@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "io.karatelabs.examples.insurance";
+
+// The CLIENT-side copy of the insurance rating contract — parsed dynamically by Grpc.connect (no stubs).
+// It adds protovalidate field bounds the server's own .proto omits: `state` is a length-bounded string
+// class-set axis and `driver_age` a numeric BVA axis, so the gRPC coverage tab grades INPUT dimensions
+// (the gRPC analog of an OpenAPI minLength/enum/range parameter) with zero authoring. Field numbers match
+// the server's contract, so this client is wire-compatible with the rating engine.
+service RatingService {
+  rpc Rate (RateRequest) returns (RateReply) {}
+  rpc StreamQuotes (RateRequest) returns (stream RateReply) {}
+  rpc BatchRate (stream RateRequest) returns (RateReply) {}
+  rpc Negotiate (stream RateRequest) returns (stream RateReply) {}
+}
+
+enum Coverage {
+  COVERAGE_UNSPECIFIED = 0;
+  LIABILITY = 1;
+  COLLISION = 2;
+  COMPREHENSIVE = 3;
+}
+
+message RateRequest {
+  // a 2-letter US state — bounded length turns `state` into a string class-set axis (empty / valid /
+  // boundary), read off the wire layer (proto has no native length keyword).
+  string state = 1 [(buf.validate.field).string.min_len = 2, (buf.validate.field).string.max_len = 2];
+  Coverage coverage = 2;   // enum dimension axis -> [LIABILITY, COLLISION, COMPREHENSIVE]  (UNSPECIFIED excluded)
+  // driver age — numeric boundary-value axis (< 18 / 18 / valid / 80 / > 80), graded by BVA.
+  int32 driver_age = 3 [(buf.validate.field).int32.gte = 18, (buf.validate.field).int32.lte = 80];
+  bool prior_claims = 4;   // boolean dimension axis -> [true, false]
+}
+
+message RateReply {
+  string policy_class = 1;
+  int32 monthly_premium = 2;
+  string currency = 3;
+}

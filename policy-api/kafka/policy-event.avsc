@@ -1,0 +1,25 @@
+{
+  "type": "record",
+  "name": "PolicyEvent",
+  "namespace": "io.karatelabs.examples.insurance",
+  "fields": [
+    { "name": "policyId", "type": "string" },
+    { "name": "holder", "type": "string" },
+    {
+      "name": "eventType",
+      "type": { "name": "EventType", "type": "enum", "symbols": ["BOUND", "CANCELLED", "CLAIM_FILED"], "default": "BOUND" },
+      "default": "BOUND"
+    },
+    {
+      "name": "rating",
+      "type": {
+        "name": "Rating",
+        "type": "record",
+        "fields": [
+          { "name": "monthlyPremium", "type": "int" },
+          { "name": "priorClaims", "type": "boolean" }
+        ]
+      }
+    }
+  ]
+}

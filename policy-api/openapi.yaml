@@ -1,0 +1,196 @@
+openapi: 3.0.3
+info:
+  title: insurance demo — Policy API
+  version: 1.0.0
+  description: |
+    The REST surface of the all-in-one insurance kit. Quotes, policies, and claims on top of an in-memory
+    store (stand it up with `Http.mock('openapi.yaml')`). The quote price comes from the gRPC RatingService
+    (proto/rating.proto); a bound policy emits a Kafka policy-event (kafka/, optional) — one insurance domain,
+    three protocols, three coverage sources (cov.openapi · cov.grpc · cov.kafka).
+
+servers:
+  - url: http://localhost:8080
+    description: local dev (the Http.mock backend)
+
+tags:
+  - name: quotes
+    description: Price a coverage request
+  - name: policies
+    description: Bind and manage policies
+  - name: claims
+    description: File and track claims
+
+paths:
+  /quotes:
+    post:
+      operationId: createQuote
+      tags: [quotes]
+      summary: Price a coverage request (the REST front door to the gRPC rating engine)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/QuoteRequest' }
+      responses:
+        '201':
+          description: a priced quote
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Quote' }
+        '400':
+          description: missing or invalid rating inputs
+
+  /policies:
+    get:
+      operationId: listPolicies
+      tags: [policies]
+      summary: List bound policies (optionally filter by state)
+      parameters:
+        - name: state
+          in: query
+          schema: { type: string, minLength: 2, maxLength: 2 }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/Policy' }
+    post:
+      operationId: bindPolicy
+      tags: [policies]
+      summary: Bind a policy from an accepted quote
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/PolicyRequest' }
+      responses:
+        '201':
+          description: the bound policy
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Policy' }
+        '400':
+          description: invalid binding request
+
+  /policies/{id}:
+    get:
+      operationId: getPolicy
+      tags: [policies]
+      summary: Fetch a policy by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Policy' }
+        '404':
+          description: no such policy
+    delete:
+      operationId: cancelPolicy
+      tags: [policies]
+      summary: Cancel a policy
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '204':
+          description: cancelled
+        '404':
+          description: no such policy
+
+  /claims:
+    post:
+      operationId: fileClaim
+      tags: [claims]
+      summary: File a claim against a policy
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/ClaimRequest' }
+      responses:
+        '201':
+          description: the filed claim
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Claim' }
+        '400':
+          description: invalid claim request
+
+  /claims/{id}:
+    get:
+      operationId: getClaim
+      tags: [claims]
+      summary: Fetch a claim by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Claim' }
+        '404':
+          description: no such claim
+
+components:
+  schemas:
+    QuoteRequest:
+      type: object
+      required: [state, coverage, driverAge]
+      properties:
+        state: { type: string, minLength: 2, maxLength: 2, example: CA }
+        coverage:
+          type: string
+          enum: [LIABILITY, COLLISION, COMPREHENSIVE]
+        driverAge: { type: integer, minimum: 18, maximum: 80, example: 40 }
+        priorClaims: { type: boolean, default: false }
+    Quote:
+      type: object
+      properties:
+        id: { type: string }
+        policyClass: { type: string, enum: [PREFERRED, STANDARD, SUBSTANDARD] }
+        monthlyPremium: { type: integer }
+        currency: { type: string, example: USD }
+    PolicyRequest:
+      type: object
+      required: [quoteId, holder]
+      properties:
+        quoteId: { type: string }
+        holder: { type: string }
+    Policy:
+      type: object
+      properties:
+        id: { type: string }
+        quoteId: { type: string }
+        holder: { type: string }
+        state: { type: string }
+        monthlyPremium: { type: integer }
+        status: { type: string, enum: [BOUND, CANCELLED] }
+    ClaimRequest:
+      type: object
+      required: [policyId, amount]
+      properties:
+        policyId: { type: string }
+        amount: { type: integer, minimum: 1 }
+        description: { type: string }
+    Claim:
+      type: object
+      properties:
+        id: { type: string }
+        policyId: { type: string }
+        amount: { type: integer }
+        status: { type: string, enum: [OPEN, APPROVED, DENIED] }

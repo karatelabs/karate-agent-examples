@@ -1,0 +1,15 @@
+# build output
+target/
+**/target/
+dependency-reduced-pom.xml
+
+# engine + license artifacts the customer drops in — never commit these
+*.jar
+karate.lic
+
+# local run scratch
+.app.pid
+.serve.pid
+.app.log
+.serve.log
+.DS_Store

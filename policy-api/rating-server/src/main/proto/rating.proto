@@ -1,0 +1,37 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "io.karatelabs.examples.insurance";
+
+// The rating engine contract used to GENERATE the demo server's stubs. The client-side copy the console
+// reads (../../proto/rating.proto) is wire-compatible (same field numbers) and adds field-validation
+// bounds for richer coverage dimensions. All four RPC kinds are present so the demo exercises the full
+// gRPC surface.
+service RatingService {
+  rpc Rate (RateRequest) returns (RateReply) {}                     // unary — the quote
+  rpc StreamQuotes (RateRequest) returns (stream RateReply) {}      // server-streaming — one quote per term option
+  rpc BatchRate (stream RateRequest) returns (RateReply) {}         // client-streaming — aggregate a batch into one premium
+  rpc Negotiate (stream RateRequest) returns (stream RateReply) {}  // bidi — a counter-offer per request
+}
+
+// The coverage line — a closed enum input dimension. COVERAGE_UNSPECIFIED = 0 is proto's idiomatic "unset"
+// sentinel a client never sends deliberately, so it is excluded from the required dimension universe.
+enum Coverage {
+  COVERAGE_UNSPECIFIED = 0;
+  LIABILITY = 1;
+  COLLISION = 2;
+  COMPREHENSIVE = 3;
+}
+
+message RateRequest {
+  string state = 1;        // 2-letter US state
+  Coverage coverage = 2;   // enum dimension axis -> [LIABILITY, COLLISION, COMPREHENSIVE]
+  int32 driver_age = 3;    // numeric dimension
+  bool prior_claims = 4;   // boolean dimension axis -> [true, false]
+}
+
+message RateReply {
+  string policy_class = 1;   // e.g. PREFERRED / STANDARD / SUBSTANDARD
+  int32 monthly_premium = 2; // in whole currency units
+  string currency = 3;       // "USD"
+}
