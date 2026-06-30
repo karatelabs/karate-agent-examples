@@ -21,7 +21,7 @@ Two files, sent with your license, dropped into this folder:
 | `karate-async-2.1.1.RC2.jar` | the engine |
 | `karate.lic` | your license |
 
-A JDK (17+) is required (Maven too, to build the demo's gRPC backend). More: <https://karatelabs.io/agent>.
+A JDK (21+) is required (Maven too, to build the demo's gRPC backend). More: <https://karatelabs.io/agent>.
 
 ## Run
 
@@ -34,7 +34,8 @@ Two long-running processes — start each in its own terminal, from this folder.
 java -jar rating-server/target/rating-server.jar 50052
 ```
 
-> The first `mvn package` downloads dependencies and can take a minute with little output — that's normal.
+> The first `mvn package` downloads dependencies and may take up to a minute with little output on a
+> cold Maven cache — that's normal (a warm cache builds in seconds).
 > Both processes print a `sun.misc.Unsafe … will be removed` warning from netty on newer JDKs; it is
 > harmless and can be ignored.
 
@@ -42,8 +43,10 @@ java -jar rating-server/target/rating-server.jar 50052
 
 ```bash
 export KARATE_LICENSE_PATH="$PWD/karate.lic"
-java -jar karate-async-2.1.1.RC2.jar serve . --port 4444 --report-dir target/karate-reports
+java -jar karate-async-2.1.1.RC2.jar serve . --port 4444
 ```
+
+(Reports land in `target/karate-reports` by default; pass `--report-dir <path>` to change it.)
 
 Then drive it from a third terminal with the `curl` calls below. Stop either process with `Ctrl-C`.
 
@@ -96,6 +99,7 @@ curl -s -X POST localhost:4444/api/eval --data-binary \
  "try { g.call('Rate', { state:'ZZ', coverage:'LIABILITY', driverAge:40 }) } catch(e) {}"
 curl -s -X POST localhost:4444/api/eval --data-binary "g.status"          # -> 'INVALID_ARGUMENT'
 curl -s -X POST localhost:4444/api/eval --data-binary "g.statusDetails"   # -> { code:3, message:'unsupported state', details:[ {BadRequest fieldViolations:[state…]}, {ErrorInfo reason:'STATE_UNSUPPORTED'…} ] }
+# (shorthand — each detail carries its real "@type", e.g. "type.googleapis.com/google.rpc.BadRequest")
 ```
 
 ## 2. Crystallize the gRPC suite + Coverage
@@ -105,16 +109,21 @@ on purpose (`Rate` + `StreamQuotes`), so it lands at **50% method coverage** —
 
 ```bash
 curl -s -X POST localhost:4444/api/eval --data-binary "Runner.run('checks/rating.feature')"
-curl -s -X POST localhost:4444/api/eval --data-binary "Report.aggregate()"   # rebuild the graph from the run's evidence
+curl -s -X POST localhost:4444/api/eval --data-binary "Report.aggregate()"   # rebuild the graph from the runs/ evidence
 curl -s -X POST localhost:4444/api/eval --data-binary "Coverage.gaps()"
 # -> a bare array of per-source rows; the grpc row's notcovered lists RatingService/BatchRate + /Negotiate
 ```
 
-`Report.aggregate()` rebuilds the traceability graph from the latest run before you query it — run, then
-aggregate, then read. The coverage verbs (`gaps` / `dimensions` / `summary`) all read that graph, so call
-`aggregate()` again after any new run. The list verbs return **bare arrays** —
+`Report.aggregate()` rebuilds the traceability graph from the **run history** (every run under `runs/`)
+before you query it — run, then aggregate, then read. The coverage verbs (`gaps` / `dimensions` / `summary`)
+all read that graph, so call `aggregate()` again after any new run. The list verbs return **bare arrays** —
 `Coverage.gaps()[0].notcovered.map(g => g.id)` just works; no unwrap. Ask an agent to author `BatchRate`
-(client-streaming) + `Negotiate` (bidi) → 4/4.
+(client-streaming) + `Negotiate` (bidi) → 4/4 — for the feature-level streaming syntax over
+`karate.channel('grpc')` (`session.stream` / `count` / `flush()` / `collect()`), pull `Skill.help('grpc')`.
+
+> **Two report locations:** each `Runner.run` writes a per-run summary under `runs/<id>/` (its own
+> `karate-summary.html`); the **aggregate coverage report** that spans all sources is rendered by
+> `Report.generate()` under the report dir (e.g. `target/karate-reports/coverage-report.html`).
 
 ### Dimensions — value-class coverage within a method
 
@@ -146,7 +155,7 @@ The quote price mirrors the gRPC engine; the mock keeps the REST surface honest 
 
 ```bash
 ( cd kafka && docker compose up -d )     # KRaft broker (:29092) + Schema Registry (:8081)
-# then uncomment the cov.kafka block in karate-boot.js and restart the console
+# then uncomment the cov.kafka block in karate-boot.js and restart the serve process
 ```
 
 A produced `policy-event` (Avro `kafka/policy-event.avsc`) joins `cov.kafka` by `topic#direction`; the Avro
