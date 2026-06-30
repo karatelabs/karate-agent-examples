@@ -111,7 +111,8 @@ on purpose (`Rate` + `StreamQuotes`), so it lands at **50% method coverage** —
 curl -s -X POST localhost:4444/api/eval --data-binary "Runner.run('checks/rating.feature')"
 curl -s -X POST localhost:4444/api/eval --data-binary "Report.aggregate()"   # rebuild the graph from the runs/ evidence
 curl -s -X POST localhost:4444/api/eval --data-binary "Coverage.gaps()"
-# -> a bare array of per-source rows; the grpc row's notcovered lists RatingService/BatchRate + /Negotiate
+# -> a bare array of per-source rows (each keyed by `type`, e.g. find(r => r.type=='grpc')); that row's
+#    notcovered lists RatingService/BatchRate + /Negotiate
 ```
 
 `Report.aggregate()` rebuilds the traceability graph from the **run history** (every run under `runs/`)
