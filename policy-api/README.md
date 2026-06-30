@@ -46,6 +46,9 @@ export KARATE_LICENSE_PATH="$PWD/karate.lic"
 java -jar karate-async-2.1.1.RC2.jar serve . --port 4444
 ```
 
+(`KARATE_LICENSE_PATH` is just one way to point at the license — dropping it at `.karate/karate.lic`
+in the project (or a parent dir) works too; see the QUICKSTART's license section for the full resolution order.)
+
 (Reports land in `target/karate-reports` by default; pass `--report-dir <path>` to change it.)
 
 Then drive it from a third terminal with the `curl` calls below. Stop either process with `Ctrl-C`.
@@ -125,6 +128,9 @@ all read that graph, so call `aggregate()` again after any new run. The list ver
 > **Two report locations:** each `Runner.run` writes a per-run summary under `runs/<id>/` (its own
 > `karate-summary.html`); the **aggregate coverage report** that spans all sources is rendered by
 > `Report.generate()` under the report dir (e.g. `target/karate-reports/coverage-report.html`).
+> Open the report **in place** — the HTML loads sibling `res/` + data files, so don't copy the `.html`
+> out on its own. On a remote/tunneled instance the `file://` URLs the verbs return aren't clickable from
+> your laptop; browse reports through the served console's **Reports** tab instead.
 
 ### Dimensions — value-class coverage within a method
 
