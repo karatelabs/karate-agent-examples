@@ -34,7 +34,7 @@ as `KARATE_LICENSE_TEXT` (sent with your evaluation).
 docker run --rm -v "$PWD":/work -w /work \
   -e KARATE_LICENSE_TEXT="$(cat karate.lic)" \
   public.ecr.aws/r3c9p5l5/karate-agent:2.1.1.RC4 \
-  karate run oracle.feature -f junit:xml,html,karate:jsonl
+  run oracle.feature -f junit:xml,html,karate:jsonl
 ```
 
 Open `target/karate-reports/index.html` — the **Traceability** tab is the RTM (requirement → rules → run).
@@ -48,7 +48,7 @@ docker run --rm -v "$PWD":/work -w /work \
   -e KARATE_LICENSE_TEXT="$(cat karate.lic)" \
   -e KARATE_ADO_ORG="your-org" -e KARATE_ADO_PROJECT="your-project" \
   public.ecr.aws/r3c9p5l5/karate-agent:2.1.1.RC4 \
-  karate run oracle.feature -f junit:xml,html,karate:jsonl
+  run oracle.feature -f junit:xml,html,karate:jsonl
 ```
 
 ## In CI
@@ -60,13 +60,13 @@ postures, side by side.
 
 ## Drive it from your own AI agent (MCP)
 
-Serve the project and point any MCP client at it:
+Serve the project and point any MCP client at it. **`serve` is the image's default** — a bare `docker run`
+brings the console + MCP endpoint up on `:4444`, serving the mounted `/work` folder:
 
 ```bash
 docker run --rm -p 4444:4444 -v "$PWD":/work -w /work \
   -e KARATE_LICENSE_TEXT="$(cat karate.lic)" \
-  public.ecr.aws/r3c9p5l5/karate-agent:2.1.1.RC4 \
-  karate serve . --port 4444
+  public.ecr.aws/r3c9p5l5/karate-agent:2.1.1.RC4
 ```
 
 Then `claude mcp add --transport http karate http://localhost:4444/api/mcp` (or point Cursor / VS Code at the

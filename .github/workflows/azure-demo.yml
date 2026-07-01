@@ -15,6 +15,11 @@ on:
     paths: [ 'azure-demo/**' ]
   workflow_dispatch:
 
+permissions:
+  contents: write        # peaceiris publishes the HTML report to the gh-pages branch
+  checks: write          # dorny/test-reporter writes the JUnit check
+  pull-requests: write
+
 jobs:
   karate:
     runs-on: ubuntu-latest
@@ -41,7 +46,7 @@ jobs:
             -v "$PWD":/work -w /work \
             -e KARATE_LICENSE_TEXT="$KARATE_LICENSE_TEXT" \
             "$IMAGE" \
-            karate run oracle.feature -f junit:xml,html,karate:jsonl
+            run oracle.feature -f junit:xml,html,karate:jsonl
         env:
           KARATE_LICENSE_TEXT: ${{ secrets.KARATE_LICENSE }}
 
@@ -59,3 +64,15 @@ jobs:
         with:
           name: karate-report
           path: azure-demo/target/karate-reports
+
+      # Publish the HTML report (RTM · coverage · summary) to GitHub Pages, per-kit subdir so kits don't
+      # clobber each other. Browsable at https://<owner>.github.io/karate-agent-examples/azure-demo/.
+      # One-time: enable Pages (Settings → Pages → Deploy from a branch → gh-pages).
+      - name: Publish HTML report to GitHub Pages
+        if: always() && github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: azure-demo/target/karate-reports
+          destination_dir: azure-demo
+          keep_files: true
