@@ -58,6 +58,9 @@ the native test report/Tests tab, and the report + RTM published as a build arti
 the ADO coordinates (linked RTM); the GitHub Actions workflow leaves them unset (pure-git RTM) — the two
 postures, side by side.
 
+**📊 See it live:** the GitHub Actions run publishes the HTML report (RTM · coverage · run summary) to GitHub
+Pages — browse the latest at **<https://karatelabs.github.io/karate-agent-examples/azure-demo/>**.
+
 ## Drive it from your own AI agent (MCP)
 
 Serve the project and point any MCP client at it. **`serve` is the image's default** — a bare `docker run`
