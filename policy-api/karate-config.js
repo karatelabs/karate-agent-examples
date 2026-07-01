@@ -5,8 +5,8 @@ function fn() {
   // (The gRPC half runs a REAL embedded rating engine, started separately on :50052 — see karate-boot.js.)
   var baseUrl = java.lang.System.getProperty('baseUrl');
   if (!baseUrl) {
-    // callSingle resolves relative to the RUNNING FEATURE's dir (checks/), not the project root.
-    baseUrl = karate.callSingle('../mock/start.js').baseUrl;
+    // Project-root-anchored ('/mock/...'): a leading '/' is from the project root, so it resolves identically
+    baseUrl = karate.callSingle('/mock/start.js').baseUrl;
   }
   return { baseUrl: baseUrl };
 }

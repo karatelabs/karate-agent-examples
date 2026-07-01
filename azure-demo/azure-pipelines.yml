@@ -1,0 +1,64 @@
+# azure-demo on Azure Pipelines — the ALM-LINKED posture.
+#
+# Runs the karate-agent container one-shot over the headless rules oracle, then publishes JUnit to the Tests
+# tab and the report + RTM as a build artifact. The pipeline derives its OWN org + project from the run's
+# predefined variables and passes them as KARATE_ADO_ORG / KARATE_ADO_PROJECT, so every requirement id in the
+# RTM click-throughs to its Azure DevOps User Story — no hardcoding. (The same kit runs pure-git on GitHub
+# Actions, where those vars are unset.)
+#
+# One-time setup: add a SECRET pipeline variable KARATE_LICENSE_TEXT (the inline karate.lic text).
+
+trigger:
+  branches: { include: [ main ] }
+  paths:    { include: [ azure-demo ] }
+pr:
+  branches: { include: [ main ] }
+  paths:    { include: [ azure-demo ] }
+schedules:
+  - cron: "0 2 * * *"
+    displayName: Nightly regression
+    branches: { include: [ main ] }
+    always: true
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  KARATE_IMAGE: public.ecr.aws/r3c9p5l5/karate-agent:2.1.1.RC4
+
+steps:
+  - checkout: self
+
+  - script: |
+      set -euo pipefail
+      cd azure-demo
+      # the karate-agent image runs as a NON-root user; pre-make target/ world-writable so it can write.
+      mkdir -p target && chmod -R 777 target
+      # derive org from the collection URI (https://dev.azure.com/<org>/) so the RTM links to THIS org/project.
+      ADO_ORG=$(echo "$(System.TeamFoundationCollectionUri)" | sed -E 's#https?://dev.azure.com/([^/]+)/?#\1#')
+      # `--pull=always` (tag iterated in beta); `karate:jsonl` is required for coverage + the RTM.
+      docker run --rm --pull=always \
+        -v "$PWD":/work -w /work \
+        -e KARATE_LICENSE_TEXT="$KARATE_LICENSE_TEXT" \
+        -e KARATE_ADO_ORG="$ADO_ORG" \
+        -e KARATE_ADO_PROJECT="$(System.TeamProject)" \
+        "$(KARATE_IMAGE)" \
+        karate run oracle.feature -f junit:xml,html,karate:jsonl
+    displayName: 'Karate: rules oracle (headless, ADO-linked RTM)'
+    env:
+      KARATE_LICENSE_TEXT: $(KARATE_LICENSE_TEXT)   # secrets must be mapped in explicitly
+
+  - task: PublishTestResults@2
+    displayName: 'Publish results -> Tests tab'
+    condition: always()
+    inputs:
+      testResultsFormat: JUnit
+      testResultsFiles: '**/junit-xml/*.xml'
+      failTaskOnFailedTests: true
+
+  - task: PublishBuildArtifacts@1
+    displayName: 'Publish report + RTM + evidence'
+    condition: always()
+    inputs:
+      PathtoPublish: 'azure-demo/target/karate-reports'
+      ArtifactName: karate-report

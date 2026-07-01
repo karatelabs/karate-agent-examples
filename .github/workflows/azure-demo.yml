@@ -1,0 +1,52 @@
+# azure-demo on GitHub Actions — the PURE-GIT / spec-driven posture.
+#
+# Runs the karate-agent container one-shot over the headless rules oracle. No ADO coordinates are set, so the
+# RTM treats the requirements markdown as the source of truth (ids render as plain text, no tracker) — the
+# spec-driven-development story. The SAME kit runs ALM-linked on Azure Pipelines (azure-demo/azure-pipelines.yml).
+#
+# One-time setup: add a repository secret KARATE_LICENSE (the inline karate.lic text). Without it the engine's
+# license check fails the run.
+name: azure-demo (pure-git RTM)
+
+on:
+  push:
+    paths: [ 'azure-demo/**', '.github/workflows/azure-demo.yml' ]
+  pull_request:
+    paths: [ 'azure-demo/**' ]
+  workflow_dispatch:
+
+jobs:
+  karate:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: azure-demo
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Karate rules oracle (headless, pure-git RTM)
+        # `--pull=always` because the engine tag is iterated in place during beta. `karate:jsonl` is required:
+        # coverage + the RTM are computed from that event stream.
+        run: |
+          docker run --rm --pull=always \
+            -v "$PWD":/work -w /work \
+            -e KARATE_LICENSE_TEXT="$KARATE_LICENSE_TEXT" \
+            public.ecr.aws/r3c9p5l5/karate-agent:2.1.1.RC4 \
+            karate run oracle.feature -f junit:xml,html,karate:jsonl
+        env:
+          KARATE_LICENSE_TEXT: ${{ secrets.KARATE_LICENSE }}
+
+      - name: Publish test results (Checks tab)
+        if: always()
+        uses: dorny/test-reporter@v1
+        with:
+          name: karate tests
+          path: 'azure-demo/target/karate-reports/**/junit-xml/*.xml'
+          reporter: java-junit
+
+      - name: Upload report + RTM + evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: karate-report
+          path: azure-demo/target/karate-reports

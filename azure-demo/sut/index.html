@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Apex Lending — Loan Desk</title>
+  <style>
+    body { font: 15px/1.5 system-ui, sans-serif; margin: 0; color: #1e293b; background: #f8fafc; }
+    header { background: #0f766e; color: #fff; padding: 16px 24px; }
+    header h1 { margin: 0; font-size: 18px; }
+    header p { margin: 2px 0 0; font-size: 13px; opacity: .85; }
+    main { max-width: 760px; margin: 24px auto; padding: 0 16px; }
+    section { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px 20px; margin-bottom: 18px; }
+    h2 { font-size: 14px; text-transform: uppercase; letter-spacing: .05em; color: #64748b; margin: 0 0 12px; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 18px; }
+    label.f { display: flex; flex-direction: column; font-size: 13px; color: #475569; gap: 4px; }
+    input[type=number] { padding: 7px 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; }
+    .check { flex-direction: row; align-items: center; gap: 8px; }
+    button { background: #0f766e; color: #fff; border: 0; padding: 9px 18px; border-radius: 8px; font-size: 14px; cursor: pointer; }
+    #decisionPanel { display: none; }
+    #decisionPanel.show { display: block; }
+    .row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f1f5f9; }
+    .decision { font-size: 20px; font-weight: 700; }
+    .pill { padding: 2px 10px; border-radius: 999px; font-size: 13px; font-weight: 600; }
+    .approved { background: #dcfce7; color: #166534; }
+    .review { background: #fef9c3; color: #854d0e; }
+    .declined { background: #fee2e2; color: #991b1b; }
+    .muted { color: #64748b; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Apex Lending — Loan Desk</h1>
+    <p>Instant personal-loan decision.</p>
+  </header>
+  <main>
+    <section>
+      <h2>Application</h2>
+      <div class="grid">
+        <label class="f">Credit score<input type="number" id="creditScore" value="720"></label>
+        <label class="f">Annual income ($)<input type="number" id="annualIncome" value="90000"></label>
+        <label class="f">Loan amount ($)<input type="number" id="loanAmount" value="12000"></label>
+        <label class="f">Term (months)<input type="number" id="termMonths" value="60"></label>
+        <label class="f">Monthly debt ($)<input type="number" id="monthlyDebt" value="500"></label>
+        <label class="f check"><input type="checkbox" id="existingCustomer"> Existing customer</label>
+      </div>
+      <div style="margin-top:16px"><button id="get-quote">Get decision</button></div>
+    </section>
+    <section id="decisionPanel">
+      <h2>Decision</h2>
+      <div class="row decision"><span>Decision</span><span id="decision"></span></div>
+      <div class="row"><span>APR</span><span id="apr" class="num"></span></div>
+      <div class="row"><span>Est. monthly payment</span><span id="monthlyPayment" class="num"></span></div>
+      <div class="row"><span>Debt-to-income</span><span id="dti" class="num"></span></div>
+    </section>
+    <section id="admin">
+      <h2>Decision config (admin) — simulate a drift from the rules</h2>
+      <p class="muted" style="margin-top:0">These knobs default to the rulebook spec, so the desk agrees with the oracle.
+         Drift one (e.g. raise the prime APR to <code>0.08</code>) and re-run the checks — they go <b>red</b>.
+         <b>Reset to spec</b> is the fix.</p>
+      <div class="grid">
+        <label class="f">Prime APR (720+)<input type="number" step="0.001" class="cfg" data-knob="primeApr" value="0.065"></label>
+        <label class="f">Mid APR (660-719)<input type="number" step="0.001" class="cfg" data-knob="midApr" value="0.099"></label>
+        <label class="f">Near-prime APR (580-659)<input type="number" step="0.001" class="cfg" data-knob="nearApr" value="0.149"></label>
+        <label class="f">Loyalty discount<input type="number" step="0.001" class="cfg" data-knob="loyaltyDiscount" value="0.005"></label>
+        <label class="f">Min credit score<input type="number" step="1" class="cfg" data-knob="minCreditScore" value="580"></label>
+        <label class="f">Max DTI<input type="number" step="0.01" class="cfg" data-knob="maxDti" value="0.5"></label>
+      </div>
+      <div style="margin-top:14px"><button id="reset-config" style="background:#475569">Reset to spec</button></div>
+    </section>
+  </main>
+  <script src="loan-calc.js"></script>
+  <script>
+    var pct = function (n) { return n == null ? '—' : (n * 100).toFixed(2) + '%'; };
+    var money = function (n) { return n == null ? '—' : '$' + Number(n).toFixed(2); };
+    var defaults = { primeApr: 0.065, midApr: 0.099, nearApr: 0.149, loyaltyDiscount: 0.005, minCreditScore: 580, maxDti: 0.5 };
+    document.getElementById('reset-config').addEventListener('click', function () {
+      document.querySelectorAll('.cfg').forEach(function (el) { el.value = defaults[el.getAttribute('data-knob')]; });
+    });
+    document.getElementById('get-quote').addEventListener('click', function () {
+      var input = {
+        creditScore: parseFloat(document.getElementById('creditScore').value) || 0,
+        annualIncome: parseFloat(document.getElementById('annualIncome').value) || 0,
+        loanAmount: parseFloat(document.getElementById('loanAmount').value) || 0,
+        termMonths: parseFloat(document.getElementById('termMonths').value) || 0,
+        monthlyDebt: parseFloat(document.getElementById('monthlyDebt').value) || 0,
+        existingCustomer: document.getElementById('existingCustomer').checked
+      };
+      var cfg = {};
+      document.querySelectorAll('.cfg').forEach(function (el) { cfg[el.getAttribute('data-knob')] = parseFloat(el.value); });
+      var q = loanDecision(input, cfg);
+      var labels = { 'auto-approved': 'Approved', 'manual-review': 'Refer to officer', 'declined': 'Declined' };
+      var cls = { 'auto-approved': 'approved', 'manual-review': 'review', 'declined': 'declined' };
+      var el = document.getElementById('decision');
+      el.textContent = labels[q.decision] || q.decision;
+      el.className = 'pill ' + (cls[q.decision] || '');
+      document.getElementById('apr').textContent = pct(q.apr);
+      document.getElementById('monthlyPayment').textContent = money(q.monthlyPayment);
+      document.getElementById('dti').textContent = pct(q.dti);
+      document.getElementById('decisionPanel').classList.add('show');
+    });
+  </script>
+</body>
+</html>
