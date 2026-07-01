@@ -1,0 +1,71 @@
+/*
+ * karate-max standalone coverage report (Track-2, run-free) — the filter toolbar + drill-down rows,
+ * layered on the coverage.css design tokens (reused; same .k-coverage-ext scope + [data-theme]).
+ * Self-contained, file://-openable: no Tailwind, no CDN. Alpine.js does the reactive filtering.
+ */
+[x-cloak] { display: none !important; }
+
+.k-coverage-ext .k-toolbar {
+  position: sticky; top: 0; z-index: 5;
+  background: var(--k-card-bg); border: 1px solid var(--k-border); border-radius: 10px;
+  padding: 10px 12px; margin: 10px 0 18px;
+  display: flex; gap: 10px; flex-wrap: wrap; align-items: center;
+}
+.k-coverage-ext .k-toolbar input, .k-coverage-ext .k-toolbar select {
+  font: inherit; font-size: 13px; padding: 6px 10px;
+  border: 1px solid var(--k-border); border-radius: 8px;
+  background: var(--k-card-bg); color: var(--k-fg);
+}
+.k-coverage-ext .k-toolbar input[type=search] { flex: 1 1 240px; min-width: 160px; }
+.k-coverage-ext .k-count { color: var(--k-muted); font-size: 12px; margin-left: auto; white-space: nowrap; }
+
+.k-coverage-ext .k-srcstrip { display: flex; gap: 12px; flex-wrap: wrap; margin: 6px 0 4px; }
+.k-coverage-ext .k-srcstrip .k-card { flex: 1 1 180px; }
+
+.k-coverage-ext tbody.k-itembody { border: 0; }
+.k-coverage-ext tr.k-row { cursor: pointer; }
+.k-coverage-ext tr.k-row:hover td { background: var(--k-card-bg); }
+.k-coverage-ext .k-caret { display: inline-block; width: 12px; color: var(--k-faint); transition: transform .12s; }
+.k-coverage-ext .k-caret.k-open { transform: rotate(90deg); }
+.k-coverage-ext .k-name span.k-path { color: var(--k-fg-strong); }
+
+.k-coverage-ext tr.k-drill > td { background: var(--k-card-bg); padding: 8px 14px 14px 32px; }
+.k-coverage-ext .k-drill h4 { margin: 10px 0 4px; font-size: 11px; text-transform: uppercase; letter-spacing: .03em; color: var(--k-muted); }
+.k-coverage-ext .k-line { font-size: 12.5px; color: var(--k-fg); margin: 3px 0; display: flex; gap: 7px; align-items: baseline; }
+.k-coverage-ext .k-empty { color: var(--k-faint); padding: 28px; text-align: center; font-size: 13px; }
+.k-coverage-ext code { font-size: 12px; background: var(--k-tag-bg); color: var(--k-tag-fg); padding: 1px 5px; border-radius: 4px; }
+
+/* §2h coverage dimensions (D118) — marginal per-axis bars + the cross/point combinations */
+.k-coverage-ext .k-dims { margin-top: 6px; }
+.k-coverage-ext .k-dimaxis { display: flex; gap: 8px; align-items: center; font-size: 12px; margin: 2px 0; }
+.k-coverage-ext .k-dimname { min-width: 110px; color: var(--k-fg-strong); font-variant-numeric: tabular-nums; }
+.k-coverage-ext .k-dimkind { color: var(--k-muted); font-size: 11px; white-space: nowrap; }
+.k-coverage-ext .k-dimbar { display: inline-block; width: 120px; height: 8px; border-radius: 4px;
+  background: var(--k-tag-bg); overflow: hidden; flex: none; }
+.k-coverage-ext .k-dimbar > span { display: block; height: 100%; border-radius: 4px; }
+.k-coverage-ext .k-dimbar > span.k-ok { background: var(--k-ok-fg); }
+.k-coverage-ext .k-dimbar > span.k-warn { background: var(--k-warn-fg); }
+.k-coverage-ext .k-dimbar > span.k-no { background: var(--k-no-fg); }
+.k-coverage-ext .k-dimpct { min-width: 36px; text-align: right; color: var(--k-fg); font-variant-numeric: tabular-nums; }
+.k-coverage-ext .k-dimgaps { color: var(--k-no-fg); font-size: 11.5px; }
+.k-coverage-ext .k-cross { margin: 8px 0 2px; }
+.k-coverage-ext .k-cross h5 { margin: 6px 0 3px; font-size: 11px; text-transform: uppercase; letter-spacing: .03em; color: var(--k-muted); }
+.k-coverage-ext .k-crossgaps { display: flex; flex-wrap: wrap; gap: 5px; align-items: baseline; margin-top: 4px; }
+.k-coverage-ext .k-cell { font-size: 11.5px; background: var(--k-no-bg); color: var(--k-no-fg);
+  padding: 1px 6px; border-radius: 4px; white-space: nowrap; }
+/* §2h/D67: the covering-array deck — the actionable "cells to test next" worklist. Blue (the --k-link
+   accent) so it reads as a to-do, distinct from the red cross-gap cells (which flag the problem). */
+.k-coverage-ext .k-deck { margin: 8px 0 2px; }
+.k-coverage-ext .k-deck h5 { margin: 6px 0 3px; font-size: 11px; text-transform: uppercase;
+  letter-spacing: .03em; color: var(--k-muted); }
+.k-coverage-ext .k-cell.k-deckcell { background: var(--k-link-bg, #dbeafe); color: var(--k-link-fg, #1e40af); }
+/* §2h slice 5: a quiet badge for rule-infeasible combinations dropped from the required cross-product */
+.k-coverage-ext .k-pruned { font-size: 10.5px; font-weight: 600; line-height: 1; margin-left: 6px;
+  background: var(--k-warn-bg, #fdf6e3); color: var(--k-warn-fg, #8a6d00);
+  padding: 2px 6px; border-radius: 8px; white-space: nowrap; }
+/* the at-a-glance DIMS column cell — a mini coverage bar + % + a gap-count badge */
+.k-coverage-ext .k-dimcell { display: inline-flex; gap: 5px; align-items: center; white-space: nowrap; }
+.k-coverage-ext .k-dimcell .k-dimbar { width: 34px; }
+.k-coverage-ext .k-dimcellpct { font-size: 11.5px; color: var(--k-fg); font-variant-numeric: tabular-nums; }
+.k-coverage-ext .k-gapbadge { font-size: 10.5px; font-weight: 600; line-height: 1; background: var(--k-no-bg);
+  color: var(--k-no-fg); padding: 2px 5px; border-radius: 8px; font-variant-numeric: tabular-nums; }
