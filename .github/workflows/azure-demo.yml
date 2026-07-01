@@ -28,6 +28,9 @@ jobs:
         # `--pull=always` because the engine tag is iterated in place during beta. `karate:jsonl` is required:
         # coverage + the RTM are computed from that event stream.
         run: |
+          # the karate-agent image runs as a NON-root user; pre-make target/ world-writable so the container
+          # can write the report / JUnit / coverage into the runner-owned checkout.
+          mkdir -p target && chmod -R 777 target
           docker run --rm --pull=always \
             -v "$PWD":/work -w /work \
             -e KARATE_LICENSE_TEXT="$KARATE_LICENSE_TEXT" \
