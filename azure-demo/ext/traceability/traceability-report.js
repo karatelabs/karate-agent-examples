@@ -239,10 +239,13 @@ document.addEventListener('alpine:init', function () {
         if (!reqId) return '';
         var s = String(reqId);
         var colon = s.indexOf(':');
-        if (colon < 0) return '';                          // bare id, no authority → no external link
-        var tmpl = this.trackerLinks[s.substring(0, colon)];
+        // a bare id (e.g. '3') lives in the default 'req' namespace — the same namespace the provider
+        // links are keyed on; a namespaced id ('ado:3') uses its own authority.
+        var authority = colon < 0 ? 'req' : s.substring(0, colon);
+        var tmpl = this.trackerLinks[authority];
         if (!tmpl) return '';
-        var id = s.substring(colon + 1).split('/')[0];     // drop any /criterion suffix
+        var local = colon < 0 ? s : s.substring(colon + 1);
+        var id = local.split('/')[0];                      // drop any /criterion suffix
         return tmpl.split('{id}').join(encodeURIComponent(id));
       },
 
