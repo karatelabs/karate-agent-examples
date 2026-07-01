@@ -25,16 +25,22 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Karate rules oracle (headless, pure-git RTM)
-        # `--pull=always` because the engine tag is iterated in place during beta. `karate:jsonl` is required:
-        # coverage + the RTM are computed from that event stream.
+        # `karate:jsonl` is required: coverage + the RTM are computed from that event stream.
         run: |
+          IMAGE=public.ecr.aws/r3c9p5l5/karate-agent:2.1.1.RC4
+          # ECR Public rate-limits ANONYMOUS pulls per source IP; GitHub's shared runners hit it, so pull
+          # explicitly with a spaced retry (then run without --pull).
+          for i in 1 2 3 4 5; do
+            docker pull "$IMAGE" && break
+            echo "registry throttled (attempt $i/5) — backing off"; sleep 30
+          done
           # the karate-agent image runs as a NON-root user; pre-make target/ world-writable so the container
           # can write the report / JUnit / coverage into the runner-owned checkout.
           mkdir -p target && chmod -R 777 target
-          docker run --rm --pull=always \
+          docker run --rm \
             -v "$PWD":/work -w /work \
             -e KARATE_LICENSE_TEXT="$KARATE_LICENSE_TEXT" \
-            public.ecr.aws/r3c9p5l5/karate-agent:2.1.1.RC4 \
+            "$IMAGE" \
             karate run oracle.feature -f junit:xml,html,karate:jsonl
         env:
           KARATE_LICENSE_TEXT: ${{ secrets.KARATE_LICENSE }}
