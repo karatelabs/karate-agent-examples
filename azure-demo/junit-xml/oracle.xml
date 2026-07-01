@@ -1,22 +1,22 @@
-<testsuite name="Loan Desk rules oracle — headless (the CI-safe pipeline stage)" tests="7" failures="0" time="0.183" skipped="0"><testcase classname="oracle" name="decline-low-score — credit score below 580 declines" time="0.073"><system-out>* expected =
+<testsuite name="Loan Desk rules oracle — headless (the CI-safe pipeline stage)" tests="7" failures="0" time="0.188" skipped="0"><testcase classname="oracle" name="decline-low-score — credit score below 580 declines" time="0.075"><system-out>* expected =
 * result = Rule.execute(&apos;personal-loan&apos;, __row).output
 * exp = expected[__row.id]
 * result.decision == exp.decision
 * result.apr == exp.apr
 </system-out></testcase>
-<testcase classname="oracle" name="decline-high-dti — DTI over 50% declines" time="0.016"><system-out>* expected =
+<testcase classname="oracle" name="decline-high-dti — DTI over 50% declines" time="0.015"><system-out>* expected =
 * result = Rule.execute(&apos;personal-loan&apos;, __row).output
 * exp = expected[__row.id]
 * result.decision == exp.decision
 * result.apr == exp.apr
 </system-out></testcase>
-<testcase classname="oracle" name="review-score-band — score 580-669 routes to review" time="0.011"><system-out>* expected =
+<testcase classname="oracle" name="review-score-band — score 580-669 routes to review" time="0.012"><system-out>* expected =
 * result = Rule.execute(&apos;personal-loan&apos;, __row).output
 * exp = expected[__row.id]
 * result.decision == exp.decision
 * result.apr == exp.apr
 </system-out></testcase>
-<testcase classname="oracle" name="review-dti-band — DTI 40-50% routes to review" time="0.009"><system-out>* expected =
+<testcase classname="oracle" name="review-dti-band — DTI 40-50% routes to review" time="0.012"><system-out>* expected =
 * result = Rule.execute(&apos;personal-loan&apos;, __row).output
 * exp = expected[__row.id]
 * result.decision == exp.decision
@@ -28,7 +28,7 @@
 * result.decision == exp.decision
 * result.apr == exp.apr
 </system-out></testcase>
-<testcase classname="oracle" name="approve-midband — 660-719 band, low DTI, auto-approve at 9.9%" time="0.009"><system-out>* expected =
+<testcase classname="oracle" name="approve-midband — 660-719 band, low DTI, auto-approve at 9.9%" time="0.008"><system-out>* expected =
 * result = Rule.execute(&apos;personal-loan&apos;, __row).output
 * exp = expected[__row.id]
 * result.decision == exp.decision
