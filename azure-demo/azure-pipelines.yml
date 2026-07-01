@@ -6,7 +6,10 @@
 # RTM click-throughs to its Azure DevOps User Story — no hardcoding. (The same kit runs pure-git on GitHub
 # Actions, where those vars are unset.)
 #
-# One-time setup: add a SECRET pipeline variable KARATE_LICENSE_TEXT (the inline karate.lic text).
+# License (site license, org-scoped): add a SECRET pipeline variable KARATE_LICENSE (the inline karate.lic
+# text) — the same short secret name the GitHub Actions workflow uses. OR, since it's a lenient site license,
+# your org can simply commit `.karate/karate.lic` into this folder and drop the secret entirely — the engine
+# reads it straight from the mounted work dir (see the kit README).
 
 trigger:
   branches: { include: [ main ] }
@@ -46,7 +49,7 @@ steps:
         run oracle.feature -f junit:xml,html,karate:jsonl
     displayName: 'Karate: rules oracle (headless, ADO-linked RTM)'
     env:
-      KARATE_LICENSE_TEXT: $(KARATE_LICENSE_TEXT)   # secrets must be mapped in explicitly
+      KARATE_LICENSE_TEXT: $(KARATE_LICENSE)   # map the KARATE_LICENSE secret var -> the engine's env (explicit)
 
   - task: PublishTestResults@2
     displayName: 'Publish results -> Tests tab'

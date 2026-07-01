@@ -58,6 +58,11 @@ the native test report/Tests tab, and the report + RTM published as a build arti
 the ADO coordinates (linked RTM); the GitHub Actions workflow leaves them unset (pure-git RTM) — the two
 postures, side by side.
 
+**License in CI.** Both pipelines pass your license via a `KARATE_LICENSE` secret. But it's an org-scoped
+**site license**, so the simplest option is to **commit `.karate/karate.lic` into this folder** — the
+container reads it straight from the mounted work dir, and CI needs **no secret at all** (drop the
+`KARATE_LICENSE` variable + the `env:` mapping). Your org's call whether to check it in.
+
 **📊 See it live:** the GitHub Actions run publishes the HTML report (RTM · coverage · run summary) to GitHub
 Pages — browse the latest at **<https://karatelabs.github.io/karate-agent-examples/azure-demo/>**.
 
