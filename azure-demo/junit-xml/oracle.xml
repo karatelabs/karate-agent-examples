@@ -1,4 +1,4 @@
-<testsuite name="Loan Desk rules oracle — headless (the CI-safe pipeline stage)" tests="7" failures="0" time="0.297" skipped="0"><testcase classname="oracle" name="decline-low-score — credit score below 580 declines" time="0.083"><system-out>* expected =
+<testsuite name="Loan Desk rules oracle — headless (the CI-safe pipeline stage)" tests="7" failures="0" time="0.314" skipped="0"><testcase classname="oracle" name="decline-low-score — credit score below 580 declines" time="0.084"><system-out>* expected =
 * result = Rule.execute(&apos;personal-loan&apos;, __row).output
 * exp = expected[__row.id]
 * result.decision == exp.decision
@@ -22,7 +22,7 @@
 * result.decision == exp.decision
 * result.apr == exp.apr
 </system-out></testcase>
-<testcase classname="oracle" name="approve-prime — prime, low DTI, auto-approves at 6.5%" time="0.008"><system-out>* expected =
+<testcase classname="oracle" name="approve-prime — prime, low DTI, auto-approves at 6.5%" time="0.012"><system-out>* expected =
 * result = Rule.execute(&apos;personal-loan&apos;, __row).output
 * exp = expected[__row.id]
 * result.decision == exp.decision

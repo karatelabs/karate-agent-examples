@@ -17,6 +17,42 @@ document.addEventListener('alpine:init', function () {
       get allItems() { return this.data.items || []; },
       get hits() { return this.data.hits || []; },
       get karateSummary() { return this.data.karateSummary || ''; },
+
+      // A1 (D168): a requirement id (`req:ORD-001`) → an external-tracker click-through, when a provider
+      // is configured (ADO Story / Jira / git heading). `links` is a resolved { authority: urlTemplate }
+      // map keyed on the requirement namespace, inlined into the coverage data global (same offline-safe
+      // shape as the RTM). Empty / no matching authority → '' → the id renders as plain text. Mirrors the
+      // RTM's reqHref so both artifacts link the same way (hyperlinks-to-source-of-truth everywhere).
+      get trackerLinks() { return this.data.links || {}; },
+      // bare-id → the requirement item (for the git provider's per-requirement sourceFile + heading anchor)
+      get reqItemById() {
+        var m = {};
+        (this.data.items || []).forEach(function (i) {
+          if (i.kind === 'req') m[String(i.id).replace(/^req:/, '')] = i;
+        });
+        return m;
+      },
+      reqHref: function (id) {
+        if (!id) return '';
+        var s = String(id);
+        var colon = s.indexOf(':');
+        var authority = colon < 0 ? 'req' : s.substring(0, colon);
+        var tmpl = this.trackerLinks[authority];
+        if (!tmpl) return '';
+        var local = colon < 0 ? s : s.substring(colon + 1);
+        var localId = local.split('/')[0];                 // drop any /criterion suffix
+        var url = tmpl.split('{id}').join(encodeURIComponent(localId));
+        // the git provider (E8/D168) needs the item's stamped source file + heading anchor (the id alone
+        // can't fill {file}/{anchor}); no sourceFile ⇒ plain text (fail-soft). Mirrors the RTM's reqHref.
+        if (url.indexOf('{file}') >= 0 || url.indexOf('{anchor}') >= 0) {
+          var it = this.reqItemById[localId];
+          if (!it || !it.sourceFile) return '';
+          var file = String(it.sourceFile).split('/').map(encodeURIComponent).join('/');
+          url = url.split('{file}').join(file).split('{anchor}').join(it.anchor || '');
+        }
+        return url;
+      },
+
       // diagnostics (carried in the same graph): calls that matched no spec op, and spec-load lint
       get unmatched() { return this.data.unmatched || []; },
       get warnings() {

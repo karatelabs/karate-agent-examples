@@ -235,6 +235,14 @@ document.addEventListener('alpine:init', function () {
       // set from boot.ext('requirements').tracker and persisted into the payload (same offline-safe,
       // opt-inlined shape as repoUrl). Empty / no matching authority → '' → the id renders as plain text.
       get trackerLinks() { return this.data.links || {}; },
+      // bare-id → the requirement item (for the git provider's per-requirement sourceFile + heading anchor)
+      get reqItemById() {
+        var m = {};
+        (this.graph.items || []).forEach(function (i) {
+          if (i.kind === 'req') m[String(i.id).replace(/^req:/, '')] = i;
+        });
+        return m;
+      },
       reqHref: function (reqId) {
         if (!reqId) return '';
         var s = String(reqId);
@@ -246,7 +254,17 @@ document.addEventListener('alpine:init', function () {
         if (!tmpl) return '';
         var local = colon < 0 ? s : s.substring(colon + 1);
         var id = local.split('/')[0];                      // drop any /criterion suffix
-        return tmpl.split('{id}').join(encodeURIComponent(id));
+        var url = tmpl.split('{id}').join(encodeURIComponent(id));
+        // the git provider (E8/D168) deep-links each requirement to its markdown heading, so the template
+        // carries {file}+{anchor} the id alone can't fill — substitute the item's stamped source file
+        // (path-encoded, slashes kept) + GitHub anchor. No sourceFile ⇒ plain text (fail-soft).
+        if (url.indexOf('{file}') >= 0 || url.indexOf('{anchor}') >= 0) {
+          var it = this.reqItemById[id];
+          if (!it || !it.sourceFile) return '';
+          var file = String(it.sourceFile).split('/').map(encodeURIComponent).join('/');
+          url = url.split('{file}').join(file).split('{anchor}').join(it.anchor || '');
+        }
+        return url;
       },
 
       // provenance (§2f): incidental (credited via @real= but no @req= anchor) wins; else the exercised level

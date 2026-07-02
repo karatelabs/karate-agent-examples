@@ -106,7 +106,7 @@
             <td><span class="k-pill" :class="statusClass(it.status)" :title="it.status" x-text="statusIcon(it.status)"></span></td>
             <td class="k-name">
               <template x-if="it.method"><span class="k-method" x-text="it.method"></span></template>
-              <template x-if="it.kind === 'req'"><span class="k-reqid" x-text="it.id.replace(/^req:/, '')"></span></template>
+              <template x-if="it.kind === 'req'"><span><a class="k-reqid" x-show="reqHref(it.id)" :href="reqHref(it.id)" target="_blank" rel="noopener" :title="'open ' + it.id.replace(/^req:/, '') + ' in tracker'" x-text="it.id.replace(/^req:/, '')"></a><span class="k-reqid" x-show="!reqHref(it.id)" x-text="it.id.replace(/^req:/, '')"></span></span></template>
               <span class="k-path" x-text="label(it)"></span>
             </td>
             <td>
