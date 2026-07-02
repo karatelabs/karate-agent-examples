@@ -35,6 +35,11 @@ jobs:
           IMAGE=public.ecr.aws/r3c9p5l5/karate-agent:2.1.1.RC4
           # ECR Public rate-limits ANONYMOUS pulls per source IP; GitHub's shared runners hit it, so pull
           # explicitly with a spaced retry (then run without --pull).
+          #
+          # FALLBACK — if ECR throttling turns chronic, switch to the GHCR mirror (no per-IP anonymous
+          # rate limit for Actions). One-time: run the "Publish image -> GHCR (manual)" workflow for this
+          # version + make the package public, then swap the IMAGE line above for:
+          #   IMAGE=ghcr.io/karatelabs/karate-agent:2.1.1.RC4
           for i in 1 2 3 4 5; do
             docker pull "$IMAGE" && break
             echo "registry throttled (attempt $i/5) — backing off"; sleep 30
