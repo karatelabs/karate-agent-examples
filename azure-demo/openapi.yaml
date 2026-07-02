@@ -1,0 +1,76 @@
+openapi: 3.0.3
+info:
+  title: Apex Lending — Loan Decision API
+  version: 1.0.0
+  description: |
+    The REST surface of the same instant-decision engine the Loan Desk UI drives. `POST /decisions`
+    prices an application exactly as the browser SUT does (both compute via the independent twin
+    `sut/loan-calc.js`), so the API check can oracle each response against the `personal-loan` rules
+    (`Rule.execute`) and the operation joins the SAME RTM as the rules + UI coverage (`cov.openapi`).
+    Stood up in-process by `mock/loan-mock.feature` (auto-started via `karate-config.js`).
+
+servers:
+  - url: http://localhost:9110
+    description: local dev (the in-process loan-mock backend)
+
+tags:
+  - name: decisions
+    description: Price and retrieve loan decisions
+
+paths:
+  /decisions:
+    post:
+      operationId: createDecision
+      tags: [decisions]
+      summary: Price an application (the REST front door to the decision engine)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/LoanApplication' }
+      responses:
+        '200':
+          description: the instant decision
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LoanDecision' }
+        '400':
+          description: missing or invalid application inputs
+  /decisions/{id}:
+    get:
+      operationId: getDecision
+      tags: [decisions]
+      summary: Retrieve a previously priced decision by id
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        '200':
+          description: the stored decision
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/LoanDecision' }
+        '404':
+          description: no such decision
+
+components:
+  schemas:
+    LoanApplication:
+      type: object
+      required: [creditScore, annualIncome, loanAmount, termMonths, monthlyDebt]
+      properties:
+        creditScore: { type: integer, minimum: 300, maximum: 850 }
+        annualIncome: { type: number, minimum: 0 }
+        loanAmount: { type: number, minimum: 0 }
+        termMonths: { type: integer, minimum: 1 }
+        monthlyDebt: { type: number, minimum: 0 }
+        existingCustomer: { type: boolean }
+    LoanDecision:
+      type: object
+      properties:
+        decision: { type: string, enum: [auto-approved, manual-review, declined] }
+        apr: { type: number, nullable: true }
+        dti: { type: number }
+        monthlyPayment: { type: number }

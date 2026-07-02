@@ -160,13 +160,21 @@ The quote price mirrors the gRPC engine; the mock keeps the REST surface honest 
 
 ## 4. Kafka — the optional event side
 
+The producer beat ships as `checks/policy-events.feature`, tagged **`@ignore`** so it never runs without a
+broker up. Three steps enable it:
+
 ```bash
-( cd kafka && docker compose up -d )     # KRaft broker (:29092) + Schema Registry (:8081)
-# then uncomment the cov.kafka block in karate-boot.js and restart the serve process
+( cd kafka && docker compose up -d )     # 1. KRaft broker (:29092) + Schema Registry (:8081)
+# 2. uncomment the cov.kafka block in karate-boot.js and restart the serve process
+# 3. remove the @ignore tag at the top of checks/policy-events.feature, then run it:
+curl -s -X POST localhost:4444/api/eval --data-binary "Runner.run('checks/policy-events.feature')"
+curl -s -X POST localhost:4444/api/eval --data-binary "Report.aggregate()"
+curl -s -X POST localhost:4444/api/eval --data-binary "Coverage.gaps().find(r => r.type=='kafka')"
 ```
 
-A produced `policy-event` (Avro `kafka/policy-event.avsc`) joins `cov.kafka` by `topic#direction`; the Avro
-`eventType` enum + `rating.priorClaims` bool become field-dimension axes.
+The produced `policy-event` (Avro `kafka/policy-event.avsc`) joins `cov.kafka` by `topic#direction` — it
+lands as `policy-events#publish` **COVERED**, leaving `#subscribe` as the gap. The Avro `eventType` enum +
+`rating.priorClaims` bool become reverse-inferred field-dimension axes (`Coverage.dimensions`).
 
 ## What it shows
 

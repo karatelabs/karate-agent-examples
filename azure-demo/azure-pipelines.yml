@@ -46,8 +46,8 @@ steps:
         -e KARATE_ADO_ORG="$ADO_ORG" \
         -e KARATE_ADO_PROJECT="$(System.TeamProject)" \
         "$(KARATE_IMAGE)" \
-        run oracle.feature -f junit:xml,html,karate:jsonl
-    displayName: 'Karate: rules oracle (headless, ADO-linked RTM)'
+        run oracle.feature checks/loan-api.feature -f junit:xml,html,karate:jsonl
+    displayName: 'Karate: rules oracle + REST API (headless, ADO-linked RTM)'
     env:
       KARATE_LICENSE_TEXT: $(KARATE_LICENSE)   # map the KARATE_LICENSE secret var -> the engine's env (explicit)
 

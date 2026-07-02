@@ -42,11 +42,17 @@ jobs:
           # the karate-agent image runs as a NON-root user; pre-make target/ world-writable so the container
           # can write the report / JUnit / coverage into the runner-owned checkout.
           mkdir -p target && chmod -R 777 target
+          # Pass the git coordinates for the pure-git RTM link: the requirement ids click through to
+          # their heading in the markdown at THIS repo + commit. github.repository auto-follows a fork; github.sha
+          # pins each link to the reviewed commit; the kit lives in the azure-demo/ subdir of the monorepo.
           docker run --rm \
             -v "$PWD":/work -w /work \
             -e KARATE_LICENSE_TEXT="$KARATE_LICENSE_TEXT" \
+            -e KARATE_GIT_REPO_URL="https://github.com/${{ github.repository }}" \
+            -e KARATE_GIT_REF="${{ github.sha }}" \
+            -e KARATE_GIT_BASE="azure-demo" \
             "$IMAGE" \
-            run oracle.feature -f junit:xml,html,karate:jsonl
+            run oracle.feature checks/loan-api.feature -f junit:xml,html,karate:jsonl
         env:
           KARATE_LICENSE_TEXT: ${{ secrets.KARATE_LICENSE }}
 

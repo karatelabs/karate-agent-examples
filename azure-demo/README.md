@@ -20,9 +20,16 @@ So one source tree runs on **Azure Pipelines** (ALM-linked) and **GitHub Actions
   rulebook is the **oracle**: it emits a requirement hit per criterion as it runs.
 - **`oracle.feature`** — the **headless, CI-safe** stage: runs the rules over each scenario and asserts the
   decision + APR against an independent expectation (so a rule drift turns a row red). No browser.
-- **`loan-rate-ui.feature`** + **`sut/`** — the flagship **browser** stage: drives the loan-calculator SUT
-  with `bot` (non-headless + video) and oracles each on-screen field against the rulebook. Needs a browser;
-  runs inside the karate-agent container (which brings its own Chrome + Xvfb).
+- **`loan-rate-ui.feature`** + **`sut/`** — the flagship **browser** stage: drives the multi-step loan desk
+  (**application → review → decision**) with `bot` (non-headless + video). Per scenario it fills the
+  application, verifies the **review** screen echoes the inputs, submits, **waits** through the SUT's
+  artificial "Calculating…" latency (`bot.wait`), and oracles the on-screen decision + APR against the
+  rulebook. Needs a browser; runs inside the karate-agent container (which brings its own Chrome + Xvfb).
+- **`openapi.yaml`** + **`mock/`** + **`checks/loan-api.feature`** — the **REST** stage: the same decision
+  engine behind a `POST /decisions` API (a karate mock computes it via the same `sut/loan-calc.js` twin the
+  browser runs). `cov.openapi` folds the API hits into the **same** RTM as the rules and requirements, so one
+  matrix spans *requirement → rule → API → UI*. `GET /decisions/{id}` is left uncovered — the honest gap the
+  RTM flags. The headless `oracle.feature` + `checks/loan-api.feature` are the CI-safe pair (no browser).
 
 ## Run it — the karate-agent container (one-shot)
 

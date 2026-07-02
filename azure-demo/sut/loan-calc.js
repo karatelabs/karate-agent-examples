@@ -35,3 +35,6 @@ function loanDecision(input, cfg) {
 
 // node/karate-engine export (the browser ignores it — `module` is undefined there)
 if (typeof module !== 'undefined') { module.exports = loanDecision; }
+// the file's final expression, so `read('sut/loan-calc.js')` / `call` return the function — the Loan
+// Decision API mock reuses THIS exact independent twin the browser runs (one engine, two surfaces).
+loanDecision;

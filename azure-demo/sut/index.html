@@ -17,8 +17,11 @@
     input[type=number] { padding: 7px 8px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 14px; }
     .check { flex-direction: row; align-items: center; gap: 8px; }
     button { background: #0f766e; color: #fff; border: 0; padding: 9px 18px; border-radius: 8px; font-size: 14px; cursor: pointer; }
-    #decisionPanel { display: none; }
-    #decisionPanel.show { display: block; }
+    button.secondary { background: #475569; }
+    .actions { margin-top: 16px; display: flex; gap: 10px; }
+    /* the applicant → review → decision wizard: exactly one step is visible at a time */
+    .step { display: none; }
+    .step.active { display: block; }
     .row { display: flex; justify-content: space-between; padding: 4px 0; border-bottom: 1px solid #f1f5f9; }
     .decision { font-size: 20px; font-weight: 700; }
     .pill { padding: 2px 10px; border-radius: 999px; font-size: 13px; font-weight: 600; }
@@ -26,6 +29,11 @@
     .review { background: #fef9c3; color: #854d0e; }
     .declined { background: #fee2e2; color: #991b1b; }
     .muted { color: #64748b; }
+    .steps { display: flex; gap: 8px; margin-bottom: 14px; font-size: 12px; color: #94a3b8; }
+    .steps .on { color: #0f766e; font-weight: 700; }
+    #spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid #cbd5e1; border-top-color: #0f766e;
+               border-radius: 50%; animation: spin .7s linear infinite; vertical-align: -3px; margin-right: 8px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
@@ -34,7 +42,16 @@
     <p>Instant personal-loan decision.</p>
   </header>
   <main>
-    <section>
+    <div class="steps">
+      <span id="crumb-application" class="on">1 · Application</span>
+      <span>›</span>
+      <span id="crumb-review">2 · Review</span>
+      <span>›</span>
+      <span id="crumb-decision">3 · Decision</span>
+    </div>
+
+    <!-- Step 1: Application -->
+    <section id="step-application" class="step active">
       <h2>Application</h2>
       <div class="grid">
         <label class="f">Credit score<input type="number" id="creditScore" value="720"></label>
@@ -44,15 +61,37 @@
         <label class="f">Monthly debt ($)<input type="number" id="monthlyDebt" value="500"></label>
         <label class="f check"><input type="checkbox" id="existingCustomer"> Existing customer</label>
       </div>
-      <div style="margin-top:16px"><button id="get-quote">Get decision</button></div>
+      <div class="actions"><button id="to-review">Continue to review</button></div>
     </section>
-    <section id="decisionPanel">
+
+    <!-- Step 2: Review the application before submitting -->
+    <section id="step-review" class="step">
+      <h2>Review your application</h2>
+      <div class="row"><span>Credit score</span><span id="review-creditScore" class="num"></span></div>
+      <div class="row"><span>Annual income</span><span id="review-annualIncome" class="num"></span></div>
+      <div class="row"><span>Loan amount</span><span id="review-loanAmount" class="num"></span></div>
+      <div class="row"><span>Term</span><span id="review-termMonths" class="num"></span></div>
+      <div class="row"><span>Monthly debt</span><span id="review-monthlyDebt" class="num"></span></div>
+      <div class="row"><span>Existing customer</span><span id="review-existingCustomer"></span></div>
+      <div class="actions">
+        <button id="back" class="secondary">Back</button>
+        <button id="submit">Submit application</button>
+      </div>
+    </section>
+
+    <!-- Step 3: Decision — revealed after a short "processing" delay -->
+    <section id="step-decision" class="step">
       <h2>Decision</h2>
-      <div class="row decision"><span>Decision</span><span id="decision"></span></div>
-      <div class="row"><span>APR</span><span id="apr" class="num"></span></div>
-      <div class="row"><span>Est. monthly payment</span><span id="monthlyPayment" class="num"></span></div>
-      <div class="row"><span>Debt-to-income</span><span id="dti" class="num"></span></div>
+      <div id="processing" class="muted"><span id="spinner"></span>Calculating decision…</div>
+      <div id="decisionBody" style="display:none">
+        <div class="row decision"><span>Decision</span><span id="decision"></span></div>
+        <div class="row"><span>APR</span><span id="apr" class="num"></span></div>
+        <div class="row"><span>Est. monthly payment</span><span id="monthlyPayment" class="num"></span></div>
+        <div class="row"><span>Debt-to-income</span><span id="dti" class="num"></span></div>
+        <div class="actions"><button id="restart" class="secondary">Start over</button></div>
+      </div>
     </section>
+
     <section id="admin">
       <h2>Decision config (admin) — simulate a drift from the rules</h2>
       <p class="muted" style="margin-top:0">These knobs default to the rulebook spec, so the desk agrees with the oracle.
@@ -66,38 +105,78 @@
         <label class="f">Min credit score<input type="number" step="1" class="cfg" data-knob="minCreditScore" value="580"></label>
         <label class="f">Max DTI<input type="number" step="0.01" class="cfg" data-knob="maxDti" value="0.5"></label>
       </div>
-      <div style="margin-top:14px"><button id="reset-config" style="background:#475569">Reset to spec</button></div>
+      <div style="margin-top:14px"><button id="reset-config" class="secondary">Reset to spec</button></div>
     </section>
   </main>
   <script src="loan-calc.js"></script>
   <script>
+    // A short artificial "processing" latency (ms) between Submit and the decision, so an automated driver
+    // must WAIT for #decision to appear (bot.wait) rather than read instantly — a realistic slow backend.
+    var PROCESSING_MS = 800;
     var pct = function (n) { return n == null ? '—' : (n * 100).toFixed(2) + '%'; };
     var money = function (n) { return n == null ? '—' : '$' + Number(n).toFixed(2); };
     var defaults = { primeApr: 0.065, midApr: 0.099, nearApr: 0.149, loyaltyDiscount: 0.005, minCreditScore: 580, maxDti: 0.5 };
-    document.getElementById('reset-config').addEventListener('click', function () {
-      document.querySelectorAll('.cfg').forEach(function (el) { el.value = defaults[el.getAttribute('data-knob')]; });
-    });
-    document.getElementById('get-quote').addEventListener('click', function () {
-      var input = {
-        creditScore: parseFloat(document.getElementById('creditScore').value) || 0,
-        annualIncome: parseFloat(document.getElementById('annualIncome').value) || 0,
-        loanAmount: parseFloat(document.getElementById('loanAmount').value) || 0,
-        termMonths: parseFloat(document.getElementById('termMonths').value) || 0,
-        monthlyDebt: parseFloat(document.getElementById('monthlyDebt').value) || 0,
-        existingCustomer: document.getElementById('existingCustomer').checked
+    var $ = function (id) { return document.getElementById(id); };
+
+    function readInput() {
+      return {
+        creditScore: parseFloat($('creditScore').value) || 0,
+        annualIncome: parseFloat($('annualIncome').value) || 0,
+        loanAmount: parseFloat($('loanAmount').value) || 0,
+        termMonths: parseFloat($('termMonths').value) || 0,
+        monthlyDebt: parseFloat($('monthlyDebt').value) || 0,
+        existingCustomer: $('existingCustomer').checked
       };
+    }
+    function readCfg() {
       var cfg = {};
       document.querySelectorAll('.cfg').forEach(function (el) { cfg[el.getAttribute('data-knob')] = parseFloat(el.value); });
-      var q = loanDecision(input, cfg);
-      var labels = { 'auto-approved': 'Approved', 'manual-review': 'Refer to officer', 'declined': 'Declined' };
-      var cls = { 'auto-approved': 'approved', 'manual-review': 'review', 'declined': 'declined' };
-      var el = document.getElementById('decision');
-      el.textContent = labels[q.decision] || q.decision;
-      el.className = 'pill ' + (cls[q.decision] || '');
-      document.getElementById('apr').textContent = pct(q.apr);
-      document.getElementById('monthlyPayment').textContent = money(q.monthlyPayment);
-      document.getElementById('dti').textContent = pct(q.dti);
-      document.getElementById('decisionPanel').classList.add('show');
+      return cfg;
+    }
+    function showStep(name) {
+      ['application', 'review', 'decision'].forEach(function (s) {
+        $('step-' + s).classList.toggle('active', s === name);
+        $('crumb-' + s).classList.toggle('on', s === name);
+      });
+    }
+
+    $('reset-config').addEventListener('click', function () {
+      document.querySelectorAll('.cfg').forEach(function (el) { el.value = defaults[el.getAttribute('data-knob')]; });
+    });
+
+    // Step 1 → 2: carry the entered values onto the review screen
+    $('to-review').addEventListener('click', function () {
+      var i = readInput();
+      $('review-creditScore').textContent = i.creditScore;
+      $('review-annualIncome').textContent = money(i.annualIncome);
+      $('review-loanAmount').textContent = money(i.loanAmount);
+      $('review-termMonths').textContent = i.termMonths + ' months';
+      $('review-monthlyDebt').textContent = money(i.monthlyDebt);
+      $('review-existingCustomer').textContent = i.existingCustomer ? 'Yes' : 'No';
+      showStep('review');
+    });
+    $('back').addEventListener('click', function () { showStep('application'); });
+    $('restart').addEventListener('click', function () { showStep('application'); });
+
+    // Step 2 → 3: show the spinner, then reveal the decision after PROCESSING_MS (the artificial latency)
+    $('submit').addEventListener('click', function () {
+      showStep('decision');
+      $('processing').style.display = 'block';
+      $('decisionBody').style.display = 'none';
+      var input = readInput(), cfg = readCfg();
+      setTimeout(function () {
+        var q = loanDecision(input, cfg);   // the pure twin — the page only adds presentational latency
+        var labels = { 'auto-approved': 'Approved', 'manual-review': 'Refer to officer', 'declined': 'Declined' };
+        var cls = { 'auto-approved': 'approved', 'manual-review': 'review', 'declined': 'declined' };
+        var el = $('decision');
+        el.textContent = labels[q.decision] || q.decision;
+        el.className = 'pill ' + (cls[q.decision] || '');
+        $('apr').textContent = pct(q.apr);
+        $('monthlyPayment').textContent = money(q.monthlyPayment);
+        $('dti').textContent = pct(q.dti);
+        $('processing').style.display = 'none';
+        $('decisionBody').style.display = 'block';
+      }, PROCESSING_MS);
     });
   </script>
 </body>

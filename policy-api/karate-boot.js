@@ -15,8 +15,9 @@ cov.grpc = 'proto';
 cov.openapi = 'openapi.yaml';
 
 // Kafka — OPTIONAL fourth beat (the one protocol whose backend wants Docker, so it is OFF by default and
-// out of CI). Start Kafka (KRaft broker + Schema Registry via kafka/docker-compose.yml), then
-// uncomment below to add the event-side universe (policy-events topic, Avro policy-event schema):
+// out of CI). Start Kafka (KRaft broker + Schema Registry via kafka/docker-compose.yml), then uncomment
+// below to add the event-side universe (policy-events topic, Avro policy-event schema). The producer that
+// exercises it is checks/policy-events.feature (@ignore'd — un-ignore it to run; see README section 4):
 // var kafka = boot.ext('kafka');
 // kafka.bootstrap = boot.sysprop('kafka.bootstrap', '127.0.0.1:29092');
 // kafka.schemaRegistry = boot.sysprop('kafka.schemaRegistry', 'http://localhost:8081');
