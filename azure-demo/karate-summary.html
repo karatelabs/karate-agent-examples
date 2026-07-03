@@ -359,17 +359,17 @@
     <script src="res/karate-report.js"></script>
     <script id="karate-data" type="application/json">{
   "env": null,
-  "reportDate": "2026-07-02 05:18:23",
+  "reportDate": "2026-07-03 05:30:09",
   "karateVersion": "2.1.1.RC1",
   "summary": {
-    "feature_count": 2,
-    "feature_passed": 2,
+    "feature_count": 3,
+    "feature_passed": 3,
     "feature_failed": 0,
-    "scenario_count": 14,
-    "scenario_passed": 14,
+    "scenario_count": 21,
+    "scenario_passed": 21,
     "scenario_failed": 0,
     "scenario_skipped": 0,
-    "duration_millis": 969,
+    "duration_millis": 35356,
     "status": "passed"
   },
   "features": [
@@ -379,7 +379,7 @@
       "fileName": "oracle",
       "passed": true,
       "failed": false,
-      "durationMillis": 314,
+      "durationMillis": 195,
       "scenarioCount": 7,
       "passedCount": 7,
       "failedCount": 0,
@@ -391,7 +391,7 @@
           "refId": "[1.1:32]",
           "passed": true,
           "skipped": false,
-          "durationMillis": 84,
+          "durationMillis": 62,
           "tags": null
         },
         {
@@ -399,7 +399,7 @@
           "refId": "[1.2:32]",
           "passed": true,
           "skipped": false,
-          "durationMillis": 12,
+          "durationMillis": 14,
           "tags": null
         },
         {
@@ -407,7 +407,7 @@
           "refId": "[1.3:32]",
           "passed": true,
           "skipped": false,
-          "durationMillis": 11,
+          "durationMillis": 12,
           "tags": null
         },
         {
@@ -415,7 +415,7 @@
           "refId": "[1.4:32]",
           "passed": true,
           "skipped": false,
-          "durationMillis": 10,
+          "durationMillis": 11,
           "tags": null
         },
         {
@@ -423,7 +423,7 @@
           "refId": "[1.5:32]",
           "passed": true,
           "skipped": false,
-          "durationMillis": 12,
+          "durationMillis": 10,
           "tags": null
         },
         {
@@ -431,7 +431,7 @@
           "refId": "[1.6:32]",
           "passed": true,
           "skipped": false,
-          "durationMillis": 8,
+          "durationMillis": 10,
           "tags": null
         },
         {
@@ -450,7 +450,7 @@
       "fileName": "checks.loan-api",
       "passed": true,
       "failed": false,
-      "durationMillis": 456,
+      "durationMillis": 453,
       "scenarioCount": 7,
       "passedCount": 7,
       "failedCount": 0,
@@ -462,7 +462,7 @@
           "refId": "[1.1:24]",
           "passed": true,
           "skipped": false,
-          "durationMillis": 353,
+          "durationMillis": 343,
           "tags": [
             "@req=3/ac1",
             "@req=4/ac1",
@@ -475,7 +475,7 @@
           "refId": "[1.2:24]",
           "passed": true,
           "skipped": false,
-          "durationMillis": 16,
+          "durationMillis": 15,
           "tags": [
             "@req=3/ac1",
             "@req=4/ac1",
@@ -488,7 +488,7 @@
           "refId": "[1.3:24]",
           "passed": true,
           "skipped": false,
-          "durationMillis": 11,
+          "durationMillis": 14,
           "tags": [
             "@req=3/ac1",
             "@req=4/ac1",
@@ -501,7 +501,7 @@
           "refId": "[1.4:24]",
           "passed": true,
           "skipped": false,
-          "durationMillis": 16,
+          "durationMillis": 15,
           "tags": [
             "@req=3/ac1",
             "@req=4/ac1",
@@ -527,7 +527,7 @@
           "refId": "[1.6:24]",
           "passed": true,
           "skipped": false,
-          "durationMillis": 11,
+          "durationMillis": 19,
           "tags": [
             "@req=3/ac1",
             "@req=4/ac1",
@@ -540,13 +540,84 @@
           "refId": "[1.7:24]",
           "passed": true,
           "skipped": false,
-          "durationMillis": 18,
+          "durationMillis": 14,
           "tags": [
             "@req=3/ac1",
             "@req=4/ac1",
             "@req=5/ac1",
             "@req=6/ac1"
           ]
+        }
+      ]
+    },
+    {
+      "name": "Loan Desk UI agrees with the personal-loan rules, per scenario",
+      "relativePath": "loan-rate-ui.feature",
+      "fileName": "loan-rate-ui",
+      "passed": true,
+      "failed": false,
+      "durationMillis": 34603,
+      "scenarioCount": 7,
+      "passedCount": 7,
+      "failedCount": 0,
+      "skippedCount": 0,
+      "passedRate": 100,
+      "scenarios": [
+        {
+          "name": "decline-low-score — credit score below 580 declines",
+          "refId": "[1.1:12]",
+          "passed": true,
+          "skipped": false,
+          "durationMillis": 5237,
+          "tags": null
+        },
+        {
+          "name": "decline-high-dti — DTI over 50% declines",
+          "refId": "[1.2:12]",
+          "passed": true,
+          "skipped": false,
+          "durationMillis": 4913,
+          "tags": null
+        },
+        {
+          "name": "review-score-band — score 580-669 routes to review",
+          "refId": "[1.3:12]",
+          "passed": true,
+          "skipped": false,
+          "durationMillis": 4819,
+          "tags": null
+        },
+        {
+          "name": "review-dti-band — DTI 40-50% routes to review",
+          "refId": "[1.4:12]",
+          "passed": true,
+          "skipped": false,
+          "durationMillis": 4817,
+          "tags": null
+        },
+        {
+          "name": "approve-prime — prime, low DTI, auto-approves at 6.5%",
+          "refId": "[1.5:12]",
+          "passed": true,
+          "skipped": false,
+          "durationMillis": 4842,
+          "tags": null
+        },
+        {
+          "name": "approve-midband — 660-719 band, low DTI, auto-approve at 9.9%",
+          "refId": "[1.6:12]",
+          "passed": true,
+          "skipped": false,
+          "durationMillis": 4817,
+          "tags": null
+        },
+        {
+          "name": "approve-loyalty — existing customer loyalty discount",
+          "refId": "[1.7:12]",
+          "passed": true,
+          "skipped": false,
+          "durationMillis": 5147,
+          "tags": null
         }
       ]
     }

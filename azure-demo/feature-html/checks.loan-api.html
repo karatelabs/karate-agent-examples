@@ -243,17 +243,17 @@
   "name": "Loan Decision API agrees with the personal-loan rules, per scenario",
   "relativePath": "checks/loan-api.feature",
   "passed": true,
-  "durationMillis": 456,
-  "reportDate": "2026-07-02 05:18:24",
+  "durationMillis": 453,
+  "reportDate": "2026-07-03 05:30:10",
   "karateVersion": "2.1.1.RC1",
   "scenarios": [
     {
       "name": "decline-low-score — credit score below 580 declines",
       "line": 24,
       "passed": true,
-      "durationMillis": 353,
-      "startTime": 1782969504458,
-      "endTime": 1782969504811,
+      "durationMillis": 343,
+      "startTime": 1783056610108,
+      "endTime": 1783056610451,
       "refId": "[1.1:24]",
       "sectionIndex": 1,
       "exampleIndex": 0,
@@ -317,25 +317,25 @@
           "text": "post",
           "line": 18,
           "status": "passed",
-          "durationMillis": 345,
+          "durationMillis": 333,
           "hasLogs": true,
           "logSegments": [
             {
-              "text": "request:\n1 > POST http://localhost:35065/decisions\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:35065\n1 > Content-Length: 118\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.1 (Java/21.0.11)\n"
+              "text": "request:\n1 > POST http://localhost:34557/decisions\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:34557\n1 > Content-Length: 118\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.1 (Java/21.0.11)\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"creditScore\": 550,\n  \"annualIncome\": 90000,\n  \"loanAmount\": 12000,\n  \"termMonths\": 60,\n  \"monthlyDebt\": 500,\n  \"existingCustomer\": false\n}"
             },
             {
-              "text": "\n\nresponse time in milliseconds: 138\n1 < 200 POST http://localhost:35065/decisions\n1 < content-length: 68\n1 < Content-Type: application/json; charset=UTF-8\n"
+              "text": "\n\nresponse time in milliseconds: 127\n1 < 200 POST http://localhost:34557/decisions\n1 < content-length: 68\n1 < Content-Type: application/json; charset=UTF-8\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"decision\": \"declined\",\n  \"apr\": null,\n  \"dti\": 0.0933,\n  \"monthlyPayment\": 200\n}"
             },
             {
-              "text": "\n\nPOST http://localhost:35065/decisions\n200 (138 ms)\n"
+              "text": "\n\nPOST http://localhost:34557/decisions\n200 (127 ms)\n"
             }
           ],
           "hasEmbeds": true,
@@ -346,7 +346,7 @@
                 {
                   "role": "primary",
                   "mime": "application/json",
-                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvZGVjaXNpb25zIiwicGF0aCI6Ii9kZWNpc2lvbnMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjM1MDY1Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjExOCJdLCJDb25uZWN0aW9uIjpbImtlZXAtYWxpdmUiXSwiVXNlci1BZ2VudCI6WyJBcGFjaGUtSHR0cENsaWVudC81LjYuMSAoSmF2YS8yMS4wLjExKSJdfSwidXJsQmFzZSI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzUwNjUiLCJtZXRob2QiOiJQT1NUIiwicGFyYW1zIjp7fSwiYm9keSI6eyJjcmVkaXRTY29yZSI6NTUwLCJhbm51YWxJbmNvbWUiOjkwMDAwLCJsb2FuQW1vdW50IjoxMjAwMCwidGVybU1vbnRocyI6NjAsIm1vbnRobHlEZWJ0Ijo1MDAsImV4aXN0aW5nQ3VzdG9tZXIiOmZhbHNlfSwidXJsIjoiaHR0cDovL2xvY2FsaG9zdDozNTA2NS9kZWNpc2lvbnMifSwicmVzcG9uc2UiOnsiaGVhZGVycyI6eyJjb250ZW50LWxlbmd0aCI6WyI2OCJdLCJDb250ZW50LVR5cGUiOlsiYXBwbGljYXRpb24vanNvbjsgY2hhcnNldD1VVEYtOCJdfSwicmVzcG9uc2VUaW1lIjoxMzgsImNvbnRlbnRMZW5ndGgiOjY4LCJib2R5Ijp7ImRlY2lzaW9uIjoiZGVjbGluZWQiLCJhcHIiOm51bGwsImR0aSI6MC4wOTMzLCJtb250aGx5UGF5bWVudCI6MjAwfSwic3RhdHVzIjoyMDB9fQ=="
+                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvZGVjaXNpb25zIiwicGF0aCI6Ii9kZWNpc2lvbnMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjM0NTU3Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjExOCJdLCJDb25uZWN0aW9uIjpbImtlZXAtYWxpdmUiXSwiVXNlci1BZ2VudCI6WyJBcGFjaGUtSHR0cENsaWVudC81LjYuMSAoSmF2YS8yMS4wLjExKSJdfSwidXJsQmFzZSI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzQ1NTciLCJtZXRob2QiOiJQT1NUIiwicGFyYW1zIjp7fSwiYm9keSI6eyJjcmVkaXRTY29yZSI6NTUwLCJhbm51YWxJbmNvbWUiOjkwMDAwLCJsb2FuQW1vdW50IjoxMjAwMCwidGVybU1vbnRocyI6NjAsIm1vbnRobHlEZWJ0Ijo1MDAsImV4aXN0aW5nQ3VzdG9tZXIiOmZhbHNlfSwidXJsIjoiaHR0cDovL2xvY2FsaG9zdDozNDU1Ny9kZWNpc2lvbnMifSwicmVzcG9uc2UiOnsiaGVhZGVycyI6eyJjb250ZW50LWxlbmd0aCI6WyI2OCJdLCJDb250ZW50LVR5cGUiOlsiYXBwbGljYXRpb24vanNvbjsgY2hhcnNldD1VVEYtOCJdfSwicmVzcG9uc2VUaW1lIjoxMjcsImNvbnRlbnRMZW5ndGgiOjY4LCJib2R5Ijp7ImRlY2lzaW9uIjoiZGVjbGluZWQiLCJhcHIiOm51bGwsImR0aSI6MC4wOTMzLCJtb250aGx5UGF5bWVudCI6MjAwfSwic3RhdHVzIjoyMDB9fQ=="
                 }
               ]
             }
@@ -370,7 +370,7 @@
           "text": "oracle = Rule.execute('personal-loan', __row).output",
           "line": 20,
           "status": "passed",
-          "durationMillis": 6,
+          "durationMillis": 7,
           "hasLogs": false,
           "hasEmbeds": true,
           "embeds": [
@@ -425,9 +425,9 @@
       "name": "decline-high-dti — DTI over 50% declines",
       "line": 24,
       "passed": true,
-      "durationMillis": 16,
-      "startTime": 1782969504814,
-      "endTime": 1782969504830,
+      "durationMillis": 15,
+      "startTime": 1783056610454,
+      "endTime": 1783056610469,
       "refId": "[1.2:24]",
       "sectionIndex": 1,
       "exampleIndex": 1,
@@ -495,21 +495,21 @@
           "hasLogs": true,
           "logSegments": [
             {
-              "text": "request:\n1 > POST http://localhost:35065/decisions\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:35065\n1 > Content-Length: 118\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.1 (Java/21.0.11)\n"
+              "text": "request:\n1 > POST http://localhost:34557/decisions\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:34557\n1 > Content-Length: 118\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.1 (Java/21.0.11)\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"creditScore\": 740,\n  \"annualIncome\": 30000,\n  \"loanAmount\": 60000,\n  \"termMonths\": 24,\n  \"monthlyDebt\": 500,\n  \"existingCustomer\": false\n}"
             },
             {
-              "text": "\n\nresponse time in milliseconds: 5\n1 < 200 POST http://localhost:35065/decisions\n1 < content-length: 66\n1 < Content-Type: application/json; charset=UTF-8\n"
+              "text": "\n\nresponse time in milliseconds: 4\n1 < 200 POST http://localhost:34557/decisions\n1 < content-length: 66\n1 < Content-Type: application/json; charset=UTF-8\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"decision\": \"declined\",\n  \"apr\": null,\n  \"dti\": 1.2,\n  \"monthlyPayment\": 2500\n}"
             },
             {
-              "text": "\n\nPOST http://localhost:35065/decisions\n200 (5 ms)\n"
+              "text": "\n\nPOST http://localhost:34557/decisions\n200 (4 ms)\n"
             }
           ],
           "hasEmbeds": true,
@@ -520,7 +520,7 @@
                 {
                   "role": "primary",
                   "mime": "application/json",
-                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvZGVjaXNpb25zIiwicGF0aCI6Ii9kZWNpc2lvbnMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjM1MDY1Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjExOCJdLCJDb25uZWN0aW9uIjpbImtlZXAtYWxpdmUiXSwiVXNlci1BZ2VudCI6WyJBcGFjaGUtSHR0cENsaWVudC81LjYuMSAoSmF2YS8yMS4wLjExKSJdfSwidXJsQmFzZSI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzUwNjUiLCJtZXRob2QiOiJQT1NUIiwicGFyYW1zIjp7fSwiYm9keSI6eyJjcmVkaXRTY29yZSI6NzQwLCJhbm51YWxJbmNvbWUiOjMwMDAwLCJsb2FuQW1vdW50Ijo2MDAwMCwidGVybU1vbnRocyI6MjQsIm1vbnRobHlEZWJ0Ijo1MDAsImV4aXN0aW5nQ3VzdG9tZXIiOmZhbHNlfSwidXJsIjoiaHR0cDovL2xvY2FsaG9zdDozNTA2NS9kZWNpc2lvbnMifSwicmVzcG9uc2UiOnsiaGVhZGVycyI6eyJjb250ZW50LWxlbmd0aCI6WyI2NiJdLCJDb250ZW50LVR5cGUiOlsiYXBwbGljYXRpb24vanNvbjsgY2hhcnNldD1VVEYtOCJdfSwicmVzcG9uc2VUaW1lIjo1LCJjb250ZW50TGVuZ3RoIjo2NiwiYm9keSI6eyJkZWNpc2lvbiI6ImRlY2xpbmVkIiwiYXByIjpudWxsLCJkdGkiOjEuMiwibW9udGhseVBheW1lbnQiOjI1MDB9LCJzdGF0dXMiOjIwMH19"
+                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvZGVjaXNpb25zIiwicGF0aCI6Ii9kZWNpc2lvbnMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjM0NTU3Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjExOCJdLCJDb25uZWN0aW9uIjpbImtlZXAtYWxpdmUiXSwiVXNlci1BZ2VudCI6WyJBcGFjaGUtSHR0cENsaWVudC81LjYuMSAoSmF2YS8yMS4wLjExKSJdfSwidXJsQmFzZSI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzQ1NTciLCJtZXRob2QiOiJQT1NUIiwicGFyYW1zIjp7fSwiYm9keSI6eyJjcmVkaXRTY29yZSI6NzQwLCJhbm51YWxJbmNvbWUiOjMwMDAwLCJsb2FuQW1vdW50Ijo2MDAwMCwidGVybU1vbnRocyI6MjQsIm1vbnRobHlEZWJ0Ijo1MDAsImV4aXN0aW5nQ3VzdG9tZXIiOmZhbHNlfSwidXJsIjoiaHR0cDovL2xvY2FsaG9zdDozNDU1Ny9kZWNpc2lvbnMifSwicmVzcG9uc2UiOnsiaGVhZGVycyI6eyJjb250ZW50LWxlbmd0aCI6WyI2NiJdLCJDb250ZW50LVR5cGUiOlsiYXBwbGljYXRpb24vanNvbjsgY2hhcnNldD1VVEYtOCJdfSwicmVzcG9uc2VUaW1lIjo0LCJjb250ZW50TGVuZ3RoIjo2NiwiYm9keSI6eyJkZWNpc2lvbiI6ImRlY2xpbmVkIiwiYXByIjpudWxsLCJkdGkiOjEuMiwibW9udGhseVBheW1lbnQiOjI1MDB9LCJzdGF0dXMiOjIwMH19"
                 }
               ]
             }
@@ -599,9 +599,9 @@
       "name": "review-score-band — score 580-669 routes to review",
       "line": 24,
       "passed": true,
-      "durationMillis": 11,
-      "startTime": 1782969504832,
-      "endTime": 1782969504843,
+      "durationMillis": 14,
+      "startTime": 1783056610471,
+      "endTime": 1783056610485,
       "refId": "[1.3:24]",
       "sectionIndex": 1,
       "exampleIndex": 2,
@@ -665,25 +665,25 @@
           "text": "post",
           "line": 18,
           "status": "passed",
-          "durationMillis": 6,
+          "durationMillis": 7,
           "hasLogs": true,
           "logSegments": [
             {
-              "text": "request:\n1 > POST http://localhost:35065/decisions\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:35065\n1 > Content-Length: 119\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.1 (Java/21.0.11)\n"
+              "text": "request:\n1 > POST http://localhost:34557/decisions\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:34557\n1 > Content-Length: 119\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.1 (Java/21.0.11)\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"creditScore\": 620,\n  \"annualIncome\": 120000,\n  \"loanAmount\": 12000,\n  \"termMonths\": 60,\n  \"monthlyDebt\": 500,\n  \"existingCustomer\": false\n}"
             },
             {
-              "text": "\n\nresponse time in milliseconds: 3\n1 < 200 POST http://localhost:35065/decisions\n1 < content-length: 72\n1 < Content-Type: application/json; charset=UTF-8\n"
+              "text": "\n\nresponse time in milliseconds: 3\n1 < 200 POST http://localhost:34557/decisions\n1 < content-length: 72\n1 < Content-Type: application/json; charset=UTF-8\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"decision\": \"manual-review\",\n  \"apr\": 0.149,\n  \"dti\": 0.07,\n  \"monthlyPayment\": 200\n}"
             },
             {
-              "text": "\n\nPOST http://localhost:35065/decisions\n200 (3 ms)\n"
+              "text": "\n\nPOST http://localhost:34557/decisions\n200 (3 ms)\n"
             }
           ],
           "hasEmbeds": true,
@@ -694,7 +694,7 @@
                 {
                   "role": "primary",
                   "mime": "application/json",
-                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvZGVjaXNpb25zIiwicGF0aCI6Ii9kZWNpc2lvbnMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjM1MDY1Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjExOSJdLCJDb25uZWN0aW9uIjpbImtlZXAtYWxpdmUiXSwiVXNlci1BZ2VudCI6WyJBcGFjaGUtSHR0cENsaWVudC81LjYuMSAoSmF2YS8yMS4wLjExKSJdfSwidXJsQmFzZSI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzUwNjUiLCJtZXRob2QiOiJQT1NUIiwicGFyYW1zIjp7fSwiYm9keSI6eyJjcmVkaXRTY29yZSI6NjIwLCJhbm51YWxJbmNvbWUiOjEyMDAwMCwibG9hbkFtb3VudCI6MTIwMDAsInRlcm1Nb250aHMiOjYwLCJtb250aGx5RGVidCI6NTAwLCJleGlzdGluZ0N1c3RvbWVyIjpmYWxzZX0sInVybCI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzUwNjUvZGVjaXNpb25zIn0sInJlc3BvbnNlIjp7ImhlYWRlcnMiOnsiY29udGVudC1sZW5ndGgiOlsiNzIiXSwiQ29udGVudC1UeXBlIjpbImFwcGxpY2F0aW9uL2pzb247IGNoYXJzZXQ9VVRGLTgiXX0sInJlc3BvbnNlVGltZSI6MywiY29udGVudExlbmd0aCI6NzIsImJvZHkiOnsiZGVjaXNpb24iOiJtYW51YWwtcmV2aWV3IiwiYXByIjowLjE0OSwiZHRpIjowLjA3LCJtb250aGx5UGF5bWVudCI6MjAwfSwic3RhdHVzIjoyMDB9fQ=="
+                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvZGVjaXNpb25zIiwicGF0aCI6Ii9kZWNpc2lvbnMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjM0NTU3Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjExOSJdLCJDb25uZWN0aW9uIjpbImtlZXAtYWxpdmUiXSwiVXNlci1BZ2VudCI6WyJBcGFjaGUtSHR0cENsaWVudC81LjYuMSAoSmF2YS8yMS4wLjExKSJdfSwidXJsQmFzZSI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzQ1NTciLCJtZXRob2QiOiJQT1NUIiwicGFyYW1zIjp7fSwiYm9keSI6eyJjcmVkaXRTY29yZSI6NjIwLCJhbm51YWxJbmNvbWUiOjEyMDAwMCwibG9hbkFtb3VudCI6MTIwMDAsInRlcm1Nb250aHMiOjYwLCJtb250aGx5RGVidCI6NTAwLCJleGlzdGluZ0N1c3RvbWVyIjpmYWxzZX0sInVybCI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzQ1NTcvZGVjaXNpb25zIn0sInJlc3BvbnNlIjp7ImhlYWRlcnMiOnsiY29udGVudC1sZW5ndGgiOlsiNzIiXSwiQ29udGVudC1UeXBlIjpbImFwcGxpY2F0aW9uL2pzb247IGNoYXJzZXQ9VVRGLTgiXX0sInJlc3BvbnNlVGltZSI6MywiY29udGVudExlbmd0aCI6NzIsImJvZHkiOnsiZGVjaXNpb24iOiJtYW51YWwtcmV2aWV3IiwiYXByIjowLjE0OSwiZHRpIjowLjA3LCJtb250aGx5UGF5bWVudCI6MjAwfSwic3RhdHVzIjoyMDB9fQ=="
                 }
               ]
             }
@@ -718,7 +718,7 @@
           "text": "oracle = Rule.execute('personal-loan', __row).output",
           "line": 20,
           "status": "passed",
-          "durationMillis": 3,
+          "durationMillis": 5,
           "hasLogs": false,
           "hasEmbeds": true,
           "embeds": [
@@ -783,9 +783,9 @@
       "name": "review-dti-band — DTI 40-50% routes to review",
       "line": 24,
       "passed": true,
-      "durationMillis": 16,
-      "startTime": 1782969504845,
-      "endTime": 1782969504861,
+      "durationMillis": 15,
+      "startTime": 1783056610487,
+      "endTime": 1783056610502,
       "refId": "[1.4:24]",
       "sectionIndex": 1,
       "exampleIndex": 3,
@@ -849,25 +849,25 @@
           "text": "post",
           "line": 18,
           "status": "passed",
-          "durationMillis": 9,
+          "durationMillis": 7,
           "hasLogs": true,
           "logSegments": [
             {
-              "text": "request:\n1 > POST http://localhost:35065/decisions\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:35065\n1 > Content-Length: 119\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.1 (Java/21.0.11)\n"
+              "text": "request:\n1 > POST http://localhost:34557/decisions\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:34557\n1 > Content-Length: 119\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.1 (Java/21.0.11)\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"creditScore\": 760,\n  \"annualIncome\": 60000,\n  \"loanAmount\": 30000,\n  \"termMonths\": 24,\n  \"monthlyDebt\": 1000,\n  \"existingCustomer\": false\n}"
             },
             {
-              "text": "\n\nresponse time in milliseconds: 8\n1 < 200 POST http://localhost:35065/decisions\n1 < content-length: 73\n1 < Content-Type: application/json; charset=UTF-8\n"
+              "text": "\n\nresponse time in milliseconds: 4\n1 < 200 POST http://localhost:34557/decisions\n1 < content-length: 73\n1 < Content-Type: application/json; charset=UTF-8\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"decision\": \"manual-review\",\n  \"apr\": 0.065,\n  \"dti\": 0.45,\n  \"monthlyPayment\": 1250\n}"
             },
             {
-              "text": "\n\nPOST http://localhost:35065/decisions\n200 (8 ms)\n"
+              "text": "\n\nPOST http://localhost:34557/decisions\n200 (4 ms)\n"
             }
           ],
           "hasEmbeds": true,
@@ -878,7 +878,7 @@
                 {
                   "role": "primary",
                   "mime": "application/json",
-                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvZGVjaXNpb25zIiwicGF0aCI6Ii9kZWNpc2lvbnMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjM1MDY1Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjExOSJdLCJDb25uZWN0aW9uIjpbImtlZXAtYWxpdmUiXSwiVXNlci1BZ2VudCI6WyJBcGFjaGUtSHR0cENsaWVudC81LjYuMSAoSmF2YS8yMS4wLjExKSJdfSwidXJsQmFzZSI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzUwNjUiLCJtZXRob2QiOiJQT1NUIiwicGFyYW1zIjp7fSwiYm9keSI6eyJjcmVkaXRTY29yZSI6NzYwLCJhbm51YWxJbmNvbWUiOjYwMDAwLCJsb2FuQW1vdW50IjozMDAwMCwidGVybU1vbnRocyI6MjQsIm1vbnRobHlEZWJ0IjoxMDAwLCJleGlzdGluZ0N1c3RvbWVyIjpmYWxzZX0sInVybCI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzUwNjUvZGVjaXNpb25zIn0sInJlc3BvbnNlIjp7ImhlYWRlcnMiOnsiY29udGVudC1sZW5ndGgiOlsiNzMiXSwiQ29udGVudC1UeXBlIjpbImFwcGxpY2F0aW9uL2pzb247IGNoYXJzZXQ9VVRGLTgiXX0sInJlc3BvbnNlVGltZSI6OCwiY29udGVudExlbmd0aCI6NzMsImJvZHkiOnsiZGVjaXNpb24iOiJtYW51YWwtcmV2aWV3IiwiYXByIjowLjA2NSwiZHRpIjowLjQ1LCJtb250aGx5UGF5bWVudCI6MTI1MH0sInN0YXR1cyI6MjAwfX0="
+                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvZGVjaXNpb25zIiwicGF0aCI6Ii9kZWNpc2lvbnMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjM0NTU3Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjExOSJdLCJDb25uZWN0aW9uIjpbImtlZXAtYWxpdmUiXSwiVXNlci1BZ2VudCI6WyJBcGFjaGUtSHR0cENsaWVudC81LjYuMSAoSmF2YS8yMS4wLjExKSJdfSwidXJsQmFzZSI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzQ1NTciLCJtZXRob2QiOiJQT1NUIiwicGFyYW1zIjp7fSwiYm9keSI6eyJjcmVkaXRTY29yZSI6NzYwLCJhbm51YWxJbmNvbWUiOjYwMDAwLCJsb2FuQW1vdW50IjozMDAwMCwidGVybU1vbnRocyI6MjQsIm1vbnRobHlEZWJ0IjoxMDAwLCJleGlzdGluZ0N1c3RvbWVyIjpmYWxzZX0sInVybCI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzQ1NTcvZGVjaXNpb25zIn0sInJlc3BvbnNlIjp7ImhlYWRlcnMiOnsiY29udGVudC1sZW5ndGgiOlsiNzMiXSwiQ29udGVudC1UeXBlIjpbImFwcGxpY2F0aW9uL2pzb247IGNoYXJzZXQ9VVRGLTgiXX0sInJlc3BvbnNlVGltZSI6NCwiY29udGVudExlbmd0aCI6NzMsImJvZHkiOnsiZGVjaXNpb24iOiJtYW51YWwtcmV2aWV3IiwiYXByIjowLjA2NSwiZHRpIjowLjQ1LCJtb250aGx5UGF5bWVudCI6MTI1MH0sInN0YXR1cyI6MjAwfX0="
                 }
               ]
             }
@@ -902,7 +902,7 @@
           "text": "oracle = Rule.execute('personal-loan', __row).output",
           "line": 20,
           "status": "passed",
-          "durationMillis": 5,
+          "durationMillis": 6,
           "hasLogs": false,
           "hasEmbeds": true,
           "embeds": [
@@ -968,8 +968,8 @@
       "line": 24,
       "passed": true,
       "durationMillis": 14,
-      "startTime": 1782969504863,
-      "endTime": 1782969504877,
+      "startTime": 1783056610503,
+      "endTime": 1783056610517,
       "refId": "[1.5:24]",
       "sectionIndex": 1,
       "exampleIndex": 4,
@@ -1037,21 +1037,21 @@
           "hasLogs": true,
           "logSegments": [
             {
-              "text": "request:\n1 > POST http://localhost:35065/decisions\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:35065\n1 > Content-Length: 119\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.1 (Java/21.0.11)\n"
+              "text": "request:\n1 > POST http://localhost:34557/decisions\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:34557\n1 > Content-Length: 119\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.1 (Java/21.0.11)\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"creditScore\": 780,\n  \"annualIncome\": 150000,\n  \"loanAmount\": 12000,\n  \"termMonths\": 60,\n  \"monthlyDebt\": 500,\n  \"existingCustomer\": false\n}"
             },
             {
-              "text": "\n\nresponse time in milliseconds: 4\n1 < 200 POST http://localhost:35065/decisions\n1 < content-length: 73\n1 < Content-Type: application/json; charset=UTF-8\n"
+              "text": "\n\nresponse time in milliseconds: 4\n1 < 200 POST http://localhost:34557/decisions\n1 < content-length: 73\n1 < Content-Type: application/json; charset=UTF-8\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"decision\": \"auto-approved\",\n  \"apr\": 0.065,\n  \"dti\": 0.056,\n  \"monthlyPayment\": 200\n}"
             },
             {
-              "text": "\n\nPOST http://localhost:35065/decisions\n200 (4 ms)\n"
+              "text": "\n\nPOST http://localhost:34557/decisions\n200 (4 ms)\n"
             }
           ],
           "hasEmbeds": true,
@@ -1062,7 +1062,7 @@
                 {
                   "role": "primary",
                   "mime": "application/json",
-                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvZGVjaXNpb25zIiwicGF0aCI6Ii9kZWNpc2lvbnMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjM1MDY1Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjExOSJdLCJDb25uZWN0aW9uIjpbImtlZXAtYWxpdmUiXSwiVXNlci1BZ2VudCI6WyJBcGFjaGUtSHR0cENsaWVudC81LjYuMSAoSmF2YS8yMS4wLjExKSJdfSwidXJsQmFzZSI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzUwNjUiLCJtZXRob2QiOiJQT1NUIiwicGFyYW1zIjp7fSwiYm9keSI6eyJjcmVkaXRTY29yZSI6NzgwLCJhbm51YWxJbmNvbWUiOjE1MDAwMCwibG9hbkFtb3VudCI6MTIwMDAsInRlcm1Nb250aHMiOjYwLCJtb250aGx5RGVidCI6NTAwLCJleGlzdGluZ0N1c3RvbWVyIjpmYWxzZX0sInVybCI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzUwNjUvZGVjaXNpb25zIn0sInJlc3BvbnNlIjp7ImhlYWRlcnMiOnsiY29udGVudC1sZW5ndGgiOlsiNzMiXSwiQ29udGVudC1UeXBlIjpbImFwcGxpY2F0aW9uL2pzb247IGNoYXJzZXQ9VVRGLTgiXX0sInJlc3BvbnNlVGltZSI6NCwiY29udGVudExlbmd0aCI6NzMsImJvZHkiOnsiZGVjaXNpb24iOiJhdXRvLWFwcHJvdmVkIiwiYXByIjowLjA2NSwiZHRpIjowLjA1NiwibW9udGhseVBheW1lbnQiOjIwMH0sInN0YXR1cyI6MjAwfX0="
+                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvZGVjaXNpb25zIiwicGF0aCI6Ii9kZWNpc2lvbnMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjM0NTU3Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjExOSJdLCJDb25uZWN0aW9uIjpbImtlZXAtYWxpdmUiXSwiVXNlci1BZ2VudCI6WyJBcGFjaGUtSHR0cENsaWVudC81LjYuMSAoSmF2YS8yMS4wLjExKSJdfSwidXJsQmFzZSI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzQ1NTciLCJtZXRob2QiOiJQT1NUIiwicGFyYW1zIjp7fSwiYm9keSI6eyJjcmVkaXRTY29yZSI6NzgwLCJhbm51YWxJbmNvbWUiOjE1MDAwMCwibG9hbkFtb3VudCI6MTIwMDAsInRlcm1Nb250aHMiOjYwLCJtb250aGx5RGVidCI6NTAwLCJleGlzdGluZ0N1c3RvbWVyIjpmYWxzZX0sInVybCI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzQ1NTcvZGVjaXNpb25zIn0sInJlc3BvbnNlIjp7ImhlYWRlcnMiOnsiY29udGVudC1sZW5ndGgiOlsiNzMiXSwiQ29udGVudC1UeXBlIjpbImFwcGxpY2F0aW9uL2pzb247IGNoYXJzZXQ9VVRGLTgiXX0sInJlc3BvbnNlVGltZSI6NCwiY29udGVudExlbmd0aCI6NzMsImJvZHkiOnsiZGVjaXNpb24iOiJhdXRvLWFwcHJvdmVkIiwiYXByIjowLjA2NSwiZHRpIjowLjA1NiwibW9udGhseVBheW1lbnQiOjIwMH0sInN0YXR1cyI6MjAwfX0="
                 }
               ]
             }
@@ -1086,7 +1086,7 @@
           "text": "oracle = Rule.execute('personal-loan', __row).output",
           "line": 20,
           "status": "passed",
-          "durationMillis": 5,
+          "durationMillis": 4,
           "hasLogs": false,
           "hasEmbeds": true,
           "embeds": [
@@ -1151,9 +1151,9 @@
       "name": "approve-midband — 660-719 band, low DTI, auto-approve at 9.9%",
       "line": 24,
       "passed": true,
-      "durationMillis": 11,
-      "startTime": 1782969504879,
-      "endTime": 1782969504890,
+      "durationMillis": 19,
+      "startTime": 1783056610519,
+      "endTime": 1783056610538,
       "refId": "[1.6:24]",
       "sectionIndex": 1,
       "exampleIndex": 5,
@@ -1217,25 +1217,25 @@
           "text": "post",
           "line": 18,
           "status": "passed",
-          "durationMillis": 5,
+          "durationMillis": 7,
           "hasLogs": true,
           "logSegments": [
             {
-              "text": "request:\n1 > POST http://localhost:35065/decisions\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:35065\n1 > Content-Length: 119\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.1 (Java/21.0.11)\n"
+              "text": "request:\n1 > POST http://localhost:34557/decisions\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:34557\n1 > Content-Length: 119\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.1 (Java/21.0.11)\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"creditScore\": 700,\n  \"annualIncome\": 150000,\n  \"loanAmount\": 12000,\n  \"termMonths\": 60,\n  \"monthlyDebt\": 500,\n  \"existingCustomer\": false\n}"
             },
             {
-              "text": "\n\nresponse time in milliseconds: 3\n1 < 200 POST http://localhost:35065/decisions\n1 < content-length: 73\n1 < Content-Type: application/json; charset=UTF-8\n"
+              "text": "\n\nresponse time in milliseconds: 4\n1 < 200 POST http://localhost:34557/decisions\n1 < content-length: 73\n1 < Content-Type: application/json; charset=UTF-8\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"decision\": \"auto-approved\",\n  \"apr\": 0.099,\n  \"dti\": 0.056,\n  \"monthlyPayment\": 200\n}"
             },
             {
-              "text": "\n\nPOST http://localhost:35065/decisions\n200 (3 ms)\n"
+              "text": "\n\nPOST http://localhost:34557/decisions\n200 (4 ms)\n"
             }
           ],
           "hasEmbeds": true,
@@ -1246,7 +1246,7 @@
                 {
                   "role": "primary",
                   "mime": "application/json",
-                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvZGVjaXNpb25zIiwicGF0aCI6Ii9kZWNpc2lvbnMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjM1MDY1Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjExOSJdLCJDb25uZWN0aW9uIjpbImtlZXAtYWxpdmUiXSwiVXNlci1BZ2VudCI6WyJBcGFjaGUtSHR0cENsaWVudC81LjYuMSAoSmF2YS8yMS4wLjExKSJdfSwidXJsQmFzZSI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzUwNjUiLCJtZXRob2QiOiJQT1NUIiwicGFyYW1zIjp7fSwiYm9keSI6eyJjcmVkaXRTY29yZSI6NzAwLCJhbm51YWxJbmNvbWUiOjE1MDAwMCwibG9hbkFtb3VudCI6MTIwMDAsInRlcm1Nb250aHMiOjYwLCJtb250aGx5RGVidCI6NTAwLCJleGlzdGluZ0N1c3RvbWVyIjpmYWxzZX0sInVybCI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzUwNjUvZGVjaXNpb25zIn0sInJlc3BvbnNlIjp7ImhlYWRlcnMiOnsiY29udGVudC1sZW5ndGgiOlsiNzMiXSwiQ29udGVudC1UeXBlIjpbImFwcGxpY2F0aW9uL2pzb247IGNoYXJzZXQ9VVRGLTgiXX0sInJlc3BvbnNlVGltZSI6MywiY29udGVudExlbmd0aCI6NzMsImJvZHkiOnsiZGVjaXNpb24iOiJhdXRvLWFwcHJvdmVkIiwiYXByIjowLjA5OSwiZHRpIjowLjA1NiwibW9udGhseVBheW1lbnQiOjIwMH0sInN0YXR1cyI6MjAwfX0="
+                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvZGVjaXNpb25zIiwicGF0aCI6Ii9kZWNpc2lvbnMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjM0NTU3Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjExOSJdLCJDb25uZWN0aW9uIjpbImtlZXAtYWxpdmUiXSwiVXNlci1BZ2VudCI6WyJBcGFjaGUtSHR0cENsaWVudC81LjYuMSAoSmF2YS8yMS4wLjExKSJdfSwidXJsQmFzZSI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzQ1NTciLCJtZXRob2QiOiJQT1NUIiwicGFyYW1zIjp7fSwiYm9keSI6eyJjcmVkaXRTY29yZSI6NzAwLCJhbm51YWxJbmNvbWUiOjE1MDAwMCwibG9hbkFtb3VudCI6MTIwMDAsInRlcm1Nb250aHMiOjYwLCJtb250aGx5RGVidCI6NTAwLCJleGlzdGluZ0N1c3RvbWVyIjpmYWxzZX0sInVybCI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzQ1NTcvZGVjaXNpb25zIn0sInJlc3BvbnNlIjp7ImhlYWRlcnMiOnsiY29udGVudC1sZW5ndGgiOlsiNzMiXSwiQ29udGVudC1UeXBlIjpbImFwcGxpY2F0aW9uL2pzb247IGNoYXJzZXQ9VVRGLTgiXX0sInJlc3BvbnNlVGltZSI6NCwiY29udGVudExlbmd0aCI6NzMsImJvZHkiOnsiZGVjaXNpb24iOiJhdXRvLWFwcHJvdmVkIiwiYXByIjowLjA5OSwiZHRpIjowLjA1NiwibW9udGhseVBheW1lbnQiOjIwMH0sInN0YXR1cyI6MjAwfX0="
                 }
               ]
             }
@@ -1270,7 +1270,7 @@
           "text": "oracle = Rule.execute('personal-loan', __row).output",
           "line": 20,
           "status": "passed",
-          "durationMillis": 5,
+          "durationMillis": 10,
           "hasLogs": false,
           "hasEmbeds": true,
           "embeds": [
@@ -1335,9 +1335,9 @@
       "name": "approve-loyalty — existing customer loyalty discount",
       "line": 24,
       "passed": true,
-      "durationMillis": 18,
-      "startTime": 1782969504892,
-      "endTime": 1782969504910,
+      "durationMillis": 14,
+      "startTime": 1783056610540,
+      "endTime": 1783056610554,
       "refId": "[1.7:24]",
       "sectionIndex": 1,
       "exampleIndex": 6,
@@ -1401,25 +1401,25 @@
           "text": "post",
           "line": 18,
           "status": "passed",
-          "durationMillis": 10,
+          "durationMillis": 8,
           "hasLogs": true,
           "logSegments": [
             {
-              "text": "request:\n1 > POST http://localhost:35065/decisions\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:35065\n1 > Content-Length: 118\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.1 (Java/21.0.11)\n"
+              "text": "request:\n1 > POST http://localhost:34557/decisions\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:34557\n1 > Content-Length: 118\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.1 (Java/21.0.11)\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"creditScore\": 780,\n  \"annualIncome\": 150000,\n  \"loanAmount\": 12000,\n  \"termMonths\": 60,\n  \"monthlyDebt\": 500,\n  \"existingCustomer\": true\n}"
             },
             {
-              "text": "\n\nresponse time in milliseconds: 7\n1 < 200 POST http://localhost:35065/decisions\n1 < content-length: 72\n1 < Content-Type: application/json; charset=UTF-8\n"
+              "text": "\n\nresponse time in milliseconds: 4\n1 < 200 POST http://localhost:34557/decisions\n1 < content-length: 72\n1 < Content-Type: application/json; charset=UTF-8\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"decision\": \"auto-approved\",\n  \"apr\": 0.06,\n  \"dti\": 0.056,\n  \"monthlyPayment\": 200\n}"
             },
             {
-              "text": "\n\nPOST http://localhost:35065/decisions\n200 (7 ms)\n"
+              "text": "\n\nPOST http://localhost:34557/decisions\n200 (4 ms)\n"
             }
           ],
           "hasEmbeds": true,
@@ -1430,7 +1430,7 @@
                 {
                   "role": "primary",
                   "mime": "application/json",
-                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvZGVjaXNpb25zIiwicGF0aCI6Ii9kZWNpc2lvbnMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjM1MDY1Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjExOCJdLCJDb25uZWN0aW9uIjpbImtlZXAtYWxpdmUiXSwiVXNlci1BZ2VudCI6WyJBcGFjaGUtSHR0cENsaWVudC81LjYuMSAoSmF2YS8yMS4wLjExKSJdfSwidXJsQmFzZSI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzUwNjUiLCJtZXRob2QiOiJQT1NUIiwicGFyYW1zIjp7fSwiYm9keSI6eyJjcmVkaXRTY29yZSI6NzgwLCJhbm51YWxJbmNvbWUiOjE1MDAwMCwibG9hbkFtb3VudCI6MTIwMDAsInRlcm1Nb250aHMiOjYwLCJtb250aGx5RGVidCI6NTAwLCJleGlzdGluZ0N1c3RvbWVyIjp0cnVlfSwidXJsIjoiaHR0cDovL2xvY2FsaG9zdDozNTA2NS9kZWNpc2lvbnMifSwicmVzcG9uc2UiOnsiaGVhZGVycyI6eyJjb250ZW50LWxlbmd0aCI6WyI3MiJdLCJDb250ZW50LVR5cGUiOlsiYXBwbGljYXRpb24vanNvbjsgY2hhcnNldD1VVEYtOCJdfSwicmVzcG9uc2VUaW1lIjo3LCJjb250ZW50TGVuZ3RoIjo3MiwiYm9keSI6eyJkZWNpc2lvbiI6ImF1dG8tYXBwcm92ZWQiLCJhcHIiOjAuMDYsImR0aSI6MC4wNTYsIm1vbnRobHlQYXltZW50IjoyMDB9LCJzdGF0dXMiOjIwMH19"
+                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvZGVjaXNpb25zIiwicGF0aCI6Ii9kZWNpc2lvbnMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjM0NTU3Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjExOCJdLCJDb25uZWN0aW9uIjpbImtlZXAtYWxpdmUiXSwiVXNlci1BZ2VudCI6WyJBcGFjaGUtSHR0cENsaWVudC81LjYuMSAoSmF2YS8yMS4wLjExKSJdfSwidXJsQmFzZSI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzQ1NTciLCJtZXRob2QiOiJQT1NUIiwicGFyYW1zIjp7fSwiYm9keSI6eyJjcmVkaXRTY29yZSI6NzgwLCJhbm51YWxJbmNvbWUiOjE1MDAwMCwibG9hbkFtb3VudCI6MTIwMDAsInRlcm1Nb250aHMiOjYwLCJtb250aGx5RGVidCI6NTAwLCJleGlzdGluZ0N1c3RvbWVyIjp0cnVlfSwidXJsIjoiaHR0cDovL2xvY2FsaG9zdDozNDU1Ny9kZWNpc2lvbnMifSwicmVzcG9uc2UiOnsiaGVhZGVycyI6eyJjb250ZW50LWxlbmd0aCI6WyI3MiJdLCJDb250ZW50LVR5cGUiOlsiYXBwbGljYXRpb24vanNvbjsgY2hhcnNldD1VVEYtOCJdfSwicmVzcG9uc2VUaW1lIjo0LCJjb250ZW50TGVuZ3RoIjo3MiwiYm9keSI6eyJkZWNpc2lvbiI6ImF1dG8tYXBwcm92ZWQiLCJhcHIiOjAuMDYsImR0aSI6MC4wNTYsIm1vbnRobHlQYXltZW50IjoyMDB9LCJzdGF0dXMiOjIwMH19"
                 }
               ]
             }
@@ -1454,7 +1454,7 @@
           "text": "oracle = Rule.execute('personal-loan', __row).output",
           "line": 20,
           "status": "passed",
-          "durationMillis": 6,
+          "durationMillis": 4,
           "hasLogs": false,
           "hasEmbeds": true,
           "embeds": [

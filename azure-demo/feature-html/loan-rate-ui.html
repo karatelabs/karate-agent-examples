@@ -239,22 +239,22 @@
 
     <script src="../res/karate-report.js"></script>
     <script id="karate-data" type="application/json">{
-  "path": "oracle.feature",
-  "name": "Loan Desk rules oracle — headless (the CI-safe pipeline stage)",
-  "relativePath": "oracle.feature",
+  "path": "loan-rate-ui.feature",
+  "name": "Loan Desk UI agrees with the personal-loan rules, per scenario",
+  "relativePath": "loan-rate-ui.feature",
   "passed": true,
-  "durationMillis": 195,
-  "reportDate": "2026-07-03 05:30:09",
+  "durationMillis": 34603,
+  "reportDate": "2026-07-03 05:30:10",
   "karateVersion": "2.1.1.RC1",
   "scenarios": [
     {
       "name": "decline-low-score — credit score below 580 declines",
-      "line": 32,
+      "line": 12,
       "passed": true,
-      "durationMillis": 62,
-      "startTime": 1783056609939,
-      "endTime": 1783056610001,
-      "refId": "[1.1:32]",
+      "durationMillis": 5237,
+      "startTime": 1783056610567,
+      "endTime": 1783056615804,
+      "refId": "[1.1:12]",
       "sectionIndex": 1,
       "exampleIndex": 0,
       "isOutlineExample": true,
@@ -263,22 +263,11 @@
       "steps": [
         {
           "prefix": "*",
-          "keyword": "def",
-          "text": "expected =",
-          "line": 13,
+          "keyword": "eval",
+          "text": "Check.run('drive-quote.js', __row)",
+          "line": 10,
           "status": "passed",
-          "durationMillis": 8,
-          "hasLogs": false,
-          "hasEmbeds": false,
-          "hasCallResults": false
-        },
-        {
-          "prefix": "*",
-          "keyword": "def",
-          "text": "result = Rule.execute('personal-loan', __row).output",
-          "line": 27,
-          "status": "passed",
-          "durationMillis": 47,
+          "durationMillis": 5237,
           "hasLogs": false,
           "hasEmbeds": true,
           "embeds": [
@@ -307,47 +296,83 @@
         },
         {
           "prefix": "*",
-          "keyword": "def",
-          "text": "exp = expected[__row.id]",
-          "line": 28,
+          "keyword": "",
+          "text": "Review screen echoes the entered credit score",
+          "line": 0,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
-          "hasEmbeds": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "evidence",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJraW5kIjoiYXNzZXJ0aW9uIiwibGFiZWwiOiJSZXZpZXcgc2NyZWVuIGVjaG9lcyB0aGUgZW50ZXJlZCBjcmVkaXQgc2NvcmUiLCJ2ZXJiIjoiZXF1YWxzIiwiYWN0dWFsIjo1NTAsImV4cGVjdGVkIjo1NTAsInBhc3MiOnRydWUsIm1lc3NhZ2UiOm51bGx9"
+                }
+              ]
+            }
+          ],
           "hasCallResults": false
         },
         {
           "prefix": "*",
-          "keyword": "match",
-          "text": "result.decision == exp.decision",
-          "line": 29,
+          "keyword": "",
+          "text": "Loan decision: declined @req=3/ac1",
+          "line": 0,
           "status": "passed",
-          "durationMillis": 3,
+          "durationMillis": 0,
           "hasLogs": false,
-          "hasEmbeds": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "Loan decision: declined @req=3/ac1",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "image/png",
+                  "url": "screenshots/001-loan-decision-declined-req-3-ac1.png"
+                }
+              ]
+            }
+          ],
           "hasCallResults": false
         },
         {
           "prefix": "*",
-          "keyword": "match",
-          "text": "result.apr == exp.apr",
-          "line": 30,
+          "keyword": "",
+          "text": "Decision = rules oracle (declined)",
+          "line": 0,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
-          "hasEmbeds": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "evidence",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJraW5kIjoiYXNzZXJ0aW9uIiwibGFiZWwiOiJEZWNpc2lvbiA9IHJ1bGVzIG9yYWNsZSAoZGVjbGluZWQpIiwidmVyYiI6ImNvbnRhaW5zIiwiYWN0dWFsIjoiZGVjbGluZWQiLCJleHBlY3RlZCI6ImRlY2xpbmVkIiwicGFzcyI6dHJ1ZSwibWVzc2FnZSI6bnVsbH0="
+                }
+              ]
+            }
+          ],
           "hasCallResults": false
         }
       ]
     },
     {
       "name": "decline-high-dti — DTI over 50% declines",
-      "line": 32,
+      "line": 12,
       "passed": true,
-      "durationMillis": 14,
-      "startTime": 1783056610005,
-      "endTime": 1783056610019,
-      "refId": "[1.2:32]",
+      "durationMillis": 4913,
+      "startTime": 1783056615806,
+      "endTime": 1783056620719,
+      "refId": "[1.2:12]",
       "sectionIndex": 1,
       "exampleIndex": 1,
       "isOutlineExample": true,
@@ -356,22 +381,11 @@
       "steps": [
         {
           "prefix": "*",
-          "keyword": "def",
-          "text": "expected =",
-          "line": 13,
+          "keyword": "eval",
+          "text": "Check.run('drive-quote.js', __row)",
+          "line": 10,
           "status": "passed",
-          "durationMillis": 0,
-          "hasLogs": false,
-          "hasEmbeds": false,
-          "hasCallResults": false
-        },
-        {
-          "prefix": "*",
-          "keyword": "def",
-          "text": "result = Rule.execute('personal-loan', __row).output",
-          "line": 27,
-          "status": "passed",
-          "durationMillis": 12,
+          "durationMillis": 4911,
           "hasLogs": false,
           "hasEmbeds": true,
           "embeds": [
@@ -400,47 +414,83 @@
         },
         {
           "prefix": "*",
-          "keyword": "def",
-          "text": "exp = expected[__row.id]",
-          "line": 28,
+          "keyword": "",
+          "text": "Review screen echoes the entered credit score",
+          "line": 0,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
-          "hasEmbeds": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "evidence",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJraW5kIjoiYXNzZXJ0aW9uIiwibGFiZWwiOiJSZXZpZXcgc2NyZWVuIGVjaG9lcyB0aGUgZW50ZXJlZCBjcmVkaXQgc2NvcmUiLCJ2ZXJiIjoiZXF1YWxzIiwiYWN0dWFsIjo3NDAsImV4cGVjdGVkIjo3NDAsInBhc3MiOnRydWUsIm1lc3NhZ2UiOm51bGx9"
+                }
+              ]
+            }
+          ],
           "hasCallResults": false
         },
         {
           "prefix": "*",
-          "keyword": "match",
-          "text": "result.decision == exp.decision",
-          "line": 29,
+          "keyword": "",
+          "text": "Loan decision: declined @req=3/ac1",
+          "line": 0,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
-          "hasEmbeds": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "Loan decision: declined @req=3/ac1",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "image/png",
+                  "url": "screenshots/002-loan-decision-declined-req-3-ac1.png"
+                }
+              ]
+            }
+          ],
           "hasCallResults": false
         },
         {
           "prefix": "*",
-          "keyword": "match",
-          "text": "result.apr == exp.apr",
-          "line": 30,
+          "keyword": "",
+          "text": "Decision = rules oracle (declined)",
+          "line": 0,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
-          "hasEmbeds": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "evidence",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJraW5kIjoiYXNzZXJ0aW9uIiwibGFiZWwiOiJEZWNpc2lvbiA9IHJ1bGVzIG9yYWNsZSAoZGVjbGluZWQpIiwidmVyYiI6ImNvbnRhaW5zIiwiYWN0dWFsIjoiZGVjbGluZWQiLCJleHBlY3RlZCI6ImRlY2xpbmVkIiwicGFzcyI6dHJ1ZSwibWVzc2FnZSI6bnVsbH0="
+                }
+              ]
+            }
+          ],
           "hasCallResults": false
         }
       ]
     },
     {
       "name": "review-score-band — score 580-669 routes to review",
-      "line": 32,
+      "line": 12,
       "passed": true,
-      "durationMillis": 12,
-      "startTime": 1783056610021,
-      "endTime": 1783056610033,
-      "refId": "[1.3:32]",
+      "durationMillis": 4819,
+      "startTime": 1783056620720,
+      "endTime": 1783056625539,
+      "refId": "[1.3:12]",
       "sectionIndex": 1,
       "exampleIndex": 2,
       "isOutlineExample": true,
@@ -449,22 +499,11 @@
       "steps": [
         {
           "prefix": "*",
-          "keyword": "def",
-          "text": "expected =",
-          "line": 13,
+          "keyword": "eval",
+          "text": "Check.run('drive-quote.js', __row)",
+          "line": 10,
           "status": "passed",
-          "durationMillis": 0,
-          "hasLogs": false,
-          "hasEmbeds": false,
-          "hasCallResults": false
-        },
-        {
-          "prefix": "*",
-          "keyword": "def",
-          "text": "result = Rule.execute('personal-loan', __row).output",
-          "line": 27,
-          "status": "passed",
-          "durationMillis": 11,
+          "durationMillis": 4818,
           "hasLogs": false,
           "hasEmbeds": true,
           "embeds": [
@@ -503,47 +542,106 @@
         },
         {
           "prefix": "*",
-          "keyword": "def",
-          "text": "exp = expected[__row.id]",
-          "line": 28,
+          "keyword": "",
+          "text": "Review screen echoes the entered credit score",
+          "line": 0,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
-          "hasEmbeds": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "evidence",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJraW5kIjoiYXNzZXJ0aW9uIiwibGFiZWwiOiJSZXZpZXcgc2NyZWVuIGVjaG9lcyB0aGUgZW50ZXJlZCBjcmVkaXQgc2NvcmUiLCJ2ZXJiIjoiZXF1YWxzIiwiYWN0dWFsIjo2MjAsImV4cGVjdGVkIjo2MjAsInBhc3MiOnRydWUsIm1lc3NhZ2UiOm51bGx9"
+                }
+              ]
+            }
+          ],
           "hasCallResults": false
         },
         {
           "prefix": "*",
-          "keyword": "match",
-          "text": "result.decision == exp.decision",
-          "line": 29,
+          "keyword": "",
+          "text": "Loan decision: manual-review @req=3/ac1",
+          "line": 0,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
-          "hasEmbeds": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "Loan decision: manual-review @req=3/ac1",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "image/png",
+                  "url": "screenshots/003-loan-decision-manual-review-req-3-ac1.png"
+                }
+              ]
+            }
+          ],
           "hasCallResults": false
         },
         {
           "prefix": "*",
-          "keyword": "match",
-          "text": "result.apr == exp.apr",
-          "line": 30,
+          "keyword": "",
+          "text": "Decision = rules oracle (manual-review)",
+          "line": 0,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
-          "hasEmbeds": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "evidence",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJraW5kIjoiYXNzZXJ0aW9uIiwibGFiZWwiOiJEZWNpc2lvbiA9IHJ1bGVzIG9yYWNsZSAobWFudWFsLXJldmlldykiLCJ2ZXJiIjoiY29udGFpbnMiLCJhY3R1YWwiOiJyZWZlciB0byBvZmZpY2VyIiwiZXhwZWN0ZWQiOiJyZWZlciIsInBhc3MiOnRydWUsIm1lc3NhZ2UiOm51bGx9"
+                }
+              ]
+            }
+          ],
+          "hasCallResults": false
+        },
+        {
+          "prefix": "*",
+          "keyword": "",
+          "text": "APR % = rules oracle",
+          "line": 0,
+          "status": "passed",
+          "durationMillis": 0,
+          "hasLogs": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "evidence",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJraW5kIjoiYXNzZXJ0aW9uIiwibGFiZWwiOiJBUFIgJSA9IHJ1bGVzIG9yYWNsZSIsInZlcmIiOiJlcXVhbHMiLCJhY3R1YWwiOjE0LjksImV4cGVjdGVkIjoxNC45LCJwYXNzIjp0cnVlLCJtZXNzYWdlIjpudWxsfQ=="
+                }
+              ]
+            }
+          ],
           "hasCallResults": false
         }
       ]
     },
     {
       "name": "review-dti-band — DTI 40-50% routes to review",
-      "line": 32,
+      "line": 12,
       "passed": true,
-      "durationMillis": 11,
-      "startTime": 1783056610036,
-      "endTime": 1783056610047,
-      "refId": "[1.4:32]",
+      "durationMillis": 4817,
+      "startTime": 1783056625540,
+      "endTime": 1783056630357,
+      "refId": "[1.4:12]",
       "sectionIndex": 1,
       "exampleIndex": 3,
       "isOutlineExample": true,
@@ -552,22 +650,11 @@
       "steps": [
         {
           "prefix": "*",
-          "keyword": "def",
-          "text": "expected =",
-          "line": 13,
+          "keyword": "eval",
+          "text": "Check.run('drive-quote.js', __row)",
+          "line": 10,
           "status": "passed",
-          "durationMillis": 0,
-          "hasLogs": false,
-          "hasEmbeds": false,
-          "hasCallResults": false
-        },
-        {
-          "prefix": "*",
-          "keyword": "def",
-          "text": "result = Rule.execute('personal-loan', __row).output",
-          "line": 27,
-          "status": "passed",
-          "durationMillis": 9,
+          "durationMillis": 4817,
           "hasLogs": false,
           "hasEmbeds": true,
           "embeds": [
@@ -606,47 +693,106 @@
         },
         {
           "prefix": "*",
-          "keyword": "def",
-          "text": "exp = expected[__row.id]",
-          "line": 28,
+          "keyword": "",
+          "text": "Review screen echoes the entered credit score",
+          "line": 0,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
-          "hasEmbeds": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "evidence",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJraW5kIjoiYXNzZXJ0aW9uIiwibGFiZWwiOiJSZXZpZXcgc2NyZWVuIGVjaG9lcyB0aGUgZW50ZXJlZCBjcmVkaXQgc2NvcmUiLCJ2ZXJiIjoiZXF1YWxzIiwiYWN0dWFsIjo3NjAsImV4cGVjdGVkIjo3NjAsInBhc3MiOnRydWUsIm1lc3NhZ2UiOm51bGx9"
+                }
+              ]
+            }
+          ],
           "hasCallResults": false
         },
         {
           "prefix": "*",
-          "keyword": "match",
-          "text": "result.decision == exp.decision",
-          "line": 29,
+          "keyword": "",
+          "text": "Loan decision: manual-review @req=3/ac1",
+          "line": 0,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
-          "hasEmbeds": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "Loan decision: manual-review @req=3/ac1",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "image/png",
+                  "url": "screenshots/004-loan-decision-manual-review-req-3-ac1.png"
+                }
+              ]
+            }
+          ],
           "hasCallResults": false
         },
         {
           "prefix": "*",
-          "keyword": "match",
-          "text": "result.apr == exp.apr",
-          "line": 30,
+          "keyword": "",
+          "text": "Decision = rules oracle (manual-review)",
+          "line": 0,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
-          "hasEmbeds": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "evidence",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJraW5kIjoiYXNzZXJ0aW9uIiwibGFiZWwiOiJEZWNpc2lvbiA9IHJ1bGVzIG9yYWNsZSAobWFudWFsLXJldmlldykiLCJ2ZXJiIjoiY29udGFpbnMiLCJhY3R1YWwiOiJyZWZlciB0byBvZmZpY2VyIiwiZXhwZWN0ZWQiOiJyZWZlciIsInBhc3MiOnRydWUsIm1lc3NhZ2UiOm51bGx9"
+                }
+              ]
+            }
+          ],
+          "hasCallResults": false
+        },
+        {
+          "prefix": "*",
+          "keyword": "",
+          "text": "APR % = rules oracle",
+          "line": 0,
+          "status": "passed",
+          "durationMillis": 0,
+          "hasLogs": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "evidence",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJraW5kIjoiYXNzZXJ0aW9uIiwibGFiZWwiOiJBUFIgJSA9IHJ1bGVzIG9yYWNsZSIsInZlcmIiOiJlcXVhbHMiLCJhY3R1YWwiOjYuNSwiZXhwZWN0ZWQiOjYuNSwicGFzcyI6dHJ1ZSwibWVzc2FnZSI6bnVsbH0="
+                }
+              ]
+            }
+          ],
           "hasCallResults": false
         }
       ]
     },
     {
       "name": "approve-prime — prime, low DTI, auto-approves at 6.5%",
-      "line": 32,
+      "line": 12,
       "passed": true,
-      "durationMillis": 10,
-      "startTime": 1783056610049,
-      "endTime": 1783056610059,
-      "refId": "[1.5:32]",
+      "durationMillis": 4842,
+      "startTime": 1783056630359,
+      "endTime": 1783056635201,
+      "refId": "[1.5:12]",
       "sectionIndex": 1,
       "exampleIndex": 4,
       "isOutlineExample": true,
@@ -655,22 +801,11 @@
       "steps": [
         {
           "prefix": "*",
-          "keyword": "def",
-          "text": "expected =",
-          "line": 13,
+          "keyword": "eval",
+          "text": "Check.run('drive-quote.js', __row)",
+          "line": 10,
           "status": "passed",
-          "durationMillis": 0,
-          "hasLogs": false,
-          "hasEmbeds": false,
-          "hasCallResults": false
-        },
-        {
-          "prefix": "*",
-          "keyword": "def",
-          "text": "result = Rule.execute('personal-loan', __row).output",
-          "line": 27,
-          "status": "passed",
-          "durationMillis": 8,
+          "durationMillis": 4842,
           "hasLogs": false,
           "hasEmbeds": true,
           "embeds": [
@@ -709,47 +844,106 @@
         },
         {
           "prefix": "*",
-          "keyword": "def",
-          "text": "exp = expected[__row.id]",
-          "line": 28,
+          "keyword": "",
+          "text": "Review screen echoes the entered credit score",
+          "line": 0,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
-          "hasEmbeds": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "evidence",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJraW5kIjoiYXNzZXJ0aW9uIiwibGFiZWwiOiJSZXZpZXcgc2NyZWVuIGVjaG9lcyB0aGUgZW50ZXJlZCBjcmVkaXQgc2NvcmUiLCJ2ZXJiIjoiZXF1YWxzIiwiYWN0dWFsIjo3ODAsImV4cGVjdGVkIjo3ODAsInBhc3MiOnRydWUsIm1lc3NhZ2UiOm51bGx9"
+                }
+              ]
+            }
+          ],
           "hasCallResults": false
         },
         {
           "prefix": "*",
-          "keyword": "match",
-          "text": "result.decision == exp.decision",
-          "line": 29,
+          "keyword": "",
+          "text": "Loan decision: auto-approved @req=3/ac1",
+          "line": 0,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
-          "hasEmbeds": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "Loan decision: auto-approved @req=3/ac1",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "image/png",
+                  "url": "screenshots/005-loan-decision-auto-approved-req-3-ac1.png"
+                }
+              ]
+            }
+          ],
           "hasCallResults": false
         },
         {
           "prefix": "*",
-          "keyword": "match",
-          "text": "result.apr == exp.apr",
-          "line": 30,
+          "keyword": "",
+          "text": "Decision = rules oracle (auto-approved)",
+          "line": 0,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
-          "hasEmbeds": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "evidence",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJraW5kIjoiYXNzZXJ0aW9uIiwibGFiZWwiOiJEZWNpc2lvbiA9IHJ1bGVzIG9yYWNsZSAoYXV0by1hcHByb3ZlZCkiLCJ2ZXJiIjoiY29udGFpbnMiLCJhY3R1YWwiOiJhcHByb3ZlZCIsImV4cGVjdGVkIjoiYXBwcm92ZWQiLCJwYXNzIjp0cnVlLCJtZXNzYWdlIjpudWxsfQ=="
+                }
+              ]
+            }
+          ],
+          "hasCallResults": false
+        },
+        {
+          "prefix": "*",
+          "keyword": "",
+          "text": "APR % = rules oracle",
+          "line": 0,
+          "status": "passed",
+          "durationMillis": 0,
+          "hasLogs": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "evidence",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJraW5kIjoiYXNzZXJ0aW9uIiwibGFiZWwiOiJBUFIgJSA9IHJ1bGVzIG9yYWNsZSIsInZlcmIiOiJlcXVhbHMiLCJhY3R1YWwiOjYuNSwiZXhwZWN0ZWQiOjYuNSwicGFzcyI6dHJ1ZSwibWVzc2FnZSI6bnVsbH0="
+                }
+              ]
+            }
+          ],
           "hasCallResults": false
         }
       ]
     },
     {
       "name": "approve-midband — 660-719 band, low DTI, auto-approve at 9.9%",
-      "line": 32,
+      "line": 12,
       "passed": true,
-      "durationMillis": 10,
-      "startTime": 1783056610061,
-      "endTime": 1783056610071,
-      "refId": "[1.6:32]",
+      "durationMillis": 4817,
+      "startTime": 1783056635202,
+      "endTime": 1783056640019,
+      "refId": "[1.6:12]",
       "sectionIndex": 1,
       "exampleIndex": 5,
       "isOutlineExample": true,
@@ -758,22 +952,11 @@
       "steps": [
         {
           "prefix": "*",
-          "keyword": "def",
-          "text": "expected =",
-          "line": 13,
+          "keyword": "eval",
+          "text": "Check.run('drive-quote.js', __row)",
+          "line": 10,
           "status": "passed",
-          "durationMillis": 0,
-          "hasLogs": false,
-          "hasEmbeds": false,
-          "hasCallResults": false
-        },
-        {
-          "prefix": "*",
-          "keyword": "def",
-          "text": "result = Rule.execute('personal-loan', __row).output",
-          "line": 27,
-          "status": "passed",
-          "durationMillis": 8,
+          "durationMillis": 4815,
           "hasLogs": false,
           "hasEmbeds": true,
           "embeds": [
@@ -812,47 +995,106 @@
         },
         {
           "prefix": "*",
-          "keyword": "def",
-          "text": "exp = expected[__row.id]",
-          "line": 28,
+          "keyword": "",
+          "text": "Review screen echoes the entered credit score",
+          "line": 0,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
-          "hasEmbeds": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "evidence",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJraW5kIjoiYXNzZXJ0aW9uIiwibGFiZWwiOiJSZXZpZXcgc2NyZWVuIGVjaG9lcyB0aGUgZW50ZXJlZCBjcmVkaXQgc2NvcmUiLCJ2ZXJiIjoiZXF1YWxzIiwiYWN0dWFsIjo3MDAsImV4cGVjdGVkIjo3MDAsInBhc3MiOnRydWUsIm1lc3NhZ2UiOm51bGx9"
+                }
+              ]
+            }
+          ],
           "hasCallResults": false
         },
         {
           "prefix": "*",
-          "keyword": "match",
-          "text": "result.decision == exp.decision",
-          "line": 29,
+          "keyword": "",
+          "text": "Loan decision: auto-approved @req=3/ac1",
+          "line": 0,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
-          "hasEmbeds": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "Loan decision: auto-approved @req=3/ac1",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "image/png",
+                  "url": "screenshots/006-loan-decision-auto-approved-req-3-ac1.png"
+                }
+              ]
+            }
+          ],
           "hasCallResults": false
         },
         {
           "prefix": "*",
-          "keyword": "match",
-          "text": "result.apr == exp.apr",
-          "line": 30,
+          "keyword": "",
+          "text": "Decision = rules oracle (auto-approved)",
+          "line": 0,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
-          "hasEmbeds": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "evidence",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJraW5kIjoiYXNzZXJ0aW9uIiwibGFiZWwiOiJEZWNpc2lvbiA9IHJ1bGVzIG9yYWNsZSAoYXV0by1hcHByb3ZlZCkiLCJ2ZXJiIjoiY29udGFpbnMiLCJhY3R1YWwiOiJhcHByb3ZlZCIsImV4cGVjdGVkIjoiYXBwcm92ZWQiLCJwYXNzIjp0cnVlLCJtZXNzYWdlIjpudWxsfQ=="
+                }
+              ]
+            }
+          ],
+          "hasCallResults": false
+        },
+        {
+          "prefix": "*",
+          "keyword": "",
+          "text": "APR % = rules oracle",
+          "line": 0,
+          "status": "passed",
+          "durationMillis": 0,
+          "hasLogs": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "evidence",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJraW5kIjoiYXNzZXJ0aW9uIiwibGFiZWwiOiJBUFIgJSA9IHJ1bGVzIG9yYWNsZSIsInZlcmIiOiJlcXVhbHMiLCJhY3R1YWwiOjkuOSwiZXhwZWN0ZWQiOjkuOSwicGFzcyI6dHJ1ZSwibWVzc2FnZSI6bnVsbH0="
+                }
+              ]
+            }
+          ],
           "hasCallResults": false
         }
       ]
     },
     {
       "name": "approve-loyalty — existing customer loyalty discount",
-      "line": 32,
+      "line": 12,
       "passed": true,
-      "durationMillis": 8,
-      "startTime": 1783056610073,
-      "endTime": 1783056610081,
-      "refId": "[1.7:32]",
+      "durationMillis": 5147,
+      "startTime": 1783056640020,
+      "endTime": 1783056645167,
+      "refId": "[1.7:12]",
       "sectionIndex": 1,
       "exampleIndex": 6,
       "isOutlineExample": true,
@@ -861,22 +1103,11 @@
       "steps": [
         {
           "prefix": "*",
-          "keyword": "def",
-          "text": "expected =",
-          "line": 13,
+          "keyword": "eval",
+          "text": "Check.run('drive-quote.js', __row)",
+          "line": 10,
           "status": "passed",
-          "durationMillis": 0,
-          "hasLogs": false,
-          "hasEmbeds": false,
-          "hasCallResults": false
-        },
-        {
-          "prefix": "*",
-          "keyword": "def",
-          "text": "result = Rule.execute('personal-loan', __row).output",
-          "line": 27,
-          "status": "passed",
-          "durationMillis": 7,
+          "durationMillis": 5147,
           "hasLogs": false,
           "hasEmbeds": true,
           "embeds": [
@@ -925,35 +1156,94 @@
         },
         {
           "prefix": "*",
-          "keyword": "def",
-          "text": "exp = expected[__row.id]",
-          "line": 28,
+          "keyword": "",
+          "text": "Review screen echoes the entered credit score",
+          "line": 0,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
-          "hasEmbeds": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "evidence",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJraW5kIjoiYXNzZXJ0aW9uIiwibGFiZWwiOiJSZXZpZXcgc2NyZWVuIGVjaG9lcyB0aGUgZW50ZXJlZCBjcmVkaXQgc2NvcmUiLCJ2ZXJiIjoiZXF1YWxzIiwiYWN0dWFsIjo3ODAsImV4cGVjdGVkIjo3ODAsInBhc3MiOnRydWUsIm1lc3NhZ2UiOm51bGx9"
+                }
+              ]
+            }
+          ],
           "hasCallResults": false
         },
         {
           "prefix": "*",
-          "keyword": "match",
-          "text": "result.decision == exp.decision",
-          "line": 29,
+          "keyword": "",
+          "text": "Loan decision: auto-approved @req=3/ac1",
+          "line": 0,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
-          "hasEmbeds": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "Loan decision: auto-approved @req=3/ac1",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "image/png",
+                  "url": "screenshots/007-loan-decision-auto-approved-req-3-ac1.png"
+                }
+              ]
+            }
+          ],
           "hasCallResults": false
         },
         {
           "prefix": "*",
-          "keyword": "match",
-          "text": "result.apr == exp.apr",
-          "line": 30,
+          "keyword": "",
+          "text": "Decision = rules oracle (auto-approved)",
+          "line": 0,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
-          "hasEmbeds": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "evidence",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJraW5kIjoiYXNzZXJ0aW9uIiwibGFiZWwiOiJEZWNpc2lvbiA9IHJ1bGVzIG9yYWNsZSAoYXV0by1hcHByb3ZlZCkiLCJ2ZXJiIjoiY29udGFpbnMiLCJhY3R1YWwiOiJhcHByb3ZlZCIsImV4cGVjdGVkIjoiYXBwcm92ZWQiLCJwYXNzIjp0cnVlLCJtZXNzYWdlIjpudWxsfQ=="
+                }
+              ]
+            }
+          ],
+          "hasCallResults": false
+        },
+        {
+          "prefix": "*",
+          "keyword": "",
+          "text": "APR % = rules oracle",
+          "line": 0,
+          "status": "passed",
+          "durationMillis": 0,
+          "hasLogs": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "evidence",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJraW5kIjoiYXNzZXJ0aW9uIiwibGFiZWwiOiJBUFIgJSA9IHJ1bGVzIG9yYWNsZSIsInZlcmIiOiJlcXVhbHMiLCJhY3R1YWwiOjYsImV4cGVjdGVkIjo2LCJwYXNzIjp0cnVlLCJtZXNzYWdlIjpudWxsfQ=="
+                }
+              ]
+            }
+          ],
           "hasCallResults": false
         }
       ]
