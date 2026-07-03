@@ -1,7 +1,8 @@
 # azure-demo on Azure Pipelines — the ALM-LINKED posture.
 #
-# Runs the karate-agent container one-shot over the headless rules oracle, then publishes JUnit to the Tests
-# tab and the report + RTM as a build artifact. The pipeline derives its OWN org + project from the run's
+# Runs the karate-agent container one-shot over the full suite (rules oracle + REST API + browser UI via
+# `launch`), then publishes JUnit to the Tests tab and the report + RTM as a build artifact. The pipeline
+# derives its OWN org + project from the run's
 # predefined variables and passes them as KARATE_ADO_ORG / KARATE_ADO_PROJECT, so every requirement id in the
 # RTM click-throughs to its Azure DevOps User Story — no hardcoding. (The same kit runs pure-git on GitHub
 # Actions, where those vars are unset.)
@@ -39,15 +40,18 @@ steps:
       mkdir -p target && chmod -R 777 target
       # derive org from the collection URI (https://dev.azure.com/<org>/) so the RTM links to THIS org/project.
       ADO_ORG=$(echo "$(System.TeamFoundationCollectionUri)" | sed -E 's#https?://dev.azure.com/([^/]+)/?#\1#')
-      # `--pull=always` (tag iterated in beta); `karate:jsonl` is required for coverage + the RTM.
+      # `--pull=always` (tag iterated in beta). `launch suite.karate.js` serves the SUT + runs the WHOLE
+      # suite (rules oracle + REST API + browser UI) as ONE consolidated report — HTML + JUnit (Tests tab) +
+      # JSONL (coverage/RTM) + screenshots — written to target/karate-reports. The browser stage runs
+      # non-headless under the image's Xvfb (real-render + screenshots); add -e KARATE_VIDEO=true for video.
       docker run --rm --pull=always \
         -v "$PWD":/work -w /work \
         -e KARATE_LICENSE_TEXT="$KARATE_LICENSE_TEXT" \
         -e KARATE_ADO_ORG="$ADO_ORG" \
         -e KARATE_ADO_PROJECT="$(System.TeamProject)" \
         "$(KARATE_IMAGE)" \
-        run oracle.feature checks/loan-api.feature -f junit:xml,html,karate:jsonl
-    displayName: 'Karate: rules oracle + REST API (headless, ADO-linked RTM)'
+        launch suite.karate.js
+    displayName: 'Karate: full suite (rules + REST + UI, ADO-linked RTM)'
     env:
       KARATE_LICENSE_TEXT: $(KARATE_LICENSE)   # map the KARATE_LICENSE secret var -> the engine's env (explicit)
 

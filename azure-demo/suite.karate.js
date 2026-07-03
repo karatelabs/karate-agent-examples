@@ -9,6 +9,13 @@
 //   3. stop the SUT and signal a non-zero exit if any scenario failed (so CI goes red).
 // The REST mock auto-starts from karate-config.js; the browser feature drives the SUT with `bot`
 // (self-launched Chrome). Requirement-link provider (ADO / git) is wired in karate-boot.js, unchanged.
+//
+// Report output: under `karate launch` a suite writes ONE canonical `target/karate-reports` (the CLI
+// default — HTML + JUnit XML for the CI Tests tab + JSONL for the coverage/RTM), a drop-in for `karate run`.
+// Both `runs/` and `target/` are gitignored. To send it elsewhere, pass an output dir:
+//   Runner.run([...], { output: 'target/karate-reports' })            // or { output: { dir, junitXml } }
+// Screenshots ride the report by default; run VIDEO is opt-in (off — CI-safe), enable per-run if you want it:
+//   Runner.run([...], { video: true })                                // or set KARATE_VIDEO=true in CI
 var sut = Http.serve('sut', 9100);
 try {
   var result = Runner.run(['oracle.feature', 'checks/loan-api.feature', 'loan-rate-ui.feature']);

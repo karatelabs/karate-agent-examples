@@ -1,6 +1,7 @@
 # azure-demo on GitHub Actions — the PURE-GIT / spec-driven posture.
 #
-# Runs the karate-agent container one-shot over the headless rules oracle. No ADO coordinates are set, so the
+# Runs the karate-agent container one-shot over the full suite (rules oracle + REST API + browser UI via
+# `launch`). No ADO coordinates are set, so the
 # RTM treats the requirements markdown as the source of truth (ids render as plain text, no tracker) — the
 # spec-driven-development story. The SAME kit runs ALM-linked on Azure Pipelines (azure-demo/azure-pipelines.yml).
 #
@@ -29,7 +30,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Karate rules oracle (headless, pure-git RTM)
+      - name: Karate full suite (rules + REST + UI, pure-git RTM)
         # `karate:jsonl` is required: coverage + the RTM are computed from that event stream.
         run: |
           IMAGE=public.ecr.aws/r3c9p5l5/karate-agent:2.1.1.RC4
@@ -50,6 +51,11 @@ jobs:
           # Pass the git coordinates for the pure-git RTM link: the requirement ids click through to
           # their heading in the markdown at THIS repo + commit. github.repository auto-follows a fork; github.sha
           # pins each link to the reviewed commit; the kit lives in the azure-demo/ subdir of the monorepo.
+          #
+          # `launch suite.karate.js` serves the SUT + runs the WHOLE suite (rules oracle + REST API + browser UI)
+          # as ONE consolidated report — HTML + JUnit (Checks tab) + JSONL (coverage/RTM) + screenshots — in
+          # target/karate-reports. The browser stage runs non-headless under the image's Xvfb; add
+          # -e KARATE_VIDEO=true to also record video.mp4.
           docker run --rm \
             -v "$PWD":/work -w /work \
             -e KARATE_LICENSE_TEXT="$KARATE_LICENSE_TEXT" \
@@ -57,7 +63,7 @@ jobs:
             -e KARATE_GIT_REF="${{ github.sha }}" \
             -e KARATE_GIT_BASE="azure-demo" \
             "$IMAGE" \
-            run oracle.feature checks/loan-api.feature -f junit:xml,html,karate:jsonl
+            launch suite.karate.js
         env:
           KARATE_LICENSE_TEXT: ${{ secrets.KARATE_LICENSE }}
 
