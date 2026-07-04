@@ -1,0 +1,26 @@
+[
+  {
+    "id": "young-collision-ca",
+    "label": "young driver, collision, California — the young-driver loading fires",
+    "state": "CA",
+    "coverage": "COLLISION",
+    "driverAge": 22,
+    "priorClaims": false
+  },
+  {
+    "id": "prior-claims-comprehensive-ny",
+    "label": "adult with prior claims, comprehensive, New York — the prior-claims surcharge fires",
+    "state": "NY",
+    "coverage": "COMPREHENSIVE",
+    "driverAge": 45,
+    "priorClaims": true
+  },
+  {
+    "id": "clean-liability-tx",
+    "label": "adult, clean record, liability, Texas — the base case, no loadings",
+    "state": "TX",
+    "coverage": "LIABILITY",
+    "driverAge": 60,
+    "priorClaims": false
+  }
+]

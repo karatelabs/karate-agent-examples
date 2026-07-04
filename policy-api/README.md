@@ -12,6 +12,15 @@ Coverage report spans all three sources (`cov.openapi` · `cov.grpc` · `cov.kaf
 The domain ties them together: a **quote** (REST) is priced by the **rating engine** (gRPC); a bound
 **policy** emits a **policy-event** (Kafka).
 
+**📊 See it live — no license needed to READ it:** every push runs the REST + rules suite on GitHub Actions
+and publishes the HTML report (Coverage · **Traceability RTM** · run summary) to GitHub Pages — browse the
+latest at **<https://karatelabs.github.io/karate-agent-examples/policy-api/>**. Open the **Traceability**
+tab: it reads **NOT READY — blocker RATE-001** (the untested senior-driver rule), and each requirement id
+**clicks through to its heading in the markdown** (`requirements/rating.md`) here in this repo — the RTM is a
+live, auditable artifact anyone can inspect, not a screenshot. *(The published run is REST + the run-free
+rules RTM; the full REST + gRPC + Kafka cross-protocol coverage runs locally off the async jar — sections
+1–4 below.)*
+
 ## What you need
 
 Two files, sent with your license, dropped into this folder:

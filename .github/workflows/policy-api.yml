@@ -1,0 +1,97 @@
+# policy-api on GitHub Actions — the PURE-GIT / spec-driven posture, REST + rules lane.
+#
+# Runs the karate-agent container one-shot over the REST suite (the covering-array coverage demo + the
+# OpenAPI operations) plus the run-free rules RTM. KARATE_GRPC_OFF is set, so karate-boot.js skips the grpc
+# beat the container image can't serve — the full REST + gRPC + Kafka cross-protocol story runs live off the
+# async jar (see the README), not here. No ADO coordinates are set: the requirement ids deep-link to their
+# heading in the markdown source of truth on THIS repo + commit (requirements.provider, git), so anyone can
+# browse the published RTM and click RATE-001 through to requirements/rating.md — no license needed to READ.
+#
+# One-time setup: add a repository secret KARATE_LICENSE (the inline karate.lic text). Without it the engine's
+# license check fails the run. Enable Pages (Settings -> Pages -> Deploy from a branch -> gh-pages).
+name: policy-api (pure-git RTM, REST + rules)
+
+on:
+  push:
+    paths: [ 'policy-api/**', '.github/workflows/policy-api.yml' ]
+  pull_request:
+    paths: [ 'policy-api/**' ]
+  workflow_dispatch:
+
+permissions:
+  contents: write        # peaceiris publishes the HTML report to the gh-pages branch
+  checks: write          # dorny/test-reporter writes the JUnit check
+  pull-requests: write
+
+jobs:
+  karate:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: policy-api
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Karate REST suite + rules RTM (pure-git RTM)
+        # `karate:jsonl` is required: coverage + the RTM are computed from that event stream.
+        run: |
+          IMAGE=public.ecr.aws/r3c9p5l5/karate-agent:2.1.1.RC4
+          # ECR Public rate-limits ANONYMOUS pulls per source IP; GitHub's shared runners hit it, so pull
+          # explicitly with a spaced retry (then run without --pull).
+          #
+          # FALLBACK — if ECR throttling turns chronic, switch to the GHCR mirror (no per-IP anonymous
+          # rate limit for Actions). One-time: run the "Publish image -> GHCR (manual)" workflow for this
+          # version + make the package public, then swap the IMAGE line above for:
+          #   IMAGE=ghcr.io/karatelabs/karate-agent:2.1.1.RC4
+          for i in 1 2 3 4 5; do
+            docker pull "$IMAGE" && break
+            echo "registry throttled (attempt $i/5) — backing off"; sleep 30
+          done
+          # the karate-agent image runs as a NON-root user; pre-make target/ world-writable so the container
+          # can write the report / JUnit / coverage into the runner-owned checkout.
+          mkdir -p target && chmod -R 777 target
+          # KARATE_GRPC_OFF: the container image has no grpc ext — run REST + rules only (karate-boot.js gate).
+          # KARATE_GIT_*: the pure-git RTM deep-link — requirement ids click through to their heading in the
+          # markdown at THIS repo + commit. github.repository auto-follows a fork; github.sha pins each link
+          # to the reviewed commit; the kit lives in the policy-api/ subdir of the examples repo.
+          #
+          # `launch suite.karate.js` runs the WHOLE REST + rules suite as ONE consolidated report — HTML +
+          # JUnit (Checks tab) + JSONL (coverage/RTM) — in target/karate-reports. No browser stage (REST only).
+          docker run --rm \
+            -v "$PWD":/work -w /work \
+            -e KARATE_LICENSE_TEXT="$KARATE_LICENSE_TEXT" \
+            -e KARATE_GRPC_OFF=1 \
+            -e KARATE_GIT_REPO_URL="https://github.com/${{ github.repository }}" \
+            -e KARATE_GIT_REF="${{ github.sha }}" \
+            -e KARATE_GIT_BASE="policy-api" \
+            "$IMAGE" \
+            launch suite.karate.js
+        env:
+          KARATE_LICENSE_TEXT: ${{ secrets.KARATE_LICENSE }}
+
+      - name: Publish test results (Checks tab)
+        if: always()
+        uses: dorny/test-reporter@v1
+        with:
+          name: karate tests
+          path: 'policy-api/target/karate-reports/**/junit-xml/*.xml'
+          reporter: java-junit
+
+      - name: Upload report + RTM + evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: karate-report
+          path: policy-api/target/karate-reports
+
+      # Publish the HTML report (RTM · coverage · summary) to GitHub Pages, per-kit subdir so kits don't
+      # clobber each other. Browsable at https://<owner>.github.io/karate-agent-examples/policy-api/.
+      # One-time: enable Pages (Settings → Pages → Deploy from a branch → gh-pages).
+      - name: Publish HTML report to GitHub Pages
+        if: always() && github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: policy-api/target/karate-reports
+          destination_dir: policy-api
+          keep_files: true
