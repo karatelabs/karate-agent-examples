@@ -237,17 +237,17 @@
   "name": "auto quotes — the covering-array dimension demo (REST front door to the rating engine)",
   "relativePath": "checks/quotes.feature",
   "passed": true,
-  "durationMillis": 56,
-  "reportDate": "2026-07-04 18:08:32",
+  "durationMillis": 79,
+  "reportDate": "2026-07-04 18:13:56",
   "karateVersion": "2.1.1.RC1",
   "scenarios": [
     {
       "name": "quote a COLLISION policy in CA (priorClaims=false)",
       "line": 19,
       "passed": true,
-      "durationMillis": 10,
-      "startTime": 1783188512404,
-      "endTime": 1783188512414,
+      "durationMillis": 16,
+      "startTime": 1783188836650,
+      "endTime": 1783188836666,
       "refId": "[1.1:19]",
       "sectionIndex": 1,
       "exampleIndex": 0,
@@ -298,21 +298,21 @@
           "hasLogs": true,
           "logSegments": [
             {
-              "text": "request:\n1 > POST http://localhost:35145/quotes\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:35145\n1 > Content-Length: 72\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.1 (Java/21.0.11)\n"
+              "text": "request:\n1 > POST http://localhost:38637/quotes\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:38637\n1 > Content-Length: 72\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.1 (Java/21.0.11)\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"state\": \"CA\",\n  \"coverage\": \"COLLISION\",\n  \"driverAge\": 40,\n  \"priorClaims\": false\n}"
             },
             {
-              "text": "\n\nresponse time in milliseconds: 2\n1 < 201 POST http://localhost:35145/quotes\n1 < content-length: 82\n1 < Content-Type: application/json; charset=UTF-8\n"
+              "text": "\n\nresponse time in milliseconds: 3\n1 < 201 POST http://localhost:38637/quotes\n1 < content-length: 82\n1 < Content-Type: application/json; charset=UTF-8\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"id\": \"#(uuid())\",\n  \"policyClass\": \"PREFERRED\",\n  \"monthlyPremium\": 100,\n  \"currency\": \"USD\"\n}"
             },
             {
-              "text": "\n\nPOST http://localhost:35145/quotes\n201 (2 ms)\n"
+              "text": "\n\nPOST http://localhost:38637/quotes\n201 (3 ms)\n"
             }
           ],
           "hasEmbeds": true,
@@ -323,7 +323,7 @@
                 {
                   "role": "primary",
                   "mime": "application/json",
-                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcXVvdGVzIiwicGF0aCI6Ii9xdW90ZXMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjM1MTQ1Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjcyIl0sIkNvbm5lY3Rpb24iOlsia2VlcC1hbGl2ZSJdLCJVc2VyLUFnZW50IjpbIkFwYWNoZS1IdHRwQ2xpZW50LzUuNi4xIChKYXZhLzIxLjAuMTEpIl19LCJ1cmxCYXNlIjoiaHR0cDovL2xvY2FsaG9zdDozNTE0NSIsIm1ldGhvZCI6IlBPU1QiLCJwYXJhbXMiOnt9LCJib2R5Ijp7InN0YXRlIjoiQ0EiLCJjb3ZlcmFnZSI6IkNPTExJU0lPTiIsImRyaXZlckFnZSI6NDAsInByaW9yQ2xhaW1zIjpmYWxzZX0sInVybCI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzUxNDUvcXVvdGVzIn0sInJlc3BvbnNlIjp7ImhlYWRlcnMiOnsiY29udGVudC1sZW5ndGgiOlsiODIiXSwiQ29udGVudC1UeXBlIjpbImFwcGxpY2F0aW9uL2pzb247IGNoYXJzZXQ9VVRGLTgiXX0sInJlc3BvbnNlVGltZSI6MiwiY29udGVudExlbmd0aCI6ODIsImJvZHkiOnsiaWQiOiIjKHV1aWQoKSkiLCJwb2xpY3lDbGFzcyI6IlBSRUZFUlJFRCIsIm1vbnRobHlQcmVtaXVtIjoxMDAsImN1cnJlbmN5IjoiVVNEIn0sInN0YXR1cyI6MjAxfX0="
+                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcXVvdGVzIiwicGF0aCI6Ii9xdW90ZXMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjM4NjM3Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjcyIl0sIkNvbm5lY3Rpb24iOlsia2VlcC1hbGl2ZSJdLCJVc2VyLUFnZW50IjpbIkFwYWNoZS1IdHRwQ2xpZW50LzUuNi4xIChKYXZhLzIxLjAuMTEpIl19LCJ1cmxCYXNlIjoiaHR0cDovL2xvY2FsaG9zdDozODYzNyIsIm1ldGhvZCI6IlBPU1QiLCJwYXJhbXMiOnt9LCJib2R5Ijp7InN0YXRlIjoiQ0EiLCJjb3ZlcmFnZSI6IkNPTExJU0lPTiIsImRyaXZlckFnZSI6NDAsInByaW9yQ2xhaW1zIjpmYWxzZX0sInVybCI6Imh0dHA6Ly9sb2NhbGhvc3Q6Mzg2MzcvcXVvdGVzIn0sInJlc3BvbnNlIjp7ImhlYWRlcnMiOnsiY29udGVudC1sZW5ndGgiOlsiODIiXSwiQ29udGVudC1UeXBlIjpbImFwcGxpY2F0aW9uL2pzb247IGNoYXJzZXQ9VVRGLTgiXX0sInJlc3BvbnNlVGltZSI6MywiY29udGVudExlbmd0aCI6ODIsImJvZHkiOnsiaWQiOiIjKHV1aWQoKSkiLCJwb2xpY3lDbGFzcyI6IlBSRUZFUlJFRCIsIm1vbnRobHlQcmVtaXVtIjoxMDAsImN1cnJlbmN5IjoiVVNEIn0sInN0YXR1cyI6MjAxfX0="
                 }
               ]
             }
@@ -347,7 +347,7 @@
           "text": "response.monthlyPremium == '#number'",
           "line": 16,
           "status": "passed",
-          "durationMillis": 1,
+          "durationMillis": 9,
           "hasLogs": false,
           "hasEmbeds": false,
           "hasCallResults": false
@@ -369,9 +369,9 @@
       "name": "quote a COMPREHENSIVE policy in NY (priorClaims=true)",
       "line": 19,
       "passed": true,
-      "durationMillis": 9,
-      "startTime": 1783188512415,
-      "endTime": 1783188512424,
+      "durationMillis": 10,
+      "startTime": 1783188836679,
+      "endTime": 1783188836689,
       "refId": "[1.2:19]",
       "sectionIndex": 1,
       "exampleIndex": 1,
@@ -418,25 +418,25 @@
           "text": "post",
           "line": 14,
           "status": "passed",
-          "durationMillis": 7,
+          "durationMillis": 8,
           "hasLogs": true,
           "logSegments": [
             {
-              "text": "request:\n1 > POST http://localhost:35145/quotes\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:35145\n1 > Content-Length: 75\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.1 (Java/21.0.11)\n"
+              "text": "request:\n1 > POST http://localhost:38637/quotes\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:38637\n1 > Content-Length: 75\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.1 (Java/21.0.11)\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"state\": \"NY\",\n  \"coverage\": \"COMPREHENSIVE\",\n  \"driverAge\": 40,\n  \"priorClaims\": true\n}"
             },
             {
-              "text": "\n\nresponse time in milliseconds: 5\n1 < 201 POST http://localhost:35145/quotes\n1 < content-length: 84\n1 < Content-Type: application/json; charset=UTF-8\n"
+              "text": "\n\nresponse time in milliseconds: 6\n1 < 201 POST http://localhost:38637/quotes\n1 < content-length: 84\n1 < Content-Type: application/json; charset=UTF-8\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"id\": \"#(uuid())\",\n  \"policyClass\": \"SUBSTANDARD\",\n  \"monthlyPremium\": 190,\n  \"currency\": \"USD\"\n}"
             },
             {
-              "text": "\n\nPOST http://localhost:35145/quotes\n201 (5 ms)\n"
+              "text": "\n\nPOST http://localhost:38637/quotes\n201 (6 ms)\n"
             }
           ],
           "hasEmbeds": true,
@@ -447,7 +447,7 @@
                 {
                   "role": "primary",
                   "mime": "application/json",
-                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcXVvdGVzIiwicGF0aCI6Ii9xdW90ZXMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjM1MTQ1Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjc1Il0sIkNvbm5lY3Rpb24iOlsia2VlcC1hbGl2ZSJdLCJVc2VyLUFnZW50IjpbIkFwYWNoZS1IdHRwQ2xpZW50LzUuNi4xIChKYXZhLzIxLjAuMTEpIl19LCJ1cmxCYXNlIjoiaHR0cDovL2xvY2FsaG9zdDozNTE0NSIsIm1ldGhvZCI6IlBPU1QiLCJwYXJhbXMiOnt9LCJib2R5Ijp7InN0YXRlIjoiTlkiLCJjb3ZlcmFnZSI6IkNPTVBSRUhFTlNJVkUiLCJkcml2ZXJBZ2UiOjQwLCJwcmlvckNsYWltcyI6dHJ1ZX0sInVybCI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzUxNDUvcXVvdGVzIn0sInJlc3BvbnNlIjp7ImhlYWRlcnMiOnsiY29udGVudC1sZW5ndGgiOlsiODQiXSwiQ29udGVudC1UeXBlIjpbImFwcGxpY2F0aW9uL2pzb247IGNoYXJzZXQ9VVRGLTgiXX0sInJlc3BvbnNlVGltZSI6NSwiY29udGVudExlbmd0aCI6ODQsImJvZHkiOnsiaWQiOiIjKHV1aWQoKSkiLCJwb2xpY3lDbGFzcyI6IlNVQlNUQU5EQVJEIiwibW9udGhseVByZW1pdW0iOjE5MCwiY3VycmVuY3kiOiJVU0QifSwic3RhdHVzIjoyMDF9fQ=="
+                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcXVvdGVzIiwicGF0aCI6Ii9xdW90ZXMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjM4NjM3Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjc1Il0sIkNvbm5lY3Rpb24iOlsia2VlcC1hbGl2ZSJdLCJVc2VyLUFnZW50IjpbIkFwYWNoZS1IdHRwQ2xpZW50LzUuNi4xIChKYXZhLzIxLjAuMTEpIl19LCJ1cmxCYXNlIjoiaHR0cDovL2xvY2FsaG9zdDozODYzNyIsIm1ldGhvZCI6IlBPU1QiLCJwYXJhbXMiOnt9LCJib2R5Ijp7InN0YXRlIjoiTlkiLCJjb3ZlcmFnZSI6IkNPTVBSRUhFTlNJVkUiLCJkcml2ZXJBZ2UiOjQwLCJwcmlvckNsYWltcyI6dHJ1ZX0sInVybCI6Imh0dHA6Ly9sb2NhbGhvc3Q6Mzg2MzcvcXVvdGVzIn0sInJlc3BvbnNlIjp7ImhlYWRlcnMiOnsiY29udGVudC1sZW5ndGgiOlsiODQiXSwiQ29udGVudC1UeXBlIjpbImFwcGxpY2F0aW9uL2pzb247IGNoYXJzZXQ9VVRGLTgiXX0sInJlc3BvbnNlVGltZSI6NiwiY29udGVudExlbmd0aCI6ODQsImJvZHkiOnsiaWQiOiIjKHV1aWQoKSkiLCJwb2xpY3lDbGFzcyI6IlNVQlNUQU5EQVJEIiwibW9udGhseVByZW1pdW0iOjE5MCwiY3VycmVuY3kiOiJVU0QifSwic3RhdHVzIjoyMDF9fQ=="
                 }
               ]
             }
@@ -494,8 +494,8 @@
       "line": 19,
       "passed": true,
       "durationMillis": 8,
-      "startTime": 1783188512425,
-      "endTime": 1783188512433,
+      "startTime": 1783188836693,
+      "endTime": 1783188836701,
       "refId": "[1.3:19]",
       "sectionIndex": 1,
       "exampleIndex": 2,
@@ -546,21 +546,21 @@
           "hasLogs": true,
           "logSegments": [
             {
-              "text": "request:\n1 > POST http://localhost:35145/quotes\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:35145\n1 > Content-Length: 72\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.1 (Java/21.0.11)\n"
+              "text": "request:\n1 > POST http://localhost:38637/quotes\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:38637\n1 > Content-Length: 72\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.1 (Java/21.0.11)\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"state\": \"TX\",\n  \"coverage\": \"LIABILITY\",\n  \"driverAge\": 40,\n  \"priorClaims\": false\n}"
             },
             {
-              "text": "\n\nresponse time in milliseconds: 3\n1 < 201 POST http://localhost:35145/quotes\n1 < content-length: 81\n1 < Content-Type: application/json; charset=UTF-8\n"
+              "text": "\n\nresponse time in milliseconds: 4\n1 < 201 POST http://localhost:38637/quotes\n1 < content-length: 81\n1 < Content-Type: application/json; charset=UTF-8\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"id\": \"#(uuid())\",\n  \"policyClass\": \"PREFERRED\",\n  \"monthlyPremium\": 50,\n  \"currency\": \"USD\"\n}"
             },
             {
-              "text": "\n\nPOST http://localhost:35145/quotes\n201 (3 ms)\n"
+              "text": "\n\nPOST http://localhost:38637/quotes\n201 (4 ms)\n"
             }
           ],
           "hasEmbeds": true,
@@ -571,7 +571,7 @@
                 {
                   "role": "primary",
                   "mime": "application/json",
-                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcXVvdGVzIiwicGF0aCI6Ii9xdW90ZXMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjM1MTQ1Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjcyIl0sIkNvbm5lY3Rpb24iOlsia2VlcC1hbGl2ZSJdLCJVc2VyLUFnZW50IjpbIkFwYWNoZS1IdHRwQ2xpZW50LzUuNi4xIChKYXZhLzIxLjAuMTEpIl19LCJ1cmxCYXNlIjoiaHR0cDovL2xvY2FsaG9zdDozNTE0NSIsIm1ldGhvZCI6IlBPU1QiLCJwYXJhbXMiOnt9LCJib2R5Ijp7InN0YXRlIjoiVFgiLCJjb3ZlcmFnZSI6IkxJQUJJTElUWSIsImRyaXZlckFnZSI6NDAsInByaW9yQ2xhaW1zIjpmYWxzZX0sInVybCI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzUxNDUvcXVvdGVzIn0sInJlc3BvbnNlIjp7ImhlYWRlcnMiOnsiY29udGVudC1sZW5ndGgiOlsiODEiXSwiQ29udGVudC1UeXBlIjpbImFwcGxpY2F0aW9uL2pzb247IGNoYXJzZXQ9VVRGLTgiXX0sInJlc3BvbnNlVGltZSI6MywiY29udGVudExlbmd0aCI6ODEsImJvZHkiOnsiaWQiOiIjKHV1aWQoKSkiLCJwb2xpY3lDbGFzcyI6IlBSRUZFUlJFRCIsIm1vbnRobHlQcmVtaXVtIjo1MCwiY3VycmVuY3kiOiJVU0QifSwic3RhdHVzIjoyMDF9fQ=="
+                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcXVvdGVzIiwicGF0aCI6Ii9xdW90ZXMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjM4NjM3Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjcyIl0sIkNvbm5lY3Rpb24iOlsia2VlcC1hbGl2ZSJdLCJVc2VyLUFnZW50IjpbIkFwYWNoZS1IdHRwQ2xpZW50LzUuNi4xIChKYXZhLzIxLjAuMTEpIl19LCJ1cmxCYXNlIjoiaHR0cDovL2xvY2FsaG9zdDozODYzNyIsIm1ldGhvZCI6IlBPU1QiLCJwYXJhbXMiOnt9LCJib2R5Ijp7InN0YXRlIjoiVFgiLCJjb3ZlcmFnZSI6IkxJQUJJTElUWSIsImRyaXZlckFnZSI6NDAsInByaW9yQ2xhaW1zIjpmYWxzZX0sInVybCI6Imh0dHA6Ly9sb2NhbGhvc3Q6Mzg2MzcvcXVvdGVzIn0sInJlc3BvbnNlIjp7ImhlYWRlcnMiOnsiY29udGVudC1sZW5ndGgiOlsiODEiXSwiQ29udGVudC1UeXBlIjpbImFwcGxpY2F0aW9uL2pzb247IGNoYXJzZXQ9VVRGLTgiXX0sInJlc3BvbnNlVGltZSI6NCwiY29udGVudExlbmd0aCI6ODEsImJvZHkiOnsiaWQiOiIjKHV1aWQoKSkiLCJwb2xpY3lDbGFzcyI6IlBSRUZFUlJFRCIsIm1vbnRobHlQcmVtaXVtIjo1MCwiY3VycmVuY3kiOiJVU0QifSwic3RhdHVzIjoyMDF9fQ=="
                 }
               ]
             }
@@ -617,9 +617,9 @@
       "name": "quote a COLLISION policy in FL (priorClaims=true)",
       "line": 19,
       "passed": true,
-      "durationMillis": 6,
-      "startTime": 1783188512435,
-      "endTime": 1783188512441,
+      "durationMillis": 8,
+      "startTime": 1783188836703,
+      "endTime": 1783188836711,
       "refId": "[1.4:19]",
       "sectionIndex": 1,
       "exampleIndex": 3,
@@ -666,25 +666,25 @@
           "text": "post",
           "line": 14,
           "status": "passed",
-          "durationMillis": 5,
+          "durationMillis": 7,
           "hasLogs": true,
           "logSegments": [
             {
-              "text": "request:\n1 > POST http://localhost:35145/quotes\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:35145\n1 > Content-Length: 71\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.1 (Java/21.0.11)\n"
+              "text": "request:\n1 > POST http://localhost:38637/quotes\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:38637\n1 > Content-Length: 71\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.1 (Java/21.0.11)\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"state\": \"FL\",\n  \"coverage\": \"COLLISION\",\n  \"driverAge\": 40,\n  \"priorClaims\": true\n}"
             },
             {
-              "text": "\n\nresponse time in milliseconds: 3\n1 < 201 POST http://localhost:35145/quotes\n1 < content-length: 84\n1 < Content-Type: application/json; charset=UTF-8\n"
+              "text": "\n\nresponse time in milliseconds: 4\n1 < 201 POST http://localhost:38637/quotes\n1 < content-length: 84\n1 < Content-Type: application/json; charset=UTF-8\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"id\": \"#(uuid())\",\n  \"policyClass\": \"SUBSTANDARD\",\n  \"monthlyPremium\": 140,\n  \"currency\": \"USD\"\n}"
             },
             {
-              "text": "\n\nPOST http://localhost:35145/quotes\n201 (3 ms)\n"
+              "text": "\n\nPOST http://localhost:38637/quotes\n201 (4 ms)\n"
             }
           ],
           "hasEmbeds": true,
@@ -695,7 +695,7 @@
                 {
                   "role": "primary",
                   "mime": "application/json",
-                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcXVvdGVzIiwicGF0aCI6Ii9xdW90ZXMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjM1MTQ1Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjcxIl0sIkNvbm5lY3Rpb24iOlsia2VlcC1hbGl2ZSJdLCJVc2VyLUFnZW50IjpbIkFwYWNoZS1IdHRwQ2xpZW50LzUuNi4xIChKYXZhLzIxLjAuMTEpIl19LCJ1cmxCYXNlIjoiaHR0cDovL2xvY2FsaG9zdDozNTE0NSIsIm1ldGhvZCI6IlBPU1QiLCJwYXJhbXMiOnt9LCJib2R5Ijp7InN0YXRlIjoiRkwiLCJjb3ZlcmFnZSI6IkNPTExJU0lPTiIsImRyaXZlckFnZSI6NDAsInByaW9yQ2xhaW1zIjp0cnVlfSwidXJsIjoiaHR0cDovL2xvY2FsaG9zdDozNTE0NS9xdW90ZXMifSwicmVzcG9uc2UiOnsiaGVhZGVycyI6eyJjb250ZW50LWxlbmd0aCI6WyI4NCJdLCJDb250ZW50LVR5cGUiOlsiYXBwbGljYXRpb24vanNvbjsgY2hhcnNldD1VVEYtOCJdfSwicmVzcG9uc2VUaW1lIjozLCJjb250ZW50TGVuZ3RoIjo4NCwiYm9keSI6eyJpZCI6IiModXVpZCgpKSIsInBvbGljeUNsYXNzIjoiU1VCU1RBTkRBUkQiLCJtb250aGx5UHJlbWl1bSI6MTQwLCJjdXJyZW5jeSI6IlVTRCJ9LCJzdGF0dXMiOjIwMX19"
+                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcXVvdGVzIiwicGF0aCI6Ii9xdW90ZXMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjM4NjM3Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjcxIl0sIkNvbm5lY3Rpb24iOlsia2VlcC1hbGl2ZSJdLCJVc2VyLUFnZW50IjpbIkFwYWNoZS1IdHRwQ2xpZW50LzUuNi4xIChKYXZhLzIxLjAuMTEpIl19LCJ1cmxCYXNlIjoiaHR0cDovL2xvY2FsaG9zdDozODYzNyIsIm1ldGhvZCI6IlBPU1QiLCJwYXJhbXMiOnt9LCJib2R5Ijp7InN0YXRlIjoiRkwiLCJjb3ZlcmFnZSI6IkNPTExJU0lPTiIsImRyaXZlckFnZSI6NDAsInByaW9yQ2xhaW1zIjp0cnVlfSwidXJsIjoiaHR0cDovL2xvY2FsaG9zdDozODYzNy9xdW90ZXMifSwicmVzcG9uc2UiOnsiaGVhZGVycyI6eyJjb250ZW50LWxlbmd0aCI6WyI4NCJdLCJDb250ZW50LVR5cGUiOlsiYXBwbGljYXRpb24vanNvbjsgY2hhcnNldD1VVEYtOCJdfSwicmVzcG9uc2VUaW1lIjo0LCJjb250ZW50TGVuZ3RoIjo4NCwiYm9keSI6eyJpZCI6IiModXVpZCgpKSIsInBvbGljeUNsYXNzIjoiU1VCU1RBTkRBUkQiLCJtb250aGx5UHJlbWl1bSI6MTQwLCJjdXJyZW5jeSI6IlVTRCJ9LCJzdGF0dXMiOjIwMX19"
                 }
               ]
             }
@@ -742,8 +742,8 @@
       "line": 19,
       "passed": true,
       "durationMillis": 7,
-      "startTime": 1783188512442,
-      "endTime": 1783188512449,
+      "startTime": 1783188836712,
+      "endTime": 1783188836719,
       "refId": "[1.5:19]",
       "sectionIndex": 1,
       "exampleIndex": 4,
@@ -790,25 +790,25 @@
           "text": "post",
           "line": 14,
           "status": "passed",
-          "durationMillis": 5,
+          "durationMillis": 6,
           "hasLogs": true,
           "logSegments": [
             {
-              "text": "request:\n1 > POST http://localhost:35145/quotes\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:35145\n1 > Content-Length: 76\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.1 (Java/21.0.11)\n"
+              "text": "request:\n1 > POST http://localhost:38637/quotes\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:38637\n1 > Content-Length: 76\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.1 (Java/21.0.11)\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"state\": \"WA\",\n  \"coverage\": \"COMPREHENSIVE\",\n  \"driverAge\": 40,\n  \"priorClaims\": false\n}"
             },
             {
-              "text": "\n\nresponse time in milliseconds: 3\n1 < 201 POST http://localhost:35145/quotes\n1 < content-length: 82\n1 < Content-Type: application/json; charset=UTF-8\n"
+              "text": "\n\nresponse time in milliseconds: 4\n1 < 201 POST http://localhost:38637/quotes\n1 < content-length: 82\n1 < Content-Type: application/json; charset=UTF-8\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"id\": \"#(uuid())\",\n  \"policyClass\": \"PREFERRED\",\n  \"monthlyPremium\": 140,\n  \"currency\": \"USD\"\n}"
             },
             {
-              "text": "\n\nPOST http://localhost:35145/quotes\n201 (3 ms)\n"
+              "text": "\n\nPOST http://localhost:38637/quotes\n201 (4 ms)\n"
             }
           ],
           "hasEmbeds": true,
@@ -819,7 +819,7 @@
                 {
                   "role": "primary",
                   "mime": "application/json",
-                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcXVvdGVzIiwicGF0aCI6Ii9xdW90ZXMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjM1MTQ1Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjc2Il0sIkNvbm5lY3Rpb24iOlsia2VlcC1hbGl2ZSJdLCJVc2VyLUFnZW50IjpbIkFwYWNoZS1IdHRwQ2xpZW50LzUuNi4xIChKYXZhLzIxLjAuMTEpIl19LCJ1cmxCYXNlIjoiaHR0cDovL2xvY2FsaG9zdDozNTE0NSIsIm1ldGhvZCI6IlBPU1QiLCJwYXJhbXMiOnt9LCJib2R5Ijp7InN0YXRlIjoiV0EiLCJjb3ZlcmFnZSI6IkNPTVBSRUhFTlNJVkUiLCJkcml2ZXJBZ2UiOjQwLCJwcmlvckNsYWltcyI6ZmFsc2V9LCJ1cmwiOiJodHRwOi8vbG9jYWxob3N0OjM1MTQ1L3F1b3RlcyJ9LCJyZXNwb25zZSI6eyJoZWFkZXJzIjp7ImNvbnRlbnQtbGVuZ3RoIjpbIjgyIl0sIkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il19LCJyZXNwb25zZVRpbWUiOjMsImNvbnRlbnRMZW5ndGgiOjgyLCJib2R5Ijp7ImlkIjoiIyh1dWlkKCkpIiwicG9saWN5Q2xhc3MiOiJQUkVGRVJSRUQiLCJtb250aGx5UHJlbWl1bSI6MTQwLCJjdXJyZW5jeSI6IlVTRCJ9LCJzdGF0dXMiOjIwMX19"
+                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcXVvdGVzIiwicGF0aCI6Ii9xdW90ZXMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjM4NjM3Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjc2Il0sIkNvbm5lY3Rpb24iOlsia2VlcC1hbGl2ZSJdLCJVc2VyLUFnZW50IjpbIkFwYWNoZS1IdHRwQ2xpZW50LzUuNi4xIChKYXZhLzIxLjAuMTEpIl19LCJ1cmxCYXNlIjoiaHR0cDovL2xvY2FsaG9zdDozODYzNyIsIm1ldGhvZCI6IlBPU1QiLCJwYXJhbXMiOnt9LCJib2R5Ijp7InN0YXRlIjoiV0EiLCJjb3ZlcmFnZSI6IkNPTVBSRUhFTlNJVkUiLCJkcml2ZXJBZ2UiOjQwLCJwcmlvckNsYWltcyI6ZmFsc2V9LCJ1cmwiOiJodHRwOi8vbG9jYWxob3N0OjM4NjM3L3F1b3RlcyJ9LCJyZXNwb25zZSI6eyJoZWFkZXJzIjp7ImNvbnRlbnQtbGVuZ3RoIjpbIjgyIl0sIkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il19LCJyZXNwb25zZVRpbWUiOjQsImNvbnRlbnRMZW5ndGgiOjgyLCJib2R5Ijp7ImlkIjoiIyh1dWlkKCkpIiwicG9saWN5Q2xhc3MiOiJQUkVGRVJSRUQiLCJtb250aGx5UHJlbWl1bSI6MTQwLCJjdXJyZW5jeSI6IlVTRCJ9LCJzdGF0dXMiOjIwMX19"
                 }
               ]
             }
@@ -865,9 +865,9 @@
       "name": "quote a LIABILITY policy in CA (priorClaims=true)",
       "line": 19,
       "passed": true,
-      "durationMillis": 6,
-      "startTime": 1783188512450,
-      "endTime": 1783188512456,
+      "durationMillis": 7,
+      "startTime": 1783188836720,
+      "endTime": 1783188836727,
       "refId": "[1.6:19]",
       "sectionIndex": 1,
       "exampleIndex": 5,
@@ -918,21 +918,21 @@
           "hasLogs": true,
           "logSegments": [
             {
-              "text": "request:\n1 > POST http://localhost:35145/quotes\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:35145\n1 > Content-Length: 71\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.1 (Java/21.0.11)\n"
+              "text": "request:\n1 > POST http://localhost:38637/quotes\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:38637\n1 > Content-Length: 71\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.1 (Java/21.0.11)\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"state\": \"CA\",\n  \"coverage\": \"LIABILITY\",\n  \"driverAge\": 40,\n  \"priorClaims\": true\n}"
             },
             {
-              "text": "\n\nresponse time in milliseconds: 3\n1 < 201 POST http://localhost:35145/quotes\n1 < content-length: 83\n1 < Content-Type: application/json; charset=UTF-8\n"
+              "text": "\n\nresponse time in milliseconds: 3\n1 < 201 POST http://localhost:38637/quotes\n1 < content-length: 83\n1 < Content-Type: application/json; charset=UTF-8\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"id\": \"#(uuid())\",\n  \"policyClass\": \"SUBSTANDARD\",\n  \"monthlyPremium\": 95,\n  \"currency\": \"USD\"\n}"
             },
             {
-              "text": "\n\nPOST http://localhost:35145/quotes\n201 (3 ms)\n"
+              "text": "\n\nPOST http://localhost:38637/quotes\n201 (3 ms)\n"
             }
           ],
           "hasEmbeds": true,
@@ -943,7 +943,7 @@
                 {
                   "role": "primary",
                   "mime": "application/json",
-                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcXVvdGVzIiwicGF0aCI6Ii9xdW90ZXMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjM1MTQ1Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjcxIl0sIkNvbm5lY3Rpb24iOlsia2VlcC1hbGl2ZSJdLCJVc2VyLUFnZW50IjpbIkFwYWNoZS1IdHRwQ2xpZW50LzUuNi4xIChKYXZhLzIxLjAuMTEpIl19LCJ1cmxCYXNlIjoiaHR0cDovL2xvY2FsaG9zdDozNTE0NSIsIm1ldGhvZCI6IlBPU1QiLCJwYXJhbXMiOnt9LCJib2R5Ijp7InN0YXRlIjoiQ0EiLCJjb3ZlcmFnZSI6IkxJQUJJTElUWSIsImRyaXZlckFnZSI6NDAsInByaW9yQ2xhaW1zIjp0cnVlfSwidXJsIjoiaHR0cDovL2xvY2FsaG9zdDozNTE0NS9xdW90ZXMifSwicmVzcG9uc2UiOnsiaGVhZGVycyI6eyJjb250ZW50LWxlbmd0aCI6WyI4MyJdLCJDb250ZW50LVR5cGUiOlsiYXBwbGljYXRpb24vanNvbjsgY2hhcnNldD1VVEYtOCJdfSwicmVzcG9uc2VUaW1lIjozLCJjb250ZW50TGVuZ3RoIjo4MywiYm9keSI6eyJpZCI6IiModXVpZCgpKSIsInBvbGljeUNsYXNzIjoiU1VCU1RBTkRBUkQiLCJtb250aGx5UHJlbWl1bSI6OTUsImN1cnJlbmN5IjoiVVNEIn0sInN0YXR1cyI6MjAxfX0="
+                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcXVvdGVzIiwicGF0aCI6Ii9xdW90ZXMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjM4NjM3Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjcxIl0sIkNvbm5lY3Rpb24iOlsia2VlcC1hbGl2ZSJdLCJVc2VyLUFnZW50IjpbIkFwYWNoZS1IdHRwQ2xpZW50LzUuNi4xIChKYXZhLzIxLjAuMTEpIl19LCJ1cmxCYXNlIjoiaHR0cDovL2xvY2FsaG9zdDozODYzNyIsIm1ldGhvZCI6IlBPU1QiLCJwYXJhbXMiOnt9LCJib2R5Ijp7InN0YXRlIjoiQ0EiLCJjb3ZlcmFnZSI6IkxJQUJJTElUWSIsImRyaXZlckFnZSI6NDAsInByaW9yQ2xhaW1zIjp0cnVlfSwidXJsIjoiaHR0cDovL2xvY2FsaG9zdDozODYzNy9xdW90ZXMifSwicmVzcG9uc2UiOnsiaGVhZGVycyI6eyJjb250ZW50LWxlbmd0aCI6WyI4MyJdLCJDb250ZW50LVR5cGUiOlsiYXBwbGljYXRpb24vanNvbjsgY2hhcnNldD1VVEYtOCJdfSwicmVzcG9uc2VUaW1lIjozLCJjb250ZW50TGVuZ3RoIjo4MywiYm9keSI6eyJpZCI6IiModXVpZCgpKSIsInBvbGljeUNsYXNzIjoiU1VCU1RBTkRBUkQiLCJtb250aGx5UHJlbWl1bSI6OTUsImN1cnJlbmN5IjoiVVNEIn0sInN0YXR1cyI6MjAxfX0="
                 }
               ]
             }
