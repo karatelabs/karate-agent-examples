@@ -116,7 +116,7 @@ document.addEventListener('alpine:init', function () {
         var c = s && s.combos;
         if (!c) return '';
         return c.covered + ' of ' + c.required + ' required combinations tested · '
-          + c.untested + ' untested · ' + c.suggested + ' suggested to test next';
+          + c.untested + ' not tested · ' + c.suggested + ' suggested to test next';
       },
       // the risk-matrix cell (mirrors RequirementReadiness.risk — the cells the engine uses)
       riskFor: function (c, s) {

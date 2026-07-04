@@ -52,7 +52,7 @@
             <div class="k-combos" :title="comboTip(s)">
               <span class="k-combobar"><span :class="comboBarClass(s)" :style="'width:' + comboPct(s) + '%'"></span></span>
               <span class="k-combotxt"><strong x-text="comboPct(s) + '% combos'"></strong> &middot; <span x-text="s.combos.covered + '/' + s.combos.required"></span></span>
-              <span class="k-combomuted" x-show="s.combos.untested > 0" x-text="s.combos.untested + ' untested · ' + s.combos.suggested + ' suggested'"></span>
+              <span class="k-combomuted" x-show="s.combos.untested > 0" x-text="s.combos.untested + ' not tested · ' + s.combos.suggested + ' suggested'"></span>
             </div>
           </template>
           <!-- §2h: marginal input-adequacy beside path/method % — input equivalence classes exercised vs the
@@ -193,7 +193,7 @@
                           </div>
                           <template x-if="(crossOf(it.id).gaps || []).length">
                             <div class="k-crossgaps">
-                              <span class="k-muted">untested:</span>
+                              <span class="k-muted">not tested:</span>
                               <template x-for="(cell, idx) in crossOf(it.id).gaps" :key="idx">
                                 <span class="k-cell" x-text="cellText(cell)"></span>
                               </template>
