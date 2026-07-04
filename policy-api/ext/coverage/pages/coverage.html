@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>API Coverage</title>
+  <!-- theme before paint (no flash): follows the main report's <html data-theme>, persisted in
+       localStorage 'karate-theme', else the OS preference. -->
+  <script>
+    (function () {
+      try {
+        // 'karate-theme' is the ONE theme key — the served console writes the same one, so this
+        // page follows the console's dark mode (same origin → same localStorage)
+        var t = localStorage.getItem('karate-theme');
+        if (!t) t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', t);
+        // follow a console toggle live (this page usually opens in its own tab)
+        window.addEventListener('storage', function (e) {
+          if (e.key === 'karate-theme' && e.newValue) {
+            document.documentElement.setAttribute('data-theme', e.newValue);
+          }
+        });
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+  <!-- this page lives at ext/coverage/pages/coverage.html; assets sit one level up in ext/coverage/ -->
+  <link rel="stylesheet" href="../coverage.css">
+  <link rel="stylesheet" href="../coverage-report.css">
+</head>
+<body>
+  <div id="k-topnav"></div>
+  <div class="k-coverage-ext" x-data="coverageReport" x-cloak>
+    <h1>Coverage Report</h1>
+    <div class="k-sub">Requirements &amp; API coverage, derived from the traceability graph. Click a row to drill in.<button
+        type="button" class="k-help-q"
+        title="What do these grades / SIMULATED mean? Copy the help-id — paste it into the Help tab or your AI chat"
+        onclick="kaCopyHelp('model.coverage.simulated')">?</button></div>
+
+    <!-- per-source summary strip -->
+    <div class="k-srcstrip">
+      <template x-for="s in sources" :key="s.namespace">
+        <div class="k-card">
+          <div class="k-num" x-text="pct(s) + '%'"></div>
+          <div class="k-lbl"><span x-text="(s.title || s.namespace)"></span> &middot; <span x-text="s.covered + '/' + s.total"></span></div>
+          <div class="k-bar"><span :style="'width:' + pct(s) + '%'"></span></div>
+          <!-- §2h/D67: combination coverage beside path/method % — the "100%-green" honesty fix (all
+               endpoints hit yet most required input combinations untested). Shown only when dimensioned. -->
+          <template x-if="s.combos">
+            <div class="k-combos" :title="comboTip(s)">
+              <span class="k-combobar"><span :class="comboBarClass(s)" :style="'width:' + comboPct(s) + '%'"></span></span>
+              <span class="k-combotxt"><strong x-text="comboPct(s) + '% combos'"></strong> &middot; <span x-text="s.combos.covered + '/' + s.combos.required"></span></span>
+              <span class="k-combomuted" x-show="s.combos.untested > 0" x-text="s.combos.untested + ' untested · ' + s.combos.suggested + ' suggested'"></span>
+            </div>
+          </template>
+          <!-- §2h: marginal input-adequacy beside path/method % — input equivalence classes exercised vs the
+               universe the spec/rules imply (the headline signal when there is no cross binding). -->
+          <template x-if="s.inputs">
+            <div class="k-combos" :title="inputTip(s)">
+              <span class="k-combobar"><span :class="inputBarClass(s)" :style="'width:' + inputPct(s) + '%'"></span></span>
+              <span class="k-combotxt"><strong x-text="inputPct(s) + '% inputs'"></strong> &middot; <span x-text="s.inputs.covered + '/' + s.inputs.total"></span></span>
+            </div>
+          </template>
+        </div>
+      </template>
+    </div>
+
+    <!-- filter toolbar -->
+    <div class="k-toolbar">
+      <input type="search" placeholder="Filter by id, name, path, method…" x-model="q">
+      <select x-model="sourceFilter">
+        <option value="">All sources</option>
+        <template x-for="s in sources" :key="s.namespace">
+          <option :value="s.namespace" x-text="s.namespace"></option>
+        </template>
+      </select>
+      <select x-model="statusFilter">
+        <option value="">All statuses</option>
+        <option>COVERED</option>
+        <option>SIMULATED</option>
+        <option>FAILING</option>
+        <option>NOTRUN</option>
+        <option>NOTCOVERED</option>
+      </select>
+      <span class="k-count" x-text="rows.length + ' of ' + visibleTotal + ' items'"></span>
+    </div>
+
+    <!-- items table; one <tbody> per item so the row + its drill-down stay one x-for unit -->
+    <table>
+      <thead>
+        <tr>
+          <th style="width:18px"></th>
+          <th style="width:34px"></th>
+          <th>Item</th>
+          <th>Tags</th>
+          <th style="width:64px">Calls</th>
+          <th style="width:64px">Tests</th>
+          <th style="width:96px" title="§2h coverage-dimension health: input-variation / required-combination coverage + open gaps">Dims</th>
+        </tr>
+      </thead>
+      <template x-for="it in rows" :key="it.id">
+        <tbody class="k-itembody">
+          <tr class="k-row" @click="toggle(it.id)">
+            <td><span class="k-caret" :class="isOpen(it.id) && 'k-open'">&#9654;</span></td>
+            <td><span class="k-pill" :class="statusClass(it.status)" :title="it.status" x-text="statusIcon(it.status)"></span></td>
+            <td class="k-name">
+              <template x-if="it.method"><span class="k-method" x-text="it.method"></span></template>
+              <template x-if="it.kind === 'req'"><span><a class="k-reqid" x-show="reqHref(it.id)" :href="reqHref(it.id)" target="_blank" rel="noopener" :title="'open ' + it.id.replace(/^req:/, '') + ' in tracker'" x-text="it.id.replace(/^req:/, '')"></a><span class="k-reqid" x-show="!reqHref(it.id)" x-text="it.id.replace(/^req:/, '')"></span></span></template>
+              <span class="k-path" x-text="label(it)"></span>
+            </td>
+            <td>
+              <template x-for="t in (it.tags || [])" :key="t"><span class="k-tag" x-text="t"></span></template>
+            </td>
+            <td x-text="it.callCount || ''"></td>
+            <td x-text="(it.tests || []).length || ''"></td>
+            <td>
+              <template x-if="dimRollupFor(it.id)">
+                <span class="k-dimcell" :title="dimCellTip(it.id)">
+                  <span class="k-dimbar" x-show="dimRollupFor(it.id).coveredProportion >= 0">
+                    <span :class="barClass(dimRollupFor(it.id).coveredProportion)" :style="'width:' + pctOf(dimRollupFor(it.id).coveredProportion) + '%'"></span>
+                  </span>
+                  <span class="k-dimcellpct" x-text="dimRollupFor(it.id).coveredProportion >= 0 ? pctOf(dimRollupFor(it.id).coveredProportion) + '%' : '—'"></span>
+                  <span class="k-gapbadge" x-show="dimRollupFor(it.id).gaps > 0" x-text="dimRollupFor(it.id).gaps" :title="dimRollupFor(it.id).gaps + ' gap(s)'"></span>
+                </span>
+              </template>
+            </td>
+          </tr>
+          <tr class="k-drill" x-show="isOpen(it.id)">
+            <td colspan="7">
+              <template x-if="criteria(it).length">
+                <div>
+                  <h4>Acceptance criteria</h4>
+                  <template x-for="c in criteria(it)" :key="c.id">
+                    <div class="k-line">
+                      <span class="k-pill" :class="statusClass(c.status)" :title="c.status" x-text="statusIcon(c.status)"></span>
+                      <code x-text="c.criterion"></code>
+                      <span x-text="c.name"></span>
+                    </div>
+                  </template>
+                </div>
+              </template>
+              <template x-if="hitsFor(it.id).length">
+                <div>
+                  <h4>Hits</h4>
+                  <template x-for="(h, idx) in hitsFor(it.id)" :key="idx">
+                    <div class="k-line">
+                      <span class="k-tag" x-text="h.kind"></span>
+                      <template x-if="h.confidence"><span class="k-tag" x-text="h.confidence"></span></template>
+                      <span x-text="hitLabel(h)"></span>
+                      <span class="k-muted">&rarr; <span x-text="testName(h.test)"></span></span>
+                    </div>
+                  </template>
+                </div>
+              </template>
+              <!-- §2h coverage dimensions (D118): marginal per-axis grade + the cross/point combinations -->
+              <template x-if="dimsFor(it.id)">
+                <div class="k-dims">
+                  <h4>Coverage dimensions &middot; <span x-text="dimsFor(it.id).points"></span> point(s)</h4>
+                  <template x-for="ax in axisList(dimsFor(it.id))" :key="ax.name">
+                    <div class="k-dimaxis">
+                      <span class="k-dimname" x-text="ax.name"></span>
+                      <span class="k-dimbar" :title="ax.closed ? pctOf(ax.coveredProportion) + '%' : 'open axis — not gradeable'">
+                        <span x-show="ax.closed" :class="barClass(ax.coveredProportion)" :style="'width:' + pctOf(ax.coveredProportion) + '%'"></span>
+                      </span>
+                      <span class="k-dimpct" x-text="ax.closed ? pctOf(ax.coveredProportion) + '%' : 'open'"></span>
+                      <span class="k-dimkind" x-show="ax.kind" x-text="axisTag(ax)" title="§2h: the axis kind + where its universe came from (auto-derived)"></span>
+                      <span class="k-muted" x-text="'seen: ' + (ax.seen.length ? ax.seen.join(', ') : '—')"></span>
+                      <template x-if="ax.gaps.length">
+                        <span class="k-dimgaps">missing: <span x-text="ax.gaps.join(', ')"></span></span>
+                      </template>
+                    </div>
+                  </template>
+                  <template x-if="crossOf(it.id)">
+                    <div class="k-cross">
+                      <h5>Required combinations &middot; <span x-text="crossOf(it.id).axes.join(' × ')"></span></h5>
+                      <template x-if="crossOf(it.id).coveredProportion < 0">
+                        <div class="k-muted k-line">ungradeable — open axis: <span x-text="(crossOf(it.id).open || []).join(', ')"></span></div>
+                      </template>
+                      <template x-if="crossOf(it.id).coveredProportion >= 0">
+                        <div>
+                          <div class="k-dimaxis">
+                            <span class="k-dimbar">
+                              <span :class="barClass(crossOf(it.id).coveredProportion)" :style="'width:' + pctOf(crossOf(it.id).coveredProportion) + '%'"></span>
+                            </span>
+                            <span class="k-dimpct" x-text="pctOf(crossOf(it.id).coveredProportion) + '%'"></span>
+                            <span class="k-muted" x-text="crossOf(it.id).covered + ' of ' + crossOf(it.id).required + ' combinations tested'"></span>
+                            <!-- §2h slice 5: cells the bound rulebook's calc.js rejected, dropped from the required set -->
+                            <span class="k-pruned" x-show="crossOf(it.id).pruned > 0"
+                                  :title="crossOf(it.id).pruned + ' rule-infeasible combination(s) excluded from the required cross-product'"
+                                  x-text="crossOf(it.id).pruned + ' infeasible pruned'"></span>
+                          </div>
+                          <template x-if="(crossOf(it.id).gaps || []).length">
+                            <div class="k-crossgaps">
+                              <span class="k-muted">untested:</span>
+                              <template x-for="(cell, idx) in crossOf(it.id).gaps" :key="idx">
+                                <span class="k-cell" x-text="cellText(cell)"></span>
+                              </template>
+                            </div>
+                          </template>
+                        </div>
+                      </template>
+                    </div>
+                  </template>
+                  <!-- §2h/D67: the covering-array deck — the minimal cells to test next (the actionable
+                       companion to the cross gaps), at the item's criticality-selected strength -->
+                  <template x-if="deckFor(it.id) && (deckFor(it.id).rows || []).length">
+                    <div class="k-deck">
+                      <h5>Suggested tests &middot; <span x-text="strengthLabel(deckFor(it.id).strength)"></span>
+                          &middot; <span x-text="deckFor(it.id).size + (deckFor(it.id).size === 1 ? ' cell' : ' cells')"></span> to test next</h5>
+                      <div class="k-crossgaps">
+                        <template x-for="(cell, idx) in deckFor(it.id).rows" :key="idx">
+                          <span class="k-cell k-deckcell" x-text="cellText(cell)"></span>
+                        </template>
+                      </div>
+                    </div>
+                  </template>
+                </div>
+              </template>
+              <template x-if="!criteria(it).length && !hitsFor(it.id).length && !dimsFor(it.id)">
+                <div class="k-muted k-line">No tests or sub-items recorded for this item.</div>
+              </template>
+            </td>
+          </tr>
+        </tbody>
+      </template>
+    </table>
+
+    <div class="k-empty" x-show="rows.length === 0">No items match the filter.</div>
+
+    <!-- diagnostics: calls that hit no declared spec operation -->
+    <div class="k-diag" x-show="unmatched.length">
+      <h2>Unmatched calls — not in any spec (<span x-text="unmatched.length"></span>)</h2>
+      <table>
+        <thead><tr><th style="width:64px">Method</th><th>Path</th><th style="width:64px">Status</th><th>Test</th></tr></thead>
+        <tbody>
+          <template x-for="(u, idx) in unmatched" :key="idx">
+            <tr>
+              <td><span class="k-method" x-text="u.method"></span></td>
+              <td class="k-path" x-text="u.path"></td>
+              <td x-text="u.status"></td>
+              <td class="k-muted" x-text="testName(u.test)"></td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- diagnostics: spec-load lint (e.g. overlapping path templates) -->
+    <div class="k-diag" x-show="warnings.length">
+      <h2>Warnings (<span x-text="warnings.length"></span>)</h2>
+      <table>
+        <thead><tr><th style="width:90px">Type</th><th>Endpoint</th><th>Message</th></tr></thead>
+        <tbody>
+          <template x-for="(w, idx) in warnings" :key="idx">
+            <tr>
+              <td><span class="k-pill k-warn" x-text="w.type"></span></td>
+              <td class="k-path" x-text="w.endpoint"></td>
+              <td x-text="w.message"></td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- the graph data as a <script> window global — loaded off disk, not over the network -->
+  <script src="../coverage-data.js"></script>
+  <!-- D124 — the shared "?" help affordance (copies a help-id slug to paste into the console Help tab). -->
+  <script src="../help-affordance.js"></script>
+  <!-- the component must register its alpine:init listener before Alpine (defer) initializes -->
+  <script src="../coverage-report.js"></script>
+  <script src="../../../res/alpine.min.js" defer></script>
+  <!-- shared report top-nav via the core KarateReport util — one consistent bar across contributed pages,
+       current tab highlighted; the Traceability tab shows only when requirements are in play. -->
+  <script src="../../../res/karate-report.js"></script>
+  <script>
+    (function () {
+      var d = window.KARATE_COVERAGE_DATA || {};
+      var tabs = [{ key: 'coverage', title: 'Coverage', href: 'coverage.html' }];
+      if ((d.sources || []).some(function (s) { return s.namespace === 'req'; })) {
+        tabs.push({ key: 'traceability', title: 'Traceability', href: '../../traceability/pages/traceability.html' });
+      }
+      KarateReport.renderTopNav({ current: 'coverage', summary: d.karateSummary, tabs: tabs });
+    })();
+  </script>
+</body>
+</html>
