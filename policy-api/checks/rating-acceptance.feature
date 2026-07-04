@@ -19,8 +19,10 @@ Feature: rating acceptance — the saved scenarios, LIVE against the /quotes API
     * url baseUrl
 
   Scenario Outline: <id> — <label>
-    # the ORACLE — what the rulebook says the premium should be (fires calc.req for the criteria this row hits)
-    * def oracle = Rule.execute('rating', __row).output
+    # run the saved scenario through the rulebook (the ORACLE) — this fires calc.req for the criteria this
+    # row reaches (the RTM) and names the saved rule-scenario coverage item
+    * def check = Rule.execute('rating', __row)
+    * def oracle = check.output
     # the SYSTEM under test — a REAL call to the /quotes API (the OBSERVED receipt)
     Given path 'quotes'
     And request { state: '#(__row.state)', coverage: '#(__row.coverage)', driverAge: '#(__row.driverAge)', priorClaims: '#(__row.priorClaims)' }
@@ -29,6 +31,8 @@ Feature: rating acceptance — the saved scenarios, LIVE against the /quotes API
     # the system must match the rule — no golden number
     And match response.monthlyPremium == oracle.monthlyPremium
     And match response.currency == oracle.currency
+    # record the live-vs-rule verdict — lights this saved scenario COVERED in the rules source
+    * check.verify(true, 'live /quotes matches the rulebook')
 
     Examples:
       | read('../rulebooks/rating/scenarios.json') |
