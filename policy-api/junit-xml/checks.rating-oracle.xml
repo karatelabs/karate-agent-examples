@@ -1,0 +1,19 @@
+<testsuite name="rating rules oracle — headless (the CI-safe pipeline stage)" tests="3" failures="0" time="0.184" skipped="0"><testcase classname="checks.rating-oracle" name="young-collision-ca — young driver, collision, California — the young-driver loading fires" time="0.032"><system-out>* expected =
+* result = Rule.execute(&apos;rating&apos;, __row).output
+* exp = expected[__row.id]
+* result.monthlyPremium == exp.monthlyPremium
+* result.currency == &apos;USD&apos;
+</system-out></testcase>
+<testcase classname="checks.rating-oracle" name="prior-claims-comprehensive-ny — adult with prior claims, comprehensive, New York — the prior-claims surcharge fires" time="0.009"><system-out>* expected =
+* result = Rule.execute(&apos;rating&apos;, __row).output
+* exp = expected[__row.id]
+* result.monthlyPremium == exp.monthlyPremium
+* result.currency == &apos;USD&apos;
+</system-out></testcase>
+<testcase classname="checks.rating-oracle" name="clean-liability-tx — adult, clean record, liability, Texas — the base case, no loadings" time="0.006"><system-out>* expected =
+* result = Rule.execute(&apos;rating&apos;, __row).output
+* exp = expected[__row.id]
+* result.monthlyPremium == exp.monthlyPremium
+* result.currency == &apos;USD&apos;
+</system-out></testcase>
+</testsuite>

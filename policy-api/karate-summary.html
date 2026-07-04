@@ -354,27 +354,66 @@
     <script src="res/karate-report.js"></script>
     <script id="karate-data" type="application/json">{
   "env": null,
-  "reportDate": "2026-07-04 13:22:14",
+  "reportDate": "2026-07-04 13:29:40",
   "karateVersion": "2.1.1.RC1",
   "summary": {
-    "feature_count": 2,
-    "feature_passed": 2,
+    "feature_count": 3,
+    "feature_passed": 3,
     "feature_failed": 0,
-    "scenario_count": 11,
-    "scenario_passed": 11,
+    "scenario_count": 14,
+    "scenario_passed": 14,
     "scenario_failed": 0,
     "scenario_skipped": 0,
-    "duration_millis": 699,
+    "duration_millis": 600,
     "status": "passed"
   },
   "features": [
+    {
+      "name": "rating rules oracle — headless (the CI-safe pipeline stage)",
+      "relativePath": "checks/rating-oracle.feature",
+      "fileName": "checks.rating-oracle",
+      "passed": true,
+      "failed": false,
+      "durationMillis": 184,
+      "scenarioCount": 3,
+      "passedCount": 3,
+      "failedCount": 0,
+      "skippedCount": 0,
+      "passedRate": 100,
+      "scenarios": [
+        {
+          "name": "young-collision-ca — young driver, collision, California — the young-driver loading fires",
+          "refId": "[1.1:29]",
+          "passed": true,
+          "skipped": false,
+          "durationMillis": 32,
+          "tags": null
+        },
+        {
+          "name": "prior-claims-comprehensive-ny — adult with prior claims, comprehensive, New York — the prior-claims surcharge fires",
+          "refId": "[1.2:29]",
+          "passed": true,
+          "skipped": false,
+          "durationMillis": 9,
+          "tags": null
+        },
+        {
+          "name": "clean-liability-tx — adult, clean record, liability, Texas — the base case, no loadings",
+          "refId": "[1.3:29]",
+          "passed": true,
+          "skipped": false,
+          "durationMillis": 6,
+          "tags": null
+        }
+      ]
+    },
     {
       "name": "auto quotes — the covering-array dimension demo (REST front door to the rating engine)",
       "relativePath": "checks/quotes.feature",
       "fileName": "checks.quotes",
       "passed": true,
       "failed": false,
-      "durationMillis": 576,
+      "durationMillis": 307,
       "scenarioCount": 6,
       "passedCount": 6,
       "failedCount": 0,
@@ -386,7 +425,7 @@
           "refId": "[1.1:19]",
           "passed": true,
           "skipped": false,
-          "durationMillis": 373,
+          "durationMillis": 264,
           "tags": null
         },
         {
@@ -394,7 +433,7 @@
           "refId": "[1.2:19]",
           "passed": true,
           "skipped": false,
-          "durationMillis": 8,
+          "durationMillis": 6,
           "tags": null
         },
         {
@@ -402,7 +441,7 @@
           "refId": "[1.3:19]",
           "passed": true,
           "skipped": false,
-          "durationMillis": 8,
+          "durationMillis": 6,
           "tags": null
         },
         {
@@ -410,7 +449,7 @@
           "refId": "[1.4:19]",
           "passed": true,
           "skipped": false,
-          "durationMillis": 8,
+          "durationMillis": 5,
           "tags": null
         },
         {
@@ -426,7 +465,7 @@
           "refId": "[1.6:19]",
           "passed": true,
           "skipped": false,
-          "durationMillis": 10,
+          "durationMillis": 7,
           "tags": null
         }
       ]
@@ -437,7 +476,7 @@
       "fileName": "checks.policy",
       "passed": true,
       "failed": false,
-      "durationMillis": 46,
+      "durationMillis": 36,
       "scenarioCount": 5,
       "passedCount": 5,
       "failedCount": 0,
@@ -457,7 +496,7 @@
           "refId": "[2:18]",
           "passed": true,
           "skipped": false,
-          "durationMillis": 6,
+          "durationMillis": 5,
           "tags": null
         },
         {
@@ -465,7 +504,7 @@
           "refId": "[3:25]",
           "passed": true,
           "skipped": false,
-          "durationMillis": 10,
+          "durationMillis": 7,
           "tags": null
         },
         {
@@ -473,7 +512,7 @@
           "refId": "[4:31]",
           "passed": true,
           "skipped": false,
-          "durationMillis": 8,
+          "durationMillis": 5,
           "tags": null
         },
         {
@@ -481,7 +520,7 @@
           "refId": "[5:36]",
           "passed": true,
           "skipped": false,
-          "durationMillis": 6,
+          "durationMillis": 4,
           "tags": null
         }
       ]
@@ -497,10 +536,10 @@
     },
     {
       "label": "Requirements",
-      "value": "0/3",
+      "value": "1/3",
       "sub": "covered",
       "href": "ext/traceability/pages/traceability.html",
-      "status": "fail"
+      "status": "warn"
     }
   ]
 }</script>

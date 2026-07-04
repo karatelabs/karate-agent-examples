@@ -214,18 +214,18 @@
     <script src="res/karate-report.js"></script>
     <script id="karate-data" type="application/json">{
   "env": null,
-  "reportDate": "2026-07-04 13:22:14",
+  "reportDate": "2026-07-04 13:29:40",
   "threads": 1,
   "karateVersion": "2.1.1.RC1",
   "summary": {
-    "feature_count": 2,
-    "feature_passed": 2,
+    "feature_count": 3,
+    "feature_passed": 3,
     "feature_failed": 0,
-    "scenario_count": 11,
-    "scenario_passed": 11,
+    "scenario_count": 14,
+    "scenario_passed": 14,
     "scenario_failed": 0,
     "scenario_skipped": 0,
-    "duration_millis": 699,
+    "duration_millis": 600,
     "status": "passed"
   },
   "groups": [
@@ -238,110 +238,161 @@
     {
       "id": 1,
       "group": 1,
-      "content": "quotes[1.1:19]",
-      "start": 1783171335118,
-      "end": 1783171335490,
-      "title": "quotes[1.1:19] 13:22:15.118 (373 ms) quote a COLLISION policy in CA (priorClaims=false)",
+      "content": "rating-oracle[1.1:29]",
+      "start": 1783171780341,
+      "end": 1783171780372,
+      "title": "rating-oracle[1.1:29] 13:29:40.341 (32 ms) young-collision-ca — young driver, collision, California — the young-driver loading fires",
       "className": "passed"
     },
     {
       "id": 2,
       "group": 1,
-      "content": "quotes[1.2:19]",
-      "start": 1783171335495,
-      "end": 1783171335502,
-      "title": "quotes[1.2:19] 13:22:15.495 (8 ms) quote a COMPREHENSIVE policy in NY (priorClaims=true)",
+      "content": "rating-oracle[1.2:29]",
+      "start": 1783171780376,
+      "end": 1783171780384,
+      "title": "rating-oracle[1.2:29] 13:29:40.376 (9 ms) prior-claims-comprehensive-ny — adult with prior claims, comprehensive, New York — the prior-claims surcharge fires",
       "className": "passed"
     },
     {
       "id": 3,
       "group": 1,
-      "content": "quotes[1.3:19]",
-      "start": 1783171335505,
-      "end": 1783171335512,
-      "title": "quotes[1.3:19] 13:22:15.505 (8 ms) quote a LIABILITY policy in TX (priorClaims=false)",
+      "content": "rating-oracle[1.3:29]",
+      "start": 1783171780387,
+      "end": 1783171780392,
+      "title": "rating-oracle[1.3:29] 13:29:40.387 (6 ms) clean-liability-tx — adult, clean record, liability, Texas — the base case, no loadings",
       "className": "passed"
     },
     {
       "id": 4,
       "group": 1,
-      "content": "quotes[1.4:19]",
-      "start": 1783171335514,
-      "end": 1783171335521,
-      "title": "quotes[1.4:19] 13:22:15.514 (8 ms) quote a COLLISION policy in FL (priorClaims=true)",
+      "content": "quotes[1.1:19]",
+      "start": 1783171780417,
+      "end": 1783171780680,
+      "title": "quotes[1.1:19] 13:29:40.417 (264 ms) quote a COLLISION policy in CA (priorClaims=false)",
       "className": "passed"
     },
     {
       "id": 5,
       "group": 1,
-      "content": "quotes[1.5:19]",
-      "start": 1783171335524,
-      "end": 1783171335530,
-      "title": "quotes[1.5:19] 13:22:15.524 (7 ms) quote a COMPREHENSIVE policy in WA (priorClaims=false)",
+      "content": "quotes[1.2:19]",
+      "start": 1783171780683,
+      "end": 1783171780688,
+      "title": "quotes[1.2:19] 13:29:40.683 (6 ms) quote a COMPREHENSIVE policy in NY (priorClaims=true)",
       "className": "passed"
     },
     {
       "id": 6,
       "group": 1,
-      "content": "quotes[1.6:19]",
-      "start": 1783171335532,
-      "end": 1783171335541,
-      "title": "quotes[1.6:19] 13:22:15.532 (10 ms) quote a LIABILITY policy in CA (priorClaims=true)",
+      "content": "quotes[1.3:19]",
+      "start": 1783171780691,
+      "end": 1783171780696,
+      "title": "quotes[1.3:19] 13:29:40.691 (6 ms) quote a LIABILITY policy in TX (priorClaims=false)",
       "className": "passed"
     },
     {
       "id": 7,
       "group": 1,
-      "content": "policy[1:10]",
-      "start": 1783171335569,
-      "end": 1783171335575,
-      "title": "policy[1:10] 13:22:15.569 (7 ms) price a quote (the REST front door to the rating engine)",
+      "content": "quotes[1.4:19]",
+      "start": 1783171780699,
+      "end": 1783171780703,
+      "title": "quotes[1.4:19] 13:29:40.699 (5 ms) quote a COLLISION policy in FL (priorClaims=true)",
       "className": "passed"
     },
     {
       "id": 8,
       "group": 1,
-      "content": "policy[2:18]",
-      "start": 1783171335578,
-      "end": 1783171335583,
-      "title": "policy[2:18] 13:22:15.578 (6 ms) bind a policy from a quote",
+      "content": "quotes[1.5:19]",
+      "start": 1783171780706,
+      "end": 1783171780712,
+      "title": "quotes[1.5:19] 13:29:40.706 (7 ms) quote a COMPREHENSIVE policy in WA (priorClaims=false)",
       "className": "passed"
     },
     {
       "id": 9,
       "group": 1,
-      "content": "policy[3:25]",
-      "start": 1783171335586,
-      "end": 1783171335595,
-      "title": "policy[3:25] 13:22:15.586 (10 ms) list policies",
+      "content": "quotes[1.6:19]",
+      "start": 1783171780714,
+      "end": 1783171780720,
+      "title": "quotes[1.6:19] 13:29:40.714 (7 ms) quote a LIABILITY policy in CA (priorClaims=true)",
       "className": "passed"
     },
     {
       "id": 10,
       "group": 1,
-      "content": "policy[4:31]",
-      "start": 1783171335597,
-      "end": 1783171335604,
-      "title": "policy[4:31] 13:22:15.597 (8 ms) fetch a missing policy is a 404",
+      "content": "policy[1:10]",
+      "start": 1783171780728,
+      "end": 1783171780734,
+      "title": "policy[1:10] 13:29:40.728 (7 ms) price a quote (the REST front door to the rating engine)",
       "className": "passed"
     },
     {
       "id": 11,
       "group": 1,
+      "content": "policy[2:18]",
+      "start": 1783171780736,
+      "end": 1783171780740,
+      "title": "policy[2:18] 13:29:40.736 (5 ms) bind a policy from a quote",
+      "className": "passed"
+    },
+    {
+      "id": 12,
+      "group": 1,
+      "content": "policy[3:25]",
+      "start": 1783171780743,
+      "end": 1783171780749,
+      "title": "policy[3:25] 13:29:40.743 (7 ms) list policies",
+      "className": "passed"
+    },
+    {
+      "id": 13,
+      "group": 1,
+      "content": "policy[4:31]",
+      "start": 1783171780751,
+      "end": 1783171780755,
+      "title": "policy[4:31] 13:29:40.751 (5 ms) fetch a missing policy is a 404",
+      "className": "passed"
+    },
+    {
+      "id": 14,
+      "group": 1,
       "content": "policy[5:36]",
-      "start": 1783171335607,
-      "end": 1783171335612,
-      "title": "policy[5:36] 13:22:15.607 (6 ms) file a claim against a policy",
+      "start": 1783171780758,
+      "end": 1783171780761,
+      "title": "policy[5:36] 13:29:40.758 (4 ms) file a claim against a policy",
       "className": "passed"
     }
   ],
   "scenarios": [
     {
+      "featureFileName": "rating-oracle",
+      "featureHtmlName": "checks.rating-oracle",
+      "refId": "[1.1:29]",
+      "name": "young-collision-ca — young driver, collision, California — the young-driver loading fires",
+      "durationMillis": 32,
+      "passed": true
+    },
+    {
+      "featureFileName": "rating-oracle",
+      "featureHtmlName": "checks.rating-oracle",
+      "refId": "[1.2:29]",
+      "name": "prior-claims-comprehensive-ny — adult with prior claims, comprehensive, New York — the prior-claims surcharge fires",
+      "durationMillis": 9,
+      "passed": true
+    },
+    {
+      "featureFileName": "rating-oracle",
+      "featureHtmlName": "checks.rating-oracle",
+      "refId": "[1.3:29]",
+      "name": "clean-liability-tx — adult, clean record, liability, Texas — the base case, no loadings",
+      "durationMillis": 6,
+      "passed": true
+    },
+    {
       "featureFileName": "quotes",
       "featureHtmlName": "checks.quotes",
       "refId": "[1.1:19]",
       "name": "quote a COLLISION policy in CA (priorClaims=false)",
-      "durationMillis": 373,
+      "durationMillis": 264,
       "passed": true
     },
     {
@@ -349,7 +400,7 @@
       "featureHtmlName": "checks.quotes",
       "refId": "[1.2:19]",
       "name": "quote a COMPREHENSIVE policy in NY (priorClaims=true)",
-      "durationMillis": 8,
+      "durationMillis": 6,
       "passed": true
     },
     {
@@ -357,7 +408,7 @@
       "featureHtmlName": "checks.quotes",
       "refId": "[1.3:19]",
       "name": "quote a LIABILITY policy in TX (priorClaims=false)",
-      "durationMillis": 8,
+      "durationMillis": 6,
       "passed": true
     },
     {
@@ -365,7 +416,7 @@
       "featureHtmlName": "checks.quotes",
       "refId": "[1.4:19]",
       "name": "quote a COLLISION policy in FL (priorClaims=true)",
-      "durationMillis": 8,
+      "durationMillis": 5,
       "passed": true
     },
     {
@@ -381,7 +432,7 @@
       "featureHtmlName": "checks.quotes",
       "refId": "[1.6:19]",
       "name": "quote a LIABILITY policy in CA (priorClaims=true)",
-      "durationMillis": 10,
+      "durationMillis": 7,
       "passed": true
     },
     {
@@ -397,7 +448,7 @@
       "featureHtmlName": "checks.policy",
       "refId": "[2:18]",
       "name": "bind a policy from a quote",
-      "durationMillis": 6,
+      "durationMillis": 5,
       "passed": true
     },
     {
@@ -405,7 +456,7 @@
       "featureHtmlName": "checks.policy",
       "refId": "[3:25]",
       "name": "list policies",
-      "durationMillis": 10,
+      "durationMillis": 7,
       "passed": true
     },
     {
@@ -413,7 +464,7 @@
       "featureHtmlName": "checks.policy",
       "refId": "[4:31]",
       "name": "fetch a missing policy is a 404",
-      "durationMillis": 8,
+      "durationMillis": 5,
       "passed": true
     },
     {
@@ -421,11 +472,11 @@
       "featureHtmlName": "checks.policy",
       "refId": "[5:36]",
       "name": "file a claim against a policy",
-      "durationMillis": 6,
+      "durationMillis": 4,
       "passed": true
     }
   ],
-  "serialDurationMillis": 451
+  "serialDurationMillis": 370
 }</script>
 </body>
 </html>
