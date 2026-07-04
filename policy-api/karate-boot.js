@@ -6,7 +6,7 @@
 // classpath, so booting grpc there hard-fails. Set KARATE_GRPC_OFF (to any value) to run REST + rules +
 // requirements only — the container / CI report lane. Unset (the live protocol lane, where grpc IS on the
 // classpath and the rating engine is running) boots the cross-protocol beat.
-var grpcOff = java.lang.System.getenv('KARATE_GRPC_OFF');
+var grpcOff = java.lang.System.getenv('KARATE_GRPC_OFF') || java.lang.System.getProperty('KARATE_GRPC_OFF');
 if (!grpcOff) {
   var grpc = boot.ext('grpc');
   grpc.host = boot.sysprop('grpc.host', 'localhost');

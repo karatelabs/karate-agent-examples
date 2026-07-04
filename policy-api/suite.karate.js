@@ -9,18 +9,18 @@
 //
 // What lands in target/karate-reports (the CLI-default launch report dir — HTML + JUnit XML for the Tests
 // tab + JSONL for coverage/RTM), all in ONE graph:
-//   1. rating-oracle.feature runs the `rating` rulebook over each saved scenario — every row's Rule.execute
-//      emits the rulebook's calc.req hits, so the RTM lights each requirement the scenarios reach
-//      (RATE-001/1 young, RATE-002/1 prior-claims) and leaves the senior-driver arm RATE-001/2 the gap →
-//      readiness NOT READY, blocker RATE-001; each requirement id deep-links to its markdown heading on
-//      GitHub (requirements.provider, wired in karate-boot.js);
+//   1. rating-acceptance.feature runs each saved scenario LIVE against the /quotes API — a real HTTP call
+//      (an OBSERVED receipt) plus the rulebook's calc.req — so the RTM lights each requirement the scenarios
+//      reach as genuinely COVERED (RATE-001/1 young, RATE-002/1 prior-claims, RATE-003/1 territory), leaving
+//      the senior-driver criterion RATE-001/2 the live gap → readiness NOT READY, blocker RATE-001; each
+//      requirement id deep-links to its markdown heading on GitHub (requirements.provider, karate-boot.js);
 //   2. quotes.feature is the covering-array demo (6 of 30 combinations, the 9-cell deck) and policy.feature
 //      exercises the OpenAPI operations, so cov.openapi grades the REST coverage in the SAME report.
 //   3. Report.generate() + Report.traceability() render the Coverage + Traceability HTML from that one graph.
-// Requirement coverage rides the run itself (calc.req), so it does NOT overwrite the run's REST coverage —
-// the published report carries the 6/30 Coverage view AND the NOT READY / RATE-001 RTM together.
-// The REST mock auto-starts from karate-config.js — no external SUT, no host networking.
-var result = Runner.run(['checks/rating-oracle.feature', 'checks/quotes.feature', 'checks/policy.feature']);
+// Requirement coverage rides the live run itself, so it does NOT overwrite the run's REST coverage — the
+// published report carries the Coverage view AND the NOT READY / RATE-001 RTM together. The REST mock
+// auto-starts from karate-config.js — no external SUT, no host networking.
+var result = Runner.run(['checks/rating-acceptance.feature', 'checks/quotes.feature', 'checks/policy.feature']);
 
 Report.generate();
 Report.traceability();

@@ -52,6 +52,10 @@ const execute = function (calc) {
         calc.log('catastrophe reinsurance surcharge +500');
     }
 
+    // RATE-003/1 — the premium is adjusted by the state rating territory factor. Applied to EVERY quote
+    // (even a zero-factor state is looked up), so any saved scenario covers this criterion.
+    calc.label('Territory rating');
+    calc.req('RATE-003/1');
     const stateFactor = lookup.stateFactor[input.state];
     const premium = base + stateFactor;
     calc.log('state factor for ' + input.state + ' = ' + stateFactor + ' → monthly premium = ' + premium);
