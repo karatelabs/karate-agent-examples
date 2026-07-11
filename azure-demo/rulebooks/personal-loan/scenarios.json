@@ -1,1 +1,72 @@
-[{"id": "decline-low-score", "label": "credit score below 580 declines", "creditScore": 550, "annualIncome": 90000, "loanAmount": 12000, "termMonths": 60, "monthlyDebt": 500, "existingCustomer": false}, {"id": "decline-high-dti", "label": "DTI over 50% declines", "creditScore": 740, "annualIncome": 30000, "loanAmount": 60000, "termMonths": 24, "monthlyDebt": 500, "existingCustomer": false}, {"id": "review-score-band", "label": "score 580-669 routes to review", "creditScore": 620, "annualIncome": 120000, "loanAmount": 12000, "termMonths": 60, "monthlyDebt": 500, "existingCustomer": false}, {"id": "review-dti-band", "label": "DTI 40-50% routes to review", "creditScore": 760, "annualIncome": 60000, "loanAmount": 30000, "termMonths": 24, "monthlyDebt": 1000, "existingCustomer": false}, {"id": "approve-prime", "label": "prime, low DTI, auto-approves at 6.5%", "creditScore": 780, "annualIncome": 150000, "loanAmount": 12000, "termMonths": 60, "monthlyDebt": 500, "existingCustomer": false}, {"id": "approve-midband", "label": "660-719 band, low DTI, auto-approve at 9.9%", "creditScore": 700, "annualIncome": 150000, "loanAmount": 12000, "termMonths": 60, "monthlyDebt": 500, "existingCustomer": false}, {"id": "approve-loyalty", "label": "existing customer loyalty discount", "creditScore": 780, "annualIncome": 150000, "loanAmount": 12000, "termMonths": 60, "monthlyDebt": 500, "existingCustomer": true}]
+[
+  {
+    "id": "decline-low-score",
+    "label": "credit score below 580 declines",
+    "creditScore": 550,
+    "annualIncome": 90000,
+    "loanAmount": 12000,
+    "termMonths": 60,
+    "monthlyDebt": 500,
+    "existingCustomer": false
+  },
+  {
+    "id": "decline-high-dti",
+    "label": "DTI over 50% declines",
+    "creditScore": 740,
+    "annualIncome": 30000,
+    "loanAmount": 60000,
+    "termMonths": 24,
+    "monthlyDebt": 500,
+    "existingCustomer": false
+  },
+  {
+    "id": "review-score-band",
+    "label": "score 580-669 routes to review",
+    "creditScore": 620,
+    "annualIncome": 120000,
+    "loanAmount": 12000,
+    "termMonths": 60,
+    "monthlyDebt": 500,
+    "existingCustomer": false
+  },
+  {
+    "id": "review-dti-band",
+    "label": "DTI 40-50% routes to review",
+    "creditScore": 760,
+    "annualIncome": 60000,
+    "loanAmount": 30000,
+    "termMonths": 24,
+    "monthlyDebt": 1000,
+    "existingCustomer": false
+  },
+  {
+    "id": "approve-prime",
+    "label": "prime, low DTI, auto-approves at 6.5%",
+    "creditScore": 780,
+    "annualIncome": 150000,
+    "loanAmount": 12000,
+    "termMonths": 60,
+    "monthlyDebt": 500,
+    "existingCustomer": false
+  },
+  {
+    "id": "approve-midband",
+    "label": "660-719 band, low DTI, auto-approve at 9.9%",
+    "creditScore": 700,
+    "annualIncome": 150000,
+    "loanAmount": 12000,
+    "termMonths": 60,
+    "monthlyDebt": 500,
+    "existingCustomer": false
+  },
+  {
+    "id": "approve-loyalty",
+    "label": "existing customer loyalty discount",
+    "creditScore": 780,
+    "annualIncome": 150000,
+    "loanAmount": 12000,
+    "termMonths": 60,
+    "monthlyDebt": 500,
+    "existingCustomer": true
+  }
+]

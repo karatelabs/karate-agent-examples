@@ -27,7 +27,7 @@ Two files, sent with your license, dropped into this folder:
 
 | file | what it is |
 | --- | --- |
-| `karate-async-2.1.1.RC4.jar` | the engine |
+| `karate-async-2.1.1.RC5.jar` | the engine |
 | `karate.lic` | your license |
 
 A JDK (21+) is required (Maven too, to build the demo's gRPC backend). More: <https://karatelabs.io/agent>.
@@ -52,7 +52,7 @@ java -jar rating-server/target/rating-server.jar 50052
 
 ```bash
 export KARATE_LICENSE_PATH="$PWD/karate.lic"
-java -jar karate-async-2.1.1.RC4.jar serve . --port 4444
+java -jar karate-async-2.1.1.RC5.jar serve . --port 4444
 ```
 
 (`KARATE_LICENSE_PATH` is just one way to point at the license — dropping it at `.karate/karate.lic`

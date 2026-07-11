@@ -28,7 +28,7 @@ pool:
   vmImage: ubuntu-latest
 
 variables:
-  KARATE_IMAGE: public.ecr.aws/r3c9p5l5/karate-agent:2.1.1.RC4
+  KARATE_IMAGE: public.ecr.aws/karatelabs/karate-agent:2.1.1.RC5
 
 steps:
   - checkout: self
