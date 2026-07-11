@@ -33,35 +33,48 @@
   <div id="k-topnav"></div>
   <div class="k-coverage-ext" x-data="coverageReport" x-cloak>
     <h1>Coverage Report</h1>
-    <div class="k-sub">Requirements &amp; API coverage, derived from the traceability graph. Click a row to drill in.<button
+    <div class="k-sub">How thoroughly your system was tested, where the gaps are, and what to test next.<button
         type="button" class="k-help-q"
         title="What do these grades / SIMULATED mean? Copy the help-id — paste it into the Help tab or your AI chat"
         onclick="kaCopyHelp('model.coverage.simulated')">?</button></div>
 
-    <!-- per-source summary strip -->
-    <div class="k-srcstrip">
-      <template x-for="s in sources" :key="s.namespace">
-        <div class="k-card">
-          <div class="k-num" x-text="pct(s) + '%'"></div>
-          <div class="k-lbl"><span x-text="(s.title || s.namespace)"></span> &middot; <span x-text="s.covered + '/' + s.total"></span></div>
-          <div class="k-bar"><span :style="'width:' + pct(s) + '%'"></span></div>
-          <!-- §2h/D67: combination coverage beside path/method % — the "100%-green" honesty fix (all
-               endpoints hit yet most required input combinations untested). Shown only when dimensioned. -->
-          <template x-if="s.combos">
-            <div class="k-combos" :title="comboTip(s)">
-              <span class="k-combobar"><span :class="comboBarClass(s)" :style="'width:' + comboPct(s) + '%'"></span></span>
-              <span class="k-combotxt"><strong x-text="comboPct(s) + '% combos'"></strong> &middot; <span x-text="s.combos.covered + '/' + s.combos.required"></span></span>
-              <span class="k-combomuted" x-show="s.combos.untested > 0" x-text="s.combos.untested + ' not tested · ' + s.combos.suggested + ' suggested'"></span>
-            </div>
-          </template>
-          <!-- §2h: marginal input-adequacy beside path/method % — input equivalence classes exercised vs the
-               universe the spec/rules imply (the headline signal when there is no cross binding). -->
-          <template x-if="s.inputs">
-            <div class="k-combos" :title="inputTip(s)">
-              <span class="k-combobar"><span :class="inputBarClass(s)" :style="'width:' + inputPct(s) + '%'"></span></span>
-              <span class="k-combotxt"><strong x-text="inputPct(s) + '% inputs'"></strong> &middot; <span x-text="s.inputs.covered + '/' + s.inputs.total"></span></span>
-            </div>
-          </template>
+    <!-- Confidence-to-ship banner (Part 1) — the CANONICAL release-readiness verdict (the same one the
+         Traceability report shows; computed once, in Java). Omitted when the project has no requirements. -->
+    <template x-if="readiness">
+      <div class="k-shipbanner" :class="readyClass()">
+        <div class="k-shipverdict">
+          <div class="k-shiplbl">Confidence to ship</div>
+          <div class="k-shipword" x-text="readyWord()"></div>
+          <div class="k-shipsub" x-text="readyVerdict()"></div>
+        </div>
+        <div class="k-shipsplit">
+          <span class="k-shipcount k-ok" x-text="readyStatusCounts().COVERED + ' covered'"></span>
+          <span class="k-shipcount k-no" x-show="readyStatusCounts().FAILING > 0" x-text="readyStatusCounts().FAILING + ' failing'"></span>
+          <span class="k-shipcount k-sim" x-show="readyStatusCounts().SIMULATED > 0" x-text="readyStatusCounts().SIMULATED + ' simulated'"></span>
+          <span class="k-shipcount k-warn" x-text="(readyStatusCounts().NOTRUN + readyStatusCounts().NOTCOVERED) + ' not tested'"></span>
+          <a class="k-shiplink" :href="traceabilityHref" x-show="hasTraceability">See full risk view &rarr;</a>
+          <span class="k-shiphint" x-show="!hasTraceability" title="requirement-level risk detail lives in the Traceability report">requirement-level detail in the Traceability report</span>
+        </div>
+      </div>
+    </template>
+
+    <!-- Coverage scorecard (Part 2) — every axis as its own card with a STATUS-SPLIT count (never one
+         blended %), ordered by what matters most for a ship decision. A card shows only when it has data. -->
+    <div class="k-scorecards">
+      <template x-for="c in axisCards()" :key="c.key">
+        <div class="k-axiscard">
+          <div class="k-axishd">
+            <span class="k-axislabel" x-text="c.label"></span>
+            <span class="k-info" @click="kaCopyHelp(c.help)" :title="'What does ' + c.label + ' mean? Copy the help-id'">&#9432;</span>
+          </div>
+          <div class="k-axisnum"><span x-text="c.pct + '%'"></span> <span class="k-axisden" x-text="'· ' + (c.segments[0] ? c.segments[0].n : 0) + '/' + c.total"></span></div>
+          <div class="k-segbar">
+            <template x-for="(seg, si) in c.segments" :key="si">
+              <span class="k-seg" :class="seg.cls" :style="'width:' + segWidth(seg, c.total)" :title="seg.n + ' ' + seg.title" x-show="seg.n > 0"></span>
+            </template>
+          </div>
+          <div class="k-axisask" x-text="c.ask"></div>
+          <div class="k-axisnote" x-show="c.note" x-text="c.note"></div>
         </div>
       </template>
     </div>
@@ -94,9 +107,9 @@
           <th style="width:34px"></th>
           <th>Item</th>
           <th>Tags</th>
-          <th style="width:64px">Calls</th>
+          <th style="width:64px" title="how many times this action was exercised at runtime">Times run</th>
           <th style="width:64px">Tests</th>
-          <th style="width:96px" title="§2h coverage-dimension health: input-variation / required-combination coverage + open gaps">Dims</th>
+          <th style="width:96px" title="how thoroughly the inputs were varied — input-value and combination coverage, with any gaps">Inputs</th>
         </tr>
       </thead>
       <template x-for="it in rows" :key="it.id">
@@ -105,7 +118,9 @@
             <td><span class="k-caret" :class="isOpen(it.id) && 'k-open'">&#9654;</span></td>
             <td><span class="k-pill" :class="statusClass(it.status)" :title="it.status" x-text="statusIcon(it.status)"></span></td>
             <td class="k-name">
-              <template x-if="it.method"><span class="k-method" x-text="it.method"></span></template>
+              <template x-if="protoBadge(it)"><span class="k-proto" x-text="protoBadge(it)" :title="protoBadge(it) === 'GRPC' ? 'gRPC service' : 'Kafka topic'"></span></template>
+              <template x-if="it.method && !protoBadge(it)"><span class="k-method" x-text="it.method"></span></template>
+              <template x-if="it.rulebook"><span class="k-rulebook" x-text="it.rulebook" :title="'rulebook: ' + it.rulebook"></span></template>
               <template x-if="it.kind === 'req'"><span><a class="k-reqid" x-show="reqHref(it.id)" :href="reqHref(it.id)" target="_blank" rel="noopener" :title="'open ' + it.id.replace(/^req:/, '') + ' in tracker'" x-text="it.id.replace(/^req:/, '')"></a><span class="k-reqid" x-show="!reqHref(it.id)" x-text="it.id.replace(/^req:/, '')"></span></span></template>
               <span class="k-path" x-text="label(it)"></span>
             </td>
@@ -142,7 +157,7 @@
               </template>
               <template x-if="hitsFor(it.id).length">
                 <div>
-                  <h4>Hits</h4>
+                  <h4>Times tested</h4>
                   <template x-for="(h, idx) in hitsFor(it.id)" :key="idx">
                     <div class="k-line">
                       <span class="k-tag" x-text="h.kind"></span>
@@ -156,16 +171,16 @@
               <!-- §2h coverage dimensions (D118): marginal per-axis grade + the cross/point combinations -->
               <template x-if="dimsFor(it.id)">
                 <div class="k-dims">
-                  <h4>Coverage dimensions &middot; <span x-text="dimsFor(it.id).points"></span> point(s)</h4>
+                  <h4>How thoroughly the inputs were varied</h4>
                   <template x-for="ax in axisList(dimsFor(it.id))" :key="ax.name">
                     <div class="k-dimaxis">
                       <span class="k-dimname" x-text="ax.name"></span>
-                      <span class="k-dimbar" :title="ax.closed ? pctOf(ax.coveredProportion) + '%' : 'open axis — not gradeable'">
+                      <span class="k-dimbar" :title="ax.closed ? pctOf(ax.coveredProportion) + '%' : 'no list of allowed values — can\'t be scored'">
                         <span x-show="ax.closed" :class="barClass(ax.coveredProportion)" :style="'width:' + pctOf(ax.coveredProportion) + '%'"></span>
                       </span>
-                      <span class="k-dimpct" x-text="ax.closed ? pctOf(ax.coveredProportion) + '%' : 'open'"></span>
-                      <span class="k-dimkind" x-show="ax.kind" x-text="axisTag(ax)" title="§2h: the axis kind + where its universe came from (auto-derived)"></span>
-                      <span class="k-muted" x-text="'seen: ' + (ax.seen.length ? ax.seen.join(', ') : '—')"></span>
+                      <span class="k-dimpct" x-text="ax.closed ? pctOf(ax.coveredProportion) + '%' : '—'"></span>
+                      <span class="k-dimkind" x-show="ax.kind" x-text="axisTag(ax)" title="the kind of field + where its list of values came from (auto-derived)"></span>
+                      <span class="k-muted" x-text="'tried: ' + (ax.seen.length ? ax.seen.join(', ') : '—')"></span>
                       <template x-if="ax.gaps.length">
                         <span class="k-dimgaps">missing: <span x-text="ax.gaps.join(', ')"></span></span>
                       </template>
@@ -173,9 +188,9 @@
                   </template>
                   <template x-if="crossOf(it.id)">
                     <div class="k-cross">
-                      <h5>Required combinations &middot; <span x-text="crossOf(it.id).axes.join(' × ')"></span></h5>
+                      <h5>Risky combinations &middot; <span x-text="crossOf(it.id).axes.join(' + ')"></span></h5>
                       <template x-if="crossOf(it.id).coveredProportion < 0">
-                        <div class="k-muted k-line">ungradeable — open axis: <span x-text="(crossOf(it.id).open || []).join(', ')"></span></div>
+                        <div class="k-muted k-line">can't be scored — no list of allowed values for: <span x-text="(crossOf(it.id).open || []).join(', ')"></span></div>
                       </template>
                       <template x-if="crossOf(it.id).coveredProportion >= 0">
                         <div>
@@ -184,11 +199,11 @@
                               <span :class="barClass(crossOf(it.id).coveredProportion)" :style="'width:' + pctOf(crossOf(it.id).coveredProportion) + '%'"></span>
                             </span>
                             <span class="k-dimpct" x-text="pctOf(crossOf(it.id).coveredProportion) + '%'"></span>
-                            <span class="k-muted" x-text="crossOf(it.id).covered + ' of ' + crossOf(it.id).required + ' combinations tested'"></span>
+                            <span class="k-muted" x-text="crossOf(it.id).covered + ' of ' + crossOf(it.id).required + ' combinations tried'"></span>
                             <!-- §2h slice 5: cells the bound rulebook's calc.js rejected, dropped from the required set -->
                             <span class="k-pruned" x-show="crossOf(it.id).pruned > 0"
-                                  :title="crossOf(it.id).pruned + ' rule-infeasible combination(s) excluded from the required cross-product'"
-                                  x-text="crossOf(it.id).pruned + ' infeasible pruned'"></span>
+                                  :title="crossOf(it.id).pruned + ' combination(s) can\'t occur in practice (the business rules reject them), so they\'re excluded'"
+                                  x-text="crossOf(it.id).pruned + ' can\'t occur, excluded'"></span>
                           </div>
                           <template x-if="(crossOf(it.id).gaps || []).length">
                             <div class="k-crossgaps">
@@ -206,8 +221,8 @@
                        companion to the cross gaps), at the item's criticality-selected strength -->
                   <template x-if="deckFor(it.id) && (deckFor(it.id).rows || []).length">
                     <div class="k-deck">
-                      <h5>Suggested tests &middot; <span x-text="strengthLabel(deckFor(it.id).strength)"></span>
-                          &middot; <span x-text="deckFor(it.id).size + (deckFor(it.id).size === 1 ? ' cell' : ' cells')"></span> to test next</h5>
+                      <h5 :title="'a minimal ' + strengthLabel(deckFor(it.id).strength) + ' set that covers the gaps'">What to test next
+                          &middot; <span x-text="deckFor(it.id).size + (deckFor(it.id).size === 1 ? ' combination' : ' combinations')"></span></h5>
                       <div class="k-crossgaps">
                         <template x-for="(cell, idx) in deckFor(it.id).rows" :key="idx">
                           <span class="k-cell k-deckcell" x-text="cellText(cell)"></span>
@@ -228,9 +243,105 @@
 
     <div class="k-empty" x-show="rows.length === 0">No items match the filter.</div>
 
+    <!-- Input Coverage (Part 3, §2h) — the marginal analog of the Rule Coverage arm view below: each input
+         VALUE is a coverable item. Per tested area, the value universe of each field with tried ✓ / missed ✗
+         (+ the concrete value that closes a miss), fields with no allowed-value list greyed with a nudge,
+         and a "what to test next" worklist. Derived from the baked `dimensions` projection (render-only). -->
+    <div class="k-inputcov" x-show="inputCoverage().length">
+      <h2>Input Coverage <span class="k-muted">&middot; did we try the meaningfully-different values of each field?</span>
+        <span class="k-info" @click="kaCopyHelp('model.coverage.inputs')" title="What does input coverage mean? Copy the help-id to paste into Help / your AI chat">&#9432;</span></h2>
+      <template x-for="src in inputCoverage()" :key="src.source">
+        <div class="k-rulebk">
+          <div class="k-rulehd">
+            <span class="k-rulebook" x-text="src.source"></span>
+            <span class="k-muted" x-text="'Tried ' + src.tried + ' of ' + src.total + ' input values'"></span>
+            <span class="k-muted" x-show="src.missed > 0" x-text="'· ' + src.missed + ' missed'"></span>
+            <span class="k-notusedcount" x-show="src.openFields.length"
+                  :title="'these fields have no declared list of allowed values, so they can\'t be scored — define their values (a schema / protovalidate / generator.js)'"
+                  x-text="src.openFields.length + (src.openFields.length === 1 ? ' field can\'t be scored yet' : ' fields can\'t be scored yet')"></span>
+          </div>
+          <div class="k-inpfields">
+            <template x-for="f in src.fields" :key="f.field">
+              <div class="k-line k-inpfield">
+                <span class="k-inpname" x-text="f.field"></span>
+                <span class="k-dimkind" x-show="f.tag" x-text="f.tag"></span>
+                <span class="k-inpchips">
+                  <template x-for="v in f.tried" :key="'t' + v">
+                    <span class="k-chip k-chip-ok" title="tried"><span class="k-chipglyph">&#10003;</span><span x-text="v"></span></span>
+                  </template>
+                  <template x-for="(m, mi) in f.missed" :key="'m' + mi">
+                    <span class="k-chip k-chip-miss" :title="'not tried — send ' + f.field + ' = ' + m.value + ' to close it'"><span class="k-chipglyph">&#10007;</span><span x-text="m.value"></span></span>
+                  </template>
+                </span>
+              </div>
+            </template>
+            <template x-for="of in src.openFields" :key="'o' + of">
+              <div class="k-line k-inpfield k-inpopen">
+                <span class="k-inpname" x-text="of"></span>
+                <span class="k-muted">no list of allowed values defined — can't be scored yet</span>
+              </div>
+            </template>
+          </div>
+          <template x-if="src.worklist.length">
+            <div class="k-deck">
+              <h5>What to test next for this area &middot; <span x-text="src.worklist.length + (src.worklist.length === 1 ? ' value' : ' values')"></span></h5>
+              <div class="k-crossgaps">
+                <template x-for="(w, wi) in src.worklist" :key="wi">
+                  <span class="k-cell k-deckcell" x-text="w.field + ' = ' + w.value"></span>
+                </template>
+              </div>
+            </div>
+          </template>
+        </div>
+      </template>
+    </div>
+
+    <!-- Rule Coverage (MODEL §Glossary/§6): a DIFFERENT axis from the requirement rows above — the share of
+         each rulebook's decision arms exercised by its scenarios, plus the reachable-but-dormant `notused`
+         arms (fix = add a scenario). Kept its own section so the arm axis is never conflated with the RTM. -->
+    <div class="k-rulecov" x-show="ruleCoverage.length">
+      <h2>Rule branches <span class="k-muted">&middot; each yes/no path in your business rules, checked separately</span>
+        <span class="k-info" @click="kaCopyHelp('model.coverage.rules')" title="What is a rule branch? Copy the help-id">&#9432;</span></h2>
+      <template x-for="r in ruleCoverage" :key="r.rule">
+        <div class="k-rulebk">
+          <div class="k-rulehd">
+            <span class="k-rulebook" x-text="r.rule" :title="'rulebook: ' + r.rule"></span>
+            <span class="k-bar"><span :class="ruleBarClass(r)" :style="'width:' + rulePct(r) + '%'"></span></span>
+            <span class="k-rulepct" x-text="rulePct(r) + '%'"></span>
+            <span class="k-muted" x-text="(r.used || 0) + ' of ' + (r.total || 0) + ' branches checked'"></span>
+            <span class="k-muted" x-show="((r.reachable || 0) - (r.used || 0)) > 0" x-text="'· ' + ((r.reachable || 0) - (r.used || 0)) + ' not checked'"></span>
+            <span class="k-muted" x-show="((r.total || 0) - (r.reachable || 0)) > 0" x-text="'· ' + ((r.total || 0) - (r.reachable || 0)) + ' not reachable'"></span>
+            <span class="k-notusedcount" x-show="ruleUnlabeled(r)"
+                  :title="'these branches show raw rule source — add a calc.label(...) at each site for a readable business name'"
+                  x-text="ruleUnlabeled(r) + ' not named'"></span>
+          </div>
+          <div class="k-rulearms">
+            <template x-for="(a, idx) in ruleArms(r)" :key="idx">
+              <div class="k-line k-rulearm">
+                <span class="k-pill" :class="armClass(a.status)"
+                      :title="a.status === 'used' ? 'a saved scenario checks this branch' : a.status === 'notused' ? 'this branch can happen (an input reaches it), but no saved scenario checks it — add a scenario' : 'nothing reaches this branch — dead logic, OR a branch we could not build an input for (review in the Health tab)'"
+                      x-text="armBadge(a.status)"></span>
+                <span class="k-armname" :class="a.label ? '' : 'k-armsrc'" x-text="a.label || a.source"></span>
+                <span class="k-armout" x-text="a.outcome ? 'when true' : 'when false'"></span>
+                <span class="k-muted" x-show="a.line" x-text="'line ' + a.line"></span>
+                <span class="k-armcount" x-show="a.status === 'used'" x-text="'checked in ' + a.scenarios + (a.scenarios === 1 ? ' scenario' : ' scenarios')"></span>
+                <template x-if="a.req">
+                  <span class="k-armreq">covers
+                    <a class="k-reqid" x-show="reqHref('req:' + a.req)" :href="reqHref('req:' + a.req)" target="_blank" rel="noopener" :title="'open ' + a.req + ' in tracker'" x-text="a.req"></a>
+                    <span class="k-reqid" x-show="!reqHref('req:' + a.req)" x-text="a.req"></span>
+                  </span>
+                </template>
+              </div>
+            </template>
+          </div>
+        </div>
+      </template>
+    </div>
+
     <!-- diagnostics: calls that hit no declared spec operation -->
     <div class="k-diag" x-show="unmatched.length">
-      <h2>Unmatched calls — not in any spec (<span x-text="unmatched.length"></span>)</h2>
+      <h2>Activity with no matching requirement (<span x-text="unmatched.length"></span>)</h2>
+      <div class="k-sub">The system did these things during testing, but they don't map to any known API operation — worth a look: either an undocumented endpoint or a stray call.</div>
       <table>
         <thead><tr><th style="width:64px">Method</th><th>Path</th><th style="width:64px">Status</th><th>Test</th></tr></thead>
         <tbody>

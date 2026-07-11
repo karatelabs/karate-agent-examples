@@ -59,6 +59,9 @@
 .k-coverage-ext .k-sc-conditional .k-verdict-val { color: var(--k-warn-fg); }
 .k-coverage-ext .k-sc-block .k-verdict-val { color: var(--k-no-fg); }
 .k-coverage-ext .k-verdict-sub { font-size: 13px; color: var(--k-muted); }
+.k-coverage-ext .k-verdict-link { display: inline-block; margin-top: 6px; font-size: 12px; font-weight: 600;
+  color: var(--k-link, #2563eb); text-decoration: none; }
+.k-coverage-ext .k-verdict-link:hover { text-decoration: underline; }
 .k-coverage-ext .k-riskcards { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
 .k-coverage-ext .k-riskcard {
   min-width: 78px; text-align: center; border-radius: 10px; padding: 8px 12px;

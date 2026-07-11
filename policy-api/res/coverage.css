@@ -14,6 +14,7 @@
   --k-row-border: #eef2f7;
   --k-method-bg: #e0e7ff; --k-method-fg: #3730a3;
   --k-reqid-bg: #cffafe; --k-reqid-fg: #155e75;
+  --k-rulebook-bg: #ede9fe; --k-rulebook-fg: #5b21b6;   /* rules source — violet: the rulebook-name badge */
   --k-ok-bg: #dcfce7; --k-ok-fg: #166534;
   --k-no-bg: #fee2e2; --k-no-fg: #991b1b;
   --k-warn-bg: #fef9c3; --k-warn-fg: #854d0e;
@@ -38,6 +39,7 @@
   --k-row-border: #1e293b;
   --k-method-bg: #312e81; --k-method-fg: #c7d2fe;
   --k-reqid-bg: #164e63; --k-reqid-fg: #a5f3fc;
+  --k-rulebook-bg: #4c1d95; --k-rulebook-fg: #ddd6fe;   /* rules source — violet */
   --k-ok-bg: #14532d; --k-ok-fg: #bbf7d0;
   --k-no-bg: #7f1d1d; --k-no-fg: #fecaca;
   --k-warn-bg: #713f12; --k-warn-fg: #fde68a;
@@ -68,6 +70,8 @@
 .k-coverage-ext th { color: var(--k-muted); font-weight: 600; font-size: 11px; text-transform: uppercase; letter-spacing: .03em; }
 .k-coverage-ext .k-method { font-weight: 700; font-size: 11px; padding: 2px 6px; border-radius: 4px; background: var(--k-method-bg); color: var(--k-method-fg); }
 .k-coverage-ext .k-reqid { font-weight: 700; font-size: 11px; padding: 2px 6px; border-radius: 4px; background: var(--k-reqid-bg); color: var(--k-reqid-fg); }
+.k-coverage-ext .k-rulebook { font-weight: 700; font-size: 11px; padding: 2px 6px; border-radius: 4px; background: var(--k-rulebook-bg); color: var(--k-rulebook-fg); text-transform: uppercase; letter-spacing: .03em; }
+.k-coverage-ext .k-proto { font-weight: 700; font-size: 11px; padding: 2px 6px; border-radius: 4px; background: var(--k-method-bg); color: var(--k-method-fg); text-transform: uppercase; letter-spacing: .03em; }   /* grpc/kafka protocol-kind badge (shares the method palette) */
 .k-coverage-ext .k-pill { font-size: 11px; padding: 1px 7px; border-radius: 999px; }
 .k-coverage-ext .k-ok { background: var(--k-ok-bg); color: var(--k-ok-fg); }
 .k-coverage-ext .k-no { background: var(--k-no-bg); color: var(--k-no-fg); }

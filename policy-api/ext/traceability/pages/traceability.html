@@ -58,6 +58,7 @@
         <div class="k-verdict-lbl">Confidence to ship</div>
         <div class="k-verdict-val" x-text="verdictWord()"></div>
         <div class="k-verdict-sub" x-text="readySub()"></div>
+        <a class="k-verdict-link" :href="coverageHref">See tested-depth &amp; gaps &rarr;</a>
       </div>
       <div class="k-riskcards">
         <template x-for="r in riskOrder" :key="r">
@@ -83,15 +84,6 @@
             <span class="k-unit" x-text="srcUnit(s)"></span>
           </div>
           <div class="k-bar"><span :style="'width:' + pct(s) + '%'"></span></div>
-          <!-- §2h/D67: combination coverage beside path/method % — the "100%-green" honesty fix (all
-               endpoints hit yet most required input combinations untested). Shown only when dimensioned. -->
-          <template x-if="s.combos">
-            <div class="k-combos" :title="comboTip(s)">
-              <span class="k-combobar"><span :class="comboBarClass(s)" :style="'width:' + comboPct(s) + '%'"></span></span>
-              <span class="k-combotxt"><strong x-text="comboPct(s) + '% combos'"></strong> &middot; <span x-text="s.combos.covered + '/' + s.combos.required"></span></span>
-              <span class="k-combomuted" x-show="s.combos.untested > 0" x-text="s.combos.untested + ' untested · ' + s.combos.suggested + ' suggested'"></span>
-            </div>
-          </template>
         </div>
       </template>
     </div>

@@ -69,3 +69,94 @@
 .k-coverage-ext .k-dimcellpct { font-size: 11.5px; color: var(--k-fg); font-variant-numeric: tabular-nums; }
 .k-coverage-ext .k-gapbadge { font-size: 10.5px; font-weight: 600; line-height: 1; background: var(--k-no-bg);
   color: var(--k-no-fg); padding: 2px 5px; border-radius: 8px; font-variant-numeric: tabular-nums; }
+
+/* Rule Coverage (MODEL §Glossary/§6) — each decision ARM is a coverable item (the analog of an API op),
+   listed with its status + fire count. Its own section below the RTM rows. Status badges: FIRED green,
+   NOT USED amber (reachable, add a scenario), NOT REACHED grey (dead OR analyzer-blind — honest, not a
+   "dead code" claim). */
+.k-coverage-ext .k-rulecov { margin-top: 24px; }
+.k-coverage-ext .k-rulecov > h2 { font-size: 15px; margin: 0 0 10px; }
+.k-coverage-ext .k-rulebk { border: 1px solid var(--k-border); border-radius: 8px; background: var(--k-card-bg); padding: 10px 14px; margin-bottom: 10px; }
+.k-coverage-ext .k-rulehd { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; font-size: 12.5px; margin-bottom: 4px; }
+.k-coverage-ext .k-rulehd .k-bar { width: 120px; height: 8px; margin-top: 0; flex: none; }
+.k-coverage-ext .k-rulehd .k-bar > span.k-ok { background: var(--k-ok-fg); }
+.k-coverage-ext .k-rulehd .k-bar > span.k-warn { background: var(--k-warn-fg); }
+.k-coverage-ext .k-rulehd .k-bar > span.k-no { background: var(--k-no-fg); }
+.k-coverage-ext .k-rulepct { font-variant-numeric: tabular-nums; color: var(--k-fg-strong); font-weight: 600; min-width: 34px; }
+.k-coverage-ext .k-notusedcount { font-size: 11px; font-weight: 600; line-height: 1; margin-left: auto;
+  background: var(--k-tag-bg); color: var(--k-muted); padding: 3px 8px; border-radius: 8px; }
+.k-coverage-ext .k-rulearms { margin-top: 6px; display: flex; flex-direction: column; gap: 2px; }
+.k-coverage-ext .k-rulearm { align-items: center; }
+/* status badges — fixed width so the rows align into a scannable column */
+.k-coverage-ext .k-rulearm .k-pill { font-weight: 700; font-size: 10px; letter-spacing: .04em; min-width: 92px; text-align: center; }
+.k-coverage-ext .k-pill.k-arm-used { background: var(--k-ok-bg, #e7f6ec); color: var(--k-ok-fg, #1a7f37); }
+.k-coverage-ext .k-pill.k-arm-notused { background: var(--k-warn-bg, #fdf6e3); color: var(--k-warn-fg, #8a6d00); }
+.k-coverage-ext .k-pill.k-arm-unreached { background: var(--k-tag-bg); color: var(--k-muted); }
+.k-coverage-ext .k-armname { color: var(--k-fg-strong); }
+.k-coverage-ext .k-armname.k-armsrc { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px; color: var(--k-fg); font-weight: 400; }
+.k-coverage-ext .k-armout { color: var(--k-faint); font-size: 11px; }
+.k-coverage-ext .k-armcount { color: var(--k-muted); font-size: 11.5px; font-variant-numeric: tabular-nums; }
+.k-coverage-ext .k-armreq { color: var(--k-muted); font-size: 12px; }
+
+/* ── the shared "?" info affordance (copies a help-id) ───────────────────────────────────────────── */
+.k-coverage-ext .k-info { cursor: pointer; color: var(--k-faint); font-size: 12px; user-select: none; }
+.k-coverage-ext .k-info:hover { color: var(--k-link, #2563eb); }
+
+/* ── Confidence-to-ship banner (Part 1) — the canonical readiness verdict, plain-language ────────── */
+.k-coverage-ext .k-shipbanner {
+  display: flex; flex-wrap: wrap; gap: 14px 24px; align-items: center; justify-content: space-between;
+  border: 1px solid var(--k-border); border-left-width: 5px; border-radius: 12px;
+  background: var(--k-card-bg); padding: 14px 18px; margin: 4px 0 16px;
+}
+.k-coverage-ext .k-shipbanner.k-sc-ready { border-left-color: var(--k-ok-fg); }
+.k-coverage-ext .k-shipbanner.k-sc-conditional { border-left-color: var(--k-warn-fg); }
+.k-coverage-ext .k-shipbanner.k-sc-block { border-left-color: var(--k-no-fg); }
+.k-coverage-ext .k-shiplbl { font-size: 10.5px; text-transform: uppercase; letter-spacing: .05em; color: var(--k-muted); }
+.k-coverage-ext .k-shipword { font-size: 21px; font-weight: 700; line-height: 1.15; margin: 1px 0 2px; }
+.k-coverage-ext .k-sc-ready .k-shipword { color: var(--k-ok-fg); }
+.k-coverage-ext .k-sc-conditional .k-shipword { color: var(--k-warn-fg); }
+.k-coverage-ext .k-sc-block .k-shipword { color: var(--k-no-fg); }
+.k-coverage-ext .k-shipsub { font-size: 12.5px; color: var(--k-fg); max-width: 52ch; }
+.k-coverage-ext .k-shipsplit { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.k-coverage-ext .k-shipcount { font-size: 11.5px; font-weight: 600; padding: 3px 9px; border-radius: 8px;
+  background: var(--k-tag-bg); color: var(--k-tag-fg); white-space: nowrap; }
+.k-coverage-ext .k-shipcount.k-ok { background: var(--k-ok-bg); color: var(--k-ok-fg); }
+.k-coverage-ext .k-shipcount.k-no { background: var(--k-no-bg); color: var(--k-no-fg); }
+.k-coverage-ext .k-shipcount.k-warn { background: var(--k-warn-bg); color: var(--k-warn-fg); }
+.k-coverage-ext .k-shipcount.k-sim { background: var(--k-sim-bg); color: var(--k-sim-fg); }
+.k-coverage-ext .k-shiplink { font-size: 12px; font-weight: 600; color: var(--k-link, #2563eb); text-decoration: none; white-space: nowrap; }
+.k-coverage-ext .k-shiplink:hover { text-decoration: underline; }
+.k-coverage-ext .k-shiphint { font-size: 11px; color: var(--k-faint); }
+
+/* ── Coverage scorecard (Part 2) — one card per axis, status-split segmented bar ──────────────────── */
+.k-coverage-ext .k-scorecards {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin: 4px 0 14px;
+}
+.k-coverage-ext .k-axiscard { border: 1px solid var(--k-border); border-radius: 10px; background: var(--k-card-bg); padding: 12px 14px; }
+.k-coverage-ext .k-axishd { display: flex; justify-content: space-between; align-items: baseline; gap: 6px; }
+.k-coverage-ext .k-axislabel { font-size: 13px; font-weight: 700; color: var(--k-fg-strong); }
+.k-coverage-ext .k-axisnum { font-size: 22px; font-weight: 700; color: var(--k-fg-strong); font-variant-numeric: tabular-nums; margin: 4px 0 6px; }
+.k-coverage-ext .k-axisden { font-size: 12px; font-weight: 400; color: var(--k-muted); }
+.k-coverage-ext .k-segbar { display: flex; height: 9px; border-radius: 5px; overflow: hidden; background: var(--k-tag-bg); gap: 1px; }
+.k-coverage-ext .k-seg { display: block; height: 100%; min-width: 2px; }
+.k-coverage-ext .k-seg-ok { background: var(--k-ok-fg); }
+.k-coverage-ext .k-seg-bad { background: var(--k-no-fg); }
+.k-coverage-ext .k-seg-none { background: var(--k-faint); opacity: .5; }
+.k-coverage-ext .k-seg-sim { background: var(--k-sim-fg); }
+.k-coverage-ext .k-axisask { font-size: 11.5px; color: var(--k-muted); margin-top: 7px; line-height: 1.35; }
+.k-coverage-ext .k-axisnote { font-size: 11px; color: var(--k-warn-fg); margin-top: 3px; }
+
+/* ── Input Coverage (Part 3) — each input VALUE a chip: tried ✓ / missed ✗ (with closing value) ───── */
+.k-coverage-ext .k-inputcov { margin-top: 24px; }
+.k-coverage-ext .k-inputcov > h2 { font-size: 15px; margin: 0 0 10px; display: flex; gap: 8px; align-items: baseline; }
+.k-coverage-ext .k-inpfields { margin-top: 6px; display: flex; flex-direction: column; gap: 6px; }
+.k-coverage-ext .k-inpfield { align-items: baseline; }
+.k-coverage-ext .k-inpname { min-width: 110px; font-weight: 600; color: var(--k-fg-strong); font-variant-numeric: tabular-nums; }
+.k-coverage-ext .k-inpchips { display: flex; flex-wrap: wrap; gap: 5px; align-items: baseline; }
+.k-coverage-ext .k-chip { display: inline-flex; align-items: center; gap: 3px; font-size: 11.5px;
+  padding: 1px 7px; border-radius: 10px; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.k-coverage-ext .k-chip-ok { background: var(--k-ok-bg); color: var(--k-ok-fg); }
+.k-coverage-ext .k-chip-miss { background: var(--k-warn-bg); color: var(--k-warn-fg); }
+.k-coverage-ext .k-chipglyph { font-weight: 700; font-size: 10px; }
+.k-coverage-ext .k-inpopen .k-inpname { color: var(--k-muted); font-weight: 400; }
+.k-coverage-ext .k-inpopen { opacity: .8; }
