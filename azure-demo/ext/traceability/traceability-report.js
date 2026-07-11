@@ -38,6 +38,9 @@ document.addEventListener('alpine:init', function () {
       get sources() { return this.graph.sources || []; },
       get repoUrl() { return this.data.repoUrl || ''; },
       get karateSummary() { return this.data.karateSummary || ''; },
+      // the relative href to the sibling Coverage page — context-dependent (in-run vs standalone layout),
+      // stamped by the Java bake so the report BODY stays identical across both shells (parity-locked).
+      get coverageHref() { return this.data.coverageHref || 'coverage-report.html'; },
 
       // a tiny, offline markdown renderer for requirement prose (EARS shall-statements: **bold**,
       // *italic*, `code`) — escapes HTML first (never inject), no CDN (airgap-safe, reporting.md note 1).
@@ -108,16 +111,8 @@ document.addEventListener('alpine:init', function () {
 
       // ---- the two differentiators (T3): the risk heatmap + eval-independence ----
       pct: function (s) { return Math.round((s && s.percentage) || 0); },
-      // §2h/D67: the per-source combination-coverage sub-stat baked onto each source by
-      // DimensionProjection.attachSourceRollup — the "100%-green" honesty fix (rendered, never re-graded).
-      comboPct: function (s) { var c = s && s.combos; return c && c.required ? Math.round(c.covered * 100 / c.required) : 0; },
-      comboBarClass: function (s) { var p = this.comboPct(s); return p >= 100 ? 'k-ok' : (p > 0 ? 'k-warn' : 'k-no'); },
-      comboTip: function (s) {
-        var c = s && s.combos;
-        if (!c) return '';
-        return c.covered + ' of ' + c.required + ' required combinations tested · '
-          + c.untested + ' untested · ' + c.suggested + ' suggested to test next';
-      },
+      // (the per-source combination sub-stat is retired from the RTM tile — that depth lives on the
+      // Coverage report's scorecard + Input Coverage, one click away via "See tested-depth & gaps", D181.)
       // the risk-matrix cell (mirrors RequirementReadiness.risk — the cells the engine uses)
       riskFor: function (c, s) {
         if (s === 'COVERED') return 'NONE';

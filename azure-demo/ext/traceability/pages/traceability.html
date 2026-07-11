@@ -32,12 +32,7 @@
   <link rel="stylesheet" href="../traceability-report.css">
 </head>
 <body>
-  <!-- back link in its own .k-coverage-ext wrapper so it picks up the muted .k-back style + the same
-       max-width/horizontal padding as the content below (alignment); kept OUTSIDE the x-data body so the
-       Alpine template stays byte-identical to the standalone page (TraceabilityPageParityTest). -->
-  <div class="k-coverage-ext" style="padding-top:14px;padding-bottom:0">
-    <a class="k-back" href="../../../karate-summary.html">&larr; Back to summary</a>
-  </div>
+  <div id="k-topnav"></div>
   <div class="k-coverage-ext" x-data="traceabilityReport" x-cloak>
     <div class="k-head">
       <div>
@@ -48,7 +43,6 @@
             onclick="kaCopyHelp('report.traceability')">?</button></div>
       </div>
       <div class="k-head-actions">
-        <a class="k-backlink" x-show="karateSummary" :href="karateSummary" title="Back to the karate test report">&#8592; Test report</a>
         <div class="k-viewtoggle" role="tablist">
           <button :class="view === 'matrix' && 'k-on'" @click="view = 'matrix'" role="tab">Matrix</button>
           <button :class="view === 'grid' && 'k-on'" @click="view = 'grid'" role="tab" title="The bidirectional requirement × test grid (T1)">Grid</button>
@@ -64,6 +58,7 @@
         <div class="k-verdict-lbl">Confidence to ship</div>
         <div class="k-verdict-val" x-text="verdictWord()"></div>
         <div class="k-verdict-sub" x-text="readySub()"></div>
+        <a class="k-verdict-link" :href="coverageHref">See tested-depth &amp; gaps &rarr;</a>
       </div>
       <div class="k-riskcards">
         <template x-for="r in riskOrder" :key="r">
@@ -89,15 +84,6 @@
             <span class="k-unit" x-text="srcUnit(s)"></span>
           </div>
           <div class="k-bar"><span :style="'width:' + pct(s) + '%'"></span></div>
-          <!-- §2h/D67: combination coverage beside path/method % — the "100%-green" honesty fix (all
-               endpoints hit yet most required input combinations untested). Shown only when dimensioned. -->
-          <template x-if="s.combos">
-            <div class="k-combos" :title="comboTip(s)">
-              <span class="k-combobar"><span :class="comboBarClass(s)" :style="'width:' + comboPct(s) + '%'"></span></span>
-              <span class="k-combotxt"><strong x-text="comboPct(s) + '% combos'"></strong> &middot; <span x-text="s.combos.covered + '/' + s.combos.required"></span></span>
-              <span class="k-combomuted" x-show="s.combos.untested > 0" x-text="s.combos.untested + ' untested · ' + s.combos.suggested + ' suggested'"></span>
-            </div>
-          </template>
         </div>
       </template>
     </div>
@@ -121,7 +107,7 @@
                 <template x-for="st in statuses" :key="st">
                   <td class="k-cell" :class="heatClass(cr, st)" @click="setFilter(cr, st)"
                       :title="cr + ' × ' + st + ' → ' + riskFor(cr, st) + ' risk'">
-                    <span x-text="heatCount(cr, st) || ''"></span>
+                    <span class="k-badge" x-text="heatCount(cr, st) || ''"></span>
                   </td>
                 </template>
               </tr>
@@ -444,5 +430,17 @@
   <script src="../traceability-report.js"></script>
   <script src="../help-affordance.js"></script>
   <script src="../../../res/alpine.min.js" defer></script>
+  <!-- shared report top-nav via the core KarateReport util — consistent bar, Traceability tab highlighted. -->
+  <script src="../../../res/karate-report.js"></script>
+  <script>
+    KarateReport.renderTopNav({
+      current: 'traceability',
+      summary: (window.KARATE_TRACE || {}).karateSummary,
+      tabs: [
+        { key: 'coverage', title: 'Coverage', href: '../../coverage/pages/coverage.html' },
+        { key: 'traceability', title: 'Traceability', href: 'traceability.html' }
+      ]
+    });
+  </script>
 </body>
 </html>

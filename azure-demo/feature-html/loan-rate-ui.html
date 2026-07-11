@@ -105,14 +105,7 @@
                 <svg x-show="theme === 'dark'" class="w-4 h-4"><use href="#icon-sun"/></svg>
             </button>
             <span class="hidden sm:inline-block w-px h-5 bg-slate-300 dark:bg-white/20"></span>
-            <a href="https://karatelabs.io/karate-enterprise?utm_source=karate-os&utm_medium=report&utm_campaign=enterprise-cta&utm_content=feature"
-               target="_blank" rel="noopener"
-               class="group inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-medium bg-accent text-white hover:bg-accent-dark transition-colors"
-               title="Karate Open Source vs Karate Enterprise — see what's included">
-                <svg class="w-3.5 h-3.5"><use href="#icon-sparkle"/></svg>
-                <span><span class="hidden md:inline">Try </span>Karate Enterprise</span>
-                <svg class="w-3 h-3 transition-transform group-hover:translate-x-0.5"><use href="#icon-arrow-right"/></svg>
-            </a>
+            <a href="https://karatelabs.io/agent" target="_blank" rel="noopener" title="Karate Agent" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-medium border border-slate-300 dark:border-white/20 text-slate-500 dark:text-white/60 hover:text-slate-800 dark:hover:text-white hover:border-slate-400 dark:hover:border-white/40 transition-colors"><svg class="w-4 h-4"><use href="#icon-sparkle"/></svg><span>Karate Agent</span></a>
         </div>
     </nav>
 
@@ -188,7 +181,8 @@
                         <span class="font-bold" x-text="scenario.refId"></span>
                         <span x-text="scenario.name"></span>
                         <template x-if="scenario.isOutlineExample">
-                            <span class="inline-block px-1.5 py-0.5 text-[0.65rem] rounded bg-accent text-white">Outline</span>
+                            <!-- outline (unfilled) style so it's clearly NOT an embed/kind badge (which are filled bg-accent) -->
+                            <span class="inline-block px-1.5 py-0.5 text-[0.65rem] rounded border border-slate-400 text-slate-500 dark:border-slate-500 dark:text-slate-400">Outline</span>
                         </template>
                         <template x-for="tag in scenario.tags || []" :key="tag">
                             <span class="inline-block px-1.5 py-0.5 text-[0.65rem] rounded bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300" x-text="tag"></span>
@@ -243,17 +237,17 @@
   "name": "Loan Desk UI agrees with the personal-loan rules, per scenario",
   "relativePath": "loan-rate-ui.feature",
   "passed": true,
-  "durationMillis": 34603,
-  "reportDate": "2026-07-03 05:30:10",
+  "durationMillis": 32778,
+  "reportDate": "2026-07-11 06:28:21",
   "karateVersion": "2.1.1.RC1",
   "scenarios": [
     {
       "name": "decline-low-score — credit score below 580 declines",
       "line": 12,
       "passed": true,
-      "durationMillis": 5237,
-      "startTime": 1783056610567,
-      "endTime": 1783056615804,
+      "durationMillis": 4892,
+      "startTime": 1783751301433,
+      "endTime": 1783751306325,
       "refId": "[1.1:12]",
       "sectionIndex": 1,
       "exampleIndex": 0,
@@ -267,7 +261,7 @@
           "text": "Check.run('drive-quote.js', __row)",
           "line": 10,
           "status": "passed",
-          "durationMillis": 5237,
+          "durationMillis": 4891,
           "hasLogs": false,
           "hasEmbeds": true,
           "embeds": [
@@ -369,9 +363,9 @@
       "name": "decline-high-dti — DTI over 50% declines",
       "line": 12,
       "passed": true,
-      "durationMillis": 4913,
-      "startTime": 1783056615806,
-      "endTime": 1783056620719,
+      "durationMillis": 4680,
+      "startTime": 1783751306328,
+      "endTime": 1783751311008,
       "refId": "[1.2:12]",
       "sectionIndex": 1,
       "exampleIndex": 1,
@@ -385,7 +379,7 @@
           "text": "Check.run('drive-quote.js', __row)",
           "line": 10,
           "status": "passed",
-          "durationMillis": 4911,
+          "durationMillis": 4679,
           "hasLogs": false,
           "hasEmbeds": true,
           "embeds": [
@@ -487,9 +481,9 @@
       "name": "review-score-band — score 580-669 routes to review",
       "line": 12,
       "passed": true,
-      "durationMillis": 4819,
-      "startTime": 1783056620720,
-      "endTime": 1783056625539,
+      "durationMillis": 4583,
+      "startTime": 1783751311010,
+      "endTime": 1783751315593,
       "refId": "[1.3:12]",
       "sectionIndex": 1,
       "exampleIndex": 2,
@@ -503,7 +497,7 @@
           "text": "Check.run('drive-quote.js', __row)",
           "line": 10,
           "status": "passed",
-          "durationMillis": 4818,
+          "durationMillis": 4583,
           "hasLogs": false,
           "hasEmbeds": true,
           "embeds": [
@@ -638,9 +632,9 @@
       "name": "review-dti-band — DTI 40-50% routes to review",
       "line": 12,
       "passed": true,
-      "durationMillis": 4817,
-      "startTime": 1783056625540,
-      "endTime": 1783056630357,
+      "durationMillis": 4613,
+      "startTime": 1783751315594,
+      "endTime": 1783751320207,
       "refId": "[1.4:12]",
       "sectionIndex": 1,
       "exampleIndex": 3,
@@ -654,7 +648,7 @@
           "text": "Check.run('drive-quote.js', __row)",
           "line": 10,
           "status": "passed",
-          "durationMillis": 4817,
+          "durationMillis": 4612,
           "hasLogs": false,
           "hasEmbeds": true,
           "embeds": [
@@ -789,9 +783,9 @@
       "name": "approve-prime — prime, low DTI, auto-approves at 6.5%",
       "line": 12,
       "passed": true,
-      "durationMillis": 4842,
-      "startTime": 1783056630359,
-      "endTime": 1783056635201,
+      "durationMillis": 4582,
+      "startTime": 1783751320208,
+      "endTime": 1783751324790,
       "refId": "[1.5:12]",
       "sectionIndex": 1,
       "exampleIndex": 4,
@@ -805,7 +799,7 @@
           "text": "Check.run('drive-quote.js', __row)",
           "line": 10,
           "status": "passed",
-          "durationMillis": 4842,
+          "durationMillis": 4581,
           "hasLogs": false,
           "hasEmbeds": true,
           "embeds": [
@@ -940,9 +934,9 @@
       "name": "approve-midband — 660-719 band, low DTI, auto-approve at 9.9%",
       "line": 12,
       "passed": true,
-      "durationMillis": 4817,
-      "startTime": 1783056635202,
-      "endTime": 1783056640019,
+      "durationMillis": 4566,
+      "startTime": 1783751324791,
+      "endTime": 1783751329357,
       "refId": "[1.6:12]",
       "sectionIndex": 1,
       "exampleIndex": 5,
@@ -956,7 +950,7 @@
           "text": "Check.run('drive-quote.js', __row)",
           "line": 10,
           "status": "passed",
-          "durationMillis": 4815,
+          "durationMillis": 4565,
           "hasLogs": false,
           "hasEmbeds": true,
           "embeds": [
@@ -1091,9 +1085,9 @@
       "name": "approve-loyalty — existing customer loyalty discount",
       "line": 12,
       "passed": true,
-      "durationMillis": 5147,
-      "startTime": 1783056640020,
-      "endTime": 1783056645167,
+      "durationMillis": 4850,
+      "startTime": 1783751329358,
+      "endTime": 1783751334208,
       "refId": "[1.7:12]",
       "sectionIndex": 1,
       "exampleIndex": 6,
@@ -1107,7 +1101,7 @@
           "text": "Check.run('drive-quote.js', __row)",
           "line": 10,
           "status": "passed",
-          "durationMillis": 5147,
+          "durationMillis": 4849,
           "hasLogs": false,
           "hasEmbeds": true,
           "embeds": [

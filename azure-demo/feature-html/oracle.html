@@ -105,14 +105,7 @@
                 <svg x-show="theme === 'dark'" class="w-4 h-4"><use href="#icon-sun"/></svg>
             </button>
             <span class="hidden sm:inline-block w-px h-5 bg-slate-300 dark:bg-white/20"></span>
-            <a href="https://karatelabs.io/karate-enterprise?utm_source=karate-os&utm_medium=report&utm_campaign=enterprise-cta&utm_content=feature"
-               target="_blank" rel="noopener"
-               class="group inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-medium bg-accent text-white hover:bg-accent-dark transition-colors"
-               title="Karate Open Source vs Karate Enterprise — see what's included">
-                <svg class="w-3.5 h-3.5"><use href="#icon-sparkle"/></svg>
-                <span><span class="hidden md:inline">Try </span>Karate Enterprise</span>
-                <svg class="w-3 h-3 transition-transform group-hover:translate-x-0.5"><use href="#icon-arrow-right"/></svg>
-            </a>
+            <a href="https://karatelabs.io/agent" target="_blank" rel="noopener" title="Karate Agent" class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded text-xs font-medium border border-slate-300 dark:border-white/20 text-slate-500 dark:text-white/60 hover:text-slate-800 dark:hover:text-white hover:border-slate-400 dark:hover:border-white/40 transition-colors"><svg class="w-4 h-4"><use href="#icon-sparkle"/></svg><span>Karate Agent</span></a>
         </div>
     </nav>
 
@@ -188,7 +181,8 @@
                         <span class="font-bold" x-text="scenario.refId"></span>
                         <span x-text="scenario.name"></span>
                         <template x-if="scenario.isOutlineExample">
-                            <span class="inline-block px-1.5 py-0.5 text-[0.65rem] rounded bg-accent text-white">Outline</span>
+                            <!-- outline (unfilled) style so it's clearly NOT an embed/kind badge (which are filled bg-accent) -->
+                            <span class="inline-block px-1.5 py-0.5 text-[0.65rem] rounded border border-slate-400 text-slate-500 dark:border-slate-500 dark:text-slate-400">Outline</span>
                         </template>
                         <template x-for="tag in scenario.tags || []" :key="tag">
                             <span class="inline-block px-1.5 py-0.5 text-[0.65rem] rounded bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300" x-text="tag"></span>
@@ -243,8 +237,8 @@
   "name": "Loan Desk rules oracle — headless (the CI-safe pipeline stage)",
   "relativePath": "oracle.feature",
   "passed": true,
-  "durationMillis": 195,
-  "reportDate": "2026-07-03 05:30:09",
+  "durationMillis": 187,
+  "reportDate": "2026-07-11 06:28:20",
   "karateVersion": "2.1.1.RC1",
   "scenarios": [
     {
@@ -252,8 +246,8 @@
       "line": 32,
       "passed": true,
       "durationMillis": 62,
-      "startTime": 1783056609939,
-      "endTime": 1783056610001,
+      "startTime": 1783751300842,
+      "endTime": 1783751300904,
       "refId": "[1.1:32]",
       "sectionIndex": 1,
       "exampleIndex": 0,
@@ -267,7 +261,7 @@
           "text": "expected =",
           "line": 13,
           "status": "passed",
-          "durationMillis": 8,
+          "durationMillis": 6,
           "hasLogs": false,
           "hasEmbeds": false,
           "hasCallResults": false
@@ -278,7 +272,7 @@
           "text": "result = Rule.execute('personal-loan', __row).output",
           "line": 27,
           "status": "passed",
-          "durationMillis": 47,
+          "durationMillis": 49,
           "hasLogs": false,
           "hasEmbeds": true,
           "embeds": [
@@ -322,7 +316,7 @@
           "text": "result.decision == exp.decision",
           "line": 29,
           "status": "passed",
-          "durationMillis": 3,
+          "durationMillis": 4,
           "hasLogs": false,
           "hasEmbeds": false,
           "hasCallResults": false
@@ -345,8 +339,8 @@
       "line": 32,
       "passed": true,
       "durationMillis": 14,
-      "startTime": 1783056610005,
-      "endTime": 1783056610019,
+      "startTime": 1783751300908,
+      "endTime": 1783751300922,
       "refId": "[1.2:32]",
       "sectionIndex": 1,
       "exampleIndex": 1,
@@ -371,7 +365,7 @@
           "text": "result = Rule.execute('personal-loan', __row).output",
           "line": 27,
           "status": "passed",
-          "durationMillis": 12,
+          "durationMillis": 13,
           "hasLogs": false,
           "hasEmbeds": true,
           "embeds": [
@@ -437,9 +431,9 @@
       "name": "review-score-band — score 580-669 routes to review",
       "line": 32,
       "passed": true,
-      "durationMillis": 12,
-      "startTime": 1783056610021,
-      "endTime": 1783056610033,
+      "durationMillis": 13,
+      "startTime": 1783751300924,
+      "endTime": 1783751300937,
       "refId": "[1.3:32]",
       "sectionIndex": 1,
       "exampleIndex": 2,
@@ -464,7 +458,7 @@
           "text": "result = Rule.execute('personal-loan', __row).output",
           "line": 27,
           "status": "passed",
-          "durationMillis": 11,
+          "durationMillis": 12,
           "hasLogs": false,
           "hasEmbeds": true,
           "embeds": [
@@ -540,9 +534,9 @@
       "name": "review-dti-band — DTI 40-50% routes to review",
       "line": 32,
       "passed": true,
-      "durationMillis": 11,
-      "startTime": 1783056610036,
-      "endTime": 1783056610047,
+      "durationMillis": 10,
+      "startTime": 1783751300939,
+      "endTime": 1783751300949,
       "refId": "[1.4:32]",
       "sectionIndex": 1,
       "exampleIndex": 3,
@@ -644,8 +638,8 @@
       "line": 32,
       "passed": true,
       "durationMillis": 10,
-      "startTime": 1783056610049,
-      "endTime": 1783056610059,
+      "startTime": 1783751300951,
+      "endTime": 1783751300961,
       "refId": "[1.5:32]",
       "sectionIndex": 1,
       "exampleIndex": 4,
@@ -746,9 +740,9 @@
       "name": "approve-midband — 660-719 band, low DTI, auto-approve at 9.9%",
       "line": 32,
       "passed": true,
-      "durationMillis": 10,
-      "startTime": 1783056610061,
-      "endTime": 1783056610071,
+      "durationMillis": 13,
+      "startTime": 1783751300962,
+      "endTime": 1783751300975,
       "refId": "[1.6:32]",
       "sectionIndex": 1,
       "exampleIndex": 5,
@@ -773,7 +767,7 @@
           "text": "result = Rule.execute('personal-loan', __row).output",
           "line": 27,
           "status": "passed",
-          "durationMillis": 8,
+          "durationMillis": 9,
           "hasLogs": false,
           "hasEmbeds": true,
           "embeds": [
@@ -838,7 +832,7 @@
           "text": "result.apr == exp.apr",
           "line": 30,
           "status": "passed",
-          "durationMillis": 0,
+          "durationMillis": 2,
           "hasLogs": false,
           "hasEmbeds": false,
           "hasCallResults": false
@@ -849,9 +843,9 @@
       "name": "approve-loyalty — existing customer loyalty discount",
       "line": 32,
       "passed": true,
-      "durationMillis": 8,
-      "startTime": 1783056610073,
-      "endTime": 1783056610081,
+      "durationMillis": 10,
+      "startTime": 1783751300977,
+      "endTime": 1783751300987,
       "refId": "[1.7:32]",
       "sectionIndex": 1,
       "exampleIndex": 6,
@@ -876,7 +870,7 @@
           "text": "result = Rule.execute('personal-loan', __row).output",
           "line": 27,
           "status": "passed",
-          "durationMillis": 7,
+          "durationMillis": 8,
           "hasLogs": false,
           "hasEmbeds": true,
           "embeds": [

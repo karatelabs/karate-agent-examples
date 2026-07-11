@@ -59,6 +59,9 @@
 .k-coverage-ext .k-sc-conditional .k-verdict-val { color: var(--k-warn-fg); }
 .k-coverage-ext .k-sc-block .k-verdict-val { color: var(--k-no-fg); }
 .k-coverage-ext .k-verdict-sub { font-size: 13px; color: var(--k-muted); }
+.k-coverage-ext .k-verdict-link { display: inline-block; margin-top: 6px; font-size: 12px; font-weight: 600;
+  color: var(--k-link, #2563eb); text-decoration: none; }
+.k-coverage-ext .k-verdict-link:hover { text-decoration: underline; }
 .k-coverage-ext .k-riskcards { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
 .k-coverage-ext .k-riskcard {
   min-width: 78px; text-align: center; border-radius: 10px; padding: 8px 12px;
@@ -86,15 +89,27 @@
 .k-coverage-ext table.k-heat { width: 100%; border-collapse: separate; border-spacing: 4px; }
 .k-coverage-ext .k-heat th { color: var(--k-muted); font-weight: 600; font-size: 10.5px; text-transform: uppercase; letter-spacing: .02em; padding: 2px 4px; border: 0; text-align: center; }
 .k-coverage-ext .k-heat tbody th { text-align: right; }
-.k-coverage-ext .k-heat td.k-cell {
-  text-align: center; font-weight: 700; font-size: 14px; padding: 10px 0; border-radius: 8px; cursor: pointer; border: 0;
+/* The coloured badge lives on an inner .k-badge (fixed height, rounded), NOT the <td>: a uniform grid
+   where colour is spent only on populated cells and 0-count cells recede to faint neutral. */
+/* The cell reuses coverage.css risk classes (k-ok/k-no/k-warn/k-tag), so the GENERIC coverage.css
+   rules for those classes leak onto this td. Two leaks, both reset here so only the .k-badge styles:
+   (1) `.k-ok/.k-no/.k-warn { background }` would paint the td and bleed through a semi-transparent
+   (empty) badge → `background: none`; (2) `.k-tag` is a PILL (`display:inline-block; margin; padding`)
+   — LOW risk maps to k-tag, so without `display: table-cell; margin: 0` those LOW-row cells collapse
+   out of the table (missing cells + stray spacing). */
+.k-coverage-ext .k-heat td.k-cell { display: table-cell; margin: 0; padding: 0; border: 0; background: none; cursor: pointer; vertical-align: middle; }
+.k-coverage-ext .k-heat td.k-cell .k-badge {
+  display: flex; align-items: center; justify-content: center;
+  height: 30px; border-radius: 8px; text-align: center; font-weight: 700; font-size: 14px;
 }
-.k-coverage-ext .k-heat td.k-cell.k-ok { background: var(--k-ok-bg); color: var(--k-ok-fg); }
-.k-coverage-ext .k-heat td.k-cell.k-warn { background: var(--k-warn-bg); color: var(--k-warn-fg); }
-.k-coverage-ext .k-heat td.k-cell.k-no { background: var(--k-no-bg); color: var(--k-no-fg); }
-.k-coverage-ext .k-heat td.k-cell.k-tag { background: var(--k-tag-bg); color: var(--k-tag-fg); }
-.k-coverage-ext .k-heat td.k-cell.k-cell-empty { opacity: .4; }
-.k-coverage-ext .k-heat td.k-cell:hover { outline: 2px solid var(--k-faint); }
+.k-coverage-ext .k-heat td.k-cell.k-ok .k-badge { background: var(--k-ok-bg); color: var(--k-ok-fg); }
+.k-coverage-ext .k-heat td.k-cell.k-warn .k-badge { background: var(--k-warn-bg); color: var(--k-warn-fg); }
+.k-coverage-ext .k-heat td.k-cell.k-no .k-badge { background: var(--k-no-bg); color: var(--k-no-fg); }
+.k-coverage-ext .k-heat td.k-cell.k-tag .k-badge { background: var(--k-tag-bg); color: var(--k-tag-fg); }
+/* 0-count cell: uniform size (fixed height on the flex badge — independent of content/padding), but
+   recede to faint NEUTRAL so strong risk colour is spent only on cells that hold a real requirement. */
+.k-coverage-ext .k-heat td.k-cell.k-cell-empty .k-badge { background: var(--k-border); opacity: .4; }
+.k-coverage-ext .k-heat td.k-cell:hover .k-badge { outline: 2px solid var(--k-faint); }
 
 /* eval-independence breakdown + trust gaps */
 .k-coverage-ext .k-provbars { display: flex; gap: 8px; flex-wrap: wrap; }
@@ -222,7 +237,7 @@
 .k-coverage-ext td.k-grid-cell.k-warn { background: var(--k-warn-bg); color: var(--k-warn-fg); }
 /* SIMULATED (D120) — indigo "simulation" pill/cell, distinct from COVERED green */
 .k-coverage-ext .k-pill.k-sim,
-.k-coverage-ext .k-heat td.k-cell.k-sim,
+.k-coverage-ext .k-heat td.k-cell.k-sim .k-badge,
 .k-coverage-ext td.k-grid-cell.k-sim { background: var(--k-sim-bg); color: var(--k-sim-fg); }
 
 /* T2: the gaps & drift worklist (rides the k-blockers panel styling) */
