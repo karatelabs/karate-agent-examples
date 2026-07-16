@@ -63,10 +63,9 @@ claude mcp add --transport http karate http://localhost:4444/api/mcp
 { "mcpServers": { "karate": { "url": "http://localhost:4444/api/mcp" } } }
 ```
 
-```toml
-# OpenAI Codex CLI — ~/.codex/config.toml (Codex does not read .mcp.json; its MCP config is global)
-[mcp_servers.karate]
-url = "http://localhost:4444/api/mcp"
+```bash
+# OpenAI Codex CLI (writes the global ~/.codex/config.toml — Codex does not read .mcp.json):
+codex mcp add karate --url http://localhost:4444/api/mcp
 ```
 
 (The kit's `.mcp.json` is a Claude Code convenience — it auto-connects only that client when the
