@@ -6,8 +6,9 @@
     <link rel="stylesheet" href="../res/karate-report.css"/>
     <link rel="stylesheet" href="../res/prism-karate.css"/>
     <link rel="icon" href="../res/favicon.ico"/>
-    <!-- data-manual: content is injected by Alpine after load, so we highlight on
-         insert via KarateReport._highlightCode rather than Prism's auto-run. -->
+    <!-- data-manual: content is injected by Alpine after load, and we highlight code
+         blocks lazily on-view (KarateReport._observeCode) rather than Prism's auto-run,
+         so collapsed/off-screen HTTP bodies aren't tokenized until actually shown. -->
     <script src="../res/prism.min.js" data-manual></script>
     <script src="../res/alpine.min.js" defer></script>
     <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('karate-theme') || 'light');</script>
@@ -237,17 +238,17 @@
   "name": "rating acceptance — the saved scenarios, LIVE against the /quotes API (the RTM spine)",
   "relativePath": "checks/rating-acceptance.feature",
   "passed": true,
-  "durationMillis": 586,
-  "reportDate": "2026-07-13 06:59:24",
-  "karateVersion": "2.1.1.RC1",
+  "durationMillis": 555,
+  "reportDate": "2026-07-16 06:19:57",
+  "karateVersion": "2.1.2.RC1",
   "scenarios": [
     {
       "name": "young-collision-ca — young driver, collision, California — the young-driver loading fires",
       "line": 37,
       "passed": true,
-      "durationMillis": 385,
-      "startTime": 1783925964292,
-      "endTime": 1783925964677,
+      "durationMillis": 341,
+      "startTime": 1784182797409,
+      "endTime": 1784182797750,
       "refId": "[1.1:37]",
       "sectionIndex": 1,
       "exampleIndex": 0,
@@ -272,7 +273,7 @@
           "text": "check = Rule.execute('rating', __row)",
           "line": 24,
           "status": "passed",
-          "durationMillis": 23,
+          "durationMillis": 25,
           "hasLogs": false,
           "hasEmbeds": true,
           "embeds": [
@@ -330,7 +331,7 @@
           "text": "{ state: '#(__row.state)', coverage: '#(__row.coverage)', driverAge: '#(__row.driverAge)', priorClaims: '#(__row.priorClaims)' }",
           "line": 28,
           "status": "passed",
-          "durationMillis": 8,
+          "durationMillis": 6,
           "hasLogs": false,
           "hasEmbeds": false,
           "hasCallResults": false
@@ -341,25 +342,25 @@
           "text": "post",
           "line": 29,
           "status": "passed",
-          "durationMillis": 345,
+          "durationMillis": 302,
           "hasLogs": true,
           "logSegments": [
             {
-              "text": "request:\n1 > POST http://localhost:37165/quotes\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:37165\n1 > Content-Length: 72\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.1 (Java/21.0.11)\n"
+              "text": "request:\n1 > POST http://localhost:34025/quotes\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:34025\n1 > Content-Length: 72\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.11)\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"state\": \"CA\",\n  \"coverage\": \"COLLISION\",\n  \"driverAge\": 22,\n  \"priorClaims\": false\n}"
             },
             {
-              "text": "\n\nresponse time in milliseconds: 136\n1 < 201 POST http://localhost:37165/quotes\n1 < content-length: 81\n1 < Content-Type: application/json; charset=UTF-8\n"
+              "text": "\n\nresponse time in milliseconds: 118\n1 < 201 POST http://localhost:34025/quotes\n1 < content-length: 81\n1 < Content-Type: application/json; charset=UTF-8\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"id\": \"#(uuid())\",\n  \"policyClass\": \"STANDARD\",\n  \"monthlyPremium\": 140,\n  \"currency\": \"USD\"\n}"
             },
             {
-              "text": "\n\nPOST http://localhost:37165/quotes\n201 (136 ms)\n"
+              "text": "\n\nPOST http://localhost:34025/quotes\n201 (118 ms)\n"
             }
           ],
           "hasEmbeds": true,
@@ -370,7 +371,7 @@
                 {
                   "role": "primary",
                   "mime": "application/json",
-                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcXVvdGVzIiwicGF0aCI6Ii9xdW90ZXMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjM3MTY1Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjcyIl0sIkNvbm5lY3Rpb24iOlsia2VlcC1hbGl2ZSJdLCJVc2VyLUFnZW50IjpbIkFwYWNoZS1IdHRwQ2xpZW50LzUuNi4xIChKYXZhLzIxLjAuMTEpIl19LCJ1cmxCYXNlIjoiaHR0cDovL2xvY2FsaG9zdDozNzE2NSIsIm1ldGhvZCI6IlBPU1QiLCJwYXJhbXMiOnt9LCJib2R5Ijp7InN0YXRlIjoiQ0EiLCJjb3ZlcmFnZSI6IkNPTExJU0lPTiIsImRyaXZlckFnZSI6MjIsInByaW9yQ2xhaW1zIjpmYWxzZX0sInVybCI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzcxNjUvcXVvdGVzIn0sInJlc3BvbnNlIjp7ImhlYWRlcnMiOnsiY29udGVudC1sZW5ndGgiOlsiODEiXSwiQ29udGVudC1UeXBlIjpbImFwcGxpY2F0aW9uL2pzb247IGNoYXJzZXQ9VVRGLTgiXX0sInJlc3BvbnNlVGltZSI6MTM2LCJjb250ZW50TGVuZ3RoIjo4MSwiYm9keSI6eyJpZCI6IiModXVpZCgpKSIsInBvbGljeUNsYXNzIjoiU1RBTkRBUkQiLCJtb250aGx5UHJlbWl1bSI6MTQwLCJjdXJyZW5jeSI6IlVTRCJ9LCJzdGF0dXMiOjIwMX19"
+                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcXVvdGVzIiwicGF0aCI6Ii9xdW90ZXMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjM0MDI1Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjcyIl0sIkNvbm5lY3Rpb24iOlsia2VlcC1hbGl2ZSJdLCJVc2VyLUFnZW50IjpbIkFwYWNoZS1IdHRwQ2xpZW50LzUuNi4yIChKYXZhLzIxLjAuMTEpIl19LCJ1cmxCYXNlIjoiaHR0cDovL2xvY2FsaG9zdDozNDAyNSIsIm1ldGhvZCI6IlBPU1QiLCJwYXJhbXMiOnt9LCJib2R5Ijp7InN0YXRlIjoiQ0EiLCJjb3ZlcmFnZSI6IkNPTExJU0lPTiIsImRyaXZlckFnZSI6MjIsInByaW9yQ2xhaW1zIjpmYWxzZX0sInVybCI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzQwMjUvcXVvdGVzIn0sInJlc3BvbnNlIjp7ImhlYWRlcnMiOnsiY29udGVudC1sZW5ndGgiOlsiODEiXSwiQ29udGVudC1UeXBlIjpbImFwcGxpY2F0aW9uL2pzb247IGNoYXJzZXQ9VVRGLTgiXX0sInJlc3BvbnNlVGltZSI6MTE4LCJjb250ZW50TGVuZ3RoIjo4MSwiYm9keSI6eyJpZCI6IiModXVpZCgpKSIsInBvbGljeUNsYXNzIjoiU1RBTkRBUkQiLCJtb250aGx5UHJlbWl1bSI6MTQwLCJjdXJyZW5jeSI6IlVTRCJ9LCJzdGF0dXMiOjIwMX19"
                 }
               ]
             }
@@ -446,8 +447,8 @@
       "line": 37,
       "passed": true,
       "durationMillis": 20,
-      "startTime": 1783925964681,
-      "endTime": 1783925964701,
+      "startTime": 1784182797754,
+      "endTime": 1784182797774,
       "refId": "[1.2:37]",
       "sectionIndex": 1,
       "exampleIndex": 1,
@@ -541,25 +542,25 @@
           "text": "post",
           "line": 29,
           "status": "passed",
-          "durationMillis": 8,
+          "durationMillis": 9,
           "hasLogs": true,
           "logSegments": [
             {
-              "text": "request:\n1 > POST http://localhost:37165/quotes\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:37165\n1 > Content-Length: 75\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.1 (Java/21.0.11)\n"
+              "text": "request:\n1 > POST http://localhost:34025/quotes\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:34025\n1 > Content-Length: 75\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.11)\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"state\": \"NY\",\n  \"coverage\": \"COMPREHENSIVE\",\n  \"driverAge\": 45,\n  \"priorClaims\": true\n}"
             },
             {
-              "text": "\n\nresponse time in milliseconds: 5\n1 < 201 POST http://localhost:37165/quotes\n1 < content-length: 84\n1 < Content-Type: application/json; charset=UTF-8\n"
+              "text": "\n\nresponse time in milliseconds: 5\n1 < 201 POST http://localhost:34025/quotes\n1 < content-length: 84\n1 < Content-Type: application/json; charset=UTF-8\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"id\": \"#(uuid())\",\n  \"policyClass\": \"SUBSTANDARD\",\n  \"monthlyPremium\": 190,\n  \"currency\": \"USD\"\n}"
             },
             {
-              "text": "\n\nPOST http://localhost:37165/quotes\n201 (5 ms)\n"
+              "text": "\n\nPOST http://localhost:34025/quotes\n201 (5 ms)\n"
             }
           ],
           "hasEmbeds": true,
@@ -570,7 +571,7 @@
                 {
                   "role": "primary",
                   "mime": "application/json",
-                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcXVvdGVzIiwicGF0aCI6Ii9xdW90ZXMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjM3MTY1Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjc1Il0sIkNvbm5lY3Rpb24iOlsia2VlcC1hbGl2ZSJdLCJVc2VyLUFnZW50IjpbIkFwYWNoZS1IdHRwQ2xpZW50LzUuNi4xIChKYXZhLzIxLjAuMTEpIl19LCJ1cmxCYXNlIjoiaHR0cDovL2xvY2FsaG9zdDozNzE2NSIsIm1ldGhvZCI6IlBPU1QiLCJwYXJhbXMiOnt9LCJib2R5Ijp7InN0YXRlIjoiTlkiLCJjb3ZlcmFnZSI6IkNPTVBSRUhFTlNJVkUiLCJkcml2ZXJBZ2UiOjQ1LCJwcmlvckNsYWltcyI6dHJ1ZX0sInVybCI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzcxNjUvcXVvdGVzIn0sInJlc3BvbnNlIjp7ImhlYWRlcnMiOnsiY29udGVudC1sZW5ndGgiOlsiODQiXSwiQ29udGVudC1UeXBlIjpbImFwcGxpY2F0aW9uL2pzb247IGNoYXJzZXQ9VVRGLTgiXX0sInJlc3BvbnNlVGltZSI6NSwiY29udGVudExlbmd0aCI6ODQsImJvZHkiOnsiaWQiOiIjKHV1aWQoKSkiLCJwb2xpY3lDbGFzcyI6IlNVQlNUQU5EQVJEIiwibW9udGhseVByZW1pdW0iOjE5MCwiY3VycmVuY3kiOiJVU0QifSwic3RhdHVzIjoyMDF9fQ=="
+                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcXVvdGVzIiwicGF0aCI6Ii9xdW90ZXMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjM0MDI1Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjc1Il0sIkNvbm5lY3Rpb24iOlsia2VlcC1hbGl2ZSJdLCJVc2VyLUFnZW50IjpbIkFwYWNoZS1IdHRwQ2xpZW50LzUuNi4yIChKYXZhLzIxLjAuMTEpIl19LCJ1cmxCYXNlIjoiaHR0cDovL2xvY2FsaG9zdDozNDAyNSIsIm1ldGhvZCI6IlBPU1QiLCJwYXJhbXMiOnt9LCJib2R5Ijp7InN0YXRlIjoiTlkiLCJjb3ZlcmFnZSI6IkNPTVBSRUhFTlNJVkUiLCJkcml2ZXJBZ2UiOjQ1LCJwcmlvckNsYWltcyI6dHJ1ZX0sInVybCI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzQwMjUvcXVvdGVzIn0sInJlc3BvbnNlIjp7ImhlYWRlcnMiOnsiY29udGVudC1sZW5ndGgiOlsiODQiXSwiQ29udGVudC1UeXBlIjpbImFwcGxpY2F0aW9uL2pzb247IGNoYXJzZXQ9VVRGLTgiXX0sInJlc3BvbnNlVGltZSI6NSwiY29udGVudExlbmd0aCI6ODQsImJvZHkiOnsiaWQiOiIjKHV1aWQoKSkiLCJwb2xpY3lDbGFzcyI6IlNVQlNUQU5EQVJEIiwibW9udGhseVByZW1pdW0iOjE5MCwiY3VycmVuY3kiOiJVU0QifSwic3RhdHVzIjoyMDF9fQ=="
                 }
               ]
             }
@@ -645,9 +646,9 @@
       "name": "clean-liability-tx — adult, clean record, liability, Texas — the base case, no loadings",
       "line": 37,
       "passed": true,
-      "durationMillis": 21,
-      "startTime": 1783925964703,
-      "endTime": 1783925964724,
+      "durationMillis": 15,
+      "startTime": 1784182797776,
+      "endTime": 1784182797791,
       "refId": "[1.3:37]",
       "sectionIndex": 1,
       "exampleIndex": 2,
@@ -672,7 +673,7 @@
           "text": "check = Rule.execute('rating', __row)",
           "line": 24,
           "status": "passed",
-          "durationMillis": 7,
+          "durationMillis": 6,
           "hasLogs": false,
           "hasEmbeds": true,
           "embeds": [
@@ -731,25 +732,25 @@
           "text": "post",
           "line": 29,
           "status": "passed",
-          "durationMillis": 11,
+          "durationMillis": 7,
           "hasLogs": true,
           "logSegments": [
             {
-              "text": "request:\n1 > POST http://localhost:37165/quotes\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:37165\n1 > Content-Length: 72\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.1 (Java/21.0.11)\n"
+              "text": "request:\n1 > POST http://localhost:34025/quotes\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:34025\n1 > Content-Length: 72\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.11)\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"state\": \"TX\",\n  \"coverage\": \"LIABILITY\",\n  \"driverAge\": 60,\n  \"priorClaims\": false\n}"
             },
             {
-              "text": "\n\nresponse time in milliseconds: 5\n1 < 201 POST http://localhost:37165/quotes\n1 < content-length: 81\n1 < Content-Type: application/json; charset=UTF-8\n"
+              "text": "\n\nresponse time in milliseconds: 5\n1 < 201 POST http://localhost:34025/quotes\n1 < content-length: 81\n1 < Content-Type: application/json; charset=UTF-8\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"id\": \"#(uuid())\",\n  \"policyClass\": \"PREFERRED\",\n  \"monthlyPremium\": 50,\n  \"currency\": \"USD\"\n}"
             },
             {
-              "text": "\n\nPOST http://localhost:37165/quotes\n201 (5 ms)\n"
+              "text": "\n\nPOST http://localhost:34025/quotes\n201 (5 ms)\n"
             }
           ],
           "hasEmbeds": true,
@@ -760,7 +761,7 @@
                 {
                   "role": "primary",
                   "mime": "application/json",
-                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcXVvdGVzIiwicGF0aCI6Ii9xdW90ZXMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjM3MTY1Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjcyIl0sIkNvbm5lY3Rpb24iOlsia2VlcC1hbGl2ZSJdLCJVc2VyLUFnZW50IjpbIkFwYWNoZS1IdHRwQ2xpZW50LzUuNi4xIChKYXZhLzIxLjAuMTEpIl19LCJ1cmxCYXNlIjoiaHR0cDovL2xvY2FsaG9zdDozNzE2NSIsIm1ldGhvZCI6IlBPU1QiLCJwYXJhbXMiOnt9LCJib2R5Ijp7InN0YXRlIjoiVFgiLCJjb3ZlcmFnZSI6IkxJQUJJTElUWSIsImRyaXZlckFnZSI6NjAsInByaW9yQ2xhaW1zIjpmYWxzZX0sInVybCI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzcxNjUvcXVvdGVzIn0sInJlc3BvbnNlIjp7ImhlYWRlcnMiOnsiY29udGVudC1sZW5ndGgiOlsiODEiXSwiQ29udGVudC1UeXBlIjpbImFwcGxpY2F0aW9uL2pzb247IGNoYXJzZXQ9VVRGLTgiXX0sInJlc3BvbnNlVGltZSI6NSwiY29udGVudExlbmd0aCI6ODEsImJvZHkiOnsiaWQiOiIjKHV1aWQoKSkiLCJwb2xpY3lDbGFzcyI6IlBSRUZFUlJFRCIsIm1vbnRobHlQcmVtaXVtIjo1MCwiY3VycmVuY3kiOiJVU0QifSwic3RhdHVzIjoyMDF9fQ=="
+                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcXVvdGVzIiwicGF0aCI6Ii9xdW90ZXMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjM0MDI1Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjcyIl0sIkNvbm5lY3Rpb24iOlsia2VlcC1hbGl2ZSJdLCJVc2VyLUFnZW50IjpbIkFwYWNoZS1IdHRwQ2xpZW50LzUuNi4yIChKYXZhLzIxLjAuMTEpIl19LCJ1cmxCYXNlIjoiaHR0cDovL2xvY2FsaG9zdDozNDAyNSIsIm1ldGhvZCI6IlBPU1QiLCJwYXJhbXMiOnt9LCJib2R5Ijp7InN0YXRlIjoiVFgiLCJjb3ZlcmFnZSI6IkxJQUJJTElUWSIsImRyaXZlckFnZSI6NjAsInByaW9yQ2xhaW1zIjpmYWxzZX0sInVybCI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzQwMjUvcXVvdGVzIn0sInJlc3BvbnNlIjp7ImhlYWRlcnMiOnsiY29udGVudC1sZW5ndGgiOlsiODEiXSwiQ29udGVudC1UeXBlIjpbImFwcGxpY2F0aW9uL2pzb247IGNoYXJzZXQ9VVRGLTgiXX0sInJlc3BvbnNlVGltZSI6NSwiY29udGVudExlbmd0aCI6ODEsImJvZHkiOnsiaWQiOiIjKHV1aWQoKSkiLCJwb2xpY3lDbGFzcyI6IlBSRUZFUlJFRCIsIm1vbnRobHlQcmVtaXVtIjo1MCwiY3VycmVuY3kiOiJVU0QifSwic3RhdHVzIjoyMDF9fQ=="
                 }
               ]
             }
