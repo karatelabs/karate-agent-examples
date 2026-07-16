@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "karate": {
+      "type": "http",
+      "url": "http://localhost:4444/api/mcp"
+    }
+  }
+}

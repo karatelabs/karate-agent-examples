@@ -15,6 +15,7 @@ rules, and evidence as one git-native graph an LLM drives and a human audits. On
 | --- | --- |
 | [`policy-api`](policy-api/) | one insurance API across three protocols — REST (OpenAPI) + gRPC + Kafka — in a single Coverage report: live probe → durable suite → method coverage → input dimensions → the rich-error path → the gap worklist. |
 | [`azure-demo`](azure-demo/) | git-first **requirements traceability** for a loan-decision engine — requirements → rules → run evidence in one RTM. The *same* kit runs ALM-linked on **Azure Pipelines** (requirement ids click through to Azure DevOps User Stories) and pure-git / spec-driven on **GitHub Actions**, switched by two env vars. |
+| [`store-api`](store-api/) | **start-from-scratch benchmark** — a bare OpenAPI spec and nothing else: the engine stands up a stateful mock from the spec, your AI agent authors the suite, and the gap lists define "done" deterministically. Includes a cheat-sheet for timing your own agent environment against a clean reference. |
 
 ## License
 

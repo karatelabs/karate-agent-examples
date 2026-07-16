@@ -61,7 +61,7 @@ const execute = function (calc) {
     calc.log('state factor for ' + input.state + ' = ' + stateFactor + ' → monthly premium = ' + premium);
 
     // a business guarantee — the premium can never dip below the coverage's own base rate
-    calc.invariant('premium never below base rate', premium >= lookup.baseRate[input.coverage]);
+    calc.always('premium never below base rate', premium >= lookup.baseRate[input.coverage]);
 
     calc.output = { monthlyPremium: premium, currency: 'USD' };
 };

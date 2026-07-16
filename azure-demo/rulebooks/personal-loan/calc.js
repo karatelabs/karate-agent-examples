@@ -108,11 +108,11 @@ const execute = function (calc) {
 
     calc.outcome(decision);
 
-    // ---- invariants (properties that must hold for ALL inputs) ----
-    calc.invariant('declined applications carry no APR', !(decision === 'declined') || apr === null);
-    calc.invariant('priced APR never below the 5% floor', apr === null || apr >= lookup.aprFloor);
-    calc.invariant('priced APR never above the 24% ceiling', apr === null || apr <= lookup.aprCeiling);
-    calc.invariant('DTI is never negative', dti >= 0);
+    // ---- always-properties (must hold for ALL inputs) ----
+    calc.always('declined applications carry no APR', !(decision === 'declined') || apr === null);
+    calc.always('priced APR never below the 5% floor', apr === null || apr >= lookup.aprFloor);
+    calc.always('priced APR never above the 24% ceiling', apr === null || apr <= lookup.aprCeiling);
+    calc.always('DTI is never negative', dti >= 0);
 
     calc.output = {
         decision: decision,

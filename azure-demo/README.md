@@ -40,7 +40,7 @@ as `KARATE_LICENSE_TEXT` (sent with your evaluation).
 # headless rules oracle — the CI-safe stage (no browser)
 docker run --rm -v "$PWD":/work -w /work \
   -e KARATE_LICENSE_TEXT="$(cat karate.lic)" \
-  public.ecr.aws/karatelabs/karate-agent:2.1.1.RC5 \
+  public.ecr.aws/karatelabs/karate-agent:2.1.2.RC1 \
   run oracle.feature -f junit:xml,html,karate:jsonl
 ```
 
@@ -54,7 +54,7 @@ RTM becomes a link to its User Story:
 docker run --rm -v "$PWD":/work -w /work \
   -e KARATE_LICENSE_TEXT="$(cat karate.lic)" \
   -e KARATE_ADO_ORG="your-org" -e KARATE_ADO_PROJECT="your-project" \
-  public.ecr.aws/karatelabs/karate-agent:2.1.1.RC5 \
+  public.ecr.aws/karatelabs/karate-agent:2.1.2.RC1 \
   run oracle.feature -f junit:xml,html,karate:jsonl
 ```
 
@@ -81,7 +81,7 @@ brings the console + MCP endpoint up on `:4444`, serving the mounted `/work` fol
 ```bash
 docker run --rm -p 4444:4444 -v "$PWD":/work -w /work \
   -e KARATE_LICENSE_TEXT="$(cat karate.lic)" \
-  public.ecr.aws/karatelabs/karate-agent:2.1.1.RC5
+  public.ecr.aws/karatelabs/karate-agent:2.1.2.RC1
 ```
 
 Then `claude mcp add --transport http karate http://localhost:4444/api/mcp` (or point Cursor / VS Code at the
