@@ -63,6 +63,15 @@ claude mcp add --transport http karate http://localhost:4444/api/mcp
 { "mcpServers": { "karate": { "url": "http://localhost:4444/api/mcp" } } }
 ```
 
+```toml
+# OpenAI Codex CLI — ~/.codex/config.toml (Codex does not read .mcp.json; its MCP config is global)
+[mcp_servers.karate]
+url = "http://localhost:4444/api/mcp"
+```
+
+(The kit's `.mcp.json` is a Claude Code convenience — it auto-connects only that client when the
+folder is opened.)
+
 > **For a fair benchmark, connect a clean client**: karate as the only (or nearly only) MCP server, a
 > minimal agent config (`AGENTS.md` / `CLAUDE.md`), and a capable model. Every extra tool schema and every
 > page of standing instructions is re-processed on *every* model turn — it is the single biggest lever on
