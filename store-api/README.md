@@ -102,9 +102,11 @@ JavaScript, get JSON). Karate self-describes — never assume an API signature, 
    Runner.suite('checks/<name>.feature') — coverage is always on, the call blocks and returns
    pass/fail (Runner.help() has the options). Only shell out if you must:
    `java -jar <the karate-agent jar> run -f karate:jsonl <feature>` (there the -f is REQUIRED).
-5. Close the gaps: Coverage.gaps() lists unexercised spec operations; Requirement.gaps() lists
-   uncovered criteria. Author tests and re-run until BOTH lists are empty. Retire any scaffold
-   starter feature once your real tests cover the same operations.
+5. Close the gaps: Coverage.gaps() returns notcovered (operations never exercised) AND happyOnly
+   (exercised but never through an error outcome — each row lists the spec's declaredUntested
+   error codes); Requirement.gaps() lists uncovered criteria. Author tests and re-run until ALL
+   lists are empty. Retire any scaffold starter feature once your real tests cover the same
+   operations.
 6. Finish: Report.generate(), Requirement.matrix(), Requirement.readiness().
 ```
 
@@ -137,8 +139,9 @@ other artifacts.
    Runner.suite('checks/<name>.feature') — coverage is always on, the call blocks and returns
    pass/fail (Runner.help() has the options). Only shell out if you must:
    `java -jar <the karate-agent jar> run -f karate:jsonl <feature>` (there the -f is REQUIRED).
-5. Coverage.gaps() lists the spec operations your tests don't exercise yet — author and re-run
-   until it is empty, then finish with Report.generate().
+5. Coverage.gaps() returns two worklists: notcovered (operations never exercised) and happyOnly
+   (exercised but never through an error outcome — each row lists the spec's declaredUntested
+   error codes). Author and re-run until BOTH are empty, then finish with Report.generate().
 ```
 
 The finish line for this variant is simply: **suite green + `Coverage.gaps()` empty**. It skips the
@@ -167,12 +170,38 @@ attention before it runs out of endpoints. The engine is built for slicing inste
 Per-pass wall-clock stays flat this way (a fresh pass starts with a small context), which is usually
 *faster* in total than one long session — and each pass is independently reviewable.
 
+### Splitting the prompt into stages? Hand off through files, gate on gaps
+
+Some teams split the prompt by *phase* instead — discover → author → review, one prompt each. That works
+too, with two rules:
+
+- **Each stage writes its output to a file the next stage reads.** A new session starts blank — "take
+  into account what was discovered earlier" only works if stage 1 wrote it down (e.g. an
+  `e2e/discovery.md` listing every operation and every *declared* error response per operation, which
+  stage 2 is told to read first).
+- **The gate between stages is measured, not asserted.** End every authoring stage with a run plus
+  `Coverage.gaps()`, and don't advance until both its lists — `notcovered` and `happyOnly` — (or the
+  slice of them that stage owns) are empty. "Ensure everything is covered" in prose does nothing; the
+  gap lists are the contract.
+
+One completeness nuance that bites here: the agent is told **not to invent the contract**, so it only
+authors error tests it can *see* — a "client not found" test appears when the 404/422 is declared in the
+spec (or in a notes file you give it). And once declared, the engine *tracks* it: `Coverage.gaps()`
+flags every operation whose declared error codes were never exercised (the `happyOnly` list), so missing
+error tests show up as a measured gap. Errors you can induce through the API (reference an id that
+doesn't exist) belong in ordinary tests — ask for them explicitly. Failures of a *downstream dependency*
+(a 500 from a system your API calls) can only be tested if you can force them — that is exactly what
+Karate mocks are for.
+
 ## 4 · The finish line — deterministic, not vibes
 
 "Did it generate all the test cases?" has an exact answer here, and it is **not** a property of one
 prompt-shot — it is what the gap loop is for:
 
-- **`Coverage.gaps()` is empty** — every operation in `openapi.yaml` is exercised by a passing test.
+- **`Coverage.gaps()` is empty — both lists**: `notcovered` (every operation in `openapi.yaml` is
+  exercised by a passing test) *and* `happyOnly` (every operation has also been driven through an error
+  outcome — each `happyOnly` row names the spec's `declaredUntested` codes, so "are the error paths
+  covered?" is measured, not eyeballed).
 - **`Requirement.gaps()` is empty** — every acceptance criterion is covered by a `@req=`-tagged scenario.
 - The suite is green and the generated report shows the traceability matrix.
 
