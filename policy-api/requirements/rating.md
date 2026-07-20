@@ -1,7 +1,7 @@
 # Auto Rating — Requirements
 
 > The business requirements the `rating` rulebook realizes. Each acceptance criterion is linked from a
-> `calc.req('RATE-…')` arm in `rulebooks/rating/calc.js`, so `Rule.cover` projects a run-free SIMULATED
+> `calc.req('RATE-…')` arm in `rulebooks/rating/calc.js`, so `Rule.cover` projects a run-free rules-only
 > RTM: positive evidence the rules satisfy these criteria, with no live test run. A criterion
 > whose rule arm no saved scenario exercises stays uncovered — the `Rule.check` `notused` finding and the
 > readiness gap are the same fact seen twice.

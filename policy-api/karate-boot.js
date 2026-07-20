@@ -33,7 +33,7 @@ if (!grpcOff) {
 cov.openapi = 'openapi.yaml';
 // Rules: the rulebook home — each saved scenario is a coverage item, and cov.dimensions binds the
 // cross/covering-array oracle to /quotes. Requirements: the EARS source; calc.req arms + Rule.cover
-// project a run-free SIMULATED RTM and the confidence-to-ship readiness verdict.
+// project a run-free RTM (rules-only evidence) and the confidence-to-ship readiness verdict.
 cov.rules = 'rulebooks';
 cov.requirements = 'requirements';
 cov.dimensions = 'config/dimensions.js';
@@ -59,7 +59,7 @@ req.provider = {
 // Kafka — OPTIONAL fourth beat (the one protocol whose backend wants Docker, so it is OFF by default and
 // out of CI). Start Kafka (KRaft broker + Schema Registry via kafka/docker-compose.yml), then uncomment
 // below to add the event-side universe (policy-events topic, Avro policy-event schema). The producer that
-// exercises it is checks/policy-events.feature (@ignore'd — un-ignore it to run; see README section 4):
+// exercises it is checks/policy-events.feature (@ignore'd — un-ignore it to run; see README section 5):
 // var kafka = boot.ext('kafka');
 // kafka.bootstrap = boot.sysprop('kafka.bootstrap', '127.0.0.1:29092');
 // kafka.schemaRegistry = boot.sysprop('kafka.schemaRegistry', 'http://localhost:8081');

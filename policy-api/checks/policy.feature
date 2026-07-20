@@ -7,13 +7,19 @@ Feature: insurance Policy API — quote → bind → claim lifecycle (REST / Ope
   Background:
     * url baseUrl
 
+  # The one priced operation in the lifecycle — so the `rating` rulebook is the oracle, never a golden
+  # number (a pinned 100 is just a copy of what the rules compute: it breaks on every rate edit and can
+  # never catch the system drifting from the rules). checks/rating-acceptance.feature does this over
+  # every saved scenario; here it is one row, inline.
   Scenario: price a quote (the REST front door to the rating engine)
+    * def row = { state: 'CA', coverage: 'COLLISION', driverAge: 40, priorClaims: false }
+    * def check = Rule.execute('rating', row)
     Given path 'quotes'
-    And request { state: 'CA', coverage: 'COLLISION', driverAge: 40, priorClaims: false }
+    And request row
     When method post
     Then status 201
-    And match response.monthlyPremium == 100
-    And match response.currency == 'USD'
+    And match response contains check.output
+    * check.verify(true, 'live /quotes matches the rulebook')
 
   Scenario: bind a policy from a quote
     Given path 'policies'

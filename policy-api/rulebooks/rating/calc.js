@@ -16,9 +16,11 @@ const lookup = {
 
 const execute = function (calc) {
     const input = calc.input;
+    calc.log('# Base rate');
     let base = lookup.baseRate[input.coverage];
     calc.log('base rate for ' + input.coverage + ' = ' + base);
 
+    calc.log('# Driver loadings');
     // RATE-001/1 — a young driver pays a loading
     calc.label('Young-driver loading');
     if (input.driverAge < 25) {
@@ -35,6 +37,7 @@ const execute = function (calc) {
         calc.log('senior-driver loading +25');
     }
 
+    calc.log('# Surcharges');
     // RATE-002/1 — a driver with prior claims pays a surcharge
     calc.label('Prior-claims surcharge');
     if (input.priorClaims) {
@@ -52,6 +55,7 @@ const execute = function (calc) {
         calc.log('catastrophe reinsurance surcharge +500');
     }
 
+    calc.log('# Territory & premium');
     // RATE-003/1 — the premium is adjusted by the state rating territory factor. Applied to EVERY quote
     // (even a zero-factor state is looked up), so any saved scenario covers this criterion.
     calc.label('Territory rating');

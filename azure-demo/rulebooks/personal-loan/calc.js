@@ -23,12 +23,14 @@ const execute = function (calc) {
     const input = calc.input;
 
     // estimated new monthly payment — simple straight-line
+    calc.log('# Affordability');
     const monthlyPayment = input.loanAmount / input.termMonths;
     // debt-to-income: existing + new monthly debt, annualized, over annual income
     const dti = (input.monthlyDebt + monthlyPayment) * 12 / input.annualIncome;
     calc.log('monthly payment estimate ' + monthlyPayment.toFixed(2) + ', DTI ' + (dti * 100).toFixed(1) + '%');
 
     // ---- Decline gate ----
+    calc.log('# Decline gate');
     calc.label('Decline gate');
     let declined = false;
     if (input.creditScore < lookup.minCreditScore) {
@@ -42,6 +44,7 @@ const execute = function (calc) {
         calc.log('declined: DTI ' + (dti * 100).toFixed(1) + '% exceeds ' + (lookup.maxDti * 100) + '%');
     }
 
+    calc.log('# Decision & pricing');
     let decision;
     let apr = null;
 
@@ -106,6 +109,7 @@ const execute = function (calc) {
         }
     }
 
+    calc.log('# Outcome');
     calc.outcome(decision);
 
     // ---- always-properties (must hold for ALL inputs) ----

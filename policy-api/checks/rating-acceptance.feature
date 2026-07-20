@@ -7,8 +7,11 @@ Feature: rating acceptance — the saved scenarios, LIVE against the /quotes API
   COVERED (a real call, not just a rule firing).
   #
   # NO hardcoded premiums: the rulebook is the source of truth, so `match response == Rule.execute` never
-  # needs maintenance, a rate edit (the Lookups tab) never breaks a row, and a row goes red only if the
-  # SYSTEM diverges from the RULE. Point baseUrl at a real backend and it's a live contract test (the keystone).
+  # needs maintenance — a rate edit (the Lookups tab) never requires EDITING a row — and a row goes red
+  # only when the SYSTEM diverges from the RULE. (Editing the rate on ONE side IS such a divergence: this
+  # kit's mock carries its own pricing implementation, exactly as a real backend would, so a rate change
+  # has to land on both sides. That red is the product working, not test maintenance.)
+  # Point baseUrl at a real backend and it's a live contract test (the keystone).
   #
   # THE LOOP: run it → the saved scenarios cover young (RATE-001/1), prior-claims (RATE-002/1) and territory
   # (RATE-003/1), but none sends a driver over 70, so RATE-001/2 is the live gap → readiness NOT READY,

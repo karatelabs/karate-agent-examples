@@ -7,10 +7,13 @@ Coverage report spans all three sources (`cov.openapi` · `cov.grpc` · `cov.kaf
   no Docker. All four RPC kinds, descriptor-grade input dimensions, and the rich-error path.
 - **REST (OpenAPI)** — a Policy API (quotes · policies · claims) backed by an in-process mock.
 - **Kafka is the optional fourth beat** — a `policy-events` stream (Avro). It needs Docker, so it is **off
-  by default**; turn it on with the `kafka/` compose file + the `cov.kafka` block in `karate-boot.js` (see section 4).
+  by default**; turn it on with the `kafka/` compose file + the `cov.kafka` block in `karate-boot.js` (see section 5).
 
 The domain ties them together: a **quote** (REST) is priced by the **rating engine** (gRPC); a bound
-**policy** emits a **policy-event** (Kafka).
+**policy** emits a **policy-event** (Kafka). One **rulebook** (`rulebooks/rating/`) states the pricing rules
+once and is the **oracle** for every protocol — so no test in this kit pins an expected premium — and its
+`calc.req` links join those rules to the **requirements** (`requirements/rating.md`), which is what turns a
+run into a traceability matrix and a release verdict (section 4).
 
 **📊 See it live — no license needed to READ it:** every push runs the REST + rules suite on GitHub Actions
 and publishes the HTML report (Coverage · **Traceability RTM** · run summary) to GitHub Pages — browse the
@@ -19,7 +22,7 @@ tab: it reads **NOT READY — blocker RATE-001** (the untested senior-driver rul
 **clicks through to its heading in the markdown** (`requirements/rating.md`) here in this repo — the RTM is a
 live, auditable artifact anyone can inspect, not a screenshot. *(The published run is REST + the run-free
 rules RTM; the full REST + gRPC + Kafka cross-protocol coverage runs locally off the async jar — sections
-1–4 below.)*
+1–5 below.)*
 
 ## What you need
 
@@ -136,8 +139,8 @@ all read that graph, so call `aggregate()` again after any new run. The list ver
 
 > **Two report locations:** each `Runner.run` writes a per-run summary under `runs/<id>/` (its own
 > `karate-summary.html`); the **aggregate coverage report** that spans all sources is rendered by
-> `Report.generate()` under the report dir (e.g. `target/karate-reports/coverage-report.html`).
-> Open the report **in place** — the HTML loads sibling `res/` + data files, so don't copy the `.html`
+> `Report.generate()` under the report dir (e.g. `target/karate-reports/ext/coverage/pages/coverage.html`).
+> Open the report **in place** — the HTML loads its sibling assets by relative path, so don't copy the `.html`
 > out on its own. On a remote/tunneled instance the `file://` URLs the verbs return aren't clickable from
 > your laptop; browse reports through the served console's **Reports** tab instead.
 
@@ -167,7 +170,69 @@ curl -s -X POST localhost:4444/api/eval --data-binary "Coverage.gaps()"
 
 The quote price mirrors the gRPC engine; the mock keeps the REST surface honest so `cov.openapi` is real.
 
-## 4. Kafka — the optional event side
+## 4. Requirements ⋈ rules — the RTM, and why no test pins a premium
+
+Coverage answers *what did we exercise*. This answers *what did we promise, and is it met* — the part a
+release decision actually needs.
+
+The `rating` **rulebook** (`rulebooks/rating/`) is the executable statement of the business rules: a
+`calc.js` that prices a quote, a `schema.js` input contract, and `scenarios.json` — the saved business
+cases. Each decision arm names the acceptance criterion it satisfies with `calc.req('RATE-001/1')`,
+pointing into `requirements/rating.md` (plain markdown, the source of truth). That link is what turns a
+test run into a traceability matrix.
+
+**The rulebook is the ORACLE, so no check in this kit pins an expected premium.** Look at
+`checks/rating-acceptance.feature`: for every saved scenario it POSTs a real quote AND asks the rulebook
+what the answer should be —
+
+```gherkin
+* def check = Rule.execute('rating', __row)     # the oracle: what the RULES say
+Given path 'quotes'
+And request { state: '#(__row.state)', ... }    # the system: a real call
+When method post
+Then status 201
+And match response contains check.output        # no golden number, anywhere
+* check.verify(true, 'live /quotes matches the rulebook')
+```
+
+A hardcoded `monthlyPremium == 100` would be a *copy* of what the rules already compute: it would need
+re-pinning on every legitimate rate change, and it could never catch the one thing it looks like it is
+checking — the system drifting from the rules. Here, **nothing in the suite is ever edited for a rate
+change**: add a scenario and nothing is pinned; change a rate and the rows that go red are exactly the
+ones where the system and the rules now disagree, each naming the requirement it violates. (The mock —
+like a real backend — carries its own pricing implementation, so a rate change has to land on both
+sides; that red is the drift detector doing its job, not test maintenance.) `check.verify(...)` records
+that something **outside** the rulebook agreed with it — without it, a criterion is disclosed as
+`oracleOnly`: the rulebook vouching for itself.
+
+Run it, then read the matrix and the release verdict:
+
+```bash
+curl -s -X POST localhost:4444/api/eval --data-binary "Runner.run('checks/rating-acceptance.feature')"
+curl -s -X POST localhost:4444/api/eval --data-binary "Report.aggregate()"
+curl -s -X POST localhost:4444/api/eval --data-binary "Requirement.matrix()"      # per-criterion status + covering tests
+curl -s -X POST localhost:4444/api/eval --data-binary "Requirement.readiness()"   # -> NOT READY, blocker RATE-001
+```
+
+**The loop, in one move.** The saved scenarios cover the young-driver, prior-claims and territory rules —
+but none sends a driver over 70, so `RATE-001/2` (the senior-driver loading) is never realized: the
+requirement stays uncovered and the release verdict is **NOT READY**. The same gap shows up three ways —
+`Rule.check('rating')` reports the senior arm as `notused` (fix = add data, not fix the rules),
+`Requirement.gaps()` lists the criterion, `readiness()` names RATE-001 as the blocker. Close it by adding
+one scenario (no new test):
+
+```bash
+curl -s -X POST localhost:4444/api/eval --data-binary \
+ "Rule.scenario.create('rating', { id:'senior-collision-ca', label:'senior driver over 70', state:'CA', coverage:'COLLISION', driverAge:75, priorClaims:false })"
+# re-run the SAME feature — the new row drives a real quote and realizes RATE-001/2
+curl -s -X POST localhost:4444/api/eval --data-binary "Runner.run('checks/rating-acceptance.feature')"
+curl -s -X POST localhost:4444/api/eval --data-binary "Report.aggregate(); Requirement.readiness()"   # -> READY
+```
+
+That is the whole product in one loop: the requirement is the promise, the rulebook realizes it, a real
+call proves it, and the verdict moves — with nothing to re-pin.
+
+## 5. Kafka — the optional event side
 
 The producer beat ships as `checks/policy-events.feature`, tagged **`@ignore`** so it never runs without a
 broker up. Three steps enable it:
@@ -191,16 +256,30 @@ lands as `policy-events#publish` **COVERED**, leaving `#subscribe` as the gap. T
 - **gRPC end to end** — live probe (`Grpc.connect`) → durable suite → method coverage + the OK/error
   histogram → input dimensions → the rich-error path → the gap worklist.
 - **Coverage that drives work** — `Coverage.gaps()` is the worklist (bare arrays); the report is the artifact.
+- **The rulebook is the oracle** — not one check pins a premium; every row asserts the live system against
+  `Rule.execute`, on REST *and* gRPC. A rate change breaks nothing; a system-vs-rules drift breaks exactly
+  the rows it should, naming the requirement.
+- **Requirements, joined and judged** — `calc.req` links each rule arm to an acceptance criterion, so a run
+  produces an RTM and a release verdict (`Requirement.readiness()` → NOT READY, blocker RATE-001) that a
+  business reader can click through to the markdown.
 
 ## Files
 
 ```
 policy-api/
   README.md            # this file
+  requirements/        # rating.md — the business promises (EARS acceptance criteria), plain markdown
+  rulebooks/rating/    # the ORACLE: calc.js (rules + calc.req links) · schema.js · scenarios.json (saved cases)
   openapi.yaml         # the REST Policy API contract (coverage universe)
   proto/rating.proto   # the gRPC rating contract (coverage universe, with field bounds)
-  checks/              # the .feature suites (rating.feature, policy.feature)
+  checks/              # the .feature suites
+    rating-acceptance.feature   # THE spine: every saved scenario, live vs the rulebook (the RTM)
+    quotes.feature              # the covering-array combination demo (REST)
+    policy.feature              # the quote → bind → claim lifecycle (OpenAPI operations)
+    rating.feature              # the gRPC lane — same rulebook, second protocol
+    rating-dryrun.feature  policy-events.feature
   mock/                # the in-process REST mock
+  config/dimensions.js # the cross / covering-array binding for POST /quotes
   karate-config.js  karate-boot.js   # config + coverage-universe wiring
   kafka/               # docker-compose + Avro schema (optional)
   rating-server/       # the standalone gRPC backend (Maven module → rating-server.jar)

@@ -5,15 +5,15 @@ Feature: rating readiness — DRY RUN, no live call (the advanced / optional bea
   # comment out the @ignore line above to run it (or just type the two JSAPI calls in the console).
   #
   # THE ADVANCED CAPABILITY: a confidence-to-ship verdict WITHOUT running a single live test. Rule.cover
-  # projects the rulebook's calc.req criteria into the RTM as SIMULATED — positive evidence the rules
-  # realize the requirements, but NOT a live green (a rule can't verify itself; only a real call on the wire
-  # earns COVERED). Useful for pre-flight gating before the system even exists. The LIVE spine is
-  # checks/rating-acceptance.feature; this is its run-free counterpart, kept for the "you don't even need to
-  # run it" beat.
+  # projects the rulebook's calc.req criteria into the RTM: the rules genuinely realize them, so they read
+  # COVERED — but carrying `oracleOnly`, because a rule can't verify itself and nothing outside the rulebook
+  # checked it. Readiness grades that like a gap, so the verdict stays honest. Useful for pre-flight gating
+  # before the system even exists. The LIVE spine is checks/rating-acceptance.feature; this is its run-free
+  # counterpart, kept for the "you don't even need to run it" beat.
 
-  Scenario: the rulebook realizes the requirements as SIMULATED — no HTTP call, still NOT READY
+  Scenario: the rulebook realizes the requirements, but only the rules vouch — still NOT READY
     * def cover = Rule.cover('rating')
     * def readiness = Requirement.readiness()
     * print 'dry-run verdict (no live call):', readiness.verdict
-    # only the senior-driver criterion (RATE-001/2) is the gap; the rest read SIMULATED, so still NOT READY
+    # RATE-001/2 (senior driver) is an outright gap; the rest are vouched for by the rules alone
     * match readiness.state == 'NOT_READY'
