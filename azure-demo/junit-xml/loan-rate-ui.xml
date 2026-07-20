@@ -1,38 +1,38 @@
-<testsuite name="Loan Desk UI agrees with the personal-loan rules, per scenario" tests="7" failures="0" time="33.138" skipped="0"><testcase classname="loan-rate-ui" name="decline-low-score — credit score below 580 declines" time="5.035"><system-out>* Check.run(&apos;drive-quote.js&apos;, __row)
+<testsuite name="Loan Desk UI agrees with the personal-loan rules, per scenario" tests="7" failures="0" time="33.034" skipped="0"><testcase classname="loan-rate-ui" name="decline-low-score — credit score below 580 declines" time="4.968"><system-out>* Check.run(&apos;drive-quote.js&apos;, __row)
 *
 *
 *
 </system-out></testcase>
-<testcase classname="loan-rate-ui" name="decline-high-dti — DTI over 50% declines" time="4.729"><system-out>* Check.run(&apos;drive-quote.js&apos;, __row)
+<testcase classname="loan-rate-ui" name="decline-high-dti — DTI over 50% declines" time="4.663"><system-out>* Check.run(&apos;drive-quote.js&apos;, __row)
 *
 *
 *
 </system-out></testcase>
-<testcase classname="loan-rate-ui" name="review-score-band — score 580-669 routes to review" time="4.618"><system-out>* Check.run(&apos;drive-quote.js&apos;, __row)
-*
-*
-*
-*
-</system-out></testcase>
-<testcase classname="loan-rate-ui" name="review-dti-band — DTI 40-50% routes to review" time="4.645"><system-out>* Check.run(&apos;drive-quote.js&apos;, __row)
+<testcase classname="loan-rate-ui" name="review-score-band — score 580-669 routes to review" time="4.634"><system-out>* Check.run(&apos;drive-quote.js&apos;, __row)
 *
 *
 *
 *
 </system-out></testcase>
-<testcase classname="loan-rate-ui" name="approve-prime — prime, low DTI, auto-approves at 6.5%" time="4.565"><system-out>* Check.run(&apos;drive-quote.js&apos;, __row)
+<testcase classname="loan-rate-ui" name="review-dti-band — DTI 40-50% routes to review" time="4.578"><system-out>* Check.run(&apos;drive-quote.js&apos;, __row)
 *
 *
 *
 *
 </system-out></testcase>
-<testcase classname="loan-rate-ui" name="approve-midband — 660-719 band, low DTI, auto-approve at 9.9%" time="4.599"><system-out>* Check.run(&apos;drive-quote.js&apos;, __row)
+<testcase classname="loan-rate-ui" name="approve-prime — prime, low DTI, auto-approves at 6.5%" time="4.648"><system-out>* Check.run(&apos;drive-quote.js&apos;, __row)
 *
 *
 *
 *
 </system-out></testcase>
-<testcase classname="loan-rate-ui" name="approve-loyalty — existing customer loyalty discount" time="4.932"><system-out>* Check.run(&apos;drive-quote.js&apos;, __row)
+<testcase classname="loan-rate-ui" name="approve-midband — 660-719 band, low DTI, auto-approve at 9.9%" time="4.615"><system-out>* Check.run(&apos;drive-quote.js&apos;, __row)
+*
+*
+*
+*
+</system-out></testcase>
+<testcase classname="loan-rate-ui" name="approve-loyalty — existing customer loyalty discount" time="4.914"><system-out>* Check.run(&apos;drive-quote.js&apos;, __row)
 *
 *
 *
