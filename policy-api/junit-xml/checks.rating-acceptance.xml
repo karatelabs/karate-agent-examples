@@ -1,13 +1,13 @@
-<testsuite name="rating acceptance — the saved scenarios, LIVE against the /quotes API (the RTM spine)" tests="3" failures="0" time="0.555" skipped="0"><testcase classname="checks.rating-acceptance" name="young-collision-ca — young driver, collision, California — the young-driver loading fires" time="0.341"><system-out>* baseUrl
+<testsuite name="rating acceptance — the saved scenarios, LIVE against the /quotes API (the RTM spine)" tests="3" failures="0" time="0.576" skipped="0"><testcase classname="checks.rating-acceptance" name="young-collision-ca — young driver, collision, California — the young-driver loading fires" time="0.366"><system-out>* baseUrl
 * check = Rule.execute(&apos;rating&apos;, __row)
 * oracle = check.output
 Given &apos;quotes&apos;
 And { state: &apos;#(__row.state)&apos;, coverage: &apos;#(__row.coverage)&apos;, driverAge: &apos;#(__row.driverAge)&apos;, priorClaims: &apos;#(__row.priorClaims)&apos; }
 When post
 request:
-1 &gt; POST http://localhost:34025/quotes
+1 &gt; POST http://localhost:33453/quotes
 1 &gt; Content-Type: application/json; charset=UTF-8
-1 &gt; Host: localhost:34025
+1 &gt; Host: localhost:33453
 1 &gt; Content-Length: 72
 1 &gt; Connection: keep-alive
 1 &gt; User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.11)
@@ -18,8 +18,8 @@ request:
   &quot;priorClaims&quot;: false
 }
 
-response time in milliseconds: 118
-1 &lt; 201 POST http://localhost:34025/quotes
+response time in milliseconds: 128
+1 &lt; 201 POST http://localhost:33453/quotes
 1 &lt; content-length: 81
 1 &lt; Content-Type: application/json; charset=UTF-8
 {
@@ -29,8 +29,8 @@ response time in milliseconds: 118
   &quot;currency&quot;: &quot;USD&quot;
 }
 
-POST http://localhost:34025/quotes
-201 (118 ms)
+POST http://localhost:33453/quotes
+201 (128 ms)
 Then 201
 And response.monthlyPremium == oracle.monthlyPremium
 And response.currency == oracle.currency
@@ -43,9 +43,9 @@ Given &apos;quotes&apos;
 And { state: &apos;#(__row.state)&apos;, coverage: &apos;#(__row.coverage)&apos;, driverAge: &apos;#(__row.driverAge)&apos;, priorClaims: &apos;#(__row.priorClaims)&apos; }
 When post
 request:
-1 &gt; POST http://localhost:34025/quotes
+1 &gt; POST http://localhost:33453/quotes
 1 &gt; Content-Type: application/json; charset=UTF-8
-1 &gt; Host: localhost:34025
+1 &gt; Host: localhost:33453
 1 &gt; Content-Length: 75
 1 &gt; Connection: keep-alive
 1 &gt; User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.11)
@@ -56,8 +56,8 @@ request:
   &quot;priorClaims&quot;: true
 }
 
-response time in milliseconds: 5
-1 &lt; 201 POST http://localhost:34025/quotes
+response time in milliseconds: 3
+1 &lt; 201 POST http://localhost:33453/quotes
 1 &lt; content-length: 84
 1 &lt; Content-Type: application/json; charset=UTF-8
 {
@@ -67,23 +67,23 @@ response time in milliseconds: 5
   &quot;currency&quot;: &quot;USD&quot;
 }
 
-POST http://localhost:34025/quotes
-201 (5 ms)
+POST http://localhost:33453/quotes
+201 (3 ms)
 Then 201
 And response.monthlyPremium == oracle.monthlyPremium
 And response.currency == oracle.currency
 * check.verify(true, &apos;live /quotes matches the rulebook&apos;)
 </system-out></testcase>
-<testcase classname="checks.rating-acceptance" name="clean-liability-tx — adult, clean record, liability, Texas — the base case, no loadings" time="0.015"><system-out>* baseUrl
+<testcase classname="checks.rating-acceptance" name="clean-liability-tx — adult, clean record, liability, Texas — the base case, no loadings" time="0.018"><system-out>* baseUrl
 * check = Rule.execute(&apos;rating&apos;, __row)
 * oracle = check.output
 Given &apos;quotes&apos;
 And { state: &apos;#(__row.state)&apos;, coverage: &apos;#(__row.coverage)&apos;, driverAge: &apos;#(__row.driverAge)&apos;, priorClaims: &apos;#(__row.priorClaims)&apos; }
 When post
 request:
-1 &gt; POST http://localhost:34025/quotes
+1 &gt; POST http://localhost:33453/quotes
 1 &gt; Content-Type: application/json; charset=UTF-8
-1 &gt; Host: localhost:34025
+1 &gt; Host: localhost:33453
 1 &gt; Content-Length: 72
 1 &gt; Connection: keep-alive
 1 &gt; User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.11)
@@ -95,7 +95,7 @@ request:
 }
 
 response time in milliseconds: 5
-1 &lt; 201 POST http://localhost:34025/quotes
+1 &lt; 201 POST http://localhost:33453/quotes
 1 &lt; content-length: 81
 1 &lt; Content-Type: application/json; charset=UTF-8
 {
@@ -105,7 +105,7 @@ response time in milliseconds: 5
   &quot;currency&quot;: &quot;USD&quot;
 }
 
-POST http://localhost:34025/quotes
+POST http://localhost:33453/quotes
 201 (5 ms)
 Then 201
 And response.monthlyPremium == oracle.monthlyPremium

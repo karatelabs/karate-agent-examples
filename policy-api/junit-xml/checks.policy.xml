@@ -1,11 +1,13 @@
-<testsuite name="insurance Policy API — quote → bind → claim lifecycle (REST / OpenAPI)" tests="5" failures="0" time="0.033" skipped="0"><testcase classname="checks.policy" name="price a quote (the REST front door to the rating engine)" time="0.007"><system-out>* baseUrl
+<testsuite name="insurance Policy API — quote → bind → claim lifecycle (REST / OpenAPI)" tests="5" failures="0" time="0.049" skipped="0"><testcase classname="checks.policy" name="price a quote (the REST front door to the rating engine)" time="0.011"><system-out>* baseUrl
+* row = { state: &apos;CA&apos;, coverage: &apos;COLLISION&apos;, driverAge: 40, priorClaims: false }
+* check = Rule.execute(&apos;rating&apos;, row)
 Given &apos;quotes&apos;
-And { state: &apos;CA&apos;, coverage: &apos;COLLISION&apos;, driverAge: 40, priorClaims: false }
+And row
 When post
 request:
-1 &gt; POST http://localhost:34025/quotes
+1 &gt; POST http://localhost:33453/quotes
 1 &gt; Content-Type: application/json; charset=UTF-8
-1 &gt; Host: localhost:34025
+1 &gt; Host: localhost:33453
 1 &gt; Content-Length: 72
 1 &gt; Connection: keep-alive
 1 &gt; User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.11)
@@ -17,7 +19,7 @@ request:
 }
 
 response time in milliseconds: 3
-1 &lt; 201 POST http://localhost:34025/quotes
+1 &lt; 201 POST http://localhost:33453/quotes
 1 &lt; content-length: 82
 1 &lt; Content-Type: application/json; charset=UTF-8
 {
@@ -27,20 +29,20 @@ response time in milliseconds: 3
   &quot;currency&quot;: &quot;USD&quot;
 }
 
-POST http://localhost:34025/quotes
+POST http://localhost:33453/quotes
 201 (3 ms)
 Then 201
-And response.monthlyPremium == 100
-And response.currency == &apos;USD&apos;
+And response contains check.output
+* check.verify(true, &apos;live /quotes matches the rulebook&apos;)
 </system-out></testcase>
 <testcase classname="checks.policy" name="bind a policy from a quote" time="0.005"><system-out>* baseUrl
 Given &apos;policies&apos;
 And { quoteId: &apos;q-123&apos;, holder: &apos;Ada Lovelace&apos; }
 When post
 request:
-1 &gt; POST http://localhost:34025/policies
+1 &gt; POST http://localhost:33453/policies
 1 &gt; Content-Type: application/json; charset=UTF-8
-1 &gt; Host: localhost:34025
+1 &gt; Host: localhost:33453
 1 &gt; Content-Length: 43
 1 &gt; Connection: keep-alive
 1 &gt; User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.11)
@@ -50,7 +52,7 @@ request:
 }
 
 response time in milliseconds: 2
-1 &lt; 201 POST http://localhost:34025/policies
+1 &lt; 201 POST http://localhost:33453/policies
 1 &lt; content-length: 98
 1 &lt; Content-Type: application/json; charset=UTF-8
 {
@@ -61,28 +63,28 @@ response time in milliseconds: 2
   &quot;status&quot;: &quot;BOUND&quot;
 }
 
-POST http://localhost:34025/policies
+POST http://localhost:33453/policies
 201 (2 ms)
 Then 201
 And response.status == &apos;BOUND&apos;
 </system-out></testcase>
-<testcase classname="checks.policy" name="list policies" time="0.005"><system-out>* baseUrl
+<testcase classname="checks.policy" name="list policies" time="0.007"><system-out>* baseUrl
 Given &apos;policies&apos;
 When get
 request:
-1 &gt; GET http://localhost:34025/policies
-1 &gt; Host: localhost:34025
+1 &gt; GET http://localhost:33453/policies
+1 &gt; Host: localhost:33453
 1 &gt; Connection: keep-alive
 1 &gt; User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.11)
 
 response time in milliseconds: 2
-1 &lt; 200 GET http://localhost:34025/policies
+1 &lt; 200 GET http://localhost:33453/policies
 1 &lt; content-length: 2
 1 &lt; Content-Type: application/json; charset=UTF-8
 [
 ]
 
-GET http://localhost:34025/policies
+GET http://localhost:33453/policies
 200 (2 ms)
 Then 200
 And response == &apos;#array&apos;
@@ -91,13 +93,13 @@ And response == &apos;#array&apos;
 Given &apos;policies&apos;, &apos;does-not-exist&apos;
 When get
 request:
-1 &gt; GET http://localhost:34025/policies/does-not-exist
-1 &gt; Host: localhost:34025
+1 &gt; GET http://localhost:33453/policies/does-not-exist
+1 &gt; Host: localhost:33453
 1 &gt; Connection: keep-alive
 1 &gt; User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.11)
 
-response time in milliseconds: 3
-1 &lt; 404 GET http://localhost:34025/policies/does-not-exist
+response time in milliseconds: 2
+1 &lt; 404 GET http://localhost:33453/policies/does-not-exist
 1 &lt; content-length: 48
 1 &lt; Content-Type: application/json; charset=UTF-8
 {
@@ -105,18 +107,18 @@ response time in milliseconds: 3
   &quot;id&quot;: &quot;does-not-exist&quot;
 }
 
-GET http://localhost:34025/policies/does-not-exist
-404 (3 ms)
+GET http://localhost:33453/policies/does-not-exist
+404 (2 ms)
 Then 404
 </system-out></testcase>
-<testcase classname="checks.policy" name="file a claim against a policy" time="0.005"><system-out>* baseUrl
+<testcase classname="checks.policy" name="file a claim against a policy" time="0.009"><system-out>* baseUrl
 Given &apos;claims&apos;
 And { policyId: &apos;p-123&apos;, amount: 2500, description: &apos;rear-end collision&apos; }
 When post
 request:
-1 &gt; POST http://localhost:34025/claims
+1 &gt; POST http://localhost:33453/claims
 1 &gt; Content-Type: application/json; charset=UTF-8
-1 &gt; Host: localhost:34025
+1 &gt; Host: localhost:33453
 1 &gt; Content-Length: 69
 1 &gt; Connection: keep-alive
 1 &gt; User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.11)
@@ -126,8 +128,8 @@ request:
   &quot;description&quot;: &quot;rear-end collision&quot;
 }
 
-response time in milliseconds: 3
-1 &lt; 201 POST http://localhost:34025/claims
+response time in milliseconds: 5
+1 &lt; 201 POST http://localhost:33453/claims
 1 &lt; content-length: 67
 1 &lt; Content-Type: application/json; charset=UTF-8
 {
@@ -137,8 +139,8 @@ response time in milliseconds: 3
   &quot;status&quot;: &quot;OPEN&quot;
 }
 
-POST http://localhost:34025/claims
-201 (3 ms)
+POST http://localhost:33453/claims
+201 (5 ms)
 Then 201
 And response.status == &apos;OPEN&apos;
 </system-out></testcase>

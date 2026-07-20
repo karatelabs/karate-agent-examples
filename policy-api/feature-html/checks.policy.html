@@ -238,18 +238,18 @@
   "name": "insurance Policy API — quote → bind → claim lifecycle (REST / OpenAPI)",
   "relativePath": "checks/policy.feature",
   "passed": true,
-  "durationMillis": 33,
-  "reportDate": "2026-07-16 06:19:57",
+  "durationMillis": 49,
+  "reportDate": "2026-07-20 08:04:50",
   "karateVersion": "2.1.2.RC1",
   "scenarios": [
     {
       "name": "price a quote (the REST front door to the rating engine)",
-      "line": 10,
+      "line": 14,
       "passed": true,
-      "durationMillis": 7,
-      "startTime": 1784182797871,
-      "endTime": 1784182797878,
-      "refId": "[1:10]",
+      "durationMillis": 11,
+      "startTime": 1784534690209,
+      "endTime": 1784534690220,
+      "refId": "[1:14]",
       "sectionIndex": 1,
       "exampleIndex": -1,
       "isOutlineExample": false,
@@ -268,10 +268,44 @@
           "hasCallResults": false
         },
         {
+          "prefix": "*",
+          "keyword": "def",
+          "text": "row = { state: 'CA', coverage: 'COLLISION', driverAge: 40, priorClaims: false }",
+          "line": 15,
+          "status": "passed",
+          "durationMillis": 0,
+          "hasLogs": false,
+          "hasEmbeds": false,
+          "hasCallResults": false
+        },
+        {
+          "prefix": "*",
+          "keyword": "def",
+          "text": "check = Rule.execute('rating', row)",
+          "line": 16,
+          "status": "passed",
+          "durationMillis": 4,
+          "hasLogs": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "coverage-emit",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJzb3VyY2UiOiJyZXEiLCJrZXkiOiJSQVRFLTAwMy8xIiwiZXZpZGVuY2UiOnsicnVsZSI6InJhdGluZyJ9fQ=="
+                }
+              ]
+            }
+          ],
+          "hasCallResults": false
+        },
+        {
           "prefix": "Given",
           "keyword": "path",
           "text": "'quotes'",
-          "line": 11,
+          "line": 17,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -281,8 +315,8 @@
         {
           "prefix": "And",
           "keyword": "request",
-          "text": "{ state: 'CA', coverage: 'COLLISION', driverAge: 40, priorClaims: false }",
-          "line": 12,
+          "text": "row",
+          "line": 18,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -293,27 +327,27 @@
           "prefix": "When",
           "keyword": "method",
           "text": "post",
-          "line": 13,
+          "line": 19,
           "status": "passed",
           "durationMillis": 5,
           "hasLogs": true,
           "logSegments": [
             {
-              "text": "request:\n1 > POST http://localhost:34025/quotes\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:34025\n1 > Content-Length: 72\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.11)\n"
+              "text": "request:\n1 > POST http://localhost:33453/quotes\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:33453\n1 > Content-Length: 72\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.11)\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"state\": \"CA\",\n  \"coverage\": \"COLLISION\",\n  \"driverAge\": 40,\n  \"priorClaims\": false\n}"
             },
             {
-              "text": "\n\nresponse time in milliseconds: 3\n1 < 201 POST http://localhost:34025/quotes\n1 < content-length: 82\n1 < Content-Type: application/json; charset=UTF-8\n"
+              "text": "\n\nresponse time in milliseconds: 3\n1 < 201 POST http://localhost:33453/quotes\n1 < content-length: 82\n1 < Content-Type: application/json; charset=UTF-8\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"id\": \"#(uuid())\",\n  \"policyClass\": \"PREFERRED\",\n  \"monthlyPremium\": 100,\n  \"currency\": \"USD\"\n}"
             },
             {
-              "text": "\n\nPOST http://localhost:34025/quotes\n201 (3 ms)\n"
+              "text": "\n\nPOST http://localhost:33453/quotes\n201 (3 ms)\n"
             }
           ],
           "hasEmbeds": true,
@@ -324,7 +358,7 @@
                 {
                   "role": "primary",
                   "mime": "application/json",
-                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcXVvdGVzIiwicGF0aCI6Ii9xdW90ZXMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjM0MDI1Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjcyIl0sIkNvbm5lY3Rpb24iOlsia2VlcC1hbGl2ZSJdLCJVc2VyLUFnZW50IjpbIkFwYWNoZS1IdHRwQ2xpZW50LzUuNi4yIChKYXZhLzIxLjAuMTEpIl19LCJ1cmxCYXNlIjoiaHR0cDovL2xvY2FsaG9zdDozNDAyNSIsIm1ldGhvZCI6IlBPU1QiLCJwYXJhbXMiOnt9LCJib2R5Ijp7InN0YXRlIjoiQ0EiLCJjb3ZlcmFnZSI6IkNPTExJU0lPTiIsImRyaXZlckFnZSI6NDAsInByaW9yQ2xhaW1zIjpmYWxzZX0sInVybCI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzQwMjUvcXVvdGVzIn0sInJlc3BvbnNlIjp7ImhlYWRlcnMiOnsiY29udGVudC1sZW5ndGgiOlsiODIiXSwiQ29udGVudC1UeXBlIjpbImFwcGxpY2F0aW9uL2pzb247IGNoYXJzZXQ9VVRGLTgiXX0sInJlc3BvbnNlVGltZSI6MywiY29udGVudExlbmd0aCI6ODIsImJvZHkiOnsiaWQiOiIjKHV1aWQoKSkiLCJwb2xpY3lDbGFzcyI6IlBSRUZFUlJFRCIsIm1vbnRobHlQcmVtaXVtIjoxMDAsImN1cnJlbmN5IjoiVVNEIn0sInN0YXR1cyI6MjAxfX0="
+                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcXVvdGVzIiwicGF0aCI6Ii9xdW90ZXMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjMzNDUzIl0sIkNvbnRlbnQtTGVuZ3RoIjpbIjcyIl0sIkNvbm5lY3Rpb24iOlsia2VlcC1hbGl2ZSJdLCJVc2VyLUFnZW50IjpbIkFwYWNoZS1IdHRwQ2xpZW50LzUuNi4yIChKYXZhLzIxLjAuMTEpIl19LCJ1cmxCYXNlIjoiaHR0cDovL2xvY2FsaG9zdDozMzQ1MyIsIm1ldGhvZCI6IlBPU1QiLCJwYXJhbXMiOnt9LCJib2R5Ijp7InN0YXRlIjoiQ0EiLCJjb3ZlcmFnZSI6IkNPTExJU0lPTiIsImRyaXZlckFnZSI6NDAsInByaW9yQ2xhaW1zIjpmYWxzZX0sInVybCI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzM0NTMvcXVvdGVzIn0sInJlc3BvbnNlIjp7ImhlYWRlcnMiOnsiY29udGVudC1sZW5ndGgiOlsiODIiXSwiQ29udGVudC1UeXBlIjpbImFwcGxpY2F0aW9uL2pzb247IGNoYXJzZXQ9VVRGLTgiXX0sInJlc3BvbnNlVGltZSI6MywiY29udGVudExlbmd0aCI6ODIsImJvZHkiOnsiaWQiOiIjKHV1aWQoKSkiLCJwb2xpY3lDbGFzcyI6IlBSRUZFUlJFRCIsIm1vbnRobHlQcmVtaXVtIjoxMDAsImN1cnJlbmN5IjoiVVNEIn0sInN0YXR1cyI6MjAxfX0="
                 }
               ]
             }
@@ -335,7 +369,7 @@
           "prefix": "Then",
           "keyword": "status",
           "text": "201",
-          "line": 14,
+          "line": 20,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -345,8 +379,8 @@
         {
           "prefix": "And",
           "keyword": "match",
-          "text": "response.monthlyPremium == 100",
-          "line": 15,
+          "text": "response contains check.output",
+          "line": 21,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -354,10 +388,10 @@
           "hasCallResults": false
         },
         {
-          "prefix": "And",
-          "keyword": "match",
-          "text": "response.currency == 'USD'",
-          "line": 16,
+          "prefix": "*",
+          "keyword": null,
+          "text": "check.verify(true, 'live /quotes matches the rulebook')",
+          "line": 22,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -368,12 +402,12 @@
     },
     {
       "name": "bind a policy from a quote",
-      "line": 18,
+      "line": 24,
       "passed": true,
       "durationMillis": 5,
-      "startTime": 1784182797879,
-      "endTime": 1784182797884,
-      "refId": "[2:18]",
+      "startTime": 1784534690221,
+      "endTime": 1784534690226,
+      "refId": "[2:24]",
       "sectionIndex": 2,
       "exampleIndex": -1,
       "isOutlineExample": false,
@@ -395,7 +429,7 @@
           "prefix": "Given",
           "keyword": "path",
           "text": "'policies'",
-          "line": 19,
+          "line": 25,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -406,7 +440,7 @@
           "prefix": "And",
           "keyword": "request",
           "text": "{ quoteId: 'q-123', holder: 'Ada Lovelace' }",
-          "line": 20,
+          "line": 26,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -417,27 +451,27 @@
           "prefix": "When",
           "keyword": "method",
           "text": "post",
-          "line": 21,
+          "line": 27,
           "status": "passed",
           "durationMillis": 4,
           "hasLogs": true,
           "logSegments": [
             {
-              "text": "request:\n1 > POST http://localhost:34025/policies\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:34025\n1 > Content-Length: 43\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.11)\n"
+              "text": "request:\n1 > POST http://localhost:33453/policies\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:33453\n1 > Content-Length: 43\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.11)\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"quoteId\": \"q-123\",\n  \"holder\": \"Ada Lovelace\"\n}"
             },
             {
-              "text": "\n\nresponse time in milliseconds: 2\n1 < 201 POST http://localhost:34025/policies\n1 < content-length: 98\n1 < Content-Type: application/json; charset=UTF-8\n"
+              "text": "\n\nresponse time in milliseconds: 2\n1 < 201 POST http://localhost:33453/policies\n1 < content-length: 98\n1 < Content-Type: application/json; charset=UTF-8\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"id\": \"#(uuid())\",\n  \"quoteId\": \"q-123\",\n  \"holder\": \"Ada Lovelace\",\n  \"monthlyPremium\": 100,\n  \"status\": \"BOUND\"\n}"
             },
             {
-              "text": "\n\nPOST http://localhost:34025/policies\n201 (2 ms)\n"
+              "text": "\n\nPOST http://localhost:33453/policies\n201 (2 ms)\n"
             }
           ],
           "hasEmbeds": true,
@@ -448,7 +482,7 @@
                 {
                   "role": "primary",
                   "mime": "application/json",
-                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcG9saWNpZXMiLCJwYXRoIjoiL3BvbGljaWVzIiwiaGVhZGVycyI6eyJDb250ZW50LVR5cGUiOlsiYXBwbGljYXRpb24vanNvbjsgY2hhcnNldD1VVEYtOCJdLCJIb3N0IjpbImxvY2FsaG9zdDozNDAyNSJdLCJDb250ZW50LUxlbmd0aCI6WyI0MyJdLCJDb25uZWN0aW9uIjpbImtlZXAtYWxpdmUiXSwiVXNlci1BZ2VudCI6WyJBcGFjaGUtSHR0cENsaWVudC81LjYuMiAoSmF2YS8yMS4wLjExKSJdfSwidXJsQmFzZSI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzQwMjUiLCJtZXRob2QiOiJQT1NUIiwicGFyYW1zIjp7fSwiYm9keSI6eyJxdW90ZUlkIjoicS0xMjMiLCJob2xkZXIiOiJBZGEgTG92ZWxhY2UifSwidXJsIjoiaHR0cDovL2xvY2FsaG9zdDozNDAyNS9wb2xpY2llcyJ9LCJyZXNwb25zZSI6eyJoZWFkZXJzIjp7ImNvbnRlbnQtbGVuZ3RoIjpbIjk4Il0sIkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il19LCJyZXNwb25zZVRpbWUiOjIsImNvbnRlbnRMZW5ndGgiOjk4LCJib2R5Ijp7ImlkIjoiIyh1dWlkKCkpIiwicXVvdGVJZCI6InEtMTIzIiwiaG9sZGVyIjoiQWRhIExvdmVsYWNlIiwibW9udGhseVByZW1pdW0iOjEwMCwic3RhdHVzIjoiQk9VTkQifSwic3RhdHVzIjoyMDF9fQ=="
+                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcG9saWNpZXMiLCJwYXRoIjoiL3BvbGljaWVzIiwiaGVhZGVycyI6eyJDb250ZW50LVR5cGUiOlsiYXBwbGljYXRpb24vanNvbjsgY2hhcnNldD1VVEYtOCJdLCJIb3N0IjpbImxvY2FsaG9zdDozMzQ1MyJdLCJDb250ZW50LUxlbmd0aCI6WyI0MyJdLCJDb25uZWN0aW9uIjpbImtlZXAtYWxpdmUiXSwiVXNlci1BZ2VudCI6WyJBcGFjaGUtSHR0cENsaWVudC81LjYuMiAoSmF2YS8yMS4wLjExKSJdfSwidXJsQmFzZSI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzM0NTMiLCJtZXRob2QiOiJQT1NUIiwicGFyYW1zIjp7fSwiYm9keSI6eyJxdW90ZUlkIjoicS0xMjMiLCJob2xkZXIiOiJBZGEgTG92ZWxhY2UifSwidXJsIjoiaHR0cDovL2xvY2FsaG9zdDozMzQ1My9wb2xpY2llcyJ9LCJyZXNwb25zZSI6eyJoZWFkZXJzIjp7ImNvbnRlbnQtbGVuZ3RoIjpbIjk4Il0sIkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il19LCJyZXNwb25zZVRpbWUiOjIsImNvbnRlbnRMZW5ndGgiOjk4LCJib2R5Ijp7ImlkIjoiIyh1dWlkKCkpIiwicXVvdGVJZCI6InEtMTIzIiwiaG9sZGVyIjoiQWRhIExvdmVsYWNlIiwibW9udGhseVByZW1pdW0iOjEwMCwic3RhdHVzIjoiQk9VTkQifSwic3RhdHVzIjoyMDF9fQ=="
                 }
               ]
             }
@@ -459,7 +493,7 @@
           "prefix": "Then",
           "keyword": "status",
           "text": "201",
-          "line": 22,
+          "line": 28,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -470,7 +504,7 @@
           "prefix": "And",
           "keyword": "match",
           "text": "response.status == 'BOUND'",
-          "line": 23,
+          "line": 29,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -481,12 +515,12 @@
     },
     {
       "name": "list policies",
-      "line": 25,
+      "line": 31,
       "passed": true,
-      "durationMillis": 5,
-      "startTime": 1784182797885,
-      "endTime": 1784182797890,
-      "refId": "[3:25]",
+      "durationMillis": 7,
+      "startTime": 1784534690227,
+      "endTime": 1784534690234,
+      "refId": "[3:31]",
       "sectionIndex": 3,
       "exampleIndex": -1,
       "isOutlineExample": false,
@@ -508,7 +542,7 @@
           "prefix": "Given",
           "keyword": "path",
           "text": "'policies'",
-          "line": 26,
+          "line": 32,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -519,20 +553,20 @@
           "prefix": "When",
           "keyword": "method",
           "text": "get",
-          "line": 27,
+          "line": 33,
           "status": "passed",
           "durationMillis": 4,
           "hasLogs": true,
           "logSegments": [
             {
-              "text": "request:\n1 > GET http://localhost:34025/policies\n1 > Host: localhost:34025\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.11)\n\nresponse time in milliseconds: 2\n1 < 200 GET http://localhost:34025/policies\n1 < content-length: 2\n1 < Content-Type: application/json; charset=UTF-8\n"
+              "text": "request:\n1 > GET http://localhost:33453/policies\n1 > Host: localhost:33453\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.11)\n\nresponse time in milliseconds: 2\n1 < 200 GET http://localhost:33453/policies\n1 < content-length: 2\n1 < Content-Type: application/json; charset=UTF-8\n"
             },
             {
               "lang": "json",
               "code": "[\n]"
             },
             {
-              "text": "\n\nGET http://localhost:34025/policies\n200 (2 ms)\n"
+              "text": "\n\nGET http://localhost:33453/policies\n200 (2 ms)\n"
             }
           ],
           "hasEmbeds": true,
@@ -543,7 +577,7 @@
                 {
                   "role": "primary",
                   "mime": "application/json",
-                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcG9saWNpZXMiLCJwYXRoIjoiL3BvbGljaWVzIiwiaGVhZGVycyI6eyJIb3N0IjpbImxvY2FsaG9zdDozNDAyNSJdLCJDb25uZWN0aW9uIjpbImtlZXAtYWxpdmUiXSwiVXNlci1BZ2VudCI6WyJBcGFjaGUtSHR0cENsaWVudC81LjYuMiAoSmF2YS8yMS4wLjExKSJdfSwidXJsQmFzZSI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzQwMjUiLCJtZXRob2QiOiJHRVQiLCJwYXJhbXMiOnt9LCJib2R5IjpudWxsLCJ1cmwiOiJodHRwOi8vbG9jYWxob3N0OjM0MDI1L3BvbGljaWVzIn0sInJlc3BvbnNlIjp7ImhlYWRlcnMiOnsiY29udGVudC1sZW5ndGgiOlsiMiJdLCJDb250ZW50LVR5cGUiOlsiYXBwbGljYXRpb24vanNvbjsgY2hhcnNldD1VVEYtOCJdfSwicmVzcG9uc2VUaW1lIjoyLCJjb250ZW50TGVuZ3RoIjoyLCJib2R5IjpbXSwic3RhdHVzIjoyMDB9fQ=="
+                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcG9saWNpZXMiLCJwYXRoIjoiL3BvbGljaWVzIiwiaGVhZGVycyI6eyJIb3N0IjpbImxvY2FsaG9zdDozMzQ1MyJdLCJDb25uZWN0aW9uIjpbImtlZXAtYWxpdmUiXSwiVXNlci1BZ2VudCI6WyJBcGFjaGUtSHR0cENsaWVudC81LjYuMiAoSmF2YS8yMS4wLjExKSJdfSwidXJsQmFzZSI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzM0NTMiLCJtZXRob2QiOiJHRVQiLCJwYXJhbXMiOnt9LCJib2R5IjpudWxsLCJ1cmwiOiJodHRwOi8vbG9jYWxob3N0OjMzNDUzL3BvbGljaWVzIn0sInJlc3BvbnNlIjp7ImhlYWRlcnMiOnsiY29udGVudC1sZW5ndGgiOlsiMiJdLCJDb250ZW50LVR5cGUiOlsiYXBwbGljYXRpb24vanNvbjsgY2hhcnNldD1VVEYtOCJdfSwicmVzcG9uc2VUaW1lIjoyLCJjb250ZW50TGVuZ3RoIjoyLCJib2R5IjpbXSwic3RhdHVzIjoyMDB9fQ=="
                 }
               ]
             }
@@ -554,7 +588,7 @@
           "prefix": "Then",
           "keyword": "status",
           "text": "200",
-          "line": 28,
+          "line": 34,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -565,9 +599,9 @@
           "prefix": "And",
           "keyword": "match",
           "text": "response == '#array'",
-          "line": 29,
+          "line": 35,
           "status": "passed",
-          "durationMillis": 0,
+          "durationMillis": 2,
           "hasLogs": false,
           "hasEmbeds": false,
           "hasCallResults": false
@@ -576,12 +610,12 @@
     },
     {
       "name": "fetch a missing policy is a 404",
-      "line": 31,
+      "line": 37,
       "passed": true,
       "durationMillis": 5,
-      "startTime": 1784182797891,
-      "endTime": 1784182797896,
-      "refId": "[4:31]",
+      "startTime": 1784534690238,
+      "endTime": 1784534690243,
+      "refId": "[4:37]",
       "sectionIndex": 4,
       "exampleIndex": -1,
       "isOutlineExample": false,
@@ -603,7 +637,7 @@
           "prefix": "Given",
           "keyword": "path",
           "text": "'policies', 'does-not-exist'",
-          "line": 32,
+          "line": 38,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -614,20 +648,20 @@
           "prefix": "When",
           "keyword": "method",
           "text": "get",
-          "line": 33,
+          "line": 39,
           "status": "passed",
           "durationMillis": 4,
           "hasLogs": true,
           "logSegments": [
             {
-              "text": "request:\n1 > GET http://localhost:34025/policies/does-not-exist\n1 > Host: localhost:34025\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.11)\n\nresponse time in milliseconds: 3\n1 < 404 GET http://localhost:34025/policies/does-not-exist\n1 < content-length: 48\n1 < Content-Type: application/json; charset=UTF-8\n"
+              "text": "request:\n1 > GET http://localhost:33453/policies/does-not-exist\n1 > Host: localhost:33453\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.11)\n\nresponse time in milliseconds: 2\n1 < 404 GET http://localhost:33453/policies/does-not-exist\n1 < content-length: 48\n1 < Content-Type: application/json; charset=UTF-8\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"error\": \"no such policy\",\n  \"id\": \"does-not-exist\"\n}"
             },
             {
-              "text": "\n\nGET http://localhost:34025/policies/does-not-exist\n404 (3 ms)\n"
+              "text": "\n\nGET http://localhost:33453/policies/does-not-exist\n404 (2 ms)\n"
             }
           ],
           "hasEmbeds": true,
@@ -638,7 +672,7 @@
                 {
                   "role": "primary",
                   "mime": "application/json",
-                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcG9saWNpZXMvZG9lcy1ub3QtZXhpc3QiLCJwYXRoIjoiL3BvbGljaWVzL2RvZXMtbm90LWV4aXN0IiwiaGVhZGVycyI6eyJIb3N0IjpbImxvY2FsaG9zdDozNDAyNSJdLCJDb25uZWN0aW9uIjpbImtlZXAtYWxpdmUiXSwiVXNlci1BZ2VudCI6WyJBcGFjaGUtSHR0cENsaWVudC81LjYuMiAoSmF2YS8yMS4wLjExKSJdfSwidXJsQmFzZSI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzQwMjUiLCJtZXRob2QiOiJHRVQiLCJwYXJhbXMiOnt9LCJib2R5IjpudWxsLCJ1cmwiOiJodHRwOi8vbG9jYWxob3N0OjM0MDI1L3BvbGljaWVzL2RvZXMtbm90LWV4aXN0In0sInJlc3BvbnNlIjp7ImhlYWRlcnMiOnsiY29udGVudC1sZW5ndGgiOlsiNDgiXSwiQ29udGVudC1UeXBlIjpbImFwcGxpY2F0aW9uL2pzb247IGNoYXJzZXQ9VVRGLTgiXX0sInJlc3BvbnNlVGltZSI6MywiY29udGVudExlbmd0aCI6NDgsImJvZHkiOnsiZXJyb3IiOiJubyBzdWNoIHBvbGljeSIsImlkIjoiZG9lcy1ub3QtZXhpc3QifSwic3RhdHVzIjo0MDR9fQ=="
+                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcG9saWNpZXMvZG9lcy1ub3QtZXhpc3QiLCJwYXRoIjoiL3BvbGljaWVzL2RvZXMtbm90LWV4aXN0IiwiaGVhZGVycyI6eyJIb3N0IjpbImxvY2FsaG9zdDozMzQ1MyJdLCJDb25uZWN0aW9uIjpbImtlZXAtYWxpdmUiXSwiVXNlci1BZ2VudCI6WyJBcGFjaGUtSHR0cENsaWVudC81LjYuMiAoSmF2YS8yMS4wLjExKSJdfSwidXJsQmFzZSI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzM0NTMiLCJtZXRob2QiOiJHRVQiLCJwYXJhbXMiOnt9LCJib2R5IjpudWxsLCJ1cmwiOiJodHRwOi8vbG9jYWxob3N0OjMzNDUzL3BvbGljaWVzL2RvZXMtbm90LWV4aXN0In0sInJlc3BvbnNlIjp7ImhlYWRlcnMiOnsiY29udGVudC1sZW5ndGgiOlsiNDgiXSwiQ29udGVudC1UeXBlIjpbImFwcGxpY2F0aW9uL2pzb247IGNoYXJzZXQ9VVRGLTgiXX0sInJlc3BvbnNlVGltZSI6MiwiY29udGVudExlbmd0aCI6NDgsImJvZHkiOnsiZXJyb3IiOiJubyBzdWNoIHBvbGljeSIsImlkIjoiZG9lcy1ub3QtZXhpc3QifSwic3RhdHVzIjo0MDR9fQ=="
                 }
               ]
             }
@@ -649,7 +683,7 @@
           "prefix": "Then",
           "keyword": "status",
           "text": "404",
-          "line": 34,
+          "line": 40,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -660,12 +694,12 @@
     },
     {
       "name": "file a claim against a policy",
-      "line": 36,
+      "line": 42,
       "passed": true,
-      "durationMillis": 5,
-      "startTime": 1784182797897,
-      "endTime": 1784182797902,
-      "refId": "[5:36]",
+      "durationMillis": 9,
+      "startTime": 1784534690244,
+      "endTime": 1784534690253,
+      "refId": "[5:42]",
       "sectionIndex": 5,
       "exampleIndex": -1,
       "isOutlineExample": false,
@@ -687,7 +721,7 @@
           "prefix": "Given",
           "keyword": "path",
           "text": "'claims'",
-          "line": 37,
+          "line": 43,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -698,7 +732,7 @@
           "prefix": "And",
           "keyword": "request",
           "text": "{ policyId: 'p-123', amount: 2500, description: 'rear-end collision' }",
-          "line": 38,
+          "line": 44,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -709,27 +743,27 @@
           "prefix": "When",
           "keyword": "method",
           "text": "post",
-          "line": 39,
+          "line": 45,
           "status": "passed",
-          "durationMillis": 4,
+          "durationMillis": 8,
           "hasLogs": true,
           "logSegments": [
             {
-              "text": "request:\n1 > POST http://localhost:34025/claims\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:34025\n1 > Content-Length: 69\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.11)\n"
+              "text": "request:\n1 > POST http://localhost:33453/claims\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:33453\n1 > Content-Length: 69\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.11)\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"policyId\": \"p-123\",\n  \"amount\": 2500,\n  \"description\": \"rear-end collision\"\n}"
             },
             {
-              "text": "\n\nresponse time in milliseconds: 3\n1 < 201 POST http://localhost:34025/claims\n1 < content-length: 67\n1 < Content-Type: application/json; charset=UTF-8\n"
+              "text": "\n\nresponse time in milliseconds: 5\n1 < 201 POST http://localhost:33453/claims\n1 < content-length: 67\n1 < Content-Type: application/json; charset=UTF-8\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"id\": \"#(uuid())\",\n  \"policyId\": \"p-123\",\n  \"amount\": 2500,\n  \"status\": \"OPEN\"\n}"
             },
             {
-              "text": "\n\nPOST http://localhost:34025/claims\n201 (3 ms)\n"
+              "text": "\n\nPOST http://localhost:33453/claims\n201 (5 ms)\n"
             }
           ],
           "hasEmbeds": true,
@@ -740,7 +774,7 @@
                 {
                   "role": "primary",
                   "mime": "application/json",
-                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvY2xhaW1zIiwicGF0aCI6Ii9jbGFpbXMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjM0MDI1Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjY5Il0sIkNvbm5lY3Rpb24iOlsia2VlcC1hbGl2ZSJdLCJVc2VyLUFnZW50IjpbIkFwYWNoZS1IdHRwQ2xpZW50LzUuNi4yIChKYXZhLzIxLjAuMTEpIl19LCJ1cmxCYXNlIjoiaHR0cDovL2xvY2FsaG9zdDozNDAyNSIsIm1ldGhvZCI6IlBPU1QiLCJwYXJhbXMiOnt9LCJib2R5Ijp7InBvbGljeUlkIjoicC0xMjMiLCJhbW91bnQiOjI1MDAsImRlc2NyaXB0aW9uIjoicmVhci1lbmQgY29sbGlzaW9uIn0sInVybCI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzQwMjUvY2xhaW1zIn0sInJlc3BvbnNlIjp7ImhlYWRlcnMiOnsiY29udGVudC1sZW5ndGgiOlsiNjciXSwiQ29udGVudC1UeXBlIjpbImFwcGxpY2F0aW9uL2pzb247IGNoYXJzZXQ9VVRGLTgiXX0sInJlc3BvbnNlVGltZSI6MywiY29udGVudExlbmd0aCI6NjcsImJvZHkiOnsiaWQiOiIjKHV1aWQoKSkiLCJwb2xpY3lJZCI6InAtMTIzIiwiYW1vdW50IjoyNTAwLCJzdGF0dXMiOiJPUEVOIn0sInN0YXR1cyI6MjAxfX0="
+                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvY2xhaW1zIiwicGF0aCI6Ii9jbGFpbXMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjMzNDUzIl0sIkNvbnRlbnQtTGVuZ3RoIjpbIjY5Il0sIkNvbm5lY3Rpb24iOlsia2VlcC1hbGl2ZSJdLCJVc2VyLUFnZW50IjpbIkFwYWNoZS1IdHRwQ2xpZW50LzUuNi4yIChKYXZhLzIxLjAuMTEpIl19LCJ1cmxCYXNlIjoiaHR0cDovL2xvY2FsaG9zdDozMzQ1MyIsIm1ldGhvZCI6IlBPU1QiLCJwYXJhbXMiOnt9LCJib2R5Ijp7InBvbGljeUlkIjoicC0xMjMiLCJhbW91bnQiOjI1MDAsImRlc2NyaXB0aW9uIjoicmVhci1lbmQgY29sbGlzaW9uIn0sInVybCI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzM0NTMvY2xhaW1zIn0sInJlc3BvbnNlIjp7ImhlYWRlcnMiOnsiY29udGVudC1sZW5ndGgiOlsiNjciXSwiQ29udGVudC1UeXBlIjpbImFwcGxpY2F0aW9uL2pzb247IGNoYXJzZXQ9VVRGLTgiXX0sInJlc3BvbnNlVGltZSI6NSwiY29udGVudExlbmd0aCI6NjcsImJvZHkiOnsiaWQiOiIjKHV1aWQoKSkiLCJwb2xpY3lJZCI6InAtMTIzIiwiYW1vdW50IjoyNTAwLCJzdGF0dXMiOiJPUEVOIn0sInN0YXR1cyI6MjAxfX0="
                 }
               ]
             }
@@ -751,7 +785,7 @@
           "prefix": "Then",
           "keyword": "status",
           "text": "201",
-          "line": 40,
+          "line": 46,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -762,7 +796,7 @@
           "prefix": "And",
           "keyword": "match",
           "text": "response.status == 'OPEN'",
-          "line": 41,
+          "line": 47,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,

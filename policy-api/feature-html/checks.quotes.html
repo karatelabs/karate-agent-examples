@@ -238,18 +238,18 @@
   "name": "auto quotes — the covering-array dimension demo (REST front door to the rating engine)",
   "relativePath": "checks/quotes.feature",
   "passed": true,
-  "durationMillis": 49,
-  "reportDate": "2026-07-16 06:19:57",
+  "durationMillis": 99,
+  "reportDate": "2026-07-20 08:04:50",
   "karateVersion": "2.1.2.RC1",
   "scenarios": [
     {
       "name": "quote a COLLISION policy in CA (priorClaims=false)",
-      "line": 19,
+      "line": 25,
       "passed": true,
-      "durationMillis": 9,
-      "startTime": 1784182797818,
-      "endTime": 1784182797827,
-      "refId": "[1.1:19]",
+      "durationMillis": 14,
+      "startTime": 1784534690104,
+      "endTime": 1784534690118,
+      "refId": "[1.1:25]",
       "sectionIndex": 1,
       "exampleIndex": 0,
       "isOutlineExample": true,
@@ -260,7 +260,7 @@
           "prefix": "*",
           "keyword": "url",
           "text": "baseUrl",
-          "line": 9,
+          "line": 14,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -268,10 +268,44 @@
           "hasCallResults": false
         },
         {
+          "prefix": "*",
+          "keyword": "def",
+          "text": "row = { state: 'CA', coverage: 'COLLISION', driverAge: 40, priorClaims: false }",
+          "line": 17,
+          "status": "passed",
+          "durationMillis": 0,
+          "hasLogs": false,
+          "hasEmbeds": false,
+          "hasCallResults": false
+        },
+        {
+          "prefix": "*",
+          "keyword": "def",
+          "text": "check = Rule.execute('rating', row)",
+          "line": 18,
+          "status": "passed",
+          "durationMillis": 4,
+          "hasLogs": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "coverage-emit",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJzb3VyY2UiOiJyZXEiLCJrZXkiOiJSQVRFLTAwMy8xIiwiZXZpZGVuY2UiOnsicnVsZSI6InJhdGluZyJ9fQ=="
+                }
+              ]
+            }
+          ],
+          "hasCallResults": false
+        },
+        {
           "prefix": "Given",
           "keyword": "path",
           "text": "'quotes'",
-          "line": 12,
+          "line": 19,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -281,8 +315,8 @@
         {
           "prefix": "And",
           "keyword": "request",
-          "text": "{ state: 'CA', coverage: 'COLLISION', driverAge: 40, priorClaims: false }",
-          "line": 13,
+          "text": "row",
+          "line": 20,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -293,27 +327,27 @@
           "prefix": "When",
           "keyword": "method",
           "text": "post",
-          "line": 14,
+          "line": 21,
           "status": "passed",
           "durationMillis": 6,
           "hasLogs": true,
           "logSegments": [
             {
-              "text": "request:\n1 > POST http://localhost:34025/quotes\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:34025\n1 > Content-Length: 72\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.11)\n"
+              "text": "request:\n1 > POST http://localhost:33453/quotes\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:33453\n1 > Content-Length: 72\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.11)\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"state\": \"CA\",\n  \"coverage\": \"COLLISION\",\n  \"driverAge\": 40,\n  \"priorClaims\": false\n}"
             },
             {
-              "text": "\n\nresponse time in milliseconds: 4\n1 < 201 POST http://localhost:34025/quotes\n1 < content-length: 82\n1 < Content-Type: application/json; charset=UTF-8\n"
+              "text": "\n\nresponse time in milliseconds: 4\n1 < 201 POST http://localhost:33453/quotes\n1 < content-length: 82\n1 < Content-Type: application/json; charset=UTF-8\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"id\": \"#(uuid())\",\n  \"policyClass\": \"PREFERRED\",\n  \"monthlyPremium\": 100,\n  \"currency\": \"USD\"\n}"
             },
             {
-              "text": "\n\nPOST http://localhost:34025/quotes\n201 (4 ms)\n"
+              "text": "\n\nPOST http://localhost:33453/quotes\n201 (4 ms)\n"
             }
           ],
           "hasEmbeds": true,
@@ -324,7 +358,7 @@
                 {
                   "role": "primary",
                   "mime": "application/json",
-                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcXVvdGVzIiwicGF0aCI6Ii9xdW90ZXMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjM0MDI1Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjcyIl0sIkNvbm5lY3Rpb24iOlsia2VlcC1hbGl2ZSJdLCJVc2VyLUFnZW50IjpbIkFwYWNoZS1IdHRwQ2xpZW50LzUuNi4yIChKYXZhLzIxLjAuMTEpIl19LCJ1cmxCYXNlIjoiaHR0cDovL2xvY2FsaG9zdDozNDAyNSIsIm1ldGhvZCI6IlBPU1QiLCJwYXJhbXMiOnt9LCJib2R5Ijp7InN0YXRlIjoiQ0EiLCJjb3ZlcmFnZSI6IkNPTExJU0lPTiIsImRyaXZlckFnZSI6NDAsInByaW9yQ2xhaW1zIjpmYWxzZX0sInVybCI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzQwMjUvcXVvdGVzIn0sInJlc3BvbnNlIjp7ImhlYWRlcnMiOnsiY29udGVudC1sZW5ndGgiOlsiODIiXSwiQ29udGVudC1UeXBlIjpbImFwcGxpY2F0aW9uL2pzb247IGNoYXJzZXQ9VVRGLTgiXX0sInJlc3BvbnNlVGltZSI6NCwiY29udGVudExlbmd0aCI6ODIsImJvZHkiOnsiaWQiOiIjKHV1aWQoKSkiLCJwb2xpY3lDbGFzcyI6IlBSRUZFUlJFRCIsIm1vbnRobHlQcmVtaXVtIjoxMDAsImN1cnJlbmN5IjoiVVNEIn0sInN0YXR1cyI6MjAxfX0="
+                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcXVvdGVzIiwicGF0aCI6Ii9xdW90ZXMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjMzNDUzIl0sIkNvbnRlbnQtTGVuZ3RoIjpbIjcyIl0sIkNvbm5lY3Rpb24iOlsia2VlcC1hbGl2ZSJdLCJVc2VyLUFnZW50IjpbIkFwYWNoZS1IdHRwQ2xpZW50LzUuNi4yIChKYXZhLzIxLjAuMTEpIl19LCJ1cmxCYXNlIjoiaHR0cDovL2xvY2FsaG9zdDozMzQ1MyIsIm1ldGhvZCI6IlBPU1QiLCJwYXJhbXMiOnt9LCJib2R5Ijp7InN0YXRlIjoiQ0EiLCJjb3ZlcmFnZSI6IkNPTExJU0lPTiIsImRyaXZlckFnZSI6NDAsInByaW9yQ2xhaW1zIjpmYWxzZX0sInVybCI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzM0NTMvcXVvdGVzIn0sInJlc3BvbnNlIjp7ImhlYWRlcnMiOnsiY29udGVudC1sZW5ndGgiOlsiODIiXSwiQ29udGVudC1UeXBlIjpbImFwcGxpY2F0aW9uL2pzb247IGNoYXJzZXQ9VVRGLTgiXX0sInJlc3BvbnNlVGltZSI6NCwiY29udGVudExlbmd0aCI6ODIsImJvZHkiOnsiaWQiOiIjKHV1aWQoKSkiLCJwb2xpY3lDbGFzcyI6IlBSRUZFUlJFRCIsIm1vbnRobHlQcmVtaXVtIjoxMDAsImN1cnJlbmN5IjoiVVNEIn0sInN0YXR1cyI6MjAxfX0="
                 }
               ]
             }
@@ -335,7 +369,7 @@
           "prefix": "Then",
           "keyword": "status",
           "text": "201",
-          "line": 15,
+          "line": 22,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -345,19 +379,8 @@
         {
           "prefix": "And",
           "keyword": "match",
-          "text": "response.monthlyPremium == '#number'",
-          "line": 16,
-          "status": "passed",
-          "durationMillis": 2,
-          "hasLogs": false,
-          "hasEmbeds": false,
-          "hasCallResults": false
-        },
-        {
-          "prefix": "And",
-          "keyword": "match",
-          "text": "response.currency == 'USD'",
-          "line": 17,
+          "text": "response contains check.output",
+          "line": 23,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -368,12 +391,12 @@
     },
     {
       "name": "quote a COMPREHENSIVE policy in NY (priorClaims=true)",
-      "line": 19,
+      "line": 25,
       "passed": true,
-      "durationMillis": 7,
-      "startTime": 1784182797829,
-      "endTime": 1784182797836,
-      "refId": "[1.2:19]",
+      "durationMillis": 17,
+      "startTime": 1784534690119,
+      "endTime": 1784534690136,
+      "refId": "[1.2:25]",
       "sectionIndex": 1,
       "exampleIndex": 1,
       "isOutlineExample": true,
@@ -384,7 +407,7 @@
           "prefix": "*",
           "keyword": "url",
           "text": "baseUrl",
-          "line": 9,
+          "line": 14,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -392,10 +415,54 @@
           "hasCallResults": false
         },
         {
+          "prefix": "*",
+          "keyword": "def",
+          "text": "row = { state: 'NY', coverage: 'COMPREHENSIVE', driverAge: 40, priorClaims: true }",
+          "line": 17,
+          "status": "passed",
+          "durationMillis": 0,
+          "hasLogs": false,
+          "hasEmbeds": false,
+          "hasCallResults": false
+        },
+        {
+          "prefix": "*",
+          "keyword": "def",
+          "text": "check = Rule.execute('rating', row)",
+          "line": 18,
+          "status": "passed",
+          "durationMillis": 9,
+          "hasLogs": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "coverage-emit",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJzb3VyY2UiOiJyZXEiLCJrZXkiOiJSQVRFLTAwMi8xIiwiZXZpZGVuY2UiOnsicnVsZSI6InJhdGluZyJ9fQ=="
+                }
+              ]
+            },
+            {
+              "name": "coverage-emit",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJzb3VyY2UiOiJyZXEiLCJrZXkiOiJSQVRFLTAwMy8xIiwiZXZpZGVuY2UiOnsicnVsZSI6InJhdGluZyJ9fQ=="
+                }
+              ]
+            }
+          ],
+          "hasCallResults": false
+        },
+        {
           "prefix": "Given",
           "keyword": "path",
           "text": "'quotes'",
-          "line": 12,
+          "line": 19,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -405,8 +472,8 @@
         {
           "prefix": "And",
           "keyword": "request",
-          "text": "{ state: 'NY', coverage: 'COMPREHENSIVE', driverAge: 40, priorClaims: true }",
-          "line": 13,
+          "text": "row",
+          "line": 20,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -417,27 +484,27 @@
           "prefix": "When",
           "keyword": "method",
           "text": "post",
-          "line": 14,
+          "line": 21,
           "status": "passed",
           "durationMillis": 6,
           "hasLogs": true,
           "logSegments": [
             {
-              "text": "request:\n1 > POST http://localhost:34025/quotes\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:34025\n1 > Content-Length: 75\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.11)\n"
+              "text": "request:\n1 > POST http://localhost:33453/quotes\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:33453\n1 > Content-Length: 75\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.11)\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"state\": \"NY\",\n  \"coverage\": \"COMPREHENSIVE\",\n  \"driverAge\": 40,\n  \"priorClaims\": true\n}"
             },
             {
-              "text": "\n\nresponse time in milliseconds: 4\n1 < 201 POST http://localhost:34025/quotes\n1 < content-length: 84\n1 < Content-Type: application/json; charset=UTF-8\n"
+              "text": "\n\nresponse time in milliseconds: 4\n1 < 201 POST http://localhost:33453/quotes\n1 < content-length: 84\n1 < Content-Type: application/json; charset=UTF-8\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"id\": \"#(uuid())\",\n  \"policyClass\": \"SUBSTANDARD\",\n  \"monthlyPremium\": 190,\n  \"currency\": \"USD\"\n}"
             },
             {
-              "text": "\n\nPOST http://localhost:34025/quotes\n201 (4 ms)\n"
+              "text": "\n\nPOST http://localhost:33453/quotes\n201 (4 ms)\n"
             }
           ],
           "hasEmbeds": true,
@@ -448,7 +515,7 @@
                 {
                   "role": "primary",
                   "mime": "application/json",
-                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcXVvdGVzIiwicGF0aCI6Ii9xdW90ZXMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjM0MDI1Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjc1Il0sIkNvbm5lY3Rpb24iOlsia2VlcC1hbGl2ZSJdLCJVc2VyLUFnZW50IjpbIkFwYWNoZS1IdHRwQ2xpZW50LzUuNi4yIChKYXZhLzIxLjAuMTEpIl19LCJ1cmxCYXNlIjoiaHR0cDovL2xvY2FsaG9zdDozNDAyNSIsIm1ldGhvZCI6IlBPU1QiLCJwYXJhbXMiOnt9LCJib2R5Ijp7InN0YXRlIjoiTlkiLCJjb3ZlcmFnZSI6IkNPTVBSRUhFTlNJVkUiLCJkcml2ZXJBZ2UiOjQwLCJwcmlvckNsYWltcyI6dHJ1ZX0sInVybCI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzQwMjUvcXVvdGVzIn0sInJlc3BvbnNlIjp7ImhlYWRlcnMiOnsiY29udGVudC1sZW5ndGgiOlsiODQiXSwiQ29udGVudC1UeXBlIjpbImFwcGxpY2F0aW9uL2pzb247IGNoYXJzZXQ9VVRGLTgiXX0sInJlc3BvbnNlVGltZSI6NCwiY29udGVudExlbmd0aCI6ODQsImJvZHkiOnsiaWQiOiIjKHV1aWQoKSkiLCJwb2xpY3lDbGFzcyI6IlNVQlNUQU5EQVJEIiwibW9udGhseVByZW1pdW0iOjE5MCwiY3VycmVuY3kiOiJVU0QifSwic3RhdHVzIjoyMDF9fQ=="
+                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcXVvdGVzIiwicGF0aCI6Ii9xdW90ZXMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjMzNDUzIl0sIkNvbnRlbnQtTGVuZ3RoIjpbIjc1Il0sIkNvbm5lY3Rpb24iOlsia2VlcC1hbGl2ZSJdLCJVc2VyLUFnZW50IjpbIkFwYWNoZS1IdHRwQ2xpZW50LzUuNi4yIChKYXZhLzIxLjAuMTEpIl19LCJ1cmxCYXNlIjoiaHR0cDovL2xvY2FsaG9zdDozMzQ1MyIsIm1ldGhvZCI6IlBPU1QiLCJwYXJhbXMiOnt9LCJib2R5Ijp7InN0YXRlIjoiTlkiLCJjb3ZlcmFnZSI6IkNPTVBSRUhFTlNJVkUiLCJkcml2ZXJBZ2UiOjQwLCJwcmlvckNsYWltcyI6dHJ1ZX0sInVybCI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzM0NTMvcXVvdGVzIn0sInJlc3BvbnNlIjp7ImhlYWRlcnMiOnsiY29udGVudC1sZW5ndGgiOlsiODQiXSwiQ29udGVudC1UeXBlIjpbImFwcGxpY2F0aW9uL2pzb247IGNoYXJzZXQ9VVRGLTgiXX0sInJlc3BvbnNlVGltZSI6NCwiY29udGVudExlbmd0aCI6ODQsImJvZHkiOnsiaWQiOiIjKHV1aWQoKSkiLCJwb2xpY3lDbGFzcyI6IlNVQlNUQU5EQVJEIiwibW9udGhseVByZW1pdW0iOjE5MCwiY3VycmVuY3kiOiJVU0QifSwic3RhdHVzIjoyMDF9fQ=="
                 }
               ]
             }
@@ -459,7 +526,7 @@
           "prefix": "Then",
           "keyword": "status",
           "text": "201",
-          "line": 15,
+          "line": 22,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -469,19 +536,8 @@
         {
           "prefix": "And",
           "keyword": "match",
-          "text": "response.monthlyPremium == '#number'",
-          "line": 16,
-          "status": "passed",
-          "durationMillis": 0,
-          "hasLogs": false,
-          "hasEmbeds": false,
-          "hasCallResults": false
-        },
-        {
-          "prefix": "And",
-          "keyword": "match",
-          "text": "response.currency == 'USD'",
-          "line": 17,
+          "text": "response contains check.output",
+          "line": 23,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -492,12 +548,12 @@
     },
     {
       "name": "quote a LIABILITY policy in TX (priorClaims=false)",
-      "line": 19,
+      "line": 25,
       "passed": true,
-      "durationMillis": 6,
-      "startTime": 1784182797837,
-      "endTime": 1784182797843,
-      "refId": "[1.3:19]",
+      "durationMillis": 18,
+      "startTime": 1784534690138,
+      "endTime": 1784534690156,
+      "refId": "[1.3:25]",
       "sectionIndex": 1,
       "exampleIndex": 2,
       "isOutlineExample": true,
@@ -508,7 +564,7 @@
           "prefix": "*",
           "keyword": "url",
           "text": "baseUrl",
-          "line": 9,
+          "line": 14,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -516,10 +572,44 @@
           "hasCallResults": false
         },
         {
+          "prefix": "*",
+          "keyword": "def",
+          "text": "row = { state: 'TX', coverage: 'LIABILITY', driverAge: 40, priorClaims: false }",
+          "line": 17,
+          "status": "passed",
+          "durationMillis": 0,
+          "hasLogs": false,
+          "hasEmbeds": false,
+          "hasCallResults": false
+        },
+        {
+          "prefix": "*",
+          "keyword": "def",
+          "text": "check = Rule.execute('rating', row)",
+          "line": 18,
+          "status": "passed",
+          "durationMillis": 7,
+          "hasLogs": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "coverage-emit",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJzb3VyY2UiOiJyZXEiLCJrZXkiOiJSQVRFLTAwMy8xIiwiZXZpZGVuY2UiOnsicnVsZSI6InJhdGluZyJ9fQ=="
+                }
+              ]
+            }
+          ],
+          "hasCallResults": false
+        },
+        {
           "prefix": "Given",
           "keyword": "path",
           "text": "'quotes'",
-          "line": 12,
+          "line": 19,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -529,8 +619,8 @@
         {
           "prefix": "And",
           "keyword": "request",
-          "text": "{ state: 'TX', coverage: 'LIABILITY', driverAge: 40, priorClaims: false }",
-          "line": 13,
+          "text": "row",
+          "line": 20,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -541,27 +631,27 @@
           "prefix": "When",
           "keyword": "method",
           "text": "post",
-          "line": 14,
+          "line": 21,
           "status": "passed",
-          "durationMillis": 4,
+          "durationMillis": 7,
           "hasLogs": true,
           "logSegments": [
             {
-              "text": "request:\n1 > POST http://localhost:34025/quotes\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:34025\n1 > Content-Length: 72\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.11)\n"
+              "text": "request:\n1 > POST http://localhost:33453/quotes\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:33453\n1 > Content-Length: 72\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.11)\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"state\": \"TX\",\n  \"coverage\": \"LIABILITY\",\n  \"driverAge\": 40,\n  \"priorClaims\": false\n}"
             },
             {
-              "text": "\n\nresponse time in milliseconds: 3\n1 < 201 POST http://localhost:34025/quotes\n1 < content-length: 81\n1 < Content-Type: application/json; charset=UTF-8\n"
+              "text": "\n\nresponse time in milliseconds: 4\n1 < 201 POST http://localhost:33453/quotes\n1 < content-length: 81\n1 < Content-Type: application/json; charset=UTF-8\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"id\": \"#(uuid())\",\n  \"policyClass\": \"PREFERRED\",\n  \"monthlyPremium\": 50,\n  \"currency\": \"USD\"\n}"
             },
             {
-              "text": "\n\nPOST http://localhost:34025/quotes\n201 (3 ms)\n"
+              "text": "\n\nPOST http://localhost:33453/quotes\n201 (4 ms)\n"
             }
           ],
           "hasEmbeds": true,
@@ -572,7 +662,7 @@
                 {
                   "role": "primary",
                   "mime": "application/json",
-                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcXVvdGVzIiwicGF0aCI6Ii9xdW90ZXMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjM0MDI1Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjcyIl0sIkNvbm5lY3Rpb24iOlsia2VlcC1hbGl2ZSJdLCJVc2VyLUFnZW50IjpbIkFwYWNoZS1IdHRwQ2xpZW50LzUuNi4yIChKYXZhLzIxLjAuMTEpIl19LCJ1cmxCYXNlIjoiaHR0cDovL2xvY2FsaG9zdDozNDAyNSIsIm1ldGhvZCI6IlBPU1QiLCJwYXJhbXMiOnt9LCJib2R5Ijp7InN0YXRlIjoiVFgiLCJjb3ZlcmFnZSI6IkxJQUJJTElUWSIsImRyaXZlckFnZSI6NDAsInByaW9yQ2xhaW1zIjpmYWxzZX0sInVybCI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzQwMjUvcXVvdGVzIn0sInJlc3BvbnNlIjp7ImhlYWRlcnMiOnsiY29udGVudC1sZW5ndGgiOlsiODEiXSwiQ29udGVudC1UeXBlIjpbImFwcGxpY2F0aW9uL2pzb247IGNoYXJzZXQ9VVRGLTgiXX0sInJlc3BvbnNlVGltZSI6MywiY29udGVudExlbmd0aCI6ODEsImJvZHkiOnsiaWQiOiIjKHV1aWQoKSkiLCJwb2xpY3lDbGFzcyI6IlBSRUZFUlJFRCIsIm1vbnRobHlQcmVtaXVtIjo1MCwiY3VycmVuY3kiOiJVU0QifSwic3RhdHVzIjoyMDF9fQ=="
+                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcXVvdGVzIiwicGF0aCI6Ii9xdW90ZXMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjMzNDUzIl0sIkNvbnRlbnQtTGVuZ3RoIjpbIjcyIl0sIkNvbm5lY3Rpb24iOlsia2VlcC1hbGl2ZSJdLCJVc2VyLUFnZW50IjpbIkFwYWNoZS1IdHRwQ2xpZW50LzUuNi4yIChKYXZhLzIxLjAuMTEpIl19LCJ1cmxCYXNlIjoiaHR0cDovL2xvY2FsaG9zdDozMzQ1MyIsIm1ldGhvZCI6IlBPU1QiLCJwYXJhbXMiOnt9LCJib2R5Ijp7InN0YXRlIjoiVFgiLCJjb3ZlcmFnZSI6IkxJQUJJTElUWSIsImRyaXZlckFnZSI6NDAsInByaW9yQ2xhaW1zIjpmYWxzZX0sInVybCI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzM0NTMvcXVvdGVzIn0sInJlc3BvbnNlIjp7ImhlYWRlcnMiOnsiY29udGVudC1sZW5ndGgiOlsiODEiXSwiQ29udGVudC1UeXBlIjpbImFwcGxpY2F0aW9uL2pzb247IGNoYXJzZXQ9VVRGLTgiXX0sInJlc3BvbnNlVGltZSI6NCwiY29udGVudExlbmd0aCI6ODEsImJvZHkiOnsiaWQiOiIjKHV1aWQoKSkiLCJwb2xpY3lDbGFzcyI6IlBSRUZFUlJFRCIsIm1vbnRobHlQcmVtaXVtIjo1MCwiY3VycmVuY3kiOiJVU0QifSwic3RhdHVzIjoyMDF9fQ=="
                 }
               ]
             }
@@ -583,7 +673,7 @@
           "prefix": "Then",
           "keyword": "status",
           "text": "201",
-          "line": 15,
+          "line": 22,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -593,19 +683,8 @@
         {
           "prefix": "And",
           "keyword": "match",
-          "text": "response.monthlyPremium == '#number'",
-          "line": 16,
-          "status": "passed",
-          "durationMillis": 0,
-          "hasLogs": false,
-          "hasEmbeds": false,
-          "hasCallResults": false
-        },
-        {
-          "prefix": "And",
-          "keyword": "match",
-          "text": "response.currency == 'USD'",
-          "line": 17,
+          "text": "response contains check.output",
+          "line": 23,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -616,12 +695,12 @@
     },
     {
       "name": "quote a COLLISION policy in FL (priorClaims=true)",
-      "line": 19,
+      "line": 25,
       "passed": true,
-      "durationMillis": 5,
-      "startTime": 1784182797844,
-      "endTime": 1784182797849,
-      "refId": "[1.4:19]",
+      "durationMillis": 11,
+      "startTime": 1784534690157,
+      "endTime": 1784534690168,
+      "refId": "[1.4:25]",
       "sectionIndex": 1,
       "exampleIndex": 3,
       "isOutlineExample": true,
@@ -632,7 +711,7 @@
           "prefix": "*",
           "keyword": "url",
           "text": "baseUrl",
-          "line": 9,
+          "line": 14,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -640,10 +719,54 @@
           "hasCallResults": false
         },
         {
+          "prefix": "*",
+          "keyword": "def",
+          "text": "row = { state: 'FL', coverage: 'COLLISION', driverAge: 40, priorClaims: true }",
+          "line": 17,
+          "status": "passed",
+          "durationMillis": 0,
+          "hasLogs": false,
+          "hasEmbeds": false,
+          "hasCallResults": false
+        },
+        {
+          "prefix": "*",
+          "keyword": "def",
+          "text": "check = Rule.execute('rating', row)",
+          "line": 18,
+          "status": "passed",
+          "durationMillis": 3,
+          "hasLogs": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "coverage-emit",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJzb3VyY2UiOiJyZXEiLCJrZXkiOiJSQVRFLTAwMi8xIiwiZXZpZGVuY2UiOnsicnVsZSI6InJhdGluZyJ9fQ=="
+                }
+              ]
+            },
+            {
+              "name": "coverage-emit",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJzb3VyY2UiOiJyZXEiLCJrZXkiOiJSQVRFLTAwMy8xIiwiZXZpZGVuY2UiOnsicnVsZSI6InJhdGluZyJ9fQ=="
+                }
+              ]
+            }
+          ],
+          "hasCallResults": false
+        },
+        {
           "prefix": "Given",
           "keyword": "path",
           "text": "'quotes'",
-          "line": 12,
+          "line": 19,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -653,8 +776,8 @@
         {
           "prefix": "And",
           "keyword": "request",
-          "text": "{ state: 'FL', coverage: 'COLLISION', driverAge: 40, priorClaims: true }",
-          "line": 13,
+          "text": "row",
+          "line": 20,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -665,27 +788,27 @@
           "prefix": "When",
           "keyword": "method",
           "text": "post",
-          "line": 14,
+          "line": 21,
           "status": "passed",
-          "durationMillis": 4,
+          "durationMillis": 6,
           "hasLogs": true,
           "logSegments": [
             {
-              "text": "request:\n1 > POST http://localhost:34025/quotes\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:34025\n1 > Content-Length: 71\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.11)\n"
+              "text": "request:\n1 > POST http://localhost:33453/quotes\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:33453\n1 > Content-Length: 71\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.11)\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"state\": \"FL\",\n  \"coverage\": \"COLLISION\",\n  \"driverAge\": 40,\n  \"priorClaims\": true\n}"
             },
             {
-              "text": "\n\nresponse time in milliseconds: 3\n1 < 201 POST http://localhost:34025/quotes\n1 < content-length: 84\n1 < Content-Type: application/json; charset=UTF-8\n"
+              "text": "\n\nresponse time in milliseconds: 5\n1 < 201 POST http://localhost:33453/quotes\n1 < content-length: 84\n1 < Content-Type: application/json; charset=UTF-8\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"id\": \"#(uuid())\",\n  \"policyClass\": \"SUBSTANDARD\",\n  \"monthlyPremium\": 140,\n  \"currency\": \"USD\"\n}"
             },
             {
-              "text": "\n\nPOST http://localhost:34025/quotes\n201 (3 ms)\n"
+              "text": "\n\nPOST http://localhost:33453/quotes\n201 (5 ms)\n"
             }
           ],
           "hasEmbeds": true,
@@ -696,7 +819,7 @@
                 {
                   "role": "primary",
                   "mime": "application/json",
-                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcXVvdGVzIiwicGF0aCI6Ii9xdW90ZXMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjM0MDI1Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjcxIl0sIkNvbm5lY3Rpb24iOlsia2VlcC1hbGl2ZSJdLCJVc2VyLUFnZW50IjpbIkFwYWNoZS1IdHRwQ2xpZW50LzUuNi4yIChKYXZhLzIxLjAuMTEpIl19LCJ1cmxCYXNlIjoiaHR0cDovL2xvY2FsaG9zdDozNDAyNSIsIm1ldGhvZCI6IlBPU1QiLCJwYXJhbXMiOnt9LCJib2R5Ijp7InN0YXRlIjoiRkwiLCJjb3ZlcmFnZSI6IkNPTExJU0lPTiIsImRyaXZlckFnZSI6NDAsInByaW9yQ2xhaW1zIjp0cnVlfSwidXJsIjoiaHR0cDovL2xvY2FsaG9zdDozNDAyNS9xdW90ZXMifSwicmVzcG9uc2UiOnsiaGVhZGVycyI6eyJjb250ZW50LWxlbmd0aCI6WyI4NCJdLCJDb250ZW50LVR5cGUiOlsiYXBwbGljYXRpb24vanNvbjsgY2hhcnNldD1VVEYtOCJdfSwicmVzcG9uc2VUaW1lIjozLCJjb250ZW50TGVuZ3RoIjo4NCwiYm9keSI6eyJpZCI6IiModXVpZCgpKSIsInBvbGljeUNsYXNzIjoiU1VCU1RBTkRBUkQiLCJtb250aGx5UHJlbWl1bSI6MTQwLCJjdXJyZW5jeSI6IlVTRCJ9LCJzdGF0dXMiOjIwMX19"
+                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcXVvdGVzIiwicGF0aCI6Ii9xdW90ZXMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjMzNDUzIl0sIkNvbnRlbnQtTGVuZ3RoIjpbIjcxIl0sIkNvbm5lY3Rpb24iOlsia2VlcC1hbGl2ZSJdLCJVc2VyLUFnZW50IjpbIkFwYWNoZS1IdHRwQ2xpZW50LzUuNi4yIChKYXZhLzIxLjAuMTEpIl19LCJ1cmxCYXNlIjoiaHR0cDovL2xvY2FsaG9zdDozMzQ1MyIsIm1ldGhvZCI6IlBPU1QiLCJwYXJhbXMiOnt9LCJib2R5Ijp7InN0YXRlIjoiRkwiLCJjb3ZlcmFnZSI6IkNPTExJU0lPTiIsImRyaXZlckFnZSI6NDAsInByaW9yQ2xhaW1zIjp0cnVlfSwidXJsIjoiaHR0cDovL2xvY2FsaG9zdDozMzQ1My9xdW90ZXMifSwicmVzcG9uc2UiOnsiaGVhZGVycyI6eyJjb250ZW50LWxlbmd0aCI6WyI4NCJdLCJDb250ZW50LVR5cGUiOlsiYXBwbGljYXRpb24vanNvbjsgY2hhcnNldD1VVEYtOCJdfSwicmVzcG9uc2VUaW1lIjo1LCJjb250ZW50TGVuZ3RoIjo4NCwiYm9keSI6eyJpZCI6IiModXVpZCgpKSIsInBvbGljeUNsYXNzIjoiU1VCU1RBTkRBUkQiLCJtb250aGx5UHJlbWl1bSI6MTQwLCJjdXJyZW5jeSI6IlVTRCJ9LCJzdGF0dXMiOjIwMX19"
                 }
               ]
             }
@@ -707,7 +830,7 @@
           "prefix": "Then",
           "keyword": "status",
           "text": "201",
-          "line": 15,
+          "line": 22,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -717,19 +840,8 @@
         {
           "prefix": "And",
           "keyword": "match",
-          "text": "response.monthlyPremium == '#number'",
-          "line": 16,
-          "status": "passed",
-          "durationMillis": 0,
-          "hasLogs": false,
-          "hasEmbeds": false,
-          "hasCallResults": false
-        },
-        {
-          "prefix": "And",
-          "keyword": "match",
-          "text": "response.currency == 'USD'",
-          "line": 17,
+          "text": "response contains check.output",
+          "line": 23,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -740,12 +852,12 @@
     },
     {
       "name": "quote a COMPREHENSIVE policy in WA (priorClaims=false)",
-      "line": 19,
+      "line": 25,
       "passed": true,
-      "durationMillis": 8,
-      "startTime": 1784182797851,
-      "endTime": 1784182797859,
-      "refId": "[1.5:19]",
+      "durationMillis": 15,
+      "startTime": 1784534690170,
+      "endTime": 1784534690185,
+      "refId": "[1.5:25]",
       "sectionIndex": 1,
       "exampleIndex": 4,
       "isOutlineExample": true,
@@ -756,7 +868,7 @@
           "prefix": "*",
           "keyword": "url",
           "text": "baseUrl",
-          "line": 9,
+          "line": 14,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -764,10 +876,44 @@
           "hasCallResults": false
         },
         {
+          "prefix": "*",
+          "keyword": "def",
+          "text": "row = { state: 'WA', coverage: 'COMPREHENSIVE', driverAge: 40, priorClaims: false }",
+          "line": 17,
+          "status": "passed",
+          "durationMillis": 0,
+          "hasLogs": false,
+          "hasEmbeds": false,
+          "hasCallResults": false
+        },
+        {
+          "prefix": "*",
+          "keyword": "def",
+          "text": "check = Rule.execute('rating', row)",
+          "line": 18,
+          "status": "passed",
+          "durationMillis": 4,
+          "hasLogs": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "coverage-emit",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJzb3VyY2UiOiJyZXEiLCJrZXkiOiJSQVRFLTAwMy8xIiwiZXZpZGVuY2UiOnsicnVsZSI6InJhdGluZyJ9fQ=="
+                }
+              ]
+            }
+          ],
+          "hasCallResults": false
+        },
+        {
           "prefix": "Given",
           "keyword": "path",
           "text": "'quotes'",
-          "line": 12,
+          "line": 19,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -777,8 +923,8 @@
         {
           "prefix": "And",
           "keyword": "request",
-          "text": "{ state: 'WA', coverage: 'COMPREHENSIVE', driverAge: 40, priorClaims: false }",
-          "line": 13,
+          "text": "row",
+          "line": 20,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -789,27 +935,27 @@
           "prefix": "When",
           "keyword": "method",
           "text": "post",
-          "line": 14,
+          "line": 21,
           "status": "passed",
-          "durationMillis": 7,
+          "durationMillis": 9,
           "hasLogs": true,
           "logSegments": [
             {
-              "text": "request:\n1 > POST http://localhost:34025/quotes\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:34025\n1 > Content-Length: 76\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.11)\n"
+              "text": "request:\n1 > POST http://localhost:33453/quotes\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:33453\n1 > Content-Length: 76\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.11)\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"state\": \"WA\",\n  \"coverage\": \"COMPREHENSIVE\",\n  \"driverAge\": 40,\n  \"priorClaims\": false\n}"
             },
             {
-              "text": "\n\nresponse time in milliseconds: 5\n1 < 201 POST http://localhost:34025/quotes\n1 < content-length: 82\n1 < Content-Type: application/json; charset=UTF-8\n"
+              "text": "\n\nresponse time in milliseconds: 5\n1 < 201 POST http://localhost:33453/quotes\n1 < content-length: 82\n1 < Content-Type: application/json; charset=UTF-8\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"id\": \"#(uuid())\",\n  \"policyClass\": \"PREFERRED\",\n  \"monthlyPremium\": 140,\n  \"currency\": \"USD\"\n}"
             },
             {
-              "text": "\n\nPOST http://localhost:34025/quotes\n201 (5 ms)\n"
+              "text": "\n\nPOST http://localhost:33453/quotes\n201 (5 ms)\n"
             }
           ],
           "hasEmbeds": true,
@@ -820,7 +966,7 @@
                 {
                   "role": "primary",
                   "mime": "application/json",
-                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcXVvdGVzIiwicGF0aCI6Ii9xdW90ZXMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjM0MDI1Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjc2Il0sIkNvbm5lY3Rpb24iOlsia2VlcC1hbGl2ZSJdLCJVc2VyLUFnZW50IjpbIkFwYWNoZS1IdHRwQ2xpZW50LzUuNi4yIChKYXZhLzIxLjAuMTEpIl19LCJ1cmxCYXNlIjoiaHR0cDovL2xvY2FsaG9zdDozNDAyNSIsIm1ldGhvZCI6IlBPU1QiLCJwYXJhbXMiOnt9LCJib2R5Ijp7InN0YXRlIjoiV0EiLCJjb3ZlcmFnZSI6IkNPTVBSRUhFTlNJVkUiLCJkcml2ZXJBZ2UiOjQwLCJwcmlvckNsYWltcyI6ZmFsc2V9LCJ1cmwiOiJodHRwOi8vbG9jYWxob3N0OjM0MDI1L3F1b3RlcyJ9LCJyZXNwb25zZSI6eyJoZWFkZXJzIjp7ImNvbnRlbnQtbGVuZ3RoIjpbIjgyIl0sIkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il19LCJyZXNwb25zZVRpbWUiOjUsImNvbnRlbnRMZW5ndGgiOjgyLCJib2R5Ijp7ImlkIjoiIyh1dWlkKCkpIiwicG9saWN5Q2xhc3MiOiJQUkVGRVJSRUQiLCJtb250aGx5UHJlbWl1bSI6MTQwLCJjdXJyZW5jeSI6IlVTRCJ9LCJzdGF0dXMiOjIwMX19"
+                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcXVvdGVzIiwicGF0aCI6Ii9xdW90ZXMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjMzNDUzIl0sIkNvbnRlbnQtTGVuZ3RoIjpbIjc2Il0sIkNvbm5lY3Rpb24iOlsia2VlcC1hbGl2ZSJdLCJVc2VyLUFnZW50IjpbIkFwYWNoZS1IdHRwQ2xpZW50LzUuNi4yIChKYXZhLzIxLjAuMTEpIl19LCJ1cmxCYXNlIjoiaHR0cDovL2xvY2FsaG9zdDozMzQ1MyIsIm1ldGhvZCI6IlBPU1QiLCJwYXJhbXMiOnt9LCJib2R5Ijp7InN0YXRlIjoiV0EiLCJjb3ZlcmFnZSI6IkNPTVBSRUhFTlNJVkUiLCJkcml2ZXJBZ2UiOjQwLCJwcmlvckNsYWltcyI6ZmFsc2V9LCJ1cmwiOiJodHRwOi8vbG9jYWxob3N0OjMzNDUzL3F1b3RlcyJ9LCJyZXNwb25zZSI6eyJoZWFkZXJzIjp7ImNvbnRlbnQtbGVuZ3RoIjpbIjgyIl0sIkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il19LCJyZXNwb25zZVRpbWUiOjUsImNvbnRlbnRMZW5ndGgiOjgyLCJib2R5Ijp7ImlkIjoiIyh1dWlkKCkpIiwicG9saWN5Q2xhc3MiOiJQUkVGRVJSRUQiLCJtb250aGx5UHJlbWl1bSI6MTQwLCJjdXJyZW5jeSI6IlVTRCJ9LCJzdGF0dXMiOjIwMX19"
                 }
               ]
             }
@@ -831,7 +977,7 @@
           "prefix": "Then",
           "keyword": "status",
           "text": "201",
-          "line": 15,
+          "line": 22,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -841,19 +987,8 @@
         {
           "prefix": "And",
           "keyword": "match",
-          "text": "response.monthlyPremium == '#number'",
-          "line": 16,
-          "status": "passed",
-          "durationMillis": 0,
-          "hasLogs": false,
-          "hasEmbeds": false,
-          "hasCallResults": false
-        },
-        {
-          "prefix": "And",
-          "keyword": "match",
-          "text": "response.currency == 'USD'",
-          "line": 17,
+          "text": "response contains check.output",
+          "line": 23,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -864,12 +999,12 @@
     },
     {
       "name": "quote a LIABILITY policy in CA (priorClaims=true)",
-      "line": 19,
+      "line": 25,
       "passed": true,
-      "durationMillis": 5,
-      "startTime": 1784182797860,
-      "endTime": 1784182797865,
-      "refId": "[1.6:19]",
+      "durationMillis": 14,
+      "startTime": 1784534690186,
+      "endTime": 1784534690200,
+      "refId": "[1.6:25]",
       "sectionIndex": 1,
       "exampleIndex": 5,
       "isOutlineExample": true,
@@ -880,7 +1015,7 @@
           "prefix": "*",
           "keyword": "url",
           "text": "baseUrl",
-          "line": 9,
+          "line": 14,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -888,10 +1023,54 @@
           "hasCallResults": false
         },
         {
+          "prefix": "*",
+          "keyword": "def",
+          "text": "row = { state: 'CA', coverage: 'LIABILITY', driverAge: 40, priorClaims: true }",
+          "line": 17,
+          "status": "passed",
+          "durationMillis": 0,
+          "hasLogs": false,
+          "hasEmbeds": false,
+          "hasCallResults": false
+        },
+        {
+          "prefix": "*",
+          "keyword": "def",
+          "text": "check = Rule.execute('rating', row)",
+          "line": 18,
+          "status": "passed",
+          "durationMillis": 4,
+          "hasLogs": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "coverage-emit",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJzb3VyY2UiOiJyZXEiLCJrZXkiOiJSQVRFLTAwMi8xIiwiZXZpZGVuY2UiOnsicnVsZSI6InJhdGluZyJ9fQ=="
+                }
+              ]
+            },
+            {
+              "name": "coverage-emit",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJzb3VyY2UiOiJyZXEiLCJrZXkiOiJSQVRFLTAwMy8xIiwiZXZpZGVuY2UiOnsicnVsZSI6InJhdGluZyJ9fQ=="
+                }
+              ]
+            }
+          ],
+          "hasCallResults": false
+        },
+        {
           "prefix": "Given",
           "keyword": "path",
           "text": "'quotes'",
-          "line": 12,
+          "line": 19,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -901,8 +1080,8 @@
         {
           "prefix": "And",
           "keyword": "request",
-          "text": "{ state: 'CA', coverage: 'LIABILITY', driverAge: 40, priorClaims: true }",
-          "line": 13,
+          "text": "row",
+          "line": 20,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -913,27 +1092,27 @@
           "prefix": "When",
           "keyword": "method",
           "text": "post",
-          "line": 14,
+          "line": 21,
           "status": "passed",
-          "durationMillis": 3,
+          "durationMillis": 9,
           "hasLogs": true,
           "logSegments": [
             {
-              "text": "request:\n1 > POST http://localhost:34025/quotes\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:34025\n1 > Content-Length: 71\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.11)\n"
+              "text": "request:\n1 > POST http://localhost:33453/quotes\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:33453\n1 > Content-Length: 71\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.11)\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"state\": \"CA\",\n  \"coverage\": \"LIABILITY\",\n  \"driverAge\": 40,\n  \"priorClaims\": true\n}"
             },
             {
-              "text": "\n\nresponse time in milliseconds: 2\n1 < 201 POST http://localhost:34025/quotes\n1 < content-length: 83\n1 < Content-Type: application/json; charset=UTF-8\n"
+              "text": "\n\nresponse time in milliseconds: 5\n1 < 201 POST http://localhost:33453/quotes\n1 < content-length: 83\n1 < Content-Type: application/json; charset=UTF-8\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"id\": \"#(uuid())\",\n  \"policyClass\": \"SUBSTANDARD\",\n  \"monthlyPremium\": 95,\n  \"currency\": \"USD\"\n}"
             },
             {
-              "text": "\n\nPOST http://localhost:34025/quotes\n201 (2 ms)\n"
+              "text": "\n\nPOST http://localhost:33453/quotes\n201 (5 ms)\n"
             }
           ],
           "hasEmbeds": true,
@@ -944,7 +1123,7 @@
                 {
                   "role": "primary",
                   "mime": "application/json",
-                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcXVvdGVzIiwicGF0aCI6Ii9xdW90ZXMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjM0MDI1Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjcxIl0sIkNvbm5lY3Rpb24iOlsia2VlcC1hbGl2ZSJdLCJVc2VyLUFnZW50IjpbIkFwYWNoZS1IdHRwQ2xpZW50LzUuNi4yIChKYXZhLzIxLjAuMTEpIl19LCJ1cmxCYXNlIjoiaHR0cDovL2xvY2FsaG9zdDozNDAyNSIsIm1ldGhvZCI6IlBPU1QiLCJwYXJhbXMiOnt9LCJib2R5Ijp7InN0YXRlIjoiQ0EiLCJjb3ZlcmFnZSI6IkxJQUJJTElUWSIsImRyaXZlckFnZSI6NDAsInByaW9yQ2xhaW1zIjp0cnVlfSwidXJsIjoiaHR0cDovL2xvY2FsaG9zdDozNDAyNS9xdW90ZXMifSwicmVzcG9uc2UiOnsiaGVhZGVycyI6eyJjb250ZW50LWxlbmd0aCI6WyI4MyJdLCJDb250ZW50LVR5cGUiOlsiYXBwbGljYXRpb24vanNvbjsgY2hhcnNldD1VVEYtOCJdfSwicmVzcG9uc2VUaW1lIjoyLCJjb250ZW50TGVuZ3RoIjo4MywiYm9keSI6eyJpZCI6IiModXVpZCgpKSIsInBvbGljeUNsYXNzIjoiU1VCU1RBTkRBUkQiLCJtb250aGx5UHJlbWl1bSI6OTUsImN1cnJlbmN5IjoiVVNEIn0sInN0YXR1cyI6MjAxfX0="
+                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcXVvdGVzIiwicGF0aCI6Ii9xdW90ZXMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjMzNDUzIl0sIkNvbnRlbnQtTGVuZ3RoIjpbIjcxIl0sIkNvbm5lY3Rpb24iOlsia2VlcC1hbGl2ZSJdLCJVc2VyLUFnZW50IjpbIkFwYWNoZS1IdHRwQ2xpZW50LzUuNi4yIChKYXZhLzIxLjAuMTEpIl19LCJ1cmxCYXNlIjoiaHR0cDovL2xvY2FsaG9zdDozMzQ1MyIsIm1ldGhvZCI6IlBPU1QiLCJwYXJhbXMiOnt9LCJib2R5Ijp7InN0YXRlIjoiQ0EiLCJjb3ZlcmFnZSI6IkxJQUJJTElUWSIsImRyaXZlckFnZSI6NDAsInByaW9yQ2xhaW1zIjp0cnVlfSwidXJsIjoiaHR0cDovL2xvY2FsaG9zdDozMzQ1My9xdW90ZXMifSwicmVzcG9uc2UiOnsiaGVhZGVycyI6eyJjb250ZW50LWxlbmd0aCI6WyI4MyJdLCJDb250ZW50LVR5cGUiOlsiYXBwbGljYXRpb24vanNvbjsgY2hhcnNldD1VVEYtOCJdfSwicmVzcG9uc2VUaW1lIjo1LCJjb250ZW50TGVuZ3RoIjo4MywiYm9keSI6eyJpZCI6IiModXVpZCgpKSIsInBvbGljeUNsYXNzIjoiU1VCU1RBTkRBUkQiLCJtb250aGx5UHJlbWl1bSI6OTUsImN1cnJlbmN5IjoiVVNEIn0sInN0YXR1cyI6MjAxfX0="
                 }
               ]
             }
@@ -955,7 +1134,7 @@
           "prefix": "Then",
           "keyword": "status",
           "text": "201",
-          "line": 15,
+          "line": 22,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
@@ -965,19 +1144,8 @@
         {
           "prefix": "And",
           "keyword": "match",
-          "text": "response.monthlyPremium == '#number'",
-          "line": 16,
-          "status": "passed",
-          "durationMillis": 0,
-          "hasLogs": false,
-          "hasEmbeds": false,
-          "hasCallResults": false
-        },
-        {
-          "prefix": "And",
-          "keyword": "match",
-          "text": "response.currency == 'USD'",
-          "line": 17,
+          "text": "response contains check.output",
+          "line": 23,
           "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
