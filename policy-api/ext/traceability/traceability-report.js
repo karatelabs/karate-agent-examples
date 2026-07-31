@@ -21,7 +21,7 @@ document.addEventListener('alpine:init', function () {
       glossaryOpen: false,
       riskOrder: ['HIGH', 'MEDIUM', 'LOW', 'NONE'],
       crits: ['high', 'medium', 'low'],
-      statuses: ['COVERED', 'SIMULATED', 'FAILING', 'NOTRUN', 'NOTCOVERED'],
+      statuses: ['COVERED', 'FAILING', 'NOTRUN', 'NOTCOVERED'],
       provOrder: ['exercised', 'partexercised', 'incidental', 'notexercised'],
 
       get graph() { return this.data.graph || {}; },
@@ -40,10 +40,10 @@ document.addEventListener('alpine:init', function () {
       get karateSummary() { return this.data.karateSummary || ''; },
       // the relative href to the sibling Coverage page — context-dependent (in-run vs standalone layout),
       // stamped by the Java bake so the report BODY stays identical across both shells (parity-locked).
-      get coverageHref() { return this.data.coverageHref || 'coverage-report.html'; },
+      get coverageHref() { return this.data.coverageHref || '../../coverage/pages/coverage.html'; },
 
       // a tiny, offline markdown renderer for requirement prose (EARS shall-statements: **bold**,
-      // *italic*, `code`) — escapes HTML first (never inject), no CDN (airgap-safe, reporting.md note 1).
+      // *italic*, `code`) — escapes HTML first (never inject), no CDN (airgap-safe, reports.md note 1).
       md: function (s) {
         if (!s) return '';
         var esc = String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -70,7 +70,7 @@ document.addEventListener('alpine:init', function () {
             if (hay.indexOf(q) < 0) return false;
           }
           return true;
-        }).map(function (r) { r.risk = risk[r.reqId] || self.riskFor(r.criticality || 'medium', r.status); return r; });
+        }).map(function (r) { r.risk = risk[r.reqId] || self.riskFor(r.criticality || 'medium', r.status, r.oracleOnly); return r; });
         if (this.sortKey) {
           var k = this.sortKey, d = this.sortDir;
           out = out.slice().sort(function (a, b) {
@@ -114,14 +114,14 @@ document.addEventListener('alpine:init', function () {
       // (the per-source combination sub-stat is retired from the RTM tile — that depth lives on the
       // Coverage report's scorecard + Input Coverage, one click away via "See tested-depth & gaps", D181.)
       // the risk-matrix cell (mirrors RequirementReadiness.risk — the cells the engine uses)
-      riskFor: function (c, s) {
-        if (s === 'COVERED') return 'NONE';
+      riskFor: function (c, s, oracleOnly) {
+        if (s === 'COVERED' && !oracleOnly) return 'NONE';
         var failing = s === 'FAILING';
         if (c === 'high') return 'HIGH';
         if (c === 'low') return failing ? 'MEDIUM' : 'LOW';
         return failing ? 'HIGH' : 'MEDIUM';
       },
-      riskOf: function (r) { return this.riskFor(r.criticality || 'medium', r.status); },
+      riskOf: function (r) { return this.riskFor(r.criticality || 'medium', r.status, r.oracleOnly); },
       heatCount: function (cr, st) {
         return this.reqs.filter(function (r) { return (r.criticality || 'medium') === cr && r.status === st; }).length;
       },
@@ -137,10 +137,13 @@ document.addEventListener('alpine:init', function () {
         var self = this;
         return this.reqs.filter(function (r) { return self.prov(r) === p; }).length;
       },
-      // "looks green, but isn't really": COVERED yet credited only incidentally (no @req= intent anchor)
+      // "looks green, but isn't really": COVERED yet credited only incidentally (no @req= intent anchor),
+      // or vouched for by nothing but the rulebook itself (oracleOnly)
       get trustGaps() {
         var self = this;
-        return this.reqs.filter(function (r) { return r.status === 'COVERED' && self.prov(r) === 'incidental'; });
+        return this.reqs.filter(function (r) {
+          return r.status === 'COVERED' && (self.prov(r) === 'incidental' || r.oracleOnly);
+        });
       },
 
       readySub: function () {
@@ -374,8 +377,8 @@ document.addEventListener('alpine:init', function () {
       // ---- presentation ----
       // item statuses (COVERED…) and test-node statuses (PASSED…) share the maps — the grid cells and
       // the "Verified by" drill-down pills show the test's own run status
-      statusClass: function (s) { return { COVERED: 'k-ok', SIMULATED: 'k-sim', FAILING: 'k-no', NOTRUN: 'k-warn', NOTCOVERED: 'k-no', PASSED: 'k-ok', FAILED: 'k-no', SKIPPED: 'k-warn' }[s] || ''; },
-      statusIcon: function (s) { return { COVERED: '✓', SIMULATED: '🧪', FAILING: '✗', NOTRUN: '~', NOTCOVERED: '—', PASSED: '✓', FAILED: '✗', SKIPPED: '~' }[s] || '?'; },
+      statusClass: function (s) { return { COVERED: 'k-ok', FAILING: 'k-no', NOTRUN: 'k-warn', NOTCOVERED: 'k-no', PASSED: 'k-ok', FAILED: 'k-no', SKIPPED: 'k-warn' }[s] || ''; },
+      statusIcon: function (s) { return { COVERED: '✓', FAILING: '✗', NOTRUN: '~', NOTCOVERED: '—', PASSED: '✓', FAILED: '✗', SKIPPED: '~' }[s] || '?'; },
       critClass: function (c) { return { high: 'k-crit-high', medium: 'k-crit-med', low: 'k-crit-low' }[c || 'medium'] || 'k-crit-med'; },
       riskClass: function (r) { return { HIGH: 'k-no', MEDIUM: 'k-warn', LOW: 'k-tag', NONE: 'k-ok' }[r] || 'k-tag'; },
       provClass: function (p) { return { exercised: 'k-ok', partexercised: 'k-warn', incidental: 'k-warn', notexercised: 'k-tag' }[p] || 'k-tag'; },
@@ -400,8 +403,7 @@ document.addEventListener('alpine:init', function () {
         {
           key: 'status', title: 'Coverage status', intro: 'The derived state of a requirement, from whether its tests ran and passed (MODEL §2c).',
           terms: [
-            { t: 'COVERED', cls: 'k-ok', d: 'Verified against the live system — a passing test (and, where acceptance criteria exist, every criterion is covered).' },
-            { t: 'SIMULATED', cls: 'k-sim', d: 'Realized by the rule oracle / a simulation (calc.js via calc.req), NOT yet verified against the live system. Positive evidence, but not a live green — a later live run promotes it to COVERED.' },
+            { t: 'COVERED', cls: 'k-ok', d: 'A passing test covers it (and, where acceptance criteria exist, every criterion is covered).' },
             { t: 'FAILING', cls: 'k-no', d: 'A linked test ran and failed.' },
             { t: 'NOTRUN', cls: 'k-warn', d: 'Linked to a test that did not run (skipped) — status unknown.' },
             { t: 'NOTCOVERED', cls: 'k-no', d: 'No covering test — or an acceptance criterion is still untested.' }
@@ -430,7 +432,8 @@ document.addEventListener('alpine:init', function () {
             { t: 'exercised', cls: 'k-ok', d: 'Anchored to the requirement (@req=) AND really exercised — every criterion ran, or a direct test ran. The trustworthy case.' },
             { t: 'partexercised', cls: 'k-warn', d: 'Some criteria ran (or a direct test ran) while other criteria remain untested.' },
             { t: 'incidental', cls: 'k-warn', d: 'Credited because a realizing artifact (@real=) was observed, but with NO @req= intent anchor — counted and flagged. "Looks covered, but nothing claims to verify it on purpose."' },
-            { t: 'notexercised', cls: 'k-tag', d: 'No real eval evidence — claimed but never run, or not covered at all.' }
+            { t: 'notexercised', cls: 'k-tag', d: 'No real eval evidence — claimed but never run, or not covered at all.' },
+            { t: 'rules only', cls: 'k-sim', d: 'Covered, but every piece of evidence is the rulebook\'s own — a calc.req hit or a Rule.cover projection. The rules realize it; nothing outside them checked it. Add a @req=-tagged test, or stamp the comparison with Rule.execute(…).verify(ok).' }
           ]
         },
         {

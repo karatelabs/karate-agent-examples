@@ -56,7 +56,7 @@ document.addEventListener('alpine:init', function () {
       // the relative href to the sibling Traceability page — context-dependent (the in-run page nests under
       // ext/coverage/pages/, the standalone sits flat), so the Java bake stamps the right path per surface;
       // this keeps the report BODY identical across both page shells (one renderer, D-unify).
-      get traceabilityHref() { return this.data.traceabilityHref || 'traceability-report.html'; },
+      get traceabilityHref() { return this.data.traceabilityHref || '../../traceability/pages/traceability.html'; },
       get readyState() { var r = this.readiness; return r ? (r.state || (r.ready ? 'READY' : 'NOT_READY')) : ''; },
       // a plain-language headline for the auditor (not the raw READY/CONDITIONAL/NOT_READY token)
       readyWord: function () {
@@ -67,9 +67,14 @@ document.addEventListener('alpine:init', function () {
       },
       // the canonical one-line reason (kept verbatim — single source with the RTM verdict)
       readyVerdict: function () { return (this.readiness && this.readiness.verdict) || ''; },
+      // covered, but only the rulebook vouches (§2c) — surfaced beside the split, never folded into green
+      get oracleOnlyCount() {
+        return ((this.readiness && this.readiness.requirements) || [])
+          .filter(function (r) { return r.oracleOnly && r.coverage === 'COVERED'; }).length;
+      },
       // the honest status split behind the verdict — covered / failing / not-tested, never blended
       readyStatusCounts: function () {
-        var c = { COVERED: 0, SIMULATED: 0, FAILING: 0, NOTRUN: 0, NOTCOVERED: 0 };
+        var c = { COVERED: 0, FAILING: 0, NOTRUN: 0, NOTCOVERED: 0 };
         ((this.readiness && this.readiness.requirements) || []).forEach(function (r) {
           if (c[r.coverage] !== undefined) c[r.coverage]++;
         });
@@ -87,7 +92,7 @@ document.addEventListener('alpine:init', function () {
         return this.listItems.filter(function (i) { return i.kind !== 'req'; });
       },
       statusSplit: function (items) {
-        var c = { COVERED: 0, SIMULATED: 0, FAILING: 0, NOTRUN: 0, NOTCOVERED: 0 };
+        var c = { COVERED: 0, FAILING: 0, NOTRUN: 0, NOTCOVERED: 0 };
         items.forEach(function (i) { if (c[i.status] !== undefined) c[i.status]++; });
         return c;
       },
@@ -124,14 +129,20 @@ document.addEventListener('alpine:init', function () {
         var reqRows = (this.readiness && this.readiness.requirements) || null;
         var rc = reqRows
           ? reqRows.reduce(function (a, r) { if (a[r.coverage] !== undefined) a[r.coverage]++; return a; },
-              { COVERED: 0, SIMULATED: 0, FAILING: 0, NOTRUN: 0, NOTCOVERED: 0 })
+              { COVERED: 0, FAILING: 0, NOTRUN: 0, NOTCOVERED: 0 })
           : this.statusSplit(this.listItems.filter(function (i) { return i.kind === 'req'; }));
+        // covered, but only the rulebook vouches — split out of the green so the card can't read
+        // greener than the evidence (the readiness row carries the flag)
+        // only ever split out of the GREEN segment, so the segments can never sum past the total
+        var reqOracleOnly = reqRows
+          ? reqRows.filter(function (r) { return r.oracleOnly && r.coverage === 'COVERED'; }).length
+          : this.listItems.filter(function (i) { return i.kind === 'req' && i.oracleOnly && i.status === 'COVERED'; }).length;
         var reqTotal = reqRows ? reqRows.length : this.listItems.filter(function (i) { return i.kind === 'req'; }).length;
         if (reqTotal) {
           cards.push(mk('req', 'Requirements', "requirements we've actually tested", 'model.coverage.axis.req',
             reqTotal, [
-              { cls: 'k-seg-ok', n: rc.COVERED, title: 'covered (tested & passed)' },
-              { cls: 'k-seg-sim', n: rc.SIMULATED, title: 'checked by the rule oracle only (not live)' },
+              { cls: 'k-seg-ok', n: Math.max(0, rc.COVERED - reqOracleOnly), title: 'covered (tested & passed)' },
+              { cls: 'k-seg-sim', n: reqOracleOnly, title: 'the rules realize it, but nothing outside the rulebook checked it' },
               { cls: 'k-seg-bad', n: rc.FAILING, title: 'a test is failing' },
               { cls: 'k-seg-none', n: rc.NOTRUN + rc.NOTCOVERED, title: 'not tested yet' }
             ]));
@@ -155,7 +166,6 @@ document.addEventListener('alpine:init', function () {
           cards.push(mk('actions', 'Actions tested', "system actions we've exercised", 'model.coverage.axis.actions',
             ops.length, [
               { cls: 'k-seg-ok', n: oc.COVERED, title: 'exercised & passed' },
-              { cls: 'k-seg-sim', n: oc.SIMULATED, title: 'simulated only' },
               { cls: 'k-seg-bad', n: oc.FAILING, title: 'a test is failing' },
               { cls: 'k-seg-none', n: oc.NOTRUN + oc.NOTCOVERED, title: 'not exercised' }
             ]));
@@ -442,10 +452,10 @@ document.addEventListener('alpine:init', function () {
         return i >= 0 ? slug.slice(i + 2) : slug;
       },
       statusClass: function (s) {
-        return { COVERED: 'k-ok', SIMULATED: 'k-sim', FAILING: 'k-no', NOTRUN: 'k-warn', NOTCOVERED: 'k-no' }[s] || '';
+        return { COVERED: 'k-ok', FAILING: 'k-no', NOTRUN: 'k-warn', NOTCOVERED: 'k-no' }[s] || '';
       },
       statusIcon: function (s) {
-        return { COVERED: '✓', SIMULATED: '🧪', FAILING: '✗', NOTRUN: '~', NOTCOVERED: '—' }[s] || '?';
+        return { COVERED: '✓', FAILING: '✗', NOTRUN: '~', NOTCOVERED: '—' }[s] || '?';
       }
     };
   });

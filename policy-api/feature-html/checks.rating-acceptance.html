@@ -237,18 +237,18 @@
   "path": "checks/rating-acceptance.feature",
   "name": "rating acceptance — the saved scenarios, LIVE against the /quotes API (the RTM spine)",
   "relativePath": "checks/rating-acceptance.feature",
-  "passed": false,
-  "durationMillis": 556,
-  "reportDate": "2026-07-31 06:20:24",
+  "passed": true,
+  "durationMillis": 509,
+  "reportDate": "2026-07-31 06:46:16",
   "karateVersion": "2.1.2.RC1",
   "scenarios": [
     {
       "name": "young-collision-ca — young driver, collision, California — the young-driver loading fires",
       "line": 40,
-      "passed": false,
-      "durationMillis": 358,
-      "startTime": 1785478824235,
-      "endTime": 1785478824593,
+      "passed": true,
+      "durationMillis": 323,
+      "startTime": 1785480377042,
+      "endTime": 1785480377365,
       "refId": "[1.1:40]",
       "sectionIndex": 1,
       "exampleIndex": 0,
@@ -273,9 +273,31 @@
           "text": "check = Rule.execute('rating', __row)",
           "line": 27,
           "status": "passed",
-          "durationMillis": 10,
+          "durationMillis": 18,
           "hasLogs": false,
-          "hasEmbeds": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "coverage-emit",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJzb3VyY2UiOiJyZXEiLCJrZXkiOiJSQVRFLTAwMS8xIiwiZXZpZGVuY2UiOnsicnVsZSI6InJhdGluZyIsIm9yYWNsZSI6dHJ1ZX19"
+                }
+              ]
+            },
+            {
+              "name": "coverage-emit",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJzb3VyY2UiOiJyZXEiLCJrZXkiOiJSQVRFLTAwMy8xIiwiZXZpZGVuY2UiOnsicnVsZSI6InJhdGluZyIsIm9yYWNsZSI6dHJ1ZX19"
+                }
+              ]
+            }
+          ],
           "hasCallResults": false
         },
         {
@@ -284,7 +306,7 @@
           "text": "oracle = check.output",
           "line": 28,
           "status": "passed",
-          "durationMillis": 2,
+          "durationMillis": 0,
           "hasLogs": false,
           "hasEmbeds": false,
           "hasCallResults": false
@@ -309,7 +331,7 @@
           "text": "{ state: '#(__row.state)', coverage: '#(__row.coverage)', driverAge: '#(__row.driverAge)', priorClaims: '#(__row.priorClaims)' }",
           "line": 31,
           "status": "passed",
-          "durationMillis": 0,
+          "durationMillis": 5,
           "hasLogs": false,
           "hasEmbeds": false,
           "hasCallResults": false
@@ -320,25 +342,25 @@
           "text": "post",
           "line": 32,
           "status": "passed",
-          "durationMillis": 335,
+          "durationMillis": 292,
           "hasLogs": true,
           "logSegments": [
             {
-              "text": "request:\n1 > POST http://localhost:41559/quotes\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:41559\n1 > Content-Length: 72\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.11)\n"
+              "text": "request:\n1 > POST http://localhost:34305/quotes\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:34305\n1 > Content-Length: 72\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.11)\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"state\": \"CA\",\n  \"coverage\": \"COLLISION\",\n  \"driverAge\": 22,\n  \"priorClaims\": false\n}"
             },
             {
-              "text": "\n\nresponse time in milliseconds: 133\n1 < 201 POST http://localhost:41559/quotes\n1 < content-length: 81\n1 < Content-Type: application/json; charset=UTF-8\n"
+              "text": "\n\nresponse time in milliseconds: 123\n1 < 201 POST http://localhost:34305/quotes\n1 < content-length: 81\n1 < Karate-Mock: true\n1 < Content-Type: application/json; charset=UTF-8\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"id\": \"#(uuid())\",\n  \"policyClass\": \"STANDARD\",\n  \"monthlyPremium\": 140,\n  \"currency\": \"USD\"\n}"
             },
             {
-              "text": "\n\nPOST http://localhost:41559/quotes\n201 (133 ms)\n"
+              "text": "\n\nPOST http://localhost:34305/quotes\n201 (123 ms)\n"
             }
           ],
           "hasEmbeds": true,
@@ -349,7 +371,7 @@
                 {
                   "role": "primary",
                   "mime": "application/json",
-                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcXVvdGVzIiwicGF0aCI6Ii9xdW90ZXMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjQxNTU5Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjcyIl0sIkNvbm5lY3Rpb24iOlsia2VlcC1hbGl2ZSJdLCJVc2VyLUFnZW50IjpbIkFwYWNoZS1IdHRwQ2xpZW50LzUuNi4yIChKYXZhLzIxLjAuMTEpIl19LCJ1cmxCYXNlIjoiaHR0cDovL2xvY2FsaG9zdDo0MTU1OSIsIm1ldGhvZCI6IlBPU1QiLCJwYXJhbXMiOnt9LCJib2R5Ijp7InN0YXRlIjoiQ0EiLCJjb3ZlcmFnZSI6IkNPTExJU0lPTiIsImRyaXZlckFnZSI6MjIsInByaW9yQ2xhaW1zIjpmYWxzZX0sInVybCI6Imh0dHA6Ly9sb2NhbGhvc3Q6NDE1NTkvcXVvdGVzIn0sInJlc3BvbnNlIjp7ImhlYWRlcnMiOnsiY29udGVudC1sZW5ndGgiOlsiODEiXSwiQ29udGVudC1UeXBlIjpbImFwcGxpY2F0aW9uL2pzb247IGNoYXJzZXQ9VVRGLTgiXX0sInJlc3BvbnNlVGltZSI6MTMzLCJjb250ZW50TGVuZ3RoIjo4MSwiYm9keSI6eyJpZCI6IiModXVpZCgpKSIsInBvbGljeUNsYXNzIjoiU1RBTkRBUkQiLCJtb250aGx5UHJlbWl1bSI6MTQwLCJjdXJyZW5jeSI6IlVTRCJ9LCJzdGF0dXMiOjIwMX19"
+                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcXVvdGVzIiwicGF0aCI6Ii9xdW90ZXMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjM0MzA1Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjcyIl0sIkNvbm5lY3Rpb24iOlsia2VlcC1hbGl2ZSJdLCJVc2VyLUFnZW50IjpbIkFwYWNoZS1IdHRwQ2xpZW50LzUuNi4yIChKYXZhLzIxLjAuMTEpIl19LCJ1cmxCYXNlIjoiaHR0cDovL2xvY2FsaG9zdDozNDMwNSIsIm1ldGhvZCI6IlBPU1QiLCJwYXJhbXMiOnt9LCJib2R5Ijp7InN0YXRlIjoiQ0EiLCJjb3ZlcmFnZSI6IkNPTExJU0lPTiIsImRyaXZlckFnZSI6MjIsInByaW9yQ2xhaW1zIjpmYWxzZX0sInVybCI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzQzMDUvcXVvdGVzIn0sInJlc3BvbnNlIjp7ImhlYWRlcnMiOnsiY29udGVudC1sZW5ndGgiOlsiODEiXSwiS2FyYXRlLU1vY2siOlsidHJ1ZSJdLCJDb250ZW50LVR5cGUiOlsiYXBwbGljYXRpb24vanNvbjsgY2hhcnNldD1VVEYtOCJdfSwicmVzcG9uc2VUaW1lIjoxMjMsImNvbnRlbnRMZW5ndGgiOjgxLCJib2R5Ijp7ImlkIjoiIyh1dWlkKCkpIiwicG9saWN5Q2xhc3MiOiJTVEFOREFSRCIsIm1vbnRobHlQcmVtaXVtIjoxNDAsImN1cnJlbmN5IjoiVVNEIn0sInN0YXR1cyI6MjAxfX0="
                 }
               ]
             }
@@ -375,10 +397,9 @@
           "comments": [
             "# the system must match the rule — no golden number"
           ],
-          "status": "failed",
-          "durationMillis": 6,
+          "status": "passed",
+          "durationMillis": 3,
           "hasLogs": false,
-          "error": "# the system must match the rule — no golden number\nmatch failed: EQUALS\n  $ | present (NUMBER:STRING)\n  140\n  '#notpresent'\n",
           "hasEmbeds": false,
           "hasCallResults": false
         },
@@ -387,7 +408,7 @@
           "keyword": "match",
           "text": "response.currency == oracle.currency",
           "line": 36,
-          "status": "skipped",
+          "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
           "hasEmbeds": false,
@@ -401,22 +422,53 @@
           "comments": [
             "# record the live-vs-rule verdict — lights this saved scenario COVERED in the rules source"
           ],
-          "status": "skipped",
+          "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
-          "hasEmbeds": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "coverage-emit",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJzb3VyY2UiOiJydWxlcyIsImtleSI6InJhdGluZy95b3VuZy1jb2xsaXNpb24tY2EiLCJldmlkZW5jZSI6eyJzdGF0dXMiOiJwYXNzIiwibm90ZSI6ImxpdmUgL3F1b3RlcyBtYXRjaGVzIHRoZSBydWxlYm9vayJ9fQ=="
+                }
+              ]
+            },
+            {
+              "name": "coverage-emit",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJzb3VyY2UiOiJyZXEiLCJrZXkiOiJSQVRFLTAwMS8xIiwiZXZpZGVuY2UiOnsic3RhdHVzIjoicGFzcyIsInZlcmlmaWVkIjp0cnVlLCJydWxlIjoicmF0aW5nIn19"
+                }
+              ]
+            },
+            {
+              "name": "coverage-emit",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJzb3VyY2UiOiJyZXEiLCJrZXkiOiJSQVRFLTAwMy8xIiwiZXZpZGVuY2UiOnsic3RhdHVzIjoicGFzcyIsInZlcmlmaWVkIjp0cnVlLCJydWxlIjoicmF0aW5nIn19"
+                }
+              ]
+            }
+          ],
           "hasCallResults": false
         }
-      ],
-      "error": "# the system must match the rule — no golden number\nmatch failed: EQUALS\n  $ | present (NUMBER:STRING)\n  140\n  '#notpresent'\n"
+      ]
     },
     {
       "name": "prior-claims-comprehensive-ny — adult with prior claims, comprehensive, New York — the prior-claims surcharge fires",
       "line": 40,
-      "passed": false,
-      "durationMillis": 14,
-      "startTime": 1785478824597,
-      "endTime": 1785478824611,
+      "passed": true,
+      "durationMillis": 18,
+      "startTime": 1785480377368,
+      "endTime": 1785480377386,
       "refId": "[1.2:40]",
       "sectionIndex": 1,
       "exampleIndex": 1,
@@ -441,9 +493,31 @@
           "text": "check = Rule.execute('rating', __row)",
           "line": 27,
           "status": "passed",
-          "durationMillis": 2,
+          "durationMillis": 7,
           "hasLogs": false,
-          "hasEmbeds": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "coverage-emit",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJzb3VyY2UiOiJyZXEiLCJrZXkiOiJSQVRFLTAwMi8xIiwiZXZpZGVuY2UiOnsicnVsZSI6InJhdGluZyIsIm9yYWNsZSI6dHJ1ZX19"
+                }
+              ]
+            },
+            {
+              "name": "coverage-emit",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJzb3VyY2UiOiJyZXEiLCJrZXkiOiJSQVRFLTAwMy8xIiwiZXZpZGVuY2UiOnsicnVsZSI6InJhdGluZyIsIm9yYWNsZSI6dHJ1ZX19"
+                }
+              ]
+            }
+          ],
           "hasCallResults": false
         },
         {
@@ -488,25 +562,25 @@
           "text": "post",
           "line": 32,
           "status": "passed",
-          "durationMillis": 10,
+          "durationMillis": 9,
           "hasLogs": true,
           "logSegments": [
             {
-              "text": "request:\n1 > POST http://localhost:41559/quotes\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:41559\n1 > Content-Length: 75\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.11)\n"
+              "text": "request:\n1 > POST http://localhost:34305/quotes\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:34305\n1 > Content-Length: 75\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.11)\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"state\": \"NY\",\n  \"coverage\": \"COMPREHENSIVE\",\n  \"driverAge\": 45,\n  \"priorClaims\": true\n}"
             },
             {
-              "text": "\n\nresponse time in milliseconds: 6\n1 < 201 POST http://localhost:41559/quotes\n1 < content-length: 84\n1 < Content-Type: application/json; charset=UTF-8\n"
+              "text": "\n\nresponse time in milliseconds: 4\n1 < 201 POST http://localhost:34305/quotes\n1 < content-length: 84\n1 < Karate-Mock: true\n1 < Content-Type: application/json; charset=UTF-8\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"id\": \"#(uuid())\",\n  \"policyClass\": \"SUBSTANDARD\",\n  \"monthlyPremium\": 190,\n  \"currency\": \"USD\"\n}"
             },
             {
-              "text": "\n\nPOST http://localhost:41559/quotes\n201 (6 ms)\n"
+              "text": "\n\nPOST http://localhost:34305/quotes\n201 (4 ms)\n"
             }
           ],
           "hasEmbeds": true,
@@ -517,7 +591,7 @@
                 {
                   "role": "primary",
                   "mime": "application/json",
-                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcXVvdGVzIiwicGF0aCI6Ii9xdW90ZXMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjQxNTU5Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjc1Il0sIkNvbm5lY3Rpb24iOlsia2VlcC1hbGl2ZSJdLCJVc2VyLUFnZW50IjpbIkFwYWNoZS1IdHRwQ2xpZW50LzUuNi4yIChKYXZhLzIxLjAuMTEpIl19LCJ1cmxCYXNlIjoiaHR0cDovL2xvY2FsaG9zdDo0MTU1OSIsIm1ldGhvZCI6IlBPU1QiLCJwYXJhbXMiOnt9LCJib2R5Ijp7InN0YXRlIjoiTlkiLCJjb3ZlcmFnZSI6IkNPTVBSRUhFTlNJVkUiLCJkcml2ZXJBZ2UiOjQ1LCJwcmlvckNsYWltcyI6dHJ1ZX0sInVybCI6Imh0dHA6Ly9sb2NhbGhvc3Q6NDE1NTkvcXVvdGVzIn0sInJlc3BvbnNlIjp7ImhlYWRlcnMiOnsiY29udGVudC1sZW5ndGgiOlsiODQiXSwiQ29udGVudC1UeXBlIjpbImFwcGxpY2F0aW9uL2pzb247IGNoYXJzZXQ9VVRGLTgiXX0sInJlc3BvbnNlVGltZSI6NiwiY29udGVudExlbmd0aCI6ODQsImJvZHkiOnsiaWQiOiIjKHV1aWQoKSkiLCJwb2xpY3lDbGFzcyI6IlNVQlNUQU5EQVJEIiwibW9udGhseVByZW1pdW0iOjE5MCwiY3VycmVuY3kiOiJVU0QifSwic3RhdHVzIjoyMDF9fQ=="
+                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcXVvdGVzIiwicGF0aCI6Ii9xdW90ZXMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjM0MzA1Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjc1Il0sIkNvbm5lY3Rpb24iOlsia2VlcC1hbGl2ZSJdLCJVc2VyLUFnZW50IjpbIkFwYWNoZS1IdHRwQ2xpZW50LzUuNi4yIChKYXZhLzIxLjAuMTEpIl19LCJ1cmxCYXNlIjoiaHR0cDovL2xvY2FsaG9zdDozNDMwNSIsIm1ldGhvZCI6IlBPU1QiLCJwYXJhbXMiOnt9LCJib2R5Ijp7InN0YXRlIjoiTlkiLCJjb3ZlcmFnZSI6IkNPTVBSRUhFTlNJVkUiLCJkcml2ZXJBZ2UiOjQ1LCJwcmlvckNsYWltcyI6dHJ1ZX0sInVybCI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzQzMDUvcXVvdGVzIn0sInJlc3BvbnNlIjp7ImhlYWRlcnMiOnsiY29udGVudC1sZW5ndGgiOlsiODQiXSwiS2FyYXRlLU1vY2siOlsidHJ1ZSJdLCJDb250ZW50LVR5cGUiOlsiYXBwbGljYXRpb24vanNvbjsgY2hhcnNldD1VVEYtOCJdfSwicmVzcG9uc2VUaW1lIjo0LCJjb250ZW50TGVuZ3RoIjo4NCwiYm9keSI6eyJpZCI6IiModXVpZCgpKSIsInBvbGljeUNsYXNzIjoiU1VCU1RBTkRBUkQiLCJtb250aGx5UHJlbWl1bSI6MTkwLCJjdXJyZW5jeSI6IlVTRCJ9LCJzdGF0dXMiOjIwMX19"
                 }
               ]
             }
@@ -543,10 +617,9 @@
           "comments": [
             "# the system must match the rule — no golden number"
           ],
-          "status": "failed",
+          "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
-          "error": "# the system must match the rule — no golden number\nmatch failed: EQUALS\n  $ | present (NUMBER:STRING)\n  190\n  '#notpresent'\n",
           "hasEmbeds": false,
           "hasCallResults": false
         },
@@ -555,7 +628,7 @@
           "keyword": "match",
           "text": "response.currency == oracle.currency",
           "line": 36,
-          "status": "skipped",
+          "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
           "hasEmbeds": false,
@@ -569,22 +642,53 @@
           "comments": [
             "# record the live-vs-rule verdict — lights this saved scenario COVERED in the rules source"
           ],
-          "status": "skipped",
+          "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
-          "hasEmbeds": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "coverage-emit",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJzb3VyY2UiOiJydWxlcyIsImtleSI6InJhdGluZy9wcmlvci1jbGFpbXMtY29tcHJlaGVuc2l2ZS1ueSIsImV2aWRlbmNlIjp7InN0YXR1cyI6InBhc3MiLCJub3RlIjoibGl2ZSAvcXVvdGVzIG1hdGNoZXMgdGhlIHJ1bGVib29rIn19"
+                }
+              ]
+            },
+            {
+              "name": "coverage-emit",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJzb3VyY2UiOiJyZXEiLCJrZXkiOiJSQVRFLTAwMi8xIiwiZXZpZGVuY2UiOnsic3RhdHVzIjoicGFzcyIsInZlcmlmaWVkIjp0cnVlLCJydWxlIjoicmF0aW5nIn19"
+                }
+              ]
+            },
+            {
+              "name": "coverage-emit",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJzb3VyY2UiOiJyZXEiLCJrZXkiOiJSQVRFLTAwMy8xIiwiZXZpZGVuY2UiOnsic3RhdHVzIjoicGFzcyIsInZlcmlmaWVkIjp0cnVlLCJydWxlIjoicmF0aW5nIn19"
+                }
+              ]
+            }
+          ],
           "hasCallResults": false
         }
-      ],
-      "error": "# the system must match the rule — no golden number\nmatch failed: EQUALS\n  $ | present (NUMBER:STRING)\n  190\n  '#notpresent'\n"
+      ]
     },
     {
       "name": "clean-liability-tx — adult, clean record, liability, Texas — the base case, no loadings",
       "line": 40,
-      "passed": false,
-      "durationMillis": 11,
-      "startTime": 1785478824613,
-      "endTime": 1785478824624,
+      "passed": true,
+      "durationMillis": 15,
+      "startTime": 1785480377387,
+      "endTime": 1785480377402,
       "refId": "[1.3:40]",
       "sectionIndex": 1,
       "exampleIndex": 2,
@@ -609,9 +713,21 @@
           "text": "check = Rule.execute('rating', __row)",
           "line": 27,
           "status": "passed",
-          "durationMillis": 1,
+          "durationMillis": 5,
           "hasLogs": false,
-          "hasEmbeds": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "coverage-emit",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJzb3VyY2UiOiJyZXEiLCJrZXkiOiJSQVRFLTAwMy8xIiwiZXZpZGVuY2UiOnsicnVsZSI6InJhdGluZyIsIm9yYWNsZSI6dHJ1ZX19"
+                }
+              ]
+            }
+          ],
           "hasCallResults": false
         },
         {
@@ -656,25 +772,25 @@
           "text": "post",
           "line": 32,
           "status": "passed",
-          "durationMillis": 8,
+          "durationMillis": 7,
           "hasLogs": true,
           "logSegments": [
             {
-              "text": "request:\n1 > POST http://localhost:41559/quotes\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:41559\n1 > Content-Length: 72\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.11)\n"
+              "text": "request:\n1 > POST http://localhost:34305/quotes\n1 > Content-Type: application/json; charset=UTF-8\n1 > Host: localhost:34305\n1 > Content-Length: 72\n1 > Connection: keep-alive\n1 > User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.11)\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"state\": \"TX\",\n  \"coverage\": \"LIABILITY\",\n  \"driverAge\": 60,\n  \"priorClaims\": false\n}"
             },
             {
-              "text": "\n\nresponse time in milliseconds: 4\n1 < 201 POST http://localhost:41559/quotes\n1 < content-length: 81\n1 < Content-Type: application/json; charset=UTF-8\n"
+              "text": "\n\nresponse time in milliseconds: 3\n1 < 201 POST http://localhost:34305/quotes\n1 < content-length: 81\n1 < Karate-Mock: true\n1 < Content-Type: application/json; charset=UTF-8\n"
             },
             {
               "lang": "json",
               "code": "{\n  \"id\": \"#(uuid())\",\n  \"policyClass\": \"PREFERRED\",\n  \"monthlyPremium\": 50,\n  \"currency\": \"USD\"\n}"
             },
             {
-              "text": "\n\nPOST http://localhost:41559/quotes\n201 (4 ms)\n"
+              "text": "\n\nPOST http://localhost:34305/quotes\n201 (3 ms)\n"
             }
           ],
           "hasEmbeds": true,
@@ -685,7 +801,7 @@
                 {
                   "role": "primary",
                   "mime": "application/json",
-                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcXVvdGVzIiwicGF0aCI6Ii9xdW90ZXMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjQxNTU5Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjcyIl0sIkNvbm5lY3Rpb24iOlsia2VlcC1hbGl2ZSJdLCJVc2VyLUFnZW50IjpbIkFwYWNoZS1IdHRwQ2xpZW50LzUuNi4yIChKYXZhLzIxLjAuMTEpIl19LCJ1cmxCYXNlIjoiaHR0cDovL2xvY2FsaG9zdDo0MTU1OSIsIm1ldGhvZCI6IlBPU1QiLCJwYXJhbXMiOnt9LCJib2R5Ijp7InN0YXRlIjoiVFgiLCJjb3ZlcmFnZSI6IkxJQUJJTElUWSIsImRyaXZlckFnZSI6NjAsInByaW9yQ2xhaW1zIjpmYWxzZX0sInVybCI6Imh0dHA6Ly9sb2NhbGhvc3Q6NDE1NTkvcXVvdGVzIn0sInJlc3BvbnNlIjp7ImhlYWRlcnMiOnsiY29udGVudC1sZW5ndGgiOlsiODEiXSwiQ29udGVudC1UeXBlIjpbImFwcGxpY2F0aW9uL2pzb247IGNoYXJzZXQ9VVRGLTgiXX0sInJlc3BvbnNlVGltZSI6NCwiY29udGVudExlbmd0aCI6ODEsImJvZHkiOnsiaWQiOiIjKHV1aWQoKSkiLCJwb2xpY3lDbGFzcyI6IlBSRUZFUlJFRCIsIm1vbnRobHlQcmVtaXVtIjo1MCwiY3VycmVuY3kiOiJVU0QifSwic3RhdHVzIjoyMDF9fQ=="
+                  "data": "eyJyZXF1ZXN0Ijp7InBhdGhSYXciOiIvcXVvdGVzIiwicGF0aCI6Ii9xdW90ZXMiLCJoZWFkZXJzIjp7IkNvbnRlbnQtVHlwZSI6WyJhcHBsaWNhdGlvbi9qc29uOyBjaGFyc2V0PVVURi04Il0sIkhvc3QiOlsibG9jYWxob3N0OjM0MzA1Il0sIkNvbnRlbnQtTGVuZ3RoIjpbIjcyIl0sIkNvbm5lY3Rpb24iOlsia2VlcC1hbGl2ZSJdLCJVc2VyLUFnZW50IjpbIkFwYWNoZS1IdHRwQ2xpZW50LzUuNi4yIChKYXZhLzIxLjAuMTEpIl19LCJ1cmxCYXNlIjoiaHR0cDovL2xvY2FsaG9zdDozNDMwNSIsIm1ldGhvZCI6IlBPU1QiLCJwYXJhbXMiOnt9LCJib2R5Ijp7InN0YXRlIjoiVFgiLCJjb3ZlcmFnZSI6IkxJQUJJTElUWSIsImRyaXZlckFnZSI6NjAsInByaW9yQ2xhaW1zIjpmYWxzZX0sInVybCI6Imh0dHA6Ly9sb2NhbGhvc3Q6MzQzMDUvcXVvdGVzIn0sInJlc3BvbnNlIjp7ImhlYWRlcnMiOnsiY29udGVudC1sZW5ndGgiOlsiODEiXSwiS2FyYXRlLU1vY2siOlsidHJ1ZSJdLCJDb250ZW50LVR5cGUiOlsiYXBwbGljYXRpb24vanNvbjsgY2hhcnNldD1VVEYtOCJdfSwicmVzcG9uc2VUaW1lIjozLCJjb250ZW50TGVuZ3RoIjo4MSwiYm9keSI6eyJpZCI6IiModXVpZCgpKSIsInBvbGljeUNsYXNzIjoiUFJFRkVSUkVEIiwibW9udGhseVByZW1pdW0iOjUwLCJjdXJyZW5jeSI6IlVTRCJ9LCJzdGF0dXMiOjIwMX19"
                 }
               ]
             }
@@ -711,10 +827,9 @@
           "comments": [
             "# the system must match the rule — no golden number"
           ],
-          "status": "failed",
+          "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
-          "error": "# the system must match the rule — no golden number\nmatch failed: EQUALS\n  $ | present (NUMBER:STRING)\n  50\n  '#notpresent'\n",
           "hasEmbeds": false,
           "hasCallResults": false
         },
@@ -723,7 +838,7 @@
           "keyword": "match",
           "text": "response.currency == oracle.currency",
           "line": 36,
-          "status": "skipped",
+          "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
           "hasEmbeds": false,
@@ -737,14 +852,35 @@
           "comments": [
             "# record the live-vs-rule verdict — lights this saved scenario COVERED in the rules source"
           ],
-          "status": "skipped",
+          "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
-          "hasEmbeds": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "coverage-emit",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJzb3VyY2UiOiJydWxlcyIsImtleSI6InJhdGluZy9jbGVhbi1saWFiaWxpdHktdHgiLCJldmlkZW5jZSI6eyJzdGF0dXMiOiJwYXNzIiwibm90ZSI6ImxpdmUgL3F1b3RlcyBtYXRjaGVzIHRoZSBydWxlYm9vayJ9fQ=="
+                }
+              ]
+            },
+            {
+              "name": "coverage-emit",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJzb3VyY2UiOiJyZXEiLCJrZXkiOiJSQVRFLTAwMy8xIiwiZXZpZGVuY2UiOnsic3RhdHVzIjoicGFzcyIsInZlcmlmaWVkIjp0cnVlLCJydWxlIjoicmF0aW5nIn19"
+                }
+              ]
+            }
+          ],
           "hasCallResults": false
         }
-      ],
-      "error": "# the system must match the rule — no golden number\nmatch failed: EQUALS\n  $ | present (NUMBER:STRING)\n  50\n  '#notpresent'\n"
+      ]
     }
   ]
 }</script>

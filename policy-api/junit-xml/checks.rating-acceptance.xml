@@ -1,18 +1,13 @@
-<testsuite name="rating acceptance — the saved scenarios, LIVE against the /quotes API (the RTM spine)" tests="3" failures="3" time="0.556" skipped="0"><testcase classname="checks.rating-acceptance" name="young-collision-ca — young driver, collision, California — the young-driver loading fires" time="0.358"><failure message="# the system must match the rule — no golden number
-match failed: EQUALS
-  $ | present (NUMBER:STRING)
-  140
-  &apos;#notpresent&apos;
-">* baseUrl
+<testsuite name="rating acceptance — the saved scenarios, LIVE against the /quotes API (the RTM spine)" tests="3" failures="0" time="0.509" skipped="0"><testcase classname="checks.rating-acceptance" name="young-collision-ca — young driver, collision, California — the young-driver loading fires" time="0.323"><system-out>* baseUrl
 * check = Rule.execute(&apos;rating&apos;, __row)
 * oracle = check.output
 Given &apos;quotes&apos;
 And { state: &apos;#(__row.state)&apos;, coverage: &apos;#(__row.coverage)&apos;, driverAge: &apos;#(__row.driverAge)&apos;, priorClaims: &apos;#(__row.priorClaims)&apos; }
 When post
 request:
-1 &gt; POST http://localhost:41559/quotes
+1 &gt; POST http://localhost:34305/quotes
 1 &gt; Content-Type: application/json; charset=UTF-8
-1 &gt; Host: localhost:41559
+1 &gt; Host: localhost:34305
 1 &gt; Content-Length: 72
 1 &gt; Connection: keep-alive
 1 &gt; User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.11)
@@ -23,9 +18,10 @@ request:
   &quot;priorClaims&quot;: false
 }
 
-response time in milliseconds: 133
-1 &lt; 201 POST http://localhost:41559/quotes
+response time in milliseconds: 123
+1 &lt; 201 POST http://localhost:34305/quotes
 1 &lt; content-length: 81
+1 &lt; Karate-Mock: true
 1 &lt; Content-Type: application/json; charset=UTF-8
 {
   &quot;id&quot;: &quot;#(uuid())&quot;,
@@ -34,28 +30,23 @@ response time in milliseconds: 133
   &quot;currency&quot;: &quot;USD&quot;
 }
 
-POST http://localhost:41559/quotes
-201 (133 ms)
+POST http://localhost:34305/quotes
+201 (123 ms)
 Then 201
 And response.monthlyPremium == oracle.monthlyPremium
 And response.currency == oracle.currency
 * check.verify(true, &apos;live /quotes matches the rulebook&apos;)
-</failure></testcase>
-<testcase classname="checks.rating-acceptance" name="prior-claims-comprehensive-ny — adult with prior claims, comprehensive, New York — the prior-claims surcharge fires" time="0.014"><failure message="# the system must match the rule — no golden number
-match failed: EQUALS
-  $ | present (NUMBER:STRING)
-  190
-  &apos;#notpresent&apos;
-">* baseUrl
+</system-out></testcase>
+<testcase classname="checks.rating-acceptance" name="prior-claims-comprehensive-ny — adult with prior claims, comprehensive, New York — the prior-claims surcharge fires" time="0.018"><system-out>* baseUrl
 * check = Rule.execute(&apos;rating&apos;, __row)
 * oracle = check.output
 Given &apos;quotes&apos;
 And { state: &apos;#(__row.state)&apos;, coverage: &apos;#(__row.coverage)&apos;, driverAge: &apos;#(__row.driverAge)&apos;, priorClaims: &apos;#(__row.priorClaims)&apos; }
 When post
 request:
-1 &gt; POST http://localhost:41559/quotes
+1 &gt; POST http://localhost:34305/quotes
 1 &gt; Content-Type: application/json; charset=UTF-8
-1 &gt; Host: localhost:41559
+1 &gt; Host: localhost:34305
 1 &gt; Content-Length: 75
 1 &gt; Connection: keep-alive
 1 &gt; User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.11)
@@ -66,9 +57,10 @@ request:
   &quot;priorClaims&quot;: true
 }
 
-response time in milliseconds: 6
-1 &lt; 201 POST http://localhost:41559/quotes
+response time in milliseconds: 4
+1 &lt; 201 POST http://localhost:34305/quotes
 1 &lt; content-length: 84
+1 &lt; Karate-Mock: true
 1 &lt; Content-Type: application/json; charset=UTF-8
 {
   &quot;id&quot;: &quot;#(uuid())&quot;,
@@ -77,28 +69,23 @@ response time in milliseconds: 6
   &quot;currency&quot;: &quot;USD&quot;
 }
 
-POST http://localhost:41559/quotes
-201 (6 ms)
+POST http://localhost:34305/quotes
+201 (4 ms)
 Then 201
 And response.monthlyPremium == oracle.monthlyPremium
 And response.currency == oracle.currency
 * check.verify(true, &apos;live /quotes matches the rulebook&apos;)
-</failure></testcase>
-<testcase classname="checks.rating-acceptance" name="clean-liability-tx — adult, clean record, liability, Texas — the base case, no loadings" time="0.011"><failure message="# the system must match the rule — no golden number
-match failed: EQUALS
-  $ | present (NUMBER:STRING)
-  50
-  &apos;#notpresent&apos;
-">* baseUrl
+</system-out></testcase>
+<testcase classname="checks.rating-acceptance" name="clean-liability-tx — adult, clean record, liability, Texas — the base case, no loadings" time="0.015"><system-out>* baseUrl
 * check = Rule.execute(&apos;rating&apos;, __row)
 * oracle = check.output
 Given &apos;quotes&apos;
 And { state: &apos;#(__row.state)&apos;, coverage: &apos;#(__row.coverage)&apos;, driverAge: &apos;#(__row.driverAge)&apos;, priorClaims: &apos;#(__row.priorClaims)&apos; }
 When post
 request:
-1 &gt; POST http://localhost:41559/quotes
+1 &gt; POST http://localhost:34305/quotes
 1 &gt; Content-Type: application/json; charset=UTF-8
-1 &gt; Host: localhost:41559
+1 &gt; Host: localhost:34305
 1 &gt; Content-Length: 72
 1 &gt; Connection: keep-alive
 1 &gt; User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.11)
@@ -109,9 +96,10 @@ request:
   &quot;priorClaims&quot;: false
 }
 
-response time in milliseconds: 4
-1 &lt; 201 POST http://localhost:41559/quotes
+response time in milliseconds: 3
+1 &lt; 201 POST http://localhost:34305/quotes
 1 &lt; content-length: 81
+1 &lt; Karate-Mock: true
 1 &lt; Content-Type: application/json; charset=UTF-8
 {
   &quot;id&quot;: &quot;#(uuid())&quot;,
@@ -120,11 +108,11 @@ response time in milliseconds: 4
   &quot;currency&quot;: &quot;USD&quot;
 }
 
-POST http://localhost:41559/quotes
-201 (4 ms)
+POST http://localhost:34305/quotes
+201 (3 ms)
 Then 201
 And response.monthlyPremium == oracle.monthlyPremium
 And response.currency == oracle.currency
 * check.verify(true, &apos;live /quotes matches the rulebook&apos;)
-</failure></testcase>
+</system-out></testcase>
 </testsuite>
