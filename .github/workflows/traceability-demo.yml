@@ -20,6 +20,7 @@ permissions:
   contents: write        # peaceiris publishes the HTML report to the gh-pages branch
   checks: write          # dorny/test-reporter writes the JUnit check
   pull-requests: write
+  packages: read         # pull the engine image from GHCR (this block is explicit, so unlisted = none)
 
 jobs:
   karate:
@@ -30,21 +31,25 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # The engine image is pulled from GHCR, AUTHENTICATED with the run's own GITHUB_TOKEN: the package is
+      # private and this repo is granted read on it, and an authenticated pull is not subject to the
+      # anonymous per-IP rate limit that throttles a shared runner. The public ECR image
+      # (public.ecr.aws/karatelabs/karate-agent) stays the customer-facing, credential-free way to pull the
+      # engine — and is what the Azure pipeline uses, since it has no GITHUB_TOKEN.
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Karate full suite (rules + REST + UI, pure-git RTM)
         # `karate:jsonl` is required: coverage + the RTM are computed from that event stream.
         run: |
-          IMAGE=public.ecr.aws/karatelabs/karate-agent:2.1.2.RC2
-          # ECR Public rate-limits ANONYMOUS pulls per source IP; GitHub's shared runners hit it, so pull
-          # explicitly with a spaced retry (then run without --pull).
-          #
-          # FALLBACK — if ECR throttling turns chronic, switch to the GHCR mirror (no per-IP anonymous
-          # rate limit for Actions). One-time: run the "Publish image -> GHCR (manual)" workflow for this
-          # version + make the package public, then swap the IMAGE line above for:
-          #   IMAGE=ghcr.io/karatelabs/karate-agent:2.1.2.RC2
-          for i in 1 2 3 4 5; do
-            docker pull "$IMAGE" && break
-            echo "registry throttled (attempt $i/5) — backing off"; sleep 30
-          done
+          IMAGE=ghcr.io/karatelabs/karate-agent:2.1.2.RC2
+          # Authenticated (see the login step) — no anonymous rate limit, so no retry loop. Each engine
+          # release mirrors this tag to GHCR via the "Publish image -> GHCR (manual)" workflow.
+          docker pull "$IMAGE"
           # the karate-agent image runs as a NON-root user; pre-make target/ world-writable so the container
           # can write the report / JUnit / coverage into the runner-owned checkout.
           mkdir -p target && chmod -R 777 target
