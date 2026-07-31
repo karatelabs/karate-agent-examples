@@ -23,9 +23,9 @@ Feature: Loan Desk rules oracle — headless (the CI-safe pipeline stage)
     }
     """
 
-  Scenario Outline: <id> — <label>
+  Scenario Outline: <_id> — <_label>
     * def result = Rule.execute('personal-loan', __row).output
-    * def exp = expected[__row.id]
+    * def exp = expected[__row._id]
     * match result.decision == exp.decision
     * match result.apr == exp.apr
 

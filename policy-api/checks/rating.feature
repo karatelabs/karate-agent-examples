@@ -9,9 +9,10 @@ Feature: insurance rating — unary + streaming against the RatingService (gRPC)
   # can price it. It is asserted here as the BUSINESS RULE it stands for (prior claims ⇒ SUBSTANDARD, a
   # clean in-band driver ⇒ PREFERRED) — a deliberate, named exception, not a copied number. The honest
   # fix is to model it in the rulebook as a `calc.req`-linked arm.
-  # Rows are inline here (not read from rulebooks/rating/scenarios.json like the REST spine) because proto
-  # JSON is STRICT about unknown fields: a saved row's `id`/`label` would be rejected on the wire. Feed a
-  # saved row to gRPC by trimming it to the proto's own fields first.
+  # The saved scenarios drive THIS protocol too (the outline below reads the same
+  # rulebooks/rating/scenarios.json the REST spine uses). Proto JSON is strict about unknown fields, so a
+  # raw row's `id`/`label` would be rejected on the wire — send `check.input`, the oracle's own view of the
+  # row with that metadata removed. One row, two protocols, no copies to keep in sync.
 
   Background:
     # host/port/protoRoots come from karate-boot.js (central config); the feature names the rest
@@ -19,16 +20,29 @@ Feature: insurance rating — unary + streaming against the RatingService (gRPC)
     * session.proto = 'proto/rating.proto'
     * session.service = 'RatingService'
 
-  Scenario: unary rate — a CA collision quote
-    * def row = { state: 'CA', coverage: 'COLLISION', driverAge: 40, priorClaims: false }
-    * def check = Rule.execute('rating', row)
+  # THE SPINE, gRPC edition — every saved scenario, driven against the live RatingService. The REST twin
+  # is checks/rating-acceptance.feature; both read the same rows and ask the same rulebook for the answer,
+  # so adding a scenario in the console covers BOTH protocols with no feature edit.
+  Scenario Outline: <_id> — <_label>
+    * def check = Rule.execute('rating', __row)
     * session.method = 'Rate'
-    * session.send(row)
+    # `check.input` = the saved row minus the rulebook's `id`/`label` (proto JSON rejects unknown fields)
+    * session.send(check.input)
     * def reply = session.pop()
     * match reply contains check.output
-    # not rule-modelled (see the note above): a clean 25-70 driver is PREFERRED
-    * match reply.policyClass == 'PREFERRED'
     * check.verify(true, 'the live RatingService agrees with the rulebook')
+
+    Examples:
+      | read('../rulebooks/rating/scenarios.json') |
+
+  # policyClass is the one field the engine returns that the rulebook does NOT model (see the note above),
+  # so it is asserted here — once, as the business rule it stands for — rather than per saved row.
+  Scenario: policy classification — the field no oracle can price
+    * session.method = 'Rate'
+    * session.send({ state: 'CA', coverage: 'COLLISION', driverAge: 40, priorClaims: false })
+    * match session.pop().policyClass == 'PREFERRED'
+    * session.send({ state: 'CA', coverage: 'COLLISION', driverAge: 40, priorClaims: true })
+    * match session.pop().policyClass == 'SUBSTANDARD'
 
   # Exercise the INPUT dimensions (coverage enum + driver_age BVA + prior_claims bool, read off the proto):
   # LIABILITY + COLLISION and a young/with-priors driver are covered; COMPREHENSIVE is left to the streaming

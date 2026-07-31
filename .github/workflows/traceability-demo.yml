@@ -1,19 +1,19 @@
-# azure-demo on GitHub Actions — the PURE-GIT / spec-driven posture.
+# traceability-demo on GitHub Actions — the PURE-GIT / spec-driven posture.
 #
 # Runs the karate-agent container one-shot over the full suite (rules oracle + REST API + browser UI via
 # `launch`). No ADO coordinates are set, so the
 # RTM treats the requirements markdown as the source of truth (ids render as plain text, no tracker) — the
-# spec-driven-development story. The SAME kit runs ALM-linked on Azure Pipelines (azure-demo/azure-pipelines.yml).
+# spec-driven-development story. The SAME kit runs ALM-linked on Azure Pipelines (traceability-demo/azure-pipelines.yml).
 #
 # One-time setup: add a repository secret KARATE_LICENSE (the inline karate.lic text). Without it the engine's
 # license check fails the run.
-name: azure-demo (pure-git RTM)
+name: traceability-demo (pure-git RTM)
 
 on:
   push:
-    paths: [ 'azure-demo/**', '.github/workflows/azure-demo.yml' ]
+    paths: [ 'traceability-demo/**', '.github/workflows/traceability-demo.yml' ]
   pull_request:
-    paths: [ 'azure-demo/**' ]
+    paths: [ 'traceability-demo/**' ]
   workflow_dispatch:
 
 permissions:
@@ -26,7 +26,7 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: azure-demo
+        working-directory: traceability-demo
     steps:
       - uses: actions/checkout@v4
 
@@ -50,7 +50,7 @@ jobs:
           mkdir -p target && chmod -R 777 target
           # Pass the git coordinates for the pure-git RTM link: the requirement ids click through to
           # their heading in the markdown at THIS repo + commit. github.repository auto-follows a fork; github.sha
-          # pins each link to the reviewed commit; the kit lives in the azure-demo/ subdir of the monorepo.
+          # pins each link to the reviewed commit; the kit lives in the traceability-demo/ subdir of the monorepo.
           #
           # `launch suite.karate.js` serves the SUT + runs the WHOLE suite (rules oracle + REST API + browser UI)
           # as ONE consolidated report — HTML + JUnit (Checks tab) + JSONL (coverage/RTM) + screenshots — in
@@ -61,7 +61,7 @@ jobs:
             -e KARATE_LICENSE_TEXT="$KARATE_LICENSE_TEXT" \
             -e KARATE_GIT_REPO_URL="https://github.com/${{ github.repository }}" \
             -e KARATE_GIT_REF="${{ github.sha }}" \
-            -e KARATE_GIT_BASE="azure-demo" \
+            -e KARATE_GIT_BASE="traceability-demo" \
             "$IMAGE" \
             launch suite.karate.js
         env:
@@ -72,7 +72,7 @@ jobs:
         uses: dorny/test-reporter@v1
         with:
           name: karate tests
-          path: 'azure-demo/target/karate-reports/**/junit-xml/*.xml'
+          path: 'traceability-demo/target/karate-reports/**/junit-xml/*.xml'
           reporter: java-junit
 
       - name: Upload report + RTM + evidence
@@ -80,16 +80,16 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: karate-report
-          path: azure-demo/target/karate-reports
+          path: traceability-demo/target/karate-reports
 
       # Publish the HTML report (RTM · coverage · summary) to GitHub Pages, per-kit subdir so kits don't
-      # clobber each other. Browsable at https://<owner>.github.io/karate-agent-examples/azure-demo/.
+      # clobber each other. Browsable at https://<owner>.github.io/karate-agent-examples/traceability-demo/.
       # One-time: enable Pages (Settings → Pages → Deploy from a branch → gh-pages).
       - name: Publish HTML report to GitHub Pages
         if: always() && github.ref == 'refs/heads/main'
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: azure-demo/target/karate-reports
-          destination_dir: azure-demo
+          publish_dir: traceability-demo/target/karate-reports
+          destination_dir: traceability-demo
           keep_files: true

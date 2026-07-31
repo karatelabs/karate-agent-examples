@@ -11,7 +11,7 @@ Feature: Loan Decision API agrees with the personal-loan rules, per scenario
     * url baseUrl
 
   @req=3/ac1 @req=4/ac1 @req=5/ac1 @req=6/ac1
-  Scenario Outline: <id> — <label>
+  Scenario Outline: <_id> — <_label>
     * def app = { creditScore: '#(__row.creditScore)', annualIncome: '#(__row.annualIncome)', loanAmount: '#(__row.loanAmount)', termMonths: '#(__row.termMonths)', monthlyDebt: '#(__row.monthlyDebt)', existingCustomer: '#(__row.existingCustomer)' }
     Given path 'decisions'
     And request app

@@ -1,4 +1,4 @@
-# azure-demo on Azure Pipelines — the ALM-LINKED posture.
+# traceability-demo on Azure Pipelines — the ALM-LINKED posture.
 #
 # Runs the karate-agent container one-shot over the full suite (rules oracle + REST API + browser UI via
 # `launch`), then publishes JUnit to the Tests tab and the report + RTM as a build artifact. The pipeline
@@ -14,10 +14,10 @@
 
 trigger:
   branches: { include: [ main ] }
-  paths:    { include: [ azure-demo ] }
+  paths:    { include: [ traceability-demo ] }
 pr:
   branches: { include: [ main ] }
-  paths:    { include: [ azure-demo ] }
+  paths:    { include: [ traceability-demo ] }
 schedules:
   - cron: "0 2 * * *"
     displayName: Nightly regression
@@ -35,7 +35,7 @@ steps:
 
   - script: |
       set -euo pipefail
-      cd azure-demo
+      cd traceability-demo
       # the karate-agent image runs as a NON-root user; pre-make target/ world-writable so it can write.
       mkdir -p target && chmod -R 777 target
       # derive org from the collection URI (https://dev.azure.com/<org>/) so the RTM links to THIS org/project.
@@ -67,5 +67,5 @@ steps:
     displayName: 'Publish report + RTM + evidence'
     condition: always()
     inputs:
-      PathtoPublish: 'azure-demo/target/karate-reports'
+      PathtoPublish: 'traceability-demo/target/karate-reports'
       ArtifactName: karate-report

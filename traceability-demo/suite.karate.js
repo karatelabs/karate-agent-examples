@@ -1,4 +1,4 @@
-// suite.karate.js — launch the WHOLE azure-demo in one command (a human or CI):
+// suite.karate.js — launch the WHOLE traceability-demo in one command (a human or CI):
 //   karate launch suite.karate.js          (locally: opens a visible Chrome)
 //   docker run … karate-agent launch suite.karate.js   (in-container: self-launched HEADLESS Chromium)
 //

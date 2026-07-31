@@ -1,12 +1,17 @@
 // The all-in-one INSURANCE demo — REST (OpenAPI) + gRPC (the rating engine, PRIMARY) + Kafka (OPTIONAL).
 // Boot the protocol exts and declare the coverage universes once here (central config), so the features
 // only name the proto/service/method (gRPC) and the spec is the operation universe (REST).
-// gRPC is the PRIMARY protocol backend of the live demo (the rating engine on :50052). It is env-gated so
-// the REST-only lane can skip it: the container that publishes the HTML report has no grpc ext on its
-// classpath, so booting grpc there hard-fails. Set KARATE_GRPC_OFF (to any value) to run REST + rules +
-// requirements only — the container / CI report lane. Unset (the live protocol lane, where grpc IS on the
-// classpath and the rating engine is running) boots the cross-protocol beat.
-var grpcOff = java.lang.System.getenv('KARATE_GRPC_OFF') || java.lang.System.getProperty('KARATE_GRPC_OFF');
+// gRPC is the PRIMARY protocol backend of the live demo (the rating engine on :50052), but it is OPTIONAL:
+// the lean agent jar / image ships without the grpc leaf, so the kit must run REST + rules + requirements
+// there rather than failing to boot. `boot.has('grpc')` asks the runtime directly — the project decides for
+// itself, with no env var for the operator to know about (an LLM or a customer driving the served console
+// cannot set one, so an env gate turned "no grpc leaf" into "every run dies at boot"). KARATE_GRPC_OFF
+// survives only as an explicit opt-out for a runtime that HAS the leaf but wants the REST-only lane.
+// Precedence: a per-run PROPERTY wins over the env. The env says what this machine is (a CI image with no
+// grpc leaf); a `props` on the run says what THIS run is meant to be — the deliberate, narrower intent, so
+// a launch script can compose a lane the environment did not anticipate. Env stays read-only either way.
+var grpcOff = boot.sysprop('KARATE_GRPC_OFF') || boot.sysenv('KARATE_GRPC_OFF')
+        || !boot.has('grpc');
 if (!grpcOff) {
   var grpc = boot.ext('grpc');
   grpc.host = boot.sysprop('grpc.host', 'localhost');
@@ -43,12 +48,12 @@ cov.dimensions = 'config/dimensions.js';
 // browsing the PUBLISHED report can click RATE-001 and land on requirements/rating.md — no license, no
 // tracker. CI passes the exact repo + commit (KARATE_GIT_*), pinning each link to the reviewed commit;
 // a bare local/serve run falls back to this kit's canonical public home on main, so the click-through
-// works on stage too. (Unlike azure-demo, which leaves the link plain-text when unset, policy-api defaults
+// works on stage too. (Unlike traceability-demo, which leaves the link plain-text when unset, policy-api defaults
 // to its published home — the whole point is a report a prospect can browse and click.)
 var req = boot.ext('requirements');
-var gitRepoUrl = java.lang.System.getenv('KARATE_GIT_REPO_URL');
-var gitRef = java.lang.System.getenv('KARATE_GIT_REF');
-var gitBase = java.lang.System.getenv('KARATE_GIT_BASE');
+var gitRepoUrl = boot.sysprop('KARATE_GIT_REPO_URL', boot.sysenv('KARATE_GIT_REPO_URL'));
+var gitRef = boot.sysprop('KARATE_GIT_REF', boot.sysenv('KARATE_GIT_REF'));
+var gitBase = boot.sysprop('KARATE_GIT_BASE', boot.sysenv('KARATE_GIT_BASE'));
 req.provider = {
   system: 'git',
   repoUrl: gitRepoUrl ? gitRepoUrl : 'https://github.com/karatelabs/karate-agent-examples',

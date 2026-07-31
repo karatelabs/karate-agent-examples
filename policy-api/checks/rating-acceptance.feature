@@ -21,7 +21,7 @@ Feature: rating acceptance — the saved scenarios, LIVE against the /quotes API
   Background:
     * url baseUrl
 
-  Scenario Outline: <id> — <label>
+  Scenario Outline: <_id> — <_label>
     # run the saved scenario through the rulebook (the ORACLE) — this fires calc.req for the criteria this
     # row reaches (the RTM) and names the saved rule-scenario coverage item
     * def check = Rule.execute('rating', __row)

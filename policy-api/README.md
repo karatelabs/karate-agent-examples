@@ -201,9 +201,10 @@ checking — the system drifting from the rules. Here, **nothing in the suite is
 change**: add a scenario and nothing is pinned; change a rate and the rows that go red are exactly the
 ones where the system and the rules now disagree, each naming the requirement it violates. (The mock —
 like a real backend — carries its own pricing implementation, so a rate change has to land on both
-sides; that red is the drift detector doing its job, not test maintenance.) `check.verify(...)` records
-that something **outside** the rulebook agreed with it — without it, a criterion is disclosed as
-`oracleOnly`: the rulebook vouching for itself.
+sides; that red is the drift detector doing its job, not test maintenance.) `check.verify(...)` asserts the
+comparison and records that something **outside** the rulebook agreed with it — a false verdict fails the
+scenario like a failed `match`, and without the call at all a criterion is disclosed as `oracleOnly`: the
+rulebook vouching for itself.
 
 Run it, then read the matrix and the release verdict:
 
@@ -223,7 +224,7 @@ one scenario (no new test):
 
 ```bash
 curl -s -X POST localhost:4444/api/eval --data-binary \
- "Rule.scenario.create('rating', { id:'senior-collision-ca', label:'senior driver over 70', state:'CA', coverage:'COLLISION', driverAge:75, priorClaims:false })"
+ "Rule.scenario.create('rating', { _id:'senior-collision-ca', _label:'senior driver over 70', state:'CA', coverage:'COLLISION', driverAge:75, priorClaims:false })"
 # re-run the SAME feature — the new row drives a real quote and realizes RATE-001/2
 curl -s -X POST localhost:4444/api/eval --data-binary "Runner.run('checks/rating-acceptance.feature')"
 curl -s -X POST localhost:4444/api/eval --data-binary "Report.aggregate(); Requirement.readiness()"   # -> READY

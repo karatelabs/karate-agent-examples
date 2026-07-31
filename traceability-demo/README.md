@@ -1,4 +1,7 @@
-# azure-demo — git-first requirements traceability, one kit on two CI systems
+# traceability-demo — a Requirements Traceability Matrix (RTM) built from real run evidence
+
+*Requirements as code in git · EARS acceptance criteria · business rules as the executable oracle · API + UI
+coverage in one report · Azure DevOps or pure-git, same source tree.*
 
 A personal-loan decision engine demoed **git-first**: the requirements live in markdown, the business rules
 are the executable oracle, and every run produces one **Requirements Traceability Matrix (RTM)** joining
@@ -71,7 +74,7 @@ container reads it straight from the mounted work dir, and CI needs **no secret 
 `KARATE_LICENSE` variable + the `env:` mapping). Your org's call whether to check it in.
 
 **📊 See it live:** the GitHub Actions run publishes the HTML report (RTM · coverage · run summary) to GitHub
-Pages — browse the latest at **<https://karatelabs.github.io/karate-agent-examples/azure-demo/>**.
+Pages — browse the latest at **<https://karatelabs.github.io/karate-agent-examples/traceability-demo/>**.
 
 ## Drive it from your own AI agent (MCP)
 
@@ -86,4 +89,8 @@ docker run --rm -p 4444:4444 -v "$PWD":/work -w /work \
 
 Then `claude mcp add --transport http karate http://localhost:4444/api/mcp` (or point Cursor / VS Code at the
 same URL) and ask in plain language — *"run the loan rules oracle and show me the requirement coverage gaps."*
-Learn more: <https://karatelabs.io/agent>.
+
+## Learn more
+
+- **Karate Agent** — the AI-driven agent, served console and traceability engine: <https://karatelabs.io/agent>
+- **Karate Enterprise** — the commercial platform, licensing and support: <https://karatelabs.io/karate-enterprise>
