@@ -237,18 +237,18 @@
   "path": "oracle.feature",
   "name": "Loan Desk rules oracle — headless (the CI-safe pipeline stage)",
   "relativePath": "oracle.feature",
-  "passed": false,
-  "durationMillis": 99,
-  "reportDate": "2026-07-31 06:19:21",
+  "passed": true,
+  "durationMillis": 143,
+  "reportDate": "2026-07-31 06:46:26",
   "karateVersion": "2.1.2.RC1",
   "scenarios": [
     {
       "name": "decline-low-score — credit score below 580 declines",
       "line": 32,
-      "passed": false,
-      "durationMillis": 20,
-      "startTime": 1785478761924,
-      "endTime": 1785478761944,
+      "passed": true,
+      "durationMillis": 47,
+      "startTime": 1785480386878,
+      "endTime": 1785480386925,
       "refId": "[1.1:32]",
       "sectionIndex": 1,
       "exampleIndex": 0,
@@ -262,7 +262,7 @@
           "text": "expected =",
           "line": 13,
           "status": "passed",
-          "durationMillis": 7,
+          "durationMillis": 6,
           "hasLogs": false,
           "hasEmbeds": false,
           "hasCallResults": false
@@ -273,9 +273,31 @@
           "text": "result = Rule.execute('personal-loan', __row).output",
           "line": 27,
           "status": "passed",
-          "durationMillis": 4,
+          "durationMillis": 34,
           "hasLogs": false,
-          "hasEmbeds": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "coverage-emit",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJzb3VyY2UiOiJyZXEiLCJrZXkiOiIzL2FjMSIsImV2aWRlbmNlIjp7InJ1bGUiOiJwZXJzb25hbC1sb2FuIiwib3JhY2xlIjp0cnVlfX0="
+                }
+              ]
+            },
+            {
+              "name": "coverage-emit",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJzb3VyY2UiOiJyZXEiLCJrZXkiOiI2L2FjNiIsImV2aWRlbmNlIjp7InJ1bGUiOiJwZXJzb25hbC1sb2FuIiwib3JhY2xlIjp0cnVlfX0="
+                }
+              ]
+            }
+          ],
           "hasCallResults": false
         },
         {
@@ -294,10 +316,9 @@
           "keyword": "match",
           "text": "result.decision == exp.decision",
           "line": 29,
-          "status": "failed",
-          "durationMillis": 5,
+          "status": "passed",
+          "durationMillis": 4,
           "hasLogs": false,
-          "error": "match failed: EQUALS\n  $ | actual path does not exist (STRING:STRING)\n  '#notpresent'\n  'declined'\n",
           "hasEmbeds": false,
           "hasCallResults": false
         },
@@ -306,22 +327,21 @@
           "keyword": "match",
           "text": "result.apr == exp.apr",
           "line": 30,
-          "status": "skipped",
-          "durationMillis": 0,
+          "status": "passed",
+          "durationMillis": 1,
           "hasLogs": false,
           "hasEmbeds": false,
           "hasCallResults": false
         }
-      ],
-      "error": "match failed: EQUALS\n  $ | actual path does not exist (STRING:STRING)\n  '#notpresent'\n  'declined'\n"
+      ]
     },
     {
       "name": "decline-high-dti — DTI over 50% declines",
       "line": 32,
-      "passed": false,
-      "durationMillis": 4,
-      "startTime": 1785478761949,
-      "endTime": 1785478761953,
+      "passed": true,
+      "durationMillis": 10,
+      "startTime": 1785480386930,
+      "endTime": 1785480386940,
       "refId": "[1.2:32]",
       "sectionIndex": 1,
       "exampleIndex": 1,
@@ -346,9 +366,31 @@
           "text": "result = Rule.execute('personal-loan', __row).output",
           "line": 27,
           "status": "passed",
-          "durationMillis": 2,
+          "durationMillis": 9,
           "hasLogs": false,
-          "hasEmbeds": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "coverage-emit",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJzb3VyY2UiOiJyZXEiLCJrZXkiOiIzL2FjMiIsImV2aWRlbmNlIjp7InJ1bGUiOiJwZXJzb25hbC1sb2FuIiwib3JhY2xlIjp0cnVlfX0="
+                }
+              ]
+            },
+            {
+              "name": "coverage-emit",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJzb3VyY2UiOiJyZXEiLCJrZXkiOiI2L2FjNiIsImV2aWRlbmNlIjp7InJ1bGUiOiJwZXJzb25hbC1sb2FuIiwib3JhY2xlIjp0cnVlfX0="
+                }
+              ]
+            }
+          ],
           "hasCallResults": false
         },
         {
@@ -367,10 +409,9 @@
           "keyword": "match",
           "text": "result.decision == exp.decision",
           "line": 29,
-          "status": "failed",
+          "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
-          "error": "match failed: EQUALS\n  $ | actual path does not exist (STRING:STRING)\n  '#notpresent'\n  'declined'\n",
           "hasEmbeds": false,
           "hasCallResults": false
         },
@@ -379,22 +420,21 @@
           "keyword": "match",
           "text": "result.apr == exp.apr",
           "line": 30,
-          "status": "skipped",
+          "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
           "hasEmbeds": false,
           "hasCallResults": false
         }
-      ],
-      "error": "match failed: EQUALS\n  $ | actual path does not exist (STRING:STRING)\n  '#notpresent'\n  'declined'\n"
+      ]
     },
     {
       "name": "review-score-band — score 580-669 routes to review",
       "line": 32,
-      "passed": false,
-      "durationMillis": 3,
-      "startTime": 1785478761955,
-      "endTime": 1785478761958,
+      "passed": true,
+      "durationMillis": 8,
+      "startTime": 1785480386942,
+      "endTime": 1785480386950,
       "refId": "[1.3:32]",
       "sectionIndex": 1,
       "exampleIndex": 2,
@@ -419,9 +459,41 @@
           "text": "result = Rule.execute('personal-loan', __row).output",
           "line": 27,
           "status": "passed",
-          "durationMillis": 1,
+          "durationMillis": 7,
           "hasLogs": false,
-          "hasEmbeds": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "coverage-emit",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJzb3VyY2UiOiJyZXEiLCJrZXkiOiI2L2FjMyIsImV2aWRlbmNlIjp7InJ1bGUiOiJwZXJzb25hbC1sb2FuIiwib3JhY2xlIjp0cnVlfX0="
+                }
+              ]
+            },
+            {
+              "name": "coverage-emit",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJzb3VyY2UiOiJyZXEiLCJrZXkiOiI2L2FjNSIsImV2aWRlbmNlIjp7InJ1bGUiOiJwZXJzb25hbC1sb2FuIiwib3JhY2xlIjp0cnVlfX0="
+                }
+              ]
+            },
+            {
+              "name": "coverage-emit",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJzb3VyY2UiOiJyZXEiLCJrZXkiOiI0L2FjMSIsImV2aWRlbmNlIjp7InJ1bGUiOiJwZXJzb25hbC1sb2FuIiwib3JhY2xlIjp0cnVlfX0="
+                }
+              ]
+            }
+          ],
           "hasCallResults": false
         },
         {
@@ -440,10 +512,9 @@
           "keyword": "match",
           "text": "result.decision == exp.decision",
           "line": 29,
-          "status": "failed",
+          "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
-          "error": "match failed: EQUALS\n  $ | actual path does not exist (STRING:STRING)\n  '#notpresent'\n  'manual-review'\n",
           "hasEmbeds": false,
           "hasCallResults": false
         },
@@ -452,22 +523,21 @@
           "keyword": "match",
           "text": "result.apr == exp.apr",
           "line": 30,
-          "status": "skipped",
+          "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
           "hasEmbeds": false,
           "hasCallResults": false
         }
-      ],
-      "error": "match failed: EQUALS\n  $ | actual path does not exist (STRING:STRING)\n  '#notpresent'\n  'manual-review'\n"
+      ]
     },
     {
       "name": "review-dti-band — DTI 40-50% routes to review",
       "line": 32,
-      "passed": false,
-      "durationMillis": 3,
-      "startTime": 1785478761959,
-      "endTime": 1785478761962,
+      "passed": true,
+      "durationMillis": 8,
+      "startTime": 1785480386951,
+      "endTime": 1785480386959,
       "refId": "[1.4:32]",
       "sectionIndex": 1,
       "exampleIndex": 3,
@@ -492,9 +562,41 @@
           "text": "result = Rule.execute('personal-loan', __row).output",
           "line": 27,
           "status": "passed",
-          "durationMillis": 1,
+          "durationMillis": 7,
           "hasLogs": false,
-          "hasEmbeds": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "coverage-emit",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJzb3VyY2UiOiJyZXEiLCJrZXkiOiI2L2FjMSIsImV2aWRlbmNlIjp7InJ1bGUiOiJwZXJzb25hbC1sb2FuIiwib3JhY2xlIjp0cnVlfX0="
+                }
+              ]
+            },
+            {
+              "name": "coverage-emit",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJzb3VyY2UiOiJyZXEiLCJrZXkiOiI2L2FjNSIsImV2aWRlbmNlIjp7InJ1bGUiOiJwZXJzb25hbC1sb2FuIiwib3JhY2xlIjp0cnVlfX0="
+                }
+              ]
+            },
+            {
+              "name": "coverage-emit",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJzb3VyY2UiOiJyZXEiLCJrZXkiOiI0L2FjMiIsImV2aWRlbmNlIjp7InJ1bGUiOiJwZXJzb25hbC1sb2FuIiwib3JhY2xlIjp0cnVlfX0="
+                }
+              ]
+            }
+          ],
           "hasCallResults": false
         },
         {
@@ -513,10 +615,9 @@
           "keyword": "match",
           "text": "result.decision == exp.decision",
           "line": 29,
-          "status": "failed",
+          "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
-          "error": "match failed: EQUALS\n  $ | actual path does not exist (STRING:STRING)\n  '#notpresent'\n  'manual-review'\n",
           "hasEmbeds": false,
           "hasCallResults": false
         },
@@ -525,22 +626,21 @@
           "keyword": "match",
           "text": "result.apr == exp.apr",
           "line": 30,
-          "status": "skipped",
+          "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
           "hasEmbeds": false,
           "hasCallResults": false
         }
-      ],
-      "error": "match failed: EQUALS\n  $ | actual path does not exist (STRING:STRING)\n  '#notpresent'\n  'manual-review'\n"
+      ]
     },
     {
       "name": "approve-prime — prime, low DTI, auto-approves at 6.5%",
       "line": 32,
-      "passed": false,
-      "durationMillis": 3,
-      "startTime": 1785478761964,
-      "endTime": 1785478761967,
+      "passed": true,
+      "durationMillis": 9,
+      "startTime": 1785480386960,
+      "endTime": 1785480386969,
       "refId": "[1.5:32]",
       "sectionIndex": 1,
       "exampleIndex": 4,
@@ -565,9 +665,41 @@
           "text": "result = Rule.execute('personal-loan', __row).output",
           "line": 27,
           "status": "passed",
-          "durationMillis": 1,
+          "durationMillis": 7,
           "hasLogs": false,
-          "hasEmbeds": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "coverage-emit",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJzb3VyY2UiOiJyZXEiLCJrZXkiOiI2L2FjMSIsImV2aWRlbmNlIjp7InJ1bGUiOiJwZXJzb25hbC1sb2FuIiwib3JhY2xlIjp0cnVlfX0="
+                }
+              ]
+            },
+            {
+              "name": "coverage-emit",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJzb3VyY2UiOiJyZXEiLCJrZXkiOiI2L2FjNSIsImV2aWRlbmNlIjp7InJ1bGUiOiJwZXJzb25hbC1sb2FuIiwib3JhY2xlIjp0cnVlfX0="
+                }
+              ]
+            },
+            {
+              "name": "coverage-emit",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJzb3VyY2UiOiJyZXEiLCJrZXkiOiI1L2FjMSIsImV2aWRlbmNlIjp7InJ1bGUiOiJwZXJzb25hbC1sb2FuIiwib3JhY2xlIjp0cnVlfX0="
+                }
+              ]
+            }
+          ],
           "hasCallResults": false
         },
         {
@@ -586,10 +718,9 @@
           "keyword": "match",
           "text": "result.decision == exp.decision",
           "line": 29,
-          "status": "failed",
+          "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
-          "error": "match failed: EQUALS\n  $ | actual path does not exist (STRING:STRING)\n  '#notpresent'\n  'auto-approved'\n",
           "hasEmbeds": false,
           "hasCallResults": false
         },
@@ -598,22 +729,21 @@
           "keyword": "match",
           "text": "result.apr == exp.apr",
           "line": 30,
-          "status": "skipped",
+          "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
           "hasEmbeds": false,
           "hasCallResults": false
         }
-      ],
-      "error": "match failed: EQUALS\n  $ | actual path does not exist (STRING:STRING)\n  '#notpresent'\n  'auto-approved'\n"
+      ]
     },
     {
       "name": "approve-midband — 660-719 band, low DTI, auto-approve at 9.9%",
       "line": 32,
-      "passed": false,
-      "durationMillis": 3,
-      "startTime": 1785478761969,
-      "endTime": 1785478761972,
+      "passed": true,
+      "durationMillis": 7,
+      "startTime": 1785480386970,
+      "endTime": 1785480386977,
       "refId": "[1.6:32]",
       "sectionIndex": 1,
       "exampleIndex": 5,
@@ -638,9 +768,41 @@
           "text": "result = Rule.execute('personal-loan', __row).output",
           "line": 27,
           "status": "passed",
-          "durationMillis": 2,
+          "durationMillis": 6,
           "hasLogs": false,
-          "hasEmbeds": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "coverage-emit",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJzb3VyY2UiOiJyZXEiLCJrZXkiOiI2L2FjMiIsImV2aWRlbmNlIjp7InJ1bGUiOiJwZXJzb25hbC1sb2FuIiwib3JhY2xlIjp0cnVlfX0="
+                }
+              ]
+            },
+            {
+              "name": "coverage-emit",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJzb3VyY2UiOiJyZXEiLCJrZXkiOiI2L2FjNSIsImV2aWRlbmNlIjp7InJ1bGUiOiJwZXJzb25hbC1sb2FuIiwib3JhY2xlIjp0cnVlfX0="
+                }
+              ]
+            },
+            {
+              "name": "coverage-emit",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJzb3VyY2UiOiJyZXEiLCJrZXkiOiI1L2FjMSIsImV2aWRlbmNlIjp7InJ1bGUiOiJwZXJzb25hbC1sb2FuIiwib3JhY2xlIjp0cnVlfX0="
+                }
+              ]
+            }
+          ],
           "hasCallResults": false
         },
         {
@@ -659,10 +821,9 @@
           "keyword": "match",
           "text": "result.decision == exp.decision",
           "line": 29,
-          "status": "failed",
+          "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
-          "error": "match failed: EQUALS\n  $ | actual path does not exist (STRING:STRING)\n  '#notpresent'\n  'auto-approved'\n",
           "hasEmbeds": false,
           "hasCallResults": false
         },
@@ -671,22 +832,21 @@
           "keyword": "match",
           "text": "result.apr == exp.apr",
           "line": 30,
-          "status": "skipped",
+          "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
           "hasEmbeds": false,
           "hasCallResults": false
         }
-      ],
-      "error": "match failed: EQUALS\n  $ | actual path does not exist (STRING:STRING)\n  '#notpresent'\n  'auto-approved'\n"
+      ]
     },
     {
       "name": "approve-loyalty — existing customer loyalty discount",
       "line": 32,
-      "passed": false,
-      "durationMillis": 3,
-      "startTime": 1785478761974,
-      "endTime": 1785478761977,
+      "passed": true,
+      "durationMillis": 6,
+      "startTime": 1785480386978,
+      "endTime": 1785480386984,
       "refId": "[1.7:32]",
       "sectionIndex": 1,
       "exampleIndex": 6,
@@ -711,9 +871,51 @@
           "text": "result = Rule.execute('personal-loan', __row).output",
           "line": 27,
           "status": "passed",
-          "durationMillis": 1,
+          "durationMillis": 5,
           "hasLogs": false,
-          "hasEmbeds": false,
+          "hasEmbeds": true,
+          "embeds": [
+            {
+              "name": "coverage-emit",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJzb3VyY2UiOiJyZXEiLCJrZXkiOiI2L2FjMSIsImV2aWRlbmNlIjp7InJ1bGUiOiJwZXJzb25hbC1sb2FuIiwib3JhY2xlIjp0cnVlfX0="
+                }
+              ]
+            },
+            {
+              "name": "coverage-emit",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJzb3VyY2UiOiJyZXEiLCJrZXkiOiI2L2FjNCIsImV2aWRlbmNlIjp7InJ1bGUiOiJwZXJzb25hbC1sb2FuIiwib3JhY2xlIjp0cnVlfX0="
+                }
+              ]
+            },
+            {
+              "name": "coverage-emit",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJzb3VyY2UiOiJyZXEiLCJrZXkiOiI2L2FjNSIsImV2aWRlbmNlIjp7InJ1bGUiOiJwZXJzb25hbC1sb2FuIiwib3JhY2xlIjp0cnVlfX0="
+                }
+              ]
+            },
+            {
+              "name": "coverage-emit",
+              "parts": [
+                {
+                  "role": "primary",
+                  "mime": "application/json",
+                  "data": "eyJzb3VyY2UiOiJyZXEiLCJrZXkiOiI1L2FjMSIsImV2aWRlbmNlIjp7InJ1bGUiOiJwZXJzb25hbC1sb2FuIiwib3JhY2xlIjp0cnVlfX0="
+                }
+              ]
+            }
+          ],
           "hasCallResults": false
         },
         {
@@ -732,10 +934,9 @@
           "keyword": "match",
           "text": "result.decision == exp.decision",
           "line": 29,
-          "status": "failed",
+          "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
-          "error": "match failed: EQUALS\n  $ | actual path does not exist (STRING:STRING)\n  '#notpresent'\n  'auto-approved'\n",
           "hasEmbeds": false,
           "hasCallResults": false
         },
@@ -744,14 +945,13 @@
           "keyword": "match",
           "text": "result.apr == exp.apr",
           "line": 30,
-          "status": "skipped",
+          "status": "passed",
           "durationMillis": 0,
           "hasLogs": false,
           "hasEmbeds": false,
           "hasCallResults": false
         }
-      ],
-      "error": "match failed: EQUALS\n  $ | actual path does not exist (STRING:STRING)\n  '#notpresent'\n  'auto-approved'\n"
+      ]
     }
   ]
 }</script>

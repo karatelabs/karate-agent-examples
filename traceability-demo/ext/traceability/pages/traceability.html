@@ -24,10 +24,10 @@
       }
     })();
   </script>
-  <!-- IN-RUN Track-1 variant (K-RTM, D75): this page lives at ext/traceability/pages/, so its assets
-       are at ext/traceability/ and Alpine is the MAIN report's res/. The `<div class="k-coverage-ext"
-       x-data="traceabilityReport">` body below is BYTE-IDENTICAL to the standalone
-       pages/traceability-report.html — gated by TraceabilityPageParityTest. Edit both, or neither. -->
+  <!-- THE one K-RTM traceability page shell (D75/D191): always at ext/traceability/pages/traceability.html —
+       copied there by a real run's report-asset contribution (CoverageExt) or by the run-free
+       Report.traceability(); assets sit one level up in ext/traceability/, Alpine + the top-nav util at
+       the report root's res/. -->
   <link rel="stylesheet" href="../coverage.css">
   <link rel="stylesheet" href="../traceability-report.css">
 </head>
@@ -134,7 +134,9 @@
               <span class="k-pill k-ok" title="derived coverage status">COVERED</span>
               <strong x-text="t.reqId"></strong>
               <span x-text="t.title || t.name"></span>
-              <span class="k-prov k-warn" :title="def('provenance', 'incidental')">incidental</span>
+              <span class="k-prov k-sim" x-show="t.oracleOnly"
+                    title="the rules realize it, but nothing outside the rulebook checked it — add a test, or stamp the comparison with Rule.execute(…).verify(…)">rules only</span>
+              <span class="k-prov k-warn" x-show="!t.oracleOnly" :title="def('provenance', 'incidental')">incidental</span>
             </div>
           </template>
         </div>
@@ -433,14 +435,18 @@
   <!-- shared report top-nav via the core KarateReport util — consistent bar, Traceability tab highlighted. -->
   <script src="../../../res/karate-report.js"></script>
   <script>
-    KarateReport.renderTopNav({
-      current: 'traceability',
-      summary: (window.KARATE_TRACE || {}).karateSummary,
-      tabs: [
-        { key: 'coverage', title: 'Coverage', href: '../../coverage/pages/coverage.html' },
-        { key: 'traceability', title: 'Traceability', href: 'traceability.html' }
-      ]
-    });
+    (function () {
+      var d = window.KARATE_TRACE || {};
+      KarateReport.renderTopNav({
+        current: 'traceability',
+        summary: d.karateSummary,
+        tabs: [
+          // the Coverage sibling is always part of the deliverable — the writer stamps the href seam
+          { key: 'coverage', title: 'Coverage', href: d.coverageHref || '../../coverage/pages/coverage.html' },
+          { key: 'traceability', title: 'Traceability', href: 'traceability.html' }
+        ]
+      });
+    })();
   </script>
 </body>
 </html>

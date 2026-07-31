@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>API Coverage</title>
+  <title>Coverage Report</title>
   <!-- theme before paint (no flash): follows the main report's <html data-theme>, persisted in
        localStorage 'karate-theme', else the OS preference. -->
   <script>
@@ -25,7 +25,9 @@
       }
     })();
   </script>
-  <!-- this page lives at ext/coverage/pages/coverage.html; assets sit one level up in ext/coverage/ -->
+  <!-- THE one coverage page shell (D191): always at ext/coverage/pages/coverage.html — copied there by a
+       real run's report-asset contribution (CoverageExt) or by the run-free Report.generate(); assets sit
+       one level up in ext/coverage/, Alpine + the top-nav util at the report root's res/. -->
   <link rel="stylesheet" href="../coverage.css">
   <link rel="stylesheet" href="../coverage-report.css">
 </head>
@@ -35,8 +37,8 @@
     <h1>Coverage Report</h1>
     <div class="k-sub">How thoroughly your system was tested, where the gaps are, and what to test next.<button
         type="button" class="k-help-q"
-        title="What do these grades / SIMULATED mean? Copy the help-id — paste it into the Help tab or your AI chat"
-        onclick="kaCopyHelp('model.coverage.simulated')">?</button></div>
+        title="What do these grades mean? Copy the help-id — paste it into the Help tab or your AI chat"
+        onclick="kaCopyHelp('model.coverage.status')">?</button></div>
 
     <!-- Confidence-to-ship banner (Part 1) — the CANONICAL release-readiness verdict (the same one the
          Traceability report shows; computed once, in Java). Omitted when the project has no requirements. -->
@@ -50,7 +52,9 @@
         <div class="k-shipsplit">
           <span class="k-shipcount k-ok" x-text="readyStatusCounts().COVERED + ' covered'"></span>
           <span class="k-shipcount k-no" x-show="readyStatusCounts().FAILING > 0" x-text="readyStatusCounts().FAILING + ' failing'"></span>
-          <span class="k-shipcount k-sim" x-show="readyStatusCounts().SIMULATED > 0" x-text="readyStatusCounts().SIMULATED + ' simulated'"></span>
+          <span class="k-shipcount k-sim" x-show="oracleOnlyCount > 0"
+                title="the rules realize it, but nothing outside the rulebook checked it"
+                x-text="oracleOnlyCount + ' rules only'"></span>
           <span class="k-shipcount k-warn" x-text="(readyStatusCounts().NOTRUN + readyStatusCounts().NOTCOVERED) + ' not tested'"></span>
           <a class="k-shiplink" :href="traceabilityHref" x-show="hasTraceability">See full risk view &rarr;</a>
           <span class="k-shiphint" x-show="!hasTraceability" title="requirement-level risk detail lives in the Traceability report">requirement-level detail in the Traceability report</span>
@@ -91,7 +95,6 @@
       <select x-model="statusFilter">
         <option value="">All statuses</option>
         <option>COVERED</option>
-        <option>SIMULATED</option>
         <option>FAILING</option>
         <option>NOTRUN</option>
         <option>NOTCOVERED</option>
@@ -123,6 +126,11 @@
               <template x-if="it.rulebook"><span class="k-rulebook" x-text="it.rulebook" :title="'rulebook: ' + it.rulebook"></span></template>
               <template x-if="it.kind === 'req'"><span><a class="k-reqid" x-show="reqHref(it.id)" :href="reqHref(it.id)" target="_blank" rel="noopener" :title="'open ' + it.id.replace(/^req:/, '') + ' in tracker'" x-text="it.id.replace(/^req:/, '')"></a><span class="k-reqid" x-show="!reqHref(it.id)" x-text="it.id.replace(/^req:/, '')"></span></span></template>
               <span class="k-path" x-text="label(it)"></span>
+              <!-- every observed exercise of this item was answered by a karate mock, which says so on the
+                   wire (Karate-Mock). A neutral disclosure, NOT a grade (D194): the status pill is
+                   untouched and the ship banner is not split by it — a mock is a legitimate stand-in.
+                   Absence means nothing, so this chip only ever appears, never certifies the opposite. -->
+              <template x-if="it.mockOnly"><span class="k-mock" title="exercised only against a karate mock — the traffic was real, the responder was a stand-in we started">mock</span></template>
             </td>
             <td>
               <template x-for="t in (it.tags || [])" :key="t"><span class="k-tag" x-text="t"></span></template>
@@ -389,8 +397,11 @@
     (function () {
       var d = window.KARATE_COVERAGE_DATA || {};
       var tabs = [{ key: 'coverage', title: 'Coverage', href: 'coverage.html' }];
-      if ((d.sources || []).some(function (s) { return s.namespace === 'req'; })) {
-        tabs.push({ key: 'traceability', title: 'Traceability', href: '../../traceability/pages/traceability.html' });
+      // the Traceability sibling exists whenever requirements are in play — the writer stamps the
+      // href seam (hasTraceability/traceabilityHref); the sources check is the pre-stamp fallback
+      if (d.hasTraceability || (d.sources || []).some(function (s) { return s.namespace === 'req'; })) {
+        tabs.push({ key: 'traceability', title: 'Traceability',
+                    href: d.traceabilityHref || '../../traceability/pages/traceability.html' });
       }
       KarateReport.renderTopNav({ current: 'coverage', summary: d.karateSummary, tabs: tabs });
     })();

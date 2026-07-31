@@ -235,7 +235,7 @@
 .k-coverage-ext td.k-grid-cell.k-ok { background: var(--k-ok-bg); color: var(--k-ok-fg); }
 .k-coverage-ext td.k-grid-cell.k-no { background: var(--k-no-bg); color: var(--k-no-fg); }
 .k-coverage-ext td.k-grid-cell.k-warn { background: var(--k-warn-bg); color: var(--k-warn-fg); }
-/* SIMULATED (D120) — indigo "simulation" pill/cell, distinct from COVERED green */
+/* oracle-only (D194) — indigo pill, distinct from COVERED green */
 .k-coverage-ext .k-pill.k-sim,
 .k-coverage-ext .k-heat td.k-cell.k-sim .k-badge,
 .k-coverage-ext td.k-grid-cell.k-sim { background: var(--k-sim-bg); color: var(--k-sim-fg); }

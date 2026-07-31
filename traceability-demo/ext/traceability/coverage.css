@@ -18,7 +18,7 @@
   --k-ok-bg: #dcfce7; --k-ok-fg: #166534;
   --k-no-bg: #fee2e2; --k-no-fg: #991b1b;
   --k-warn-bg: #fef9c3; --k-warn-fg: #854d0e;
-  --k-sim-bg: #e0e7ff; --k-sim-fg: #3730a3;   /* SIMULATED (D120) — indigo: realized by the rule oracle, not live */
+  --k-sim-bg: #e0e7ff; --k-sim-fg: #3730a3;   /* oracle-only (D194) — indigo: the rules realize it, nothing outside them checked */
   --k-tag-bg: #f1f5f9; --k-tag-fg: #475569;
   --k-link: #2563eb; --k-link-bg: #dbeafe; --k-link-fg: #1e40af;   /* blue accent — links + the covering-array deck */
   --k-bar-bg: #e2e8f0; --k-bar-fill: #16a34a;
@@ -43,7 +43,7 @@
   --k-ok-bg: #14532d; --k-ok-fg: #bbf7d0;
   --k-no-bg: #7f1d1d; --k-no-fg: #fecaca;
   --k-warn-bg: #713f12; --k-warn-fg: #fde68a;
-  --k-sim-bg: #312e81; --k-sim-fg: #c7d2fe;   /* SIMULATED (D120) — indigo */
+  --k-sim-bg: #312e81; --k-sim-fg: #c7d2fe;   /* oracle-only (D194) — indigo */
   --k-tag-bg: #334155; --k-tag-fg: #cbd5e1;
   --k-link: #60a5fa; --k-link-bg: #1e3a8a; --k-link-fg: #bfdbfe;   /* blue accent — links + the covering-array deck */
   --k-bar-bg: #334155; --k-bar-fill: #22c55e;
@@ -72,11 +72,14 @@
 .k-coverage-ext .k-reqid { font-weight: 700; font-size: 11px; padding: 2px 6px; border-radius: 4px; background: var(--k-reqid-bg); color: var(--k-reqid-fg); }
 .k-coverage-ext .k-rulebook { font-weight: 700; font-size: 11px; padding: 2px 6px; border-radius: 4px; background: var(--k-rulebook-bg); color: var(--k-rulebook-fg); text-transform: uppercase; letter-spacing: .03em; }
 .k-coverage-ext .k-proto { font-weight: 700; font-size: 11px; padding: 2px 6px; border-radius: 4px; background: var(--k-method-bg); color: var(--k-method-fg); text-transform: uppercase; letter-spacing: .03em; }   /* grpc/kafka protocol-kind badge (shares the method palette) */
+/* mock-served disclosure — deliberately NEUTRAL (muted outline, not a status colour): it says what
+   answered, it does not grade the item (D194). Never restyle it as a warning. */
+.k-coverage-ext .k-mock { font-weight: 600; font-size: 10px; padding: 1px 5px; border-radius: 4px; border: 1px solid var(--k-muted); color: var(--k-muted); text-transform: uppercase; letter-spacing: .03em; margin-left: 6px; }
 .k-coverage-ext .k-pill { font-size: 11px; padding: 1px 7px; border-radius: 999px; }
 .k-coverage-ext .k-ok { background: var(--k-ok-bg); color: var(--k-ok-fg); }
 .k-coverage-ext .k-no { background: var(--k-no-bg); color: var(--k-no-fg); }
 .k-coverage-ext .k-warn { background: var(--k-warn-bg); color: var(--k-warn-fg); }
-.k-coverage-ext .k-sim { background: var(--k-sim-bg); color: var(--k-sim-fg); }   /* SIMULATED (D120) — indigo */
+.k-coverage-ext .k-sim { background: var(--k-sim-bg); color: var(--k-sim-fg); }   /* oracle-only (D194) — indigo */
 .k-coverage-ext .k-tag { display: inline-block; font-size: 11px; color: var(--k-tag-fg); background: var(--k-tag-bg); border-radius: 4px; padding: 1px 6px; margin: 0 4px 4px 0; }
 .k-coverage-ext .k-muted { color: var(--k-faint); }
 .k-coverage-ext .k-source { border: 1px solid var(--k-border); border-radius: 12px; padding: 18px 20px; margin-bottom: 24px; }
