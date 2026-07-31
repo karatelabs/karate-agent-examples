@@ -16,9 +16,15 @@
 //   Runner.run([...], { output: 'target/karate-reports' })            // or { output: { dir, junitXml } }
 // Screenshots ride the report by default; run VIDEO is opt-in (off — CI-safe), enable per-run if you want it:
 //   Runner.run([...], { video: true })                                // or set KARATE_VIDEO=true in CI
+// Pin `loan.url` to the SUT THIS run just served, for this run only (`props`). The kit's karate-config.js
+// default targets the host (`host.docker.internal:9100`) — right for the served console, where the SUT runs
+// outside the container — but under `launch` the SUT is served HERE, in-process, so the browser must drive
+// the URL we just bound. props reach karate-config.js, the features, karate-boot.js, and the `.js` checks a
+// scenario spawns, so the UI check's `bot.go(loanUrl)` lands on this SUT and both flows work unchanged.
 var sut = Http.serve('sut', 9100);
 try {
-  var result = Runner.run(['oracle.feature', 'checks/loan-api.feature', 'loan-rate-ui.feature']);
+  var result = Runner.run(['oracle.feature', 'checks/loan-api.feature', 'loan-rate-ui.feature'],
+    { props: { 'loan.url': sut.url } });
   if (result.failed > 0) {
     throw 'launch: ' + result.failed + ' of ' + result.total + ' scenarios failed — see ' + result.reportUrl;
   }
