@@ -354,55 +354,55 @@
     <script src="res/karate-report.js"></script>
     <script id="karate-data" type="application/json">{
   "env": null,
-  "reportDate": "2026-07-20 08:04:49",
+  "reportDate": "2026-07-31 06:20:24",
   "karateVersion": "2.1.2.RC1",
   "summary": {
     "feature_count": 3,
-    "feature_passed": 3,
-    "feature_failed": 0,
+    "feature_passed": 0,
+    "feature_failed": 3,
     "scenario_count": 14,
-    "scenario_passed": 14,
-    "scenario_failed": 0,
+    "scenario_passed": 4,
+    "scenario_failed": 10,
     "scenario_skipped": 0,
-    "duration_millis": 807,
-    "status": "passed"
+    "duration_millis": 771,
+    "status": "failed"
   },
   "features": [
     {
       "name": "rating acceptance — the saved scenarios, LIVE against the /quotes API (the RTM spine)",
       "relativePath": "checks/rating-acceptance.feature",
       "fileName": "checks.rating-acceptance",
-      "passed": true,
-      "failed": false,
-      "durationMillis": 576,
+      "passed": false,
+      "failed": true,
+      "durationMillis": 556,
       "scenarioCount": 3,
-      "passedCount": 3,
-      "failedCount": 0,
+      "passedCount": 0,
+      "failedCount": 3,
       "skippedCount": 0,
-      "passedRate": 100,
+      "passedRate": 0,
       "scenarios": [
         {
           "name": "young-collision-ca — young driver, collision, California — the young-driver loading fires",
           "refId": "[1.1:40]",
-          "passed": true,
+          "passed": false,
           "skipped": false,
-          "durationMillis": 366,
+          "durationMillis": 358,
           "tags": null
         },
         {
           "name": "prior-claims-comprehensive-ny — adult with prior claims, comprehensive, New York — the prior-claims surcharge fires",
           "refId": "[1.2:40]",
-          "passed": true,
+          "passed": false,
           "skipped": false,
-          "durationMillis": 20,
+          "durationMillis": 14,
           "tags": null
         },
         {
           "name": "clean-liability-tx — adult, clean record, liability, Texas — the base case, no loadings",
           "refId": "[1.3:40]",
-          "passed": true,
+          "passed": false,
           "skipped": false,
-          "durationMillis": 18,
+          "durationMillis": 11,
           "tags": null
         }
       ]
@@ -411,61 +411,61 @@
       "name": "auto quotes — the covering-array dimension demo (REST front door to the rating engine)",
       "relativePath": "checks/quotes.feature",
       "fileName": "checks.quotes",
-      "passed": true,
-      "failed": false,
-      "durationMillis": 99,
+      "passed": false,
+      "failed": true,
+      "durationMillis": 86,
       "scenarioCount": 6,
-      "passedCount": 6,
-      "failedCount": 0,
+      "passedCount": 0,
+      "failedCount": 6,
       "skippedCount": 0,
-      "passedRate": 100,
+      "passedRate": 0,
       "scenarios": [
         {
           "name": "quote a COLLISION policy in CA (priorClaims=false)",
           "refId": "[1.1:25]",
-          "passed": true,
-          "skipped": false,
-          "durationMillis": 14,
-          "tags": null
-        },
-        {
-          "name": "quote a COMPREHENSIVE policy in NY (priorClaims=true)",
-          "refId": "[1.2:25]",
-          "passed": true,
+          "passed": false,
           "skipped": false,
           "durationMillis": 17,
           "tags": null
         },
         {
+          "name": "quote a COMPREHENSIVE policy in NY (priorClaims=true)",
+          "refId": "[1.2:25]",
+          "passed": false,
+          "skipped": false,
+          "durationMillis": 16,
+          "tags": null
+        },
+        {
           "name": "quote a LIABILITY policy in TX (priorClaims=false)",
           "refId": "[1.3:25]",
-          "passed": true,
+          "passed": false,
           "skipped": false,
-          "durationMillis": 18,
+          "durationMillis": 12,
           "tags": null
         },
         {
           "name": "quote a COLLISION policy in FL (priorClaims=true)",
           "refId": "[1.4:25]",
-          "passed": true,
+          "passed": false,
           "skipped": false,
-          "durationMillis": 11,
+          "durationMillis": 9,
           "tags": null
         },
         {
           "name": "quote a COMPREHENSIVE policy in WA (priorClaims=false)",
           "refId": "[1.5:25]",
-          "passed": true,
+          "passed": false,
           "skipped": false,
-          "durationMillis": 15,
+          "durationMillis": 9,
           "tags": null
         },
         {
           "name": "quote a LIABILITY policy in CA (priorClaims=true)",
           "refId": "[1.6:25]",
-          "passed": true,
+          "passed": false,
           "skipped": false,
-          "durationMillis": 14,
+          "durationMillis": 11,
           "tags": null
         }
       ]
@@ -474,21 +474,21 @@
       "name": "insurance Policy API — quote → bind → claim lifecycle (REST / OpenAPI)",
       "relativePath": "checks/policy.feature",
       "fileName": "checks.policy",
-      "passed": true,
-      "failed": false,
-      "durationMillis": 49,
+      "passed": false,
+      "failed": true,
+      "durationMillis": 51,
       "scenarioCount": 5,
-      "passedCount": 5,
-      "failedCount": 0,
+      "passedCount": 4,
+      "failedCount": 1,
       "skippedCount": 0,
-      "passedRate": 100,
+      "passedRate": 80,
       "scenarios": [
         {
           "name": "price a quote (the REST front door to the rating engine)",
           "refId": "[1:14]",
-          "passed": true,
+          "passed": false,
           "skipped": false,
-          "durationMillis": 11,
+          "durationMillis": 9,
           "tags": null
         },
         {
@@ -496,7 +496,7 @@
           "refId": "[2:24]",
           "passed": true,
           "skipped": false,
-          "durationMillis": 5,
+          "durationMillis": 12,
           "tags": null
         },
         {
@@ -504,7 +504,7 @@
           "refId": "[3:31]",
           "passed": true,
           "skipped": false,
-          "durationMillis": 7,
+          "durationMillis": 10,
           "tags": null
         },
         {
@@ -512,7 +512,7 @@
           "refId": "[4:37]",
           "passed": true,
           "skipped": false,
-          "durationMillis": 5,
+          "durationMillis": 7,
           "tags": null
         },
         {
@@ -520,7 +520,7 @@
           "refId": "[5:42]",
           "passed": true,
           "skipped": false,
-          "durationMillis": 9,
+          "durationMillis": 7,
           "tags": null
         }
       ]
@@ -529,17 +529,17 @@
   "summaryCards": [
     {
       "label": "API coverage",
-      "value": "71%",
-      "sub": "5/7 endpoints · 20% combos · 50% inputs · 20% error paths",
+      "value": "57%",
+      "sub": "4/7 endpoints · 0% combos · 44% inputs · 20% error paths",
       "href": "ext/coverage/pages/coverage.html",
       "status": "warn"
     },
     {
       "label": "Requirements",
-      "value": "2/3",
+      "value": "0/3",
       "sub": "covered",
       "href": "ext/traceability/pages/traceability.html",
-      "status": "warn"
+      "status": "fail"
     }
   ]
 }</script>
