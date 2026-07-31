@@ -109,3 +109,17 @@ Match the user's task to a row, then read the steering file named on the right. 
 | know whether the work is actually verified — coverage, gaps, traceability, the report | `karate-evidence-loop.md` |
 
 The second one is the point of this power. Anything can run a test; the reason to reach for Karate is the evidence it leaves behind. 18 workflows ship with the server — `Skill.list()` on the live server is the authoritative roster.
+
+## Licensing, privacy and support
+
+**The MCP server is yours.** This power integrates exactly one MCP server: a Karate Agent instance that **you** run, on your own machine or inside your own network. There is no Karate Labs-hosted endpoint — the `url` in `mcp.json` is your own port.
+
+- **Your code stays with you.** Source, tests, requirements and run results are read and written in the folder you mounted. No source, usage data or telemetry is sent to Karate Labs by using this power.
+- **Licensing is checked offline.** The runtime license is a signed file validated locally; it makes no network call, so the agent runs in a fully air-gapped network.
+- **AI features are bring-your-own-model.** You choose the provider and supply the key; requests go from your own instance straight to that provider. Karate Labs is not in the path, and the agent needs no AI key at all when your own client is driving it.
+
+**Licensing.** This power's own content — `POWER.md` and its steering files — is MIT. The Karate Agent it drives is commercial software governed by the Karate Labs [EULA](https://karatelabs.io/eula); a runtime license is issued by Karate Labs.
+
+**Privacy.** [Privacy Policy](https://karatelabs.io/privacy-policy).
+
+**Support.** <https://karatelabs.io/agent> — the contact form at the end of that page reaches Karate Labs for licensing, evaluation and support.
