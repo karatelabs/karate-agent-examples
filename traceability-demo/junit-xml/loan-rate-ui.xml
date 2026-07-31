@@ -1,0 +1,85 @@
+<testsuite name="Loan Desk UI agrees with the personal-loan rules, per scenario" tests="7" failures="7" time="43.853" skipped="0"><testcase classname="loan-rate-ui" name="decline-low-score — credit score below 580 declines" time="6.413"><failure message="js failed:
+==========
+  Line: 10, Col: 0
+  Code: Check.run(&apos;drive-quote.js&apos;, __row)
+  Error: Check &apos;drive-quote.js&apos; failed: js failed:
+==========
+  Line: 22, Col: 0
+  Code: bot.act(&apos;#creditScore&apos;, &apos;clear&apos;); bot.act(&apos;#creditScore&apos;, &apos;input&apos;, &apos;&apos; + row.creditScore);
+  Error: element not found after 3 retries: #creditScore | url=chrome-error://chromewebdata/, domContentEventFired=false, framesLoading=0, mainFrameId=F0A6FC95441B78E3484A3680753AB0F8, frameContexts=1, terminated=false | hint: Call look() and use the EXACT locator string from the response. Locators on the same page are NOT consistent — e.g. #vehicleYear + #make + #model, not #vehicleMake. Never extrapolate one locator from another.
+==========
+Do NOT give up, and do NOT blind-rewrite the whole check and re-run (each Check.run re-drives the ENTIRE flow). Go to the live browser and troubleshoot the FAILING step by hand: drive it with bot.act(&apos;&lt;loc&gt;&apos;, ...) and read bot.look({full: true}) to see what the real page actually does, ...">* Check.run(&apos;drive-quote.js&apos;, __row)
+</failure></testcase>
+<testcase classname="loan-rate-ui" name="decline-high-dti — DTI over 50% declines" time="6.284"><failure message="js failed:
+==========
+  Line: 10, Col: 0
+  Code: Check.run(&apos;drive-quote.js&apos;, __row)
+  Error: Check &apos;drive-quote.js&apos; failed: js failed:
+==========
+  Line: 22, Col: 0
+  Code: bot.act(&apos;#creditScore&apos;, &apos;clear&apos;); bot.act(&apos;#creditScore&apos;, &apos;input&apos;, &apos;&apos; + row.creditScore);
+  Error: element not found after 3 retries: #creditScore | url=chrome-error://chromewebdata/, domContentEventFired=false, framesLoading=0, mainFrameId=0D242F14DB0977CA0E10DF740B864C83, frameContexts=1, terminated=false | hint: Call look() and use the EXACT locator string from the response. Locators on the same page are NOT consistent — e.g. #vehicleYear + #make + #model, not #vehicleMake. Never extrapolate one locator from another.
+==========
+Do NOT give up, and do NOT blind-rewrite the whole check and re-run (each Check.run re-drives the ENTIRE flow). Go to the live browser and troubleshoot the FAILING step by hand: drive it with bot.act(&apos;&lt;loc&gt;&apos;, ...) and read bot.look({full: true}) to see what the real page actually does, ...">* Check.run(&apos;drive-quote.js&apos;, __row)
+</failure></testcase>
+<testcase classname="loan-rate-ui" name="review-score-band — score 580-669 routes to review" time="6.236"><failure message="js failed:
+==========
+  Line: 10, Col: 0
+  Code: Check.run(&apos;drive-quote.js&apos;, __row)
+  Error: Check &apos;drive-quote.js&apos; failed: js failed:
+==========
+  Line: 22, Col: 0
+  Code: bot.act(&apos;#creditScore&apos;, &apos;clear&apos;); bot.act(&apos;#creditScore&apos;, &apos;input&apos;, &apos;&apos; + row.creditScore);
+  Error: element not found after 3 retries: #creditScore | url=chrome-error://chromewebdata/, domContentEventFired=false, framesLoading=0, mainFrameId=06F3C624903CD706509E790E9A438738, frameContexts=1, terminated=false | hint: Call look() and use the EXACT locator string from the response. Locators on the same page are NOT consistent — e.g. #vehicleYear + #make + #model, not #vehicleMake. Never extrapolate one locator from another.
+==========
+Do NOT give up, and do NOT blind-rewrite the whole check and re-run (each Check.run re-drives the ENTIRE flow). Go to the live browser and troubleshoot the FAILING step by hand: drive it with bot.act(&apos;&lt;loc&gt;&apos;, ...) and read bot.look({full: true}) to see what the real page actually does, ...">* Check.run(&apos;drive-quote.js&apos;, __row)
+</failure></testcase>
+<testcase classname="loan-rate-ui" name="review-dti-band — DTI 40-50% routes to review" time="6.198"><failure message="js failed:
+==========
+  Line: 10, Col: 0
+  Code: Check.run(&apos;drive-quote.js&apos;, __row)
+  Error: Check &apos;drive-quote.js&apos; failed: js failed:
+==========
+  Line: 22, Col: 0
+  Code: bot.act(&apos;#creditScore&apos;, &apos;clear&apos;); bot.act(&apos;#creditScore&apos;, &apos;input&apos;, &apos;&apos; + row.creditScore);
+  Error: element not found after 3 retries: #creditScore | url=chrome-error://chromewebdata/, domContentEventFired=false, framesLoading=0, mainFrameId=4591BAF8F8CF381D48B4B951265BA425, frameContexts=1, terminated=false | hint: Call look() and use the EXACT locator string from the response. Locators on the same page are NOT consistent — e.g. #vehicleYear + #make + #model, not #vehicleMake. Never extrapolate one locator from another.
+==========
+Do NOT give up, and do NOT blind-rewrite the whole check and re-run (each Check.run re-drives the ENTIRE flow). Go to the live browser and troubleshoot the FAILING step by hand: drive it with bot.act(&apos;&lt;loc&gt;&apos;, ...) and read bot.look({full: true}) to see what the real page actually does, ...">* Check.run(&apos;drive-quote.js&apos;, __row)
+</failure></testcase>
+<testcase classname="loan-rate-ui" name="approve-prime — prime, low DTI, auto-approves at 6.5%" time="6.264"><failure message="js failed:
+==========
+  Line: 10, Col: 0
+  Code: Check.run(&apos;drive-quote.js&apos;, __row)
+  Error: Check &apos;drive-quote.js&apos; failed: js failed:
+==========
+  Line: 22, Col: 0
+  Code: bot.act(&apos;#creditScore&apos;, &apos;clear&apos;); bot.act(&apos;#creditScore&apos;, &apos;input&apos;, &apos;&apos; + row.creditScore);
+  Error: element not found after 3 retries: #creditScore | url=chrome-error://chromewebdata/, domContentEventFired=false, framesLoading=0, mainFrameId=92307C95433828A39DAE3F6EB7264BBB, frameContexts=1, terminated=false | hint: Call look() and use the EXACT locator string from the response. Locators on the same page are NOT consistent — e.g. #vehicleYear + #make + #model, not #vehicleMake. Never extrapolate one locator from another.
+==========
+Do NOT give up, and do NOT blind-rewrite the whole check and re-run (each Check.run re-drives the ENTIRE flow). Go to the live browser and troubleshoot the FAILING step by hand: drive it with bot.act(&apos;&lt;loc&gt;&apos;, ...) and read bot.look({full: true}) to see what the real page actually does, ...">* Check.run(&apos;drive-quote.js&apos;, __row)
+</failure></testcase>
+<testcase classname="loan-rate-ui" name="approve-midband — 660-719 band, low DTI, auto-approve at 9.9%" time="6.249"><failure message="js failed:
+==========
+  Line: 10, Col: 0
+  Code: Check.run(&apos;drive-quote.js&apos;, __row)
+  Error: Check &apos;drive-quote.js&apos; failed: js failed:
+==========
+  Line: 22, Col: 0
+  Code: bot.act(&apos;#creditScore&apos;, &apos;clear&apos;); bot.act(&apos;#creditScore&apos;, &apos;input&apos;, &apos;&apos; + row.creditScore);
+  Error: element not found after 3 retries: #creditScore | url=chrome-error://chromewebdata/, domContentEventFired=false, framesLoading=0, mainFrameId=890579FAB7CDF8A6184B74AF2236ADD4, frameContexts=1, terminated=false | hint: Call look() and use the EXACT locator string from the response. Locators on the same page are NOT consistent — e.g. #vehicleYear + #make + #model, not #vehicleMake. Never extrapolate one locator from another.
+==========
+Do NOT give up, and do NOT blind-rewrite the whole check and re-run (each Check.run re-drives the ENTIRE flow). Go to the live browser and troubleshoot the FAILING step by hand: drive it with bot.act(&apos;&lt;loc&gt;&apos;, ...) and read bot.look({full: true}) to see what the real page actually does, ...">* Check.run(&apos;drive-quote.js&apos;, __row)
+</failure></testcase>
+<testcase classname="loan-rate-ui" name="approve-loyalty — existing customer loyalty discount" time="6.196"><failure message="js failed:
+==========
+  Line: 10, Col: 0
+  Code: Check.run(&apos;drive-quote.js&apos;, __row)
+  Error: Check &apos;drive-quote.js&apos; failed: js failed:
+==========
+  Line: 22, Col: 0
+  Code: bot.act(&apos;#creditScore&apos;, &apos;clear&apos;); bot.act(&apos;#creditScore&apos;, &apos;input&apos;, &apos;&apos; + row.creditScore);
+  Error: element not found after 3 retries: #creditScore | url=chrome-error://chromewebdata/, domContentEventFired=false, framesLoading=0, mainFrameId=EB651D2F2C28693FA645A3C2BA8AB607, frameContexts=1, terminated=false | hint: Call look() and use the EXACT locator string from the response. Locators on the same page are NOT consistent — e.g. #vehicleYear + #make + #model, not #vehicleMake. Never extrapolate one locator from another.
+==========
+Do NOT give up, and do NOT blind-rewrite the whole check and re-run (each Check.run re-drives the ENTIRE flow). Go to the live browser and troubleshoot the FAILING step by hand: drive it with bot.act(&apos;&lt;loc&gt;&apos;, ...) and read bot.look({full: true}) to see what the real page actually does, ...">* Check.run(&apos;drive-quote.js&apos;, __row)
+</failure></testcase>
+</testsuite>
