@@ -16,13 +16,6 @@ on:
     paths: [ 'traceability-demo/**' ]
   workflow_dispatch:
 
-# Every kit publishes its report to the SAME gh-pages branch, so two workflows finishing together
-# race on one `git push` and the loser fails with `! [rejected] (fetch first)` — a red run whose
-# tests all passed. A push that touches several kits (a release sync) does exactly that. Serialize
-# on the branch, and never cancel: the point is that both reports land, not that the newest wins.
-concurrency:
-  group: gh-pages-publish
-  cancel-in-progress: false
 
 permissions:
   contents: write        # peaceiris publishes the HTML report to the gh-pages branch
@@ -98,8 +91,24 @@ jobs:
       # Publish the HTML report (RTM · coverage · summary) to GitHub Pages, per-kit subdir so kits don't
       # clobber each other. Browsable at https://<owner>.github.io/karate-agent-examples/traceability-demo/.
       # One-time: enable Pages (Settings → Pages → Deploy from a branch → gh-pages).
+      # Every kit publishes into its own destination_dir on ONE shared gh-pages branch, so two
+      # workflows finishing together race on the push and the loser dies with `! [rejected]
+      # (fetch first)` — a red run whose tests all passed. A push touching several kits does that
+      # every time. Retry rather than serialize: a concurrency group queues only one run, so a
+      # third kit cancels the second outright. The retry re-clones gh-pages, so it rebases.
       - name: Publish HTML report to GitHub Pages
+        id: pages
+        continue-on-error: true
         if: always() && github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: traceability-demo/target/karate-reports
+          destination_dir: traceability-demo
+          keep_files: true
+
+      - name: Retry the publish (another kit won the race for gh-pages)
+        if: always() && github.ref == 'refs/heads/main' && steps.pages.outcome == 'failure'
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
