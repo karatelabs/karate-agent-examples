@@ -79,6 +79,10 @@ Work.current()
 
 This returns `{name, root, …}` — the project the server is pointed at. Compare its folder name to this workspace; on a mismatch call `Work.list()` then `Work.use('<name>')` before you do anything else.
 
+**If `karate_eval` is not among your tools, say so before you do anything else.** The connection to this server is opened once, when your session starts — so a server that was not yet listening at that moment leaves the tool absent for the rest of the session, and nothing you do inside the conversation reopens it. Tell the user both halves: the server is up (step 1 proves it), the connection to it is not, and reconnecting the `karate` server from their MCP-servers panel brings the tool back.
+
+Meanwhile you can keep working over HTTP — `curl -s http://localhost:4444/api/eval -d '<code>'` runs the same JavaScript and returns the same JSON. **Name the fallback each time you use it.** Falling back silently keeps the answers flowing and hides the broken connection behind them, and the same workspace is driven from surfaces where no shell is available — so a connection nobody noticed was down is a failure deferred, not avoided.
+
 **5. Get oriented.** The server sends its own cold-start guide when the MCP connection opens. If you do not have it, pull it: `curl -s http://localhost:4444/api/prompts`. Then `Skill.flows()` for the workflow menu.
 
 **6. Optional — a verification hook.** If the user wants the checks run automatically rather than on request, write `.kiro/hooks/karate-verify.kiro.hook`:

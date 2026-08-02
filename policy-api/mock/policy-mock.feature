@@ -1,3 +1,4 @@
+@ignore
 Feature: insurance Policy API mock — a happy-path backend for the cov.openapi demo
 
   # Stand up by karate-config.js (karate.start). Just enough surface to exercise the operations so

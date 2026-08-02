@@ -32,6 +32,7 @@ report, in a browser, nothing installed and no license needed:
 | --- | --- |
 | [`traceability-demo`](traceability-demo/) | git-first **requirements traceability** for a loan-decision engine — requirements → business rules → run evidence in one RTM. The *same* kit runs ALM-linked on **Azure Pipelines** (each requirement id click-throughs to its Azure DevOps User Story) and pure-git / **spec-driven** on **GitHub Actions**, switched by two environment variables. |
 | [`policy-api`](policy-api/) | one insurance API across three protocols — REST (OpenAPI) + gRPC + Kafka — in a single coverage report: live probe → durable suite → method coverage → input dimensions → the rich-error path → the gap worklist. |
+| [`kiro-demo`](kiro-demo/) | **"done" is a claim, not evidence** — the requirements are read straight out of an AI coding tool's own spec folder, with its task list ticked complete. Every scenario passes and the verdict is still **NOT READY**: one criterion a completed task claims is implemented but never exercised. Rules + REST only, no browser, about half a second per run. |
 | [`store-api`](store-api/) | **start-from-scratch benchmark** — a bare OpenAPI spec and nothing else: the engine stands up a stateful mock from the spec, your AI agent authors the suite, and the gap lists define "done" deterministically. Includes a cheat-sheet for timing your own agent environment against a clean reference. |
 
 ## Drive it from your own AI agent (MCP)

@@ -1,0 +1,14 @@
+# A git-first karate project — git is the source of truth; the two report roots are generated, never committed:
+#   target/  — the CLI / `karate launch` report dir (target/karate-reports: HTML + JUnit + JSONL).
+#   runs/    — the served console / agent per-run evidence store (runs/<id>/: report + screenshots + video).
+target/
+runs/
+
+# OS / IDE noise
+.DS_Store
+.idea/
+*.iml
+.vscode/
+
+# Local, gitignored credentials — real secrets never enter git.
+.karate/.env

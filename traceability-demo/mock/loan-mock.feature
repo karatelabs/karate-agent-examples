@@ -1,3 +1,4 @@
+@ignore
 Feature: Loan Decision API mock — the REST backend for the cov.openapi half
 
   # Stood up by karate-config.js (karate.start). It computes each decision with the SAME independent twin

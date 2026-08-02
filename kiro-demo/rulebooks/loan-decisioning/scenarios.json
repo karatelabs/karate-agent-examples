@@ -1,0 +1,52 @@
+[
+  {
+    "_id": "decline-low-score",
+    "_label": "a credit score below 580 is declined",
+    "creditScore": 550,
+    "annualIncome": 90000,
+    "requestedAmount": 12000,
+    "termMonths": 60,
+    "existingMonthlyDebt": 500,
+    "isExistingCustomer": false
+  },
+  {
+    "_id": "decline-high-dti",
+    "_label": "debt-to-income over 50% is declined",
+    "creditScore": 740,
+    "annualIncome": 30000,
+    "requestedAmount": 60000,
+    "termMonths": 24,
+    "existingMonthlyDebt": 500,
+    "isExistingCustomer": false
+  },
+  {
+    "_id": "review-borderline-score",
+    "_label": "a score of 580-669 goes to manual review",
+    "creditScore": 620,
+    "annualIncome": 90000,
+    "requestedAmount": 12000,
+    "termMonths": 60,
+    "existingMonthlyDebt": 500,
+    "isExistingCustomer": false
+  },
+  {
+    "_id": "approve-prime",
+    "_label": "a prime applicant is approved at the top band",
+    "creditScore": 760,
+    "annualIncome": 120000,
+    "requestedAmount": 15000,
+    "termMonths": 60,
+    "existingMonthlyDebt": 400,
+    "isExistingCustomer": false
+  },
+  {
+    "_id": "approve-midband",
+    "_label": "a mid-band applicant is approved at 9.9%",
+    "creditScore": 690,
+    "annualIncome": 100000,
+    "requestedAmount": 10000,
+    "termMonths": 48,
+    "existingMonthlyDebt": 300,
+    "isExistingCustomer": false
+  }
+]

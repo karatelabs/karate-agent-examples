@@ -1,0 +1,59 @@
+openapi: 3.0.3
+info:
+  title: Loan Decisioning API
+  version: 1.0.0
+  description: |
+    The HTTP surface of the Loan Decisioning service. `POST /decisions` decides an application and, where
+    the outcome is priced, returns its APR. Requests that fail validation return a 400 naming the offending
+    field. Stood up in-process by `mock/decision-mock.feature` (auto-started from `karate-config.js`).
+
+servers:
+  - url: http://localhost:9120
+    description: local (the in-process decision service)
+
+paths:
+  /decisions:
+    post:
+      operationId: createDecision
+      summary: Decide a loan application
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Application' }
+      responses:
+        '200':
+          description: the decision
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/DecisionResult' }
+        '400':
+          description: the application failed validation
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ValidationError' }
+
+components:
+  schemas:
+    Application:
+      type: object
+      required: [creditScore, annualIncome, requestedAmount, termMonths, existingMonthlyDebt, isExistingCustomer]
+      properties:
+        creditScore: { type: integer, minimum: 300, maximum: 850, example: 720 }
+        annualIncome: { type: number, example: 90000 }
+        requestedAmount: { type: number, example: 12000 }
+        termMonths: { type: integer, example: 60 }
+        existingMonthlyDebt: { type: number, example: 500 }
+        isExistingCustomer: { type: boolean, example: false }
+    DecisionResult:
+      type: object
+      properties:
+        outcome: { type: string, enum: [APPROVED, DECLINED, MANUAL_REVIEW] }
+        apr: { type: number, nullable: true, example: 0.065 }
+        dti: { type: number, example: 0.1867 }
+        monthlyPayment: { type: number, example: 200 }
+    ValidationError:
+      type: object
+      properties:
+        field: { type: string, example: creditScore }
+        message: { type: string, example: must be between 300 and 850 }
