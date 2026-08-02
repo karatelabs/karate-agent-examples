@@ -354,6 +354,14 @@ document.addEventListener('alpine:init', function () {
           return i.kind === 'acceptance-criterion' && i.status !== 'COVERED';
         });
       },
+      // D214e — the task gate: criteria a spec-driven front-end says are DONE (a ticked `- [x]` task)
+      // while the graph derives no passing check. The claim rides the criterion item; the status beside it
+      // is what we measured, and the pair is the finding.
+      get gapClaimed() {
+        return (this.graph.items || []).filter(function (i) {
+          return i.kind === 'acceptance-criterion' && i.claimed && i.status !== 'COVERED';
+        });
+      },
       // drift: linked to tests yet never exercised — declared/claimed coverage that no run backs (§2f)
       get gapDrift() {
         var self = this;
