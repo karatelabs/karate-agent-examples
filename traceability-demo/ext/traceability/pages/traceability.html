@@ -187,6 +187,23 @@
           </template>
         </div>
       </template>
+      <!-- D214e — "claimed done, not verified": the task gate's finding, rendered FIRST in the worklist
+           because it is the one gap nobody is expecting (the work is recorded as finished). -->
+      <template x-if="gapClaimed.length">
+        <div class="k-gap-group">
+          <h4>Claimed done, not verified <span class="k-muted" x-text="'(' + gapClaimed.length + ')'"></span></h4>
+          <template x-for="c in gapClaimed" :key="c.id">
+            <div class="k-line">
+              <span class="k-pill" :class="statusClass(c.status)" :title="def('status', c.status)" x-text="statusIcon(c.status)"></span>
+              <strong x-text="critParent(c)"></strong>
+              <code x-text="c.criterion"></code>
+              <span x-text="c.name"></span>
+              <span class="k-ai" x-text="'task ' + (c.claimedBy || '?') + ' ✓'"
+                    :title="'a task marked complete claims this criterion' + (c.claimedTask ? ': ' + c.claimedTask : '') + ' — the checkbox is a claim, not evidence'"></span>
+            </div>
+          </template>
+        </div>
+      </template>
       <template x-if="gapDrift.length">
         <div class="k-gap-group">
           <h4>Drift &mdash; linked to tests but never exercised <span class="k-muted" x-text="'(' + gapDrift.length + ')'"></span></h4>
@@ -282,6 +299,11 @@
                         <!-- §2f honest grading (D96): lit only by machine claims → flagged @ai (attested, review pending) -->
                         <span class="k-ai" x-show="attestedOnly(c.id)"
                               title="attested — a machine claim from a harness run (@ai, review pending); observed/verified evidence upgrades it">@ai attested</span>
+                        <!-- D214e: a ticked task says this criterion is done; the pill beside it is what we
+                             derived. Shown only where the two disagree — agreement needs no badge. -->
+                        <span class="k-ai" x-show="c.claimed && c.status !== 'COVERED'"
+                              :title="'claimed complete by task ' + (c.claimedBy || '?') + (c.claimedTask ? ' — ' + c.claimedTask : '') + ', but no passing check verifies it'"
+                              x-text="'claimed done · task ' + (c.claimedBy || '?')"></span>
                       </div>
                       <!-- the attested evidence rail (D96): {shot, note, t} per run claim — thumbnail + narration -->
                       <template x-if="evidenceOf(c.id).length">

@@ -1,12 +1,12 @@
-<testsuite name="Loan Decision API agrees with the personal-loan rules, per scenario" tests="7" failures="0" time="0.42" skipped="0"><testcase classname="checks.loan-api" name="decline-low-score — credit score below 580 declines" time="0.317"><properties><property name="req" value="3/ac1"/><property name="req" value="4/ac1"/><property name="req" value="5/ac1"/><property name="req" value="6/ac1"/></properties><system-out>* baseUrl
+<testsuite name="Loan Decision API agrees with the personal-loan rules, per scenario" tests="7" failures="0" time="0.412" skipped="0"><testcase classname="checks.loan-api" name="decline-low-score — credit score below 580 declines" time="0.306"><properties><property name="req" value="3/ac1"/><property name="req" value="4/ac1"/><property name="req" value="5/ac1"/><property name="req" value="6/ac1"/></properties><system-out>* baseUrl
 * app = { creditScore: &apos;#(__row.creditScore)&apos;, annualIncome: &apos;#(__row.annualIncome)&apos;, loanAmount: &apos;#(__row.loanAmount)&apos;, termMonths: &apos;#(__row.termMonths)&apos;, monthlyDebt: &apos;#(__row.monthlyDebt)&apos;, existingCustomer: &apos;#(__row.existingCustomer)&apos; }
 Given &apos;decisions&apos;
 And app
 When post
 request:
-1 &gt; POST http://localhost:45159/decisions
+1 &gt; POST http://localhost:41223/decisions
 1 &gt; Content-Type: application/json; charset=UTF-8
-1 &gt; Host: localhost:45159
+1 &gt; Host: localhost:41223
 1 &gt; Content-Length: 118
 1 &gt; Connection: keep-alive
 1 &gt; User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.12)
@@ -19,8 +19,8 @@ request:
   &quot;existingCustomer&quot;: false
 }
 
-response time in milliseconds: 113
-1 &lt; 200 POST http://localhost:45159/decisions
+response time in milliseconds: 112
+1 &lt; 200 POST http://localhost:41223/decisions
 1 &lt; content-length: 68
 1 &lt; Karate-Mock: true
 1 &lt; Content-Type: application/json; charset=UTF-8
@@ -31,8 +31,8 @@ response time in milliseconds: 113
   &quot;monthlyPayment&quot;: 200
 }
 
-POST http://localhost:45159/decisions
-200 (113 ms)
+POST http://localhost:41223/decisions
+200 (112 ms)
 Then 200
 * oracle = Rule.execute(&apos;personal-loan&apos;, __row).output
 And response.decision == oracle.decision
@@ -44,9 +44,9 @@ Given &apos;decisions&apos;
 And app
 When post
 request:
-1 &gt; POST http://localhost:45159/decisions
+1 &gt; POST http://localhost:41223/decisions
 1 &gt; Content-Type: application/json; charset=UTF-8
-1 &gt; Host: localhost:45159
+1 &gt; Host: localhost:41223
 1 &gt; Content-Length: 118
 1 &gt; Connection: keep-alive
 1 &gt; User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.12)
@@ -59,8 +59,8 @@ request:
   &quot;existingCustomer&quot;: false
 }
 
-response time in milliseconds: 3
-1 &lt; 200 POST http://localhost:45159/decisions
+response time in milliseconds: 4
+1 &lt; 200 POST http://localhost:41223/decisions
 1 &lt; content-length: 66
 1 &lt; Karate-Mock: true
 1 &lt; Content-Type: application/json; charset=UTF-8
@@ -71,22 +71,22 @@ response time in milliseconds: 3
   &quot;monthlyPayment&quot;: 2500
 }
 
-POST http://localhost:45159/decisions
-200 (3 ms)
+POST http://localhost:41223/decisions
+200 (4 ms)
 Then 200
 * oracle = Rule.execute(&apos;personal-loan&apos;, __row).output
 And response.decision == oracle.decision
 And response.apr == oracle.apr
 </system-out></testcase>
-<testcase classname="checks.loan-api" name="review-score-band — score 580-669 routes to review" time="0.014"><properties><property name="req" value="3/ac1"/><property name="req" value="4/ac1"/><property name="req" value="5/ac1"/><property name="req" value="6/ac1"/></properties><system-out>* baseUrl
+<testcase classname="checks.loan-api" name="review-score-band — score 580-669 routes to review" time="0.016"><properties><property name="req" value="3/ac1"/><property name="req" value="4/ac1"/><property name="req" value="5/ac1"/><property name="req" value="6/ac1"/></properties><system-out>* baseUrl
 * app = { creditScore: &apos;#(__row.creditScore)&apos;, annualIncome: &apos;#(__row.annualIncome)&apos;, loanAmount: &apos;#(__row.loanAmount)&apos;, termMonths: &apos;#(__row.termMonths)&apos;, monthlyDebt: &apos;#(__row.monthlyDebt)&apos;, existingCustomer: &apos;#(__row.existingCustomer)&apos; }
 Given &apos;decisions&apos;
 And app
 When post
 request:
-1 &gt; POST http://localhost:45159/decisions
+1 &gt; POST http://localhost:41223/decisions
 1 &gt; Content-Type: application/json; charset=UTF-8
-1 &gt; Host: localhost:45159
+1 &gt; Host: localhost:41223
 1 &gt; Content-Length: 119
 1 &gt; Connection: keep-alive
 1 &gt; User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.12)
@@ -99,8 +99,8 @@ request:
   &quot;existingCustomer&quot;: false
 }
 
-response time in milliseconds: 5
-1 &lt; 200 POST http://localhost:45159/decisions
+response time in milliseconds: 3
+1 &lt; 200 POST http://localhost:41223/decisions
 1 &lt; content-length: 72
 1 &lt; Karate-Mock: true
 1 &lt; Content-Type: application/json; charset=UTF-8
@@ -111,22 +111,22 @@ response time in milliseconds: 5
   &quot;monthlyPayment&quot;: 200
 }
 
-POST http://localhost:45159/decisions
-200 (5 ms)
+POST http://localhost:41223/decisions
+200 (3 ms)
 Then 200
 * oracle = Rule.execute(&apos;personal-loan&apos;, __row).output
 And response.decision == oracle.decision
 And response.apr == oracle.apr
 </system-out></testcase>
-<testcase classname="checks.loan-api" name="review-dti-band — DTI 40-50% routes to review" time="0.02"><properties><property name="req" value="3/ac1"/><property name="req" value="4/ac1"/><property name="req" value="5/ac1"/><property name="req" value="6/ac1"/></properties><system-out>* baseUrl
+<testcase classname="checks.loan-api" name="review-dti-band — DTI 40-50% routes to review" time="0.014"><properties><property name="req" value="3/ac1"/><property name="req" value="4/ac1"/><property name="req" value="5/ac1"/><property name="req" value="6/ac1"/></properties><system-out>* baseUrl
 * app = { creditScore: &apos;#(__row.creditScore)&apos;, annualIncome: &apos;#(__row.annualIncome)&apos;, loanAmount: &apos;#(__row.loanAmount)&apos;, termMonths: &apos;#(__row.termMonths)&apos;, monthlyDebt: &apos;#(__row.monthlyDebt)&apos;, existingCustomer: &apos;#(__row.existingCustomer)&apos; }
 Given &apos;decisions&apos;
 And app
 When post
 request:
-1 &gt; POST http://localhost:45159/decisions
+1 &gt; POST http://localhost:41223/decisions
 1 &gt; Content-Type: application/json; charset=UTF-8
-1 &gt; Host: localhost:45159
+1 &gt; Host: localhost:41223
 1 &gt; Content-Length: 119
 1 &gt; Connection: keep-alive
 1 &gt; User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.12)
@@ -139,8 +139,8 @@ request:
   &quot;existingCustomer&quot;: false
 }
 
-response time in milliseconds: 5
-1 &lt; 200 POST http://localhost:45159/decisions
+response time in milliseconds: 4
+1 &lt; 200 POST http://localhost:41223/decisions
 1 &lt; content-length: 73
 1 &lt; Karate-Mock: true
 1 &lt; Content-Type: application/json; charset=UTF-8
@@ -151,22 +151,22 @@ response time in milliseconds: 5
   &quot;monthlyPayment&quot;: 1250
 }
 
-POST http://localhost:45159/decisions
-200 (5 ms)
+POST http://localhost:41223/decisions
+200 (4 ms)
 Then 200
 * oracle = Rule.execute(&apos;personal-loan&apos;, __row).output
 And response.decision == oracle.decision
 And response.apr == oracle.apr
 </system-out></testcase>
-<testcase classname="checks.loan-api" name="approve-prime — prime, low DTI, auto-approves at 6.5%" time="0.015"><properties><property name="req" value="3/ac1"/><property name="req" value="4/ac1"/><property name="req" value="5/ac1"/><property name="req" value="6/ac1"/></properties><system-out>* baseUrl
+<testcase classname="checks.loan-api" name="approve-prime — prime, low DTI, auto-approves at 6.5%" time="0.014"><properties><property name="req" value="3/ac1"/><property name="req" value="4/ac1"/><property name="req" value="5/ac1"/><property name="req" value="6/ac1"/></properties><system-out>* baseUrl
 * app = { creditScore: &apos;#(__row.creditScore)&apos;, annualIncome: &apos;#(__row.annualIncome)&apos;, loanAmount: &apos;#(__row.loanAmount)&apos;, termMonths: &apos;#(__row.termMonths)&apos;, monthlyDebt: &apos;#(__row.monthlyDebt)&apos;, existingCustomer: &apos;#(__row.existingCustomer)&apos; }
 Given &apos;decisions&apos;
 And app
 When post
 request:
-1 &gt; POST http://localhost:45159/decisions
+1 &gt; POST http://localhost:41223/decisions
 1 &gt; Content-Type: application/json; charset=UTF-8
-1 &gt; Host: localhost:45159
+1 &gt; Host: localhost:41223
 1 &gt; Content-Length: 119
 1 &gt; Connection: keep-alive
 1 &gt; User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.12)
@@ -179,8 +179,8 @@ request:
   &quot;existingCustomer&quot;: false
 }
 
-response time in milliseconds: 4
-1 &lt; 200 POST http://localhost:45159/decisions
+response time in milliseconds: 5
+1 &lt; 200 POST http://localhost:41223/decisions
 1 &lt; content-length: 73
 1 &lt; Karate-Mock: true
 1 &lt; Content-Type: application/json; charset=UTF-8
@@ -191,22 +191,22 @@ response time in milliseconds: 4
   &quot;monthlyPayment&quot;: 200
 }
 
-POST http://localhost:45159/decisions
-200 (4 ms)
+POST http://localhost:41223/decisions
+200 (5 ms)
 Then 200
 * oracle = Rule.execute(&apos;personal-loan&apos;, __row).output
 And response.decision == oracle.decision
 And response.apr == oracle.apr
 </system-out></testcase>
-<testcase classname="checks.loan-api" name="approve-midband — 660-719 band, low DTI, auto-approve at 9.9%" time="0.013"><properties><property name="req" value="3/ac1"/><property name="req" value="4/ac1"/><property name="req" value="5/ac1"/><property name="req" value="6/ac1"/></properties><system-out>* baseUrl
+<testcase classname="checks.loan-api" name="approve-midband — 660-719 band, low DTI, auto-approve at 9.9%" time="0.016"><properties><property name="req" value="3/ac1"/><property name="req" value="4/ac1"/><property name="req" value="5/ac1"/><property name="req" value="6/ac1"/></properties><system-out>* baseUrl
 * app = { creditScore: &apos;#(__row.creditScore)&apos;, annualIncome: &apos;#(__row.annualIncome)&apos;, loanAmount: &apos;#(__row.loanAmount)&apos;, termMonths: &apos;#(__row.termMonths)&apos;, monthlyDebt: &apos;#(__row.monthlyDebt)&apos;, existingCustomer: &apos;#(__row.existingCustomer)&apos; }
 Given &apos;decisions&apos;
 And app
 When post
 request:
-1 &gt; POST http://localhost:45159/decisions
+1 &gt; POST http://localhost:41223/decisions
 1 &gt; Content-Type: application/json; charset=UTF-8
-1 &gt; Host: localhost:45159
+1 &gt; Host: localhost:41223
 1 &gt; Content-Length: 119
 1 &gt; Connection: keep-alive
 1 &gt; User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.12)
@@ -219,8 +219,8 @@ request:
   &quot;existingCustomer&quot;: false
 }
 
-response time in milliseconds: 4
-1 &lt; 200 POST http://localhost:45159/decisions
+response time in milliseconds: 5
+1 &lt; 200 POST http://localhost:41223/decisions
 1 &lt; content-length: 73
 1 &lt; Karate-Mock: true
 1 &lt; Content-Type: application/json; charset=UTF-8
@@ -231,22 +231,22 @@ response time in milliseconds: 4
   &quot;monthlyPayment&quot;: 200
 }
 
-POST http://localhost:45159/decisions
-200 (4 ms)
+POST http://localhost:41223/decisions
+200 (5 ms)
 Then 200
 * oracle = Rule.execute(&apos;personal-loan&apos;, __row).output
 And response.decision == oracle.decision
 And response.apr == oracle.apr
 </system-out></testcase>
-<testcase classname="checks.loan-api" name="approve-loyalty — existing customer loyalty discount" time="0.012"><properties><property name="req" value="3/ac1"/><property name="req" value="4/ac1"/><property name="req" value="5/ac1"/><property name="req" value="6/ac1"/></properties><system-out>* baseUrl
+<testcase classname="checks.loan-api" name="approve-loyalty — existing customer loyalty discount" time="0.018"><properties><property name="req" value="3/ac1"/><property name="req" value="4/ac1"/><property name="req" value="5/ac1"/><property name="req" value="6/ac1"/></properties><system-out>* baseUrl
 * app = { creditScore: &apos;#(__row.creditScore)&apos;, annualIncome: &apos;#(__row.annualIncome)&apos;, loanAmount: &apos;#(__row.loanAmount)&apos;, termMonths: &apos;#(__row.termMonths)&apos;, monthlyDebt: &apos;#(__row.monthlyDebt)&apos;, existingCustomer: &apos;#(__row.existingCustomer)&apos; }
 Given &apos;decisions&apos;
 And app
 When post
 request:
-1 &gt; POST http://localhost:45159/decisions
+1 &gt; POST http://localhost:41223/decisions
 1 &gt; Content-Type: application/json; charset=UTF-8
-1 &gt; Host: localhost:45159
+1 &gt; Host: localhost:41223
 1 &gt; Content-Length: 118
 1 &gt; Connection: keep-alive
 1 &gt; User-Agent: Apache-HttpClient/5.6.2 (Java/21.0.12)
@@ -259,8 +259,8 @@ request:
   &quot;existingCustomer&quot;: true
 }
 
-response time in milliseconds: 3
-1 &lt; 200 POST http://localhost:45159/decisions
+response time in milliseconds: 6
+1 &lt; 200 POST http://localhost:41223/decisions
 1 &lt; content-length: 72
 1 &lt; Karate-Mock: true
 1 &lt; Content-Type: application/json; charset=UTF-8
@@ -271,8 +271,8 @@ response time in milliseconds: 3
   &quot;monthlyPayment&quot;: 200
 }
 
-POST http://localhost:45159/decisions
-200 (3 ms)
+POST http://localhost:41223/decisions
+200 (6 ms)
 Then 200
 * oracle = Rule.execute(&apos;personal-loan&apos;, __row).output
 And response.decision == oracle.decision
