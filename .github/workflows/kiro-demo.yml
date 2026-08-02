@@ -18,6 +18,14 @@ on:
     paths: [ 'kiro-demo/**' ]
   workflow_dispatch:
 
+# Every kit publishes its report to the SAME gh-pages branch, so two workflows finishing together
+# race on one `git push` and the loser fails with `! [rejected] (fetch first)` — a red run whose
+# tests all passed. A push that touches several kits (a release sync) does exactly that. Serialize
+# on the branch, and never cancel: the point is that both reports land, not that the newest wins.
+concurrency:
+  group: gh-pages-publish
+  cancel-in-progress: false
+
 permissions:
   contents: write        # peaceiris publishes the HTML report to the gh-pages branch
   checks: write          # dorny/test-reporter writes the JUnit check
