@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Contract — paired run</title>
+  <!-- theme before paint (no flash); follows the main report's <html data-theme>, else OS preference. -->
+  <script>
+    (function () {
+      try {
+        // 'karate-theme' is the ONE theme key — the served console writes the same one, so this
+        // page follows the console's dark mode (same origin → same localStorage)
+        var t = localStorage.getItem('karate-theme');
+        if (!t) t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', t);
+        window.addEventListener('storage', function (e) {
+          if (e.key === 'karate-theme' && e.newValue) {
+            document.documentElement.setAttribute('data-theme', e.newValue);
+          }
+        });
+      } catch (e) {
+        document.documentElement.setAttribute('data-theme', 'light');
+      }
+    })();
+  </script>
+  <!-- THE one paired-run page shell (D191): always at ext/contract/pages/contract.html — written by
+       Contract.report(); assets sit one level up in ext/contract/, Alpine + the top-nav util at the
+       report root's res/. Every number on it is READ from window.KARATE_PAIR, which is what
+       Contract.read returned — nothing here re-derives a claim (D227f). -->
+  <link rel="stylesheet" href="../coverage.css">
+  <link rel="stylesheet" href="../contract-report.css">
+</head>
+<body>
+  <div id="k-topnav"></div>
+  <div class="k-coverage-ext" x-data="contractReport" x-cloak>
+    <a class="k-backlink" x-show="karateSummary" :href="karateSummary">&larr; run report</a>
+    <div class="k-head">
+      <div>
+        <h1>Contract &mdash; one suite, two targets</h1>
+        <!-- no "?" help affordance here on purpose: the D124 button copies a help-id for the Help tab to
+             resolve, and the help pages carry no `contract` id yet — a "?" that pastes a slug nothing
+             answers is the false-surface defect the drives punish. The prose below carries the meaning. -->
+        <div class="k-sub">
+          The measured divergence set between the mock this project ships and the real provider &mdash; and
+          the rung that evidence entitles it to claim.
+        </div>
+      </div>
+      <div class="k-head-actions">
+        <span class="k-pill k-warn" x-show="pair.draft" :title="typeof pair.draft === 'string' ? pair.draft : 'exploratory, not project evidence'">DRAFT</span>
+        <span class="k-pill k-warn" x-show="rehearsal" :title="rehearsalNote">REHEARSAL</span>
+      </div>
+    </div>
+
+    <!-- what the rehearsal check ESTABLISHED — including when it could not run. Its absence used to read
+         as "checked and cleared", which is the one thing a 0-of-0 disclosure exists to prevent. -->
+    <div class="k-qual" x-show="pair.rehearsalCheck" x-text="pair.rehearsalCheck"></div>
+
+    <!-- the identity strip: what this pair is about. A rung is a claim about a SUBJECT, so the subject
+         travels with it rather than being reconstructed from the file name. -->
+    <div class="k-idstrip">
+      <span><b x-text="pair.pairId"></b></span>
+      <span x-show="pair.mintedAt">minted <span x-text="pair.mintedAt"></span></span>
+      <span x-show="scope.provider">provider <code x-text="scope.provider"></code></span>
+      <span x-show="scope.providerEnv">env <code x-text="scope.providerEnv"></code></span>
+      <span x-show="scope.profile">profile <code x-text="scope.profile"></code></span>
+      <span x-show="pair.evidenceFile">evidence <code x-text="pair.evidenceFile"></code></span>
+    </div>
+
+    <!-- THE CLAIM SENTENCE — the artifact's own words, never a paraphrase. "Substitutable" is a property
+         of a tuple, so the sentence naming its own bounds is the thing a reader is meant to quote. -->
+    <blockquote class="k-claim" x-show="pair.claimSentence" x-text="pair.claimSentence"></blockquote>
+
+    <!-- freshness FIRST, because a withdrawn rung must never be read as a standing one -->
+    <div class="k-fresh" :class="freshClass" x-show="freshness.status">
+      <div class="k-fresh-head">
+        <span class="k-fresh-val" x-text="String(freshness.status || '').toUpperCase()"></span>
+        <span class="k-fresh-at">at <span x-text="freshness.asOf"></span></span>
+      </div>
+      <div class="k-sub" x-text="freshness.note"></div>
+      <table class="k-changed" x-show="(freshness.changed || []).length">
+        <thead><tr><th>Binding</th><th>Recorded</th><th>Now</th></tr></thead>
+        <tbody>
+          <template x-for="c in (freshness.changed || [])" :key="c.binding">
+            <tr><td><code x-text="c.binding"></code></td><td class="k-muted" x-text="c.was"></td><td class="k-muted" x-text="c.now"></td></tr>
+          </template>
+        </tbody>
+      </table>
+      <div class="k-sub" x-show="(freshness.unchecked || []).length">
+        Not checked by this reader: <span x-text="(freshness.unchecked || []).join(', ')"></span>
+      </div>
+      <template x-if="refresh.available">
+        <div class="k-refresh">
+          <div class="k-lbl">Re-mint it with</div>
+          <pre x-text="refresh.call"></pre>
+        </div>
+      </template>
+      <div class="k-sub" x-show="refresh.why && !refresh.available">
+        No call refreshes this: <span x-text="refresh.why"></span>
+      </div>
+      <div class="k-sub" x-show="refresh.caution" x-text="refresh.caution"></div>
+    </div>
+
+    <!-- THE TWO NUMBERS, side by side and in that order. The first alone is the failure this page exists
+         to prevent: a proportion with no coverage of the claim beside it reads as fidelity. -->
+    <div class="k-cards" x-show="measured">
+      <div class="k-card">
+        <div class="k-num" x-text="pct(proportion.value)"></div>
+        <div class="k-lbl">Divergence-free</div>
+        <div class="k-sub k-cardsub"><span x-text="proportion.divergenceFree"></span> of <span x-text="proportion.admissible"></span> admissible operations</div>
+      </div>
+      <div class="k-card">
+        <div class="k-num" x-text="pct(coverage.value)"></div>
+        <div class="k-lbl">Coverage of the claim</div>
+        <div class="k-sub k-cardsub"><span x-text="coverage.exercised"></span> of <span x-text="coverage.declared"></span> declared operations exercised by THIS pair</div>
+      </div>
+    </div>
+    <div class="k-notmeasured" x-show="!measured">
+      <span class="k-pill k-warn">NOT MEASURED</span>
+      <span x-text="claim.note"></span>
+    </div>
+    <div class="k-sub" x-show="measured && claim.note" x-text="claim.note"></div>
+    <!-- …and on a decayed pair the numbers above are what the run OBSERVED, not what stands today -->
+    <div class="k-qual" x-show="claim.standing" x-text="claim.standing"></div>
+
+    <!-- THE LADDER — and it renders the STANDING rung (`pair.rung`), never the mint-time one. A decayed
+         pair holds no rung at all: the verb withdraws it and strips the prose that described it as in
+         force, and a renderer reaching past that to `claim.rungs.aggregate` would put the withdrawn claim
+         back in the one slot a reader quotes. Which is precisely the defect this page exists downstream
+         of, so it is gated here rather than trusted. -->
+    <template x-if="standing.name">
+      <div>
+        <h2 x-show="!withdrawn">Rung &mdash; <span x-text="standing.name"></span><span x-show="standing.rung != null"> (<span x-text="standing.rung"></span> of 4)</span></h2>
+        <h2 x-show="withdrawn">Rung &mdash; WITHDRAWN</h2>
+        <div class="k-rungbar">
+          <template x-for="n in [1,2,3,4]" :key="n">
+            <span class="k-rungstep" :class="n <= (standing.rung || 0) ? 'k-on' : ''" :title="rungName(n)"></span>
+          </template>
+        </div>
+        <!-- the withdrawal note first, and the observed rung named as OBSERVED — not as held -->
+        <div class="k-qual" x-show="withdrawn" x-text="standing.note"></div>
+        <div class="k-sub" x-show="withdrawn">
+          What the run observed was rung <span x-text="standing.observed"></span>
+          (<span x-text="standing.observedName"></span>). That is still true of the run and is not true of
+          the subject this project holds today — the per-operation ladder below is the run's, unedited.
+        </div>
+        <div class="k-sub" x-show="!withdrawn && standing.means" x-text="standing.means"></div>
+        <template x-for="k in ['cappedBy', 'blockedBy', 'note', 'scope']" :key="k">
+          <div class="k-qual" x-show="!withdrawn && standing[k]" x-text="standing[k]"></div>
+        </template>
+        <div class="k-qual" x-show="!withdrawn && (standing.waivedBars || []).length">
+          This rung rests on a waived bar: <span x-text="(standing.waivedBars || []).join(', ')"></span>
+        </div>
+
+        <template x-for="it in items" :key="it.item">
+          <div class="k-item">
+            <div class="k-item-head">
+              <code class="k-item-name" x-text="it.item"></code>
+              <span class="k-pill" :class="rungClass(it.rung)" x-text="it.name"></span>
+              <span class="k-muted k-item-held" x-show="it.blockedBy" x-text="'held back by ' + it.blockedBy"></span>
+              <button class="k-linkbtn" @click="toggle(it.item)"
+                      x-text="expanded[it.item] ? 'hide bars' : 'bars (' + (it.bars || []).length + ')'"></button>
+            </div>
+            <table class="k-bars" x-show="expanded[it.item]">
+              <thead><tr><th>Bar</th><th>Held</th><th>Counted</th></tr></thead>
+              <tbody>
+                <template x-for="b in (it.bars || [])" :key="b.bar">
+                  <tr>
+                    <td><code x-text="b.bar"></code></td>
+                    <td>
+                      <span class="k-pill" :class="b.held ? (b.waived ? 'k-warn' : 'k-ok') : 'k-no'"
+                            x-text="b.held ? (b.waived ? 'waived' : 'yes') : 'no'"></span>
+                      <!-- a bar stood down is a WAIVER: the reason and the owner travel with it, or the
+                           rung reads as resting on evidence it does not rest on -->
+                      <div class="k-sub" x-show="b.waived">
+                        <span x-text="b.waived && b.waived.reason"></span> &mdash;
+                        <span x-text="b.waived && b.waived.owner"></span>
+                      </div>
+                      <div class="k-sub" x-show="!b.held && b.note" x-text="b.note"></div>
+                    </td>
+                    <!-- `0 of 0` reads NOT CHECKED here as everywhere else: the count IS the bar -->
+                    <td class="k-muted" x-text="b.counted"></td>
+                  </tr>
+                </template>
+              </tbody>
+            </table>
+          </div>
+        </template>
+      </div>
+    </template>
+
+    <!-- the two disclosures that must be read BEFORE the divergence set -->
+    <template x-if="warnings.note">
+      <div class="k-warnbox">
+        <h2>Warnings &mdash; read these first</h2>
+        <div class="k-sub" x-text="warnings.note"></div>
+        <ul>
+          <template x-for="w in (warnings.mock || [])" :key="w.message">
+            <li><code x-text="w.type"></code> &mdash; <span x-text="w.message"></span></li>
+          </template>
+        </ul>
+      </div>
+    </template>
+    <template x-if="specMismatch.note">
+      <div class="k-warnbox">
+        <h2>The <code>spec</code> this pair is bound to is not the one it counted</h2>
+        <div class="k-sub" x-text="specMismatch.note"></div>
+      </div>
+    </template>
+
+    <h2>Outcomes</h2>
+    <!-- Only three of the six classes are IN the divergence set below — the others are counted here and
+         listed (or not carried) elsewhere, so only those three filter. A tile that filtered to an empty
+         list while showing a count of 12 told the reader those twelve rows had vanished. -->
+    <div class="k-outcomes">
+      <template x-for="c in classes" :key="c">
+        <button class="k-outcome" :class="[outcomeTile(c), filter === c ? 'k-on' : '', filterable(c) ? '' : 'k-static']"
+                :disabled="!filterable(c)"
+                @click="filterable(c) && (filter = (filter === c ? '' : c))" :title="outcomeHelp(c)">
+          <span class="k-num" x-text="outcomes[c] || 0"></span>
+          <span class="k-lbl" x-text="c"></span>
+        </button>
+      </template>
+    </div>
+
+    <div class="k-sub">
+      The three divergent classes filter the list below. <code>notMeasured</code> rows are listed in full
+      in their own section; <code>agreed</code> and <code>agreedFailure</code> rows are the quiet ones and
+      are not carried on this page &mdash; every classified row is in the evidence file.
+    </div>
+
+    <h2>Divergences</h2>
+    <div class="k-empty" x-show="!divergences.length && !measured">
+      Nothing was measured, so there is no divergence set &mdash; an empty list here is the ABSENCE of
+      evidence, never agreement. Read the not-measured rows below for why.
+    </div>
+    <div class="k-empty" x-show="!divergences.length && measured">
+      No divergence was found &mdash; over what this pair exercised, and nothing more. An empty divergence
+      set is NOT evidence of fidelity: a pair whose suite never touched the diverging path emits exactly
+      what a pair against a faithful mock emits, which is why the coverage of the claim travels beside the
+      proportion above.
+    </div>
+    <div class="k-sub" x-show="divergences.length && !shown.length">
+      Nothing in this outcome class &mdash; <button class="k-linkbtn" @click="filter = ''">clear the filter</button>.
+    </div>
+    <template x-for="(d, di) in shown" :key="(d.slug || d.scenario) + '#' + di">
+      <div class="k-div">
+        <div class="k-div-head">
+          <span class="k-pill" :class="outcomeClass(d.outcome)" x-text="d.outcome"></span>
+          <span class="k-div-name" x-text="d.scenario"></span>
+        </div>
+        <div class="k-sub" x-show="d.detail" x-text="d.detail"></div>
+        <div class="k-sub" x-show="d.confirmation">Confirmation: <span x-text="d.confirmation"></span>.</div>
+        <table x-show="(d.differences || []).length">
+          <thead><tr><th>At</th><th>Provider</th><th>Mock</th></tr></thead>
+          <tbody>
+            <template x-for="(f, i) in (d.differences || [])" :key="i">
+              <tr :class="f.ignoredBy ? 'k-ignored' : ''">
+                <td><code x-text="f.at"></code></td>
+                <td x-html="cell(f.provider)"></td>
+                <td x-html="cell(f.mock)"></td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+    </template>
+
+    <template x-if="notMeasured.length">
+      <div>
+        <h2>Not measured &mdash; decided BEFORE anything was compared</h2>
+        <ul>
+          <template x-for="(n, ni) in notMeasured" :key="(n.slug || n.scenario) + '#' + ni">
+            <li>
+              <b x-text="n.scenario"></b> (<code x-text="n.cause"></code>) &mdash; <span x-text="n.detail"></span>
+              <!-- a preconditionMismatch row's own detail says READ THE DIFFERENCES ON THIS ROW, so the
+                   page may not be the surface that withholds them -->
+              <table x-show="(n.differences || []).length">
+                <thead><tr><th>At</th><th>Provider</th><th>Mock</th></tr></thead>
+                <tbody>
+                  <template x-for="(f, fi) in (n.differences || [])" :key="fi">
+                    <tr :class="f.ignoredBy ? 'k-ignored' : ''">
+                      <td><code x-text="f.at"></code></td>
+                      <td x-html="cell(f.provider)"></td>
+                      <td x-html="cell(f.mock)"></td>
+                    </tr>
+                  </template>
+                </tbody>
+              </table>
+            </li>
+          </template>
+        </ul>
+        <div class="k-sub">
+          These produced no verdict about behaviour. They are neither divergence-free nor divergent, and they
+          travel BESIDE the proportion rather than inside it &mdash; folding them in would depress the number
+          exactly as divergence does.
+        </div>
+      </div>
+    </template>
+
+    <template x-if="(ignored.rules || []).length">
+      <div>
+        <h2>Ignored &mdash; a waiver register, not a filter</h2>
+        <div class="k-sub" x-text="ignored.note"></div>
+        <table>
+          <thead><tr><th>Rule</th><th>Scope</th><th>Marker</th><th>Matched</th><th>Reason</th><th>Owner</th></tr></thead>
+          <tbody>
+            <template x-for="r in (ignored.rules || [])" :key="r.id">
+              <tr>
+                <td><code x-text="r.id"></code></td>
+                <td><code x-text="r.scope || ('key: ' + r.key)"></code></td>
+                <td><code x-text="r.marker"></code></td>
+                <td>
+                  <span x-text="r.matched"></span>
+                  <span class="k-pill k-warn" x-show="r.stale" title="This rule covered nothing — a stale waiver nobody goes looking for">stale</span>
+                </td>
+                <td x-text="r.reason"></td>
+                <td x-text="r.owner"></td>
+              </tr>
+            </template>
+          </tbody>
+        </table>
+      </div>
+    </template>
+
+    <div class="k-qual" x-show="pair.confirmation && pair.confirmation.note"
+         x-text="pair.confirmation && pair.confirmation.note"></div>
+
+    <div class="k-foot">
+      <div x-show="excluded.note" x-text="excluded.note"></div>
+      <div x-show="coverageGraph.note" x-text="coverageGraph.note"></div>
+      <div>
+        Rendered from what <code>Contract.read</code> returned &mdash; nothing on this page is re-derived, so
+        the page and the verb cannot disagree about what this pair claims. Freshness is derived at read time,
+        so this is a snapshot at the instant above; re-render after every mint.
+      </div>
+    </div>
+  </div>
+
+  <script src="../contract-data.js"></script>
+  <script src="../contract-report.js"></script>
+  <script src="../../../res/alpine.min.js" defer></script>
+  <!-- shared report top-nav via the core KarateReport util — the Coverage/Traceability siblings appear
+       only when they were really published beside this page (the writer stamps the hrefs). -->
+  <script src="../../../res/karate-report.js"></script>
+  <script>
+    (function () {
+      var d = window.KARATE_PAIR || {};
+      var tabs = [];
+      if (d.coverageHref) tabs.push({ key: 'coverage', title: 'Coverage', href: d.coverageHref });
+      if (d.traceabilityHref) tabs.push({ key: 'traceability', title: 'Traceability', href: d.traceabilityHref });
+      tabs.push({ key: 'contract', title: 'Contract', href: 'contract.html' });
+      KarateReport.renderTopNav({ current: 'contract', summary: d.karateSummary, tabs: tabs });
+    })();
+  </script>
+</body>
+</html>
