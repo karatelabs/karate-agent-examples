@@ -1,0 +1,26 @@
+<testsuite name="STOMP over WebSocket — a custom wire protocol via a codec" tests="2" failures="0" time="0.203" skipped="0"><testcase classname="checks.stomp" name="connect, subscribe, send, and receive the broadcast" time="0.194"><system-out>* StompCodec = Java.type(&apos;StompCodec&apos;)
+* session = karate.channel(&apos;websocket&apos;)
+* = &apos;ws://localhost:8091/stomp&apos;
+* = new StompCodec()
+* session.start()
+* session.send({ command: &apos;CONNECT&apos;, headers: { &apos;accept-version&apos;: &apos;1.2&apos;, &apos;heart-beat&apos;: &apos;0,0&apos; } })
+* session.pop().command == &apos;CONNECTED&apos;
+* session.send({ command: &apos;SUBSCRIBE&apos;, headers: { id: &apos;sub-0&apos;, destination: &apos;/topic/greetings&apos; } })
+* session.send({ command: &apos;SEND&apos;, headers: { destination: &apos;/app/hello&apos; }, body: { name: &apos;foo&apos; } })
+* message = session.pop()
+* message.command == &apos;MESSAGE&apos;
+* message.body.content == &apos;Hello, foo!&apos;
+</system-out></testcase>
+<testcase classname="checks.stomp" name="a receipt confirms the disconnect" time="0.008"><system-out>* StompCodec = Java.type(&apos;StompCodec&apos;)
+* session = karate.channel(&apos;websocket&apos;)
+* = &apos;ws://localhost:8091/stomp&apos;
+* = new StompCodec()
+* session.start()
+* session.send({ command: &apos;CONNECT&apos;, headers: { &apos;accept-version&apos;: &apos;1.2&apos;, &apos;heart-beat&apos;: &apos;0,0&apos; } })
+* session.pop().command == &apos;CONNECTED&apos;
+* session.send({ command: &apos;DISCONNECT&apos;, headers: { receipt: &apos;disc-0&apos; } })
+* receipt = session.pop()
+* receipt.command == &apos;RECEIPT&apos;
+* receipt.headers[&apos;receipt-id&apos;] == &apos;disc-0&apos;
+</system-out></testcase>
+</testsuite>
