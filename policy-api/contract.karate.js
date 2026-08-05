@@ -67,6 +67,11 @@ console.log(Contract.read(pair.evidenceFile, { output: 'markdown' }).markdown);
 // pair claims. Publish the report dir (CI does) and the divergence set is browsable beside Coverage and
 // Traceability — the live contract-test report.
 var page = Contract.report(pair.evidenceFile);
+if (page.error) {
+  // checked like every other verb result here: an unchecked render prints "report undefined", the job
+  // goes green, and the README sends a reader to a Contract tab that was never written.
+  throw 'contract: the pair was minted but its report page could not be written — ' + page.error;
+}
 console.log('contract: report ' + page.url);
 
 // Re-render the two sibling pages so their nav can reach this one: they were written by the suite run

@@ -122,6 +122,10 @@ jobs:
         # docker is even reached. Make writable only what this step introduces.
         # A provider that never came up mints a pair that measured NOTHING, and the script fails the job on
         # it rather than letting an empty divergence set read as a clean bill of health.
+        # KARATE_GIT_* is passed HERE TOO, and not by accident: this step re-renders the Traceability page
+        # so its nav can reach the new Contract one, and a render without these falls back to `main` — so
+        # every green run would quietly replace requirement links pinned to the reviewed commit with links
+        # to a moving branch (on a fork, to the wrong repo). The deep-link IS the kit's headline feature.
         run: |
           IMAGE=ghcr.io/karatelabs/karate-agent:2.1.2.RC2
           mkdir -p contract/pairs && chmod 777 contract contract/pairs
@@ -131,6 +135,9 @@ jobs:
             -e KARATE_GRPC_OFF=1 \
             -e PROVIDER_URL=http://host.docker.internal:8080 \
             -e PROVIDER_ENV=ci \
+            -e KARATE_GIT_REPO_URL="https://github.com/${{ github.repository }}" \
+            -e KARATE_GIT_REF="${{ github.sha }}" \
+            -e KARATE_GIT_BASE="policy-api" \
             "$IMAGE" \
             launch contract.karate.js
         env:
