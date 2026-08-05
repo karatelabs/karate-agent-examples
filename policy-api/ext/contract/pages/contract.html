@@ -33,7 +33,6 @@
 <body>
   <div id="k-topnav"></div>
   <div class="k-coverage-ext" x-data="contractReport" x-cloak>
-    <a class="k-backlink" x-show="karateSummary" :href="karateSummary">&larr; run report</a>
     <div class="k-head">
       <div>
         <h1>Contract &mdash; one suite, two targets</h1>
@@ -51,13 +50,29 @@
       </div>
     </div>
 
+    <!-- THE EMPTY STATE — the ordinary answer for a project that declared contract testing and has not
+         minted a pair yet. A first-class answer rather than an error page: an absence of evidence says
+         nothing about the mock, and the reader is told what to run. -->
+    <template x-if="pair.absent">
+      <div class="k-notmeasured">
+        <span class="k-pill k-warn">NO PAIR YET</span>
+        <div>
+          <div x-text="pair.absent"></div>
+          <div class="k-refresh">
+            <div class="k-lbl">Mint one with</div>
+            <pre x-text="pair.mint"></pre>
+          </div>
+        </div>
+      </div>
+    </template>
+
     <!-- what the rehearsal check ESTABLISHED — including when it could not run. Its absence used to read
          as "checked and cleared", which is the one thing a 0-of-0 disclosure exists to prevent. -->
     <div class="k-qual" x-show="pair.rehearsalCheck" x-text="pair.rehearsalCheck"></div>
 
     <!-- the identity strip: what this pair is about. A rung is a claim about a SUBJECT, so the subject
          travels with it rather than being reconstructed from the file name. -->
-    <div class="k-idstrip">
+    <div class="k-idstrip" x-show="!pair.absent">
       <span><b x-text="pair.pairId"></b></span>
       <span x-show="pair.mintedAt">minted <span x-text="pair.mintedAt"></span></span>
       <span x-show="scope.provider">provider <code x-text="scope.provider"></code></span>
@@ -102,7 +117,7 @@
 
     <!-- THE TWO NUMBERS, side by side and in that order. The first alone is the failure this page exists
          to prevent: a proportion with no coverage of the claim beside it reads as fidelity. -->
-    <div class="k-cards" x-show="measured">
+    <div class="k-cards" x-show="!pair.absent && measured">
       <div class="k-card">
         <div class="k-num" x-text="pct(proportion.value)"></div>
         <div class="k-lbl">Divergence-free</div>
@@ -114,7 +129,7 @@
         <div class="k-sub k-cardsub"><span x-text="coverage.exercised"></span> of <span x-text="coverage.declared"></span> declared operations exercised by THIS pair</div>
       </div>
     </div>
-    <div class="k-notmeasured" x-show="!measured">
+    <div class="k-notmeasured" x-show="!pair.absent && !measured">
       <span class="k-pill k-warn">NOT MEASURED</span>
       <span x-text="claim.note"></span>
     </div>
@@ -207,11 +222,11 @@
       </div>
     </template>
 
-    <h2>Outcomes</h2>
+    <h2 x-show="!pair.absent">Outcomes</h2>
     <!-- Only three of the six classes are IN the divergence set below — the others are counted here and
          listed (or not carried) elsewhere, so only those three filter. A tile that filtered to an empty
          list while showing a count of 12 told the reader those twelve rows had vanished. -->
-    <div class="k-outcomes">
+    <div class="k-outcomes" x-show="!pair.absent">
       <template x-for="c in classes" :key="c">
         <button class="k-outcome" :class="[outcomeTile(c), filter === c ? 'k-on' : '', filterable(c) ? '' : 'k-static']"
                 :disabled="!filterable(c)"
@@ -222,18 +237,18 @@
       </template>
     </div>
 
-    <div class="k-sub">
+    <div class="k-sub" x-show="!pair.absent">
       The three divergent classes filter the list below. <code>notMeasured</code> rows are listed in full
       in their own section; <code>agreed</code> and <code>agreedFailure</code> rows are the quiet ones and
       are not carried on this page &mdash; every classified row is in the evidence file.
     </div>
 
-    <h2>Divergences</h2>
-    <div class="k-empty" x-show="!divergences.length && !measured">
+    <h2 x-show="!pair.absent">Divergences</h2>
+    <div class="k-empty" x-show="!pair.absent && !divergences.length && !measured">
       Nothing was measured, so there is no divergence set &mdash; an empty list here is the ABSENCE of
       evidence, never agreement. Read the not-measured rows below for why.
     </div>
-    <div class="k-empty" x-show="!divergences.length && measured">
+    <div class="k-empty" x-show="!pair.absent && !divergences.length && measured">
       No divergence was found &mdash; over what this pair exercised, and nothing more. An empty divergence
       set is NOT evidence of fidelity: a pair whose suite never touched the diverging path emits exactly
       what a pair against a faithful mock emits, which is why the coverage of the claim travels beside the
@@ -328,7 +343,7 @@
     <div class="k-foot">
       <div x-show="excluded.note" x-text="excluded.note"></div>
       <div x-show="coverageGraph.note" x-text="coverageGraph.note"></div>
-      <div>
+      <div x-show="!pair.absent">
         Rendered from what <code>Contract.read</code> returned &mdash; nothing on this page is re-derived, so
         the page and the verb cannot disagree about what this pair claims. Freshness is derived at read time,
         so this is a snapshot at the instant above; re-render after every mint.
