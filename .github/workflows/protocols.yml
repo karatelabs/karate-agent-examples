@@ -128,13 +128,21 @@ jobs:
           java -cp "../${JAR}:server-classes" io.karatelabs.Main run -f html,junit:xml checks
 
       # ---- results ----
+      # NOTE the glob: this action resolves paths with @actions/glob, which supports **, *, ? and [] but
+      # NOT brace expansion — a '{grpc,kafka,websocket}/...' pattern matches nothing and the step fails
+      # with "No test report files were found" even when every kit passed. A leading '*/' is the portable
+      # spelling, and only kit dirs carry target/karate-reports.
+      # fail-on-empty is OFF for the same reason the gates above skip: when there is no licence or no
+      # published engine yet, no kit runs and there are legitimately no reports — that is a skip, not a
+      # failure. A kit that actually ran and failed still turns this red via its own step.
       - name: Publish test results (Checks tab)
         if: always()
         uses: dorny/test-reporter@v1
         with:
           name: karate protocol tests
-          path: '{grpc,kafka,websocket}/target/karate-reports/**/junit-xml/*.xml'
+          path: '*/target/karate-reports/**/junit-xml/*.xml'
           reporter: java-junit
+          fail-on-empty: false
 
       - name: Upload the reports
         if: always()
