@@ -1,11 +1,11 @@
-<testsuite name="WebSocket — raw text and JSON against the echo server" tests="3" failures="0" time="0.327" skipped="0"><testcase classname="checks.echo" name="send text, read it back" time="0.28"><system-out>* wsUrl = &apos;ws://localhost:8090/echo&apos;
+<testsuite name="WebSocket — raw text and JSON against the echo server" tests="3" failures="0" time="0.344" skipped="0"><testcase classname="checks.echo" name="send text, read it back" time="0.296"><system-out>* wsUrl = &apos;ws://localhost:8090/echo&apos;
 * session = karate.channel(&apos;websocket&apos;)
 * = wsUrl
 * session.start()
 * session.send(&apos;hello&apos;)
 * session.pop() == &apos;hello&apos;
 </system-out></testcase>
-<testcase classname="checks.echo" name="JSON in, JSON out" time="0.019"><system-out>* wsUrl = &apos;ws://localhost:8090/echo&apos;
+<testcase classname="checks.echo" name="JSON in, JSON out" time="0.02"><system-out>* wsUrl = &apos;ws://localhost:8090/echo&apos;
 * JsonTextCodec = Java.type(&apos;io.karatelabs.ext.websocket.JsonTextCodec&apos;)
 * session = karate.channel(&apos;websocket&apos;)
 * = wsUrl
