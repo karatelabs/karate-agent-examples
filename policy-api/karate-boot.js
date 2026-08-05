@@ -75,3 +75,8 @@ req.provider = {
 // about what this project does, not about whether a pair happens to be lying around. With no pair minted
 // yet the page says so and names the call; `contract.karate.js` is what mints one.
 boot.ext('contract');
+
+// ...and it GRADES its own spec: the same deterministic lint, scored per dimension, with a ship verdict and
+// a maturity level — on a Governance tab beside the other three. It grades what `cov.openapi` already
+// declares, so the document is named once. Nothing here is judged by a model.
+boot.ext('governance');

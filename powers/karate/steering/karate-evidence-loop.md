@@ -48,6 +48,7 @@ When the workspace carries a spec whose tasks are ticked off as done — a task 
 | `coverage` | Coverage & reports |
 | `openapi` | API specs |
 | `contract` | Contract testing — mock vs provider |
+| `governance` | API governance — the graded spec |
 | `mock` | Mocks |
 | `http` | Http — live exploration |
 | `match` | match — assertions |
