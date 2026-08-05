@@ -69,3 +69,9 @@ req.provider = {
 // kafka.bootstrap = boot.sysprop('kafka.bootstrap', '127.0.0.1:29092');
 // kafka.schemaRegistry = boot.sysprop('kafka.schemaRegistry', 'http://localhost:8081');
 // cov.kafka = { schemaRegistry: kafka.schemaRegistry, topics: [ { topic: 'policy-events', schema: 'policy-event' } ] };
+
+// This project does CONTRACT TESTING — one suite against the mock and against the real provider — so its
+// reports carry a Contract tab beside Coverage and Traceability. Booting it IS the declaration: the tab is
+// about what this project does, not about whether a pair happens to be lying around. With no pair minted
+// yet the page says so and names the call; `contract.karate.js` is what mints one.
+boot.ext('contract');
