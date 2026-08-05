@@ -38,6 +38,9 @@ docker compose down
 
 Four scenarios should pass. The HTML report is written to `target/karate-reports/`.
 
+> **See it without running anything.** This kit runs on every push, and its report is
+> published here: **<https://karatelabs.github.io/karate-agent-examples/kafka/>**
+
 ## How a check is written
 
 Open a channel, then take a producer and a consumer from it:

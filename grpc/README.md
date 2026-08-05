@@ -41,6 +41,9 @@ java -jar ../karate-async-2.1.2.RC2.jar checks
 
 You should see six scenarios pass. The HTML report is written to `target/karate-reports/`.
 
+> **See it without running anything.** This kit runs on every push, and its report is
+> published here: **<https://karatelabs.github.io/karate-agent-examples/grpc/>**
+
 ## How a check is written
 
 A session is opened on the `grpc` channel, told which contract to use, then driven:

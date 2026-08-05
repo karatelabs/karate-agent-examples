@@ -39,7 +39,10 @@ report, in a browser, nothing installed and no license needed:
 
 Plain, self-contained examples of testing a non-HTTP protocol — no traceability or coverage story, just
 the protocol. Each ships the service under test, so it runs standalone, and each is driven by the
-`karate-async` engine jar rather than the container image.
+`karate-async` engine jar rather than the container image. All three run on every push and publish their
+reports: [grpc](https://karatelabs.github.io/karate-agent-examples/grpc/) ·
+[kafka](https://karatelabs.github.io/karate-agent-examples/kafka/) ·
+[websocket](https://karatelabs.github.io/karate-agent-examples/websocket/).
 
 | kit | what it demonstrates |
 | --- | --- |

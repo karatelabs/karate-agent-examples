@@ -40,6 +40,9 @@ java -cp "../karate-async-2.1.2.RC2.jar:server-classes" io.karatelabs.Main run c
 
 Five scenarios should pass. The HTML report is written to `target/karate-reports/`.
 
+> **See it without running anything.** This kit runs on every push, and its report is
+> published here: **<https://karatelabs.github.io/karate-agent-examples/websocket/>**
+
 > The checks are launched with `-cp … io.karatelabs.Main` rather than `java -jar` because
 > `stomp.feature` loads `StompCodec` by name, so the compiled classes have to be on the classpath.
 > `echo.feature` on its own runs fine with plain `java -jar ... run checks/echo.feature`.
