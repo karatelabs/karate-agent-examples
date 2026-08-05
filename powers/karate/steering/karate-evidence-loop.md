@@ -47,6 +47,7 @@ When the workspace carries a spec whose tasks are ticked off as done — a task 
 | `run` | Runs & working memory |
 | `coverage` | Coverage & reports |
 | `openapi` | API specs |
+| `contract` | Contract testing — mock vs provider |
 | `mock` | Mocks |
 | `http` | Http — live exploration |
 | `match` | match — assertions |
