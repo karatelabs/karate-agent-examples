@@ -12,10 +12,13 @@
 // is for. It says nothing about whether a team building against the mock is building against the truth.
 // This does, and it is the only thing that moves the `contract` dimension of Openapi.grade.
 
-// The provider. A launch script is sandboxed (no env, no sysprops), so the port is a constant here —
-// point it at a staging deployment when you have one: the same call with a better URL, and the evidence
-// records which one it was.
-var provider = 'http://localhost:8080';
+// The provider. CI hands it in — `PROVIDER_URL` in the environment, or `-Dprovider.url=…` on the command
+// line — and the local default is what you get when neither is set. Point it at a staging deployment when
+// you have one: the same call with a better URL, and the evidence records which one it was.
+var provider = Settings.sysprop('provider.url', Settings.sysenv('PROVIDER_URL', 'http://localhost:8080'));
+// `local` when nobody said otherwise: the environment label rides INTO the evidence, so a pair minted
+// against staging is not read later as if it had been minted against a laptop.
+var providerEnv = Settings.sysenv('PROVIDER_ENV', 'local');
 
 // EVERY ignore rule is a waiver: it re-classifies a difference, it never hides one (both values stay in the
 // artifact), and it owes a reason and an owner exactly as a lint waiver does. These three say the same
@@ -50,7 +53,7 @@ var pair = Contract.pair({
   // property rather than the suite being rewritten around a contract-testing convention
   targetProp: 'baseUrl',
   ignore: surrogateKeys,
-  providerEnv: 'local'
+  providerEnv: providerEnv
 });
 
 if (pair.error) {
@@ -58,6 +61,31 @@ if (pair.error) {
 }
 
 console.log(Contract.read(pair.evidenceFile, { output: 'markdown' }).markdown);
+
+// ...and the same reading as a PAGE, in the report dir, for whoever is not at a prompt. It renders what
+// Contract.read returns and re-derives nothing, so the page and the verb cannot disagree about what this
+// pair claims. Publish the report dir (CI does) and the divergence set is browsable beside Coverage and
+// Traceability — the live contract-test report.
+var page = Contract.report(pair.evidenceFile);
+console.log('contract: report ' + page.url);
+
+// Re-render the two sibling pages so their nav can reach this one: they were written by the suite run
+// BEFORE this pair existed, and both are pure functions of the graph already on disk — re-deriving them
+// is free, and it costs nothing when there is no graph yet (a bare `contract.karate.js` run).
+if (!Report.generate().error) {
+  Report.traceability();
+}
+
+// A pair that measured NOTHING is the honest answer to an unreachable provider — every scenario comes back
+// `notMeasured` on environment grounds, and the claim carries no rung at all rather than a percentage over
+// nothing. That is exactly right as evidence, and it must still fail the job: in CI it means the provider
+// never came up, which is a broken run, not a clean bill of health.
+if (!pair.claim || !pair.claim.rungs) {
+  console.log(pair.claimSentence);
+  throw 'contract: the pair measured NOTHING — the provider at ' + provider + ' produced no comparable '
+      + 'result (see the notMeasured causes above). Nothing here says the mock is faithful, and nothing '
+      + 'says it is not.';
+}
 
 // The rung is what the pair entitles this project to SAY, and it is deliberately not a percentage. The
 // aggregate is the FLOOR of the per-operation rungs and is capped while any declared operation is

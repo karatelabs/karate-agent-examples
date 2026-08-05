@@ -1,4 +1,10 @@
+@grpc
 Feature: insurance rating — unary + streaming against the RatingService (gRPC)
+
+  # TAGGED @grpc BECAUSE IT NEEDS A LEAF THE LEAN ENGINE DOES NOT CARRY. The console image bakes the lean
+  # agent jar, so `karate.channel('grpc')` there fails with "cannot find [grpc]" — the capability is
+  # absent, not broken. Run the whole kit on an engine that bundles the protocol leaves (the karate-async
+  # jar, or mount it into /jars), or select around it: Runner.run('checks', {tags:'~@grpc'}).
 
   # THE ORACLE IS THE RULEBOOK, on every protocol. The premium is a business value the `rating` rulebook
   # computes, so no scenario below pins a number: each asks Rule.execute what the premium SHOULD be and

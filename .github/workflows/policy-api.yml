@@ -1,4 +1,4 @@
-# policy-api on GitHub Actions — the PURE-GIT / spec-driven posture, REST + rules lane.
+# policy-api on GitHub Actions — the PURE-GIT / spec-driven posture, REST + rules + the paired run.
 #
 # Runs the karate-agent container one-shot over the REST suite (the covering-array coverage demo + the
 # OpenAPI operations) plus the run-free rules RTM. KARATE_GRPC_OFF is set, so karate-boot.js skips the grpc
@@ -7,9 +7,14 @@
 # heading in the markdown source of truth on THIS repo + commit (requirements.provider, git), so anyone can
 # browse the published RTM and click RATE-001 through to requirements/rating.md — no license needed to READ.
 #
+# It then starts the REST face of the kit's own Java backend and MINTS A PAIR against it — one suite, two
+# targets, a measured divergence set — so the published report carries a live contract-test page beside the
+# Coverage and Traceability ones. That step is also the parity gate between the kit's TWO implementations
+# of the same contract (the karate mock and rating-server), which nothing else in CI builds.
+#
 # One-time setup: add a repository secret KARATE_LICENSE (the inline karate.lic text). Without it the engine's
 # license check fails the run. Enable Pages (Settings -> Pages -> Deploy from a branch -> gh-pages).
-name: policy-api (pure-git RTM, REST + rules)
+name: policy-api (pure-git RTM, REST + rules + the paired run)
 
 on:
   push:
@@ -74,6 +79,66 @@ jobs:
             launch suite.karate.js
         env:
           KARATE_LICENSE_TEXT: ${{ secrets.KARATE_LICENSE }}
+
+      # ── the PAIRED RUN — one suite, two targets, and the only parity gate these two implementations have ──
+      # policy-api implements its own contract TWICE: mock/policy-mock.feature (the mock it hands to
+      # consuming teams) and rating-server's REST face in Java. Nothing else in CI builds the kit's maven
+      # module, so without this step the two drift silently — and they HAVE disagreed (a coercion case, a
+      # blank string, an empty body), each found by a pair and hand-aligned afterwards. The evidence that
+      # they still agree is the pair itself, so minting one here IS the gate.
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+          cache: maven
+
+      - name: Build the provider (rating-server's REST face)
+        run: mvn -q -f rating-server/pom.xml package
+
+      - name: Start the provider — clean, on :8080
+        # It is an in-memory backend, so a provider carrying an earlier run's rows would make the list
+        # endpoint answer differently on the two legs. A fresh runner gives us that for free; the readiness
+        # probe is what stops the pair from minting `notMeasured` rows against a server still booting.
+        run: |
+          nohup java -cp rating-server/target/rating-server.jar \
+            io.karatelabs.examples.insurance.PolicyServer 8080 > policy-server.log 2>&1 &
+          for _ in $(seq 1 30); do
+            curl -sf http://localhost:8080/policies >/dev/null 2>&1 && break
+            sleep 1
+          done
+          curl -sf http://localhost:8080/policies >/dev/null \
+            || { echo "the provider did not come up:"; cat policy-server.log; exit 1; }
+
+      - name: Contract pair (the shipped mock vs the provider)
+        # The provider runs on the RUNNER and the pair's own mock leg stands up inside the container, so the
+        # container needs a route back to the host: `--add-host …:host-gateway` is that route, and it is the
+        # same spelling a developer uses on a laptop, so this step is reproducible off CI. PROVIDER_URL and
+        # PROVIDER_ENV are read by contract.karate.js off the process (Settings.sysenv), so CI hands it a
+        # target without editing the kit, and the environment label rides INTO the evidence.
+        # The evidence file lands in contract/pairs/ and the rendered page in target/karate-reports — both
+        # written by the container's NON-root user, so both dirs are pre-made world-writable.
+        # A provider that never came up mints a pair that measured NOTHING, and the script fails the job on
+        # it rather than letting an empty divergence set read as a clean bill of health.
+        run: |
+          IMAGE=ghcr.io/karatelabs/karate-agent:2.1.2.RC2
+          mkdir -p contract/pairs target && chmod -R 777 contract/pairs target
+          docker run --rm --add-host=host.docker.internal:host-gateway \
+            -v "$PWD":/work -w /work \
+            -e KARATE_LICENSE_TEXT="$KARATE_LICENSE_TEXT" \
+            -e KARATE_GRPC_OFF=1 \
+            -e PROVIDER_URL=http://host.docker.internal:8080 \
+            -e PROVIDER_ENV=ci \
+            "$IMAGE" \
+            launch contract.karate.js
+        env:
+          KARATE_LICENSE_TEXT: ${{ secrets.KARATE_LICENSE }}
+
+      - name: Upload the pair evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: contract-pair
+          path: policy-api/contract/pairs
 
       - name: Publish test results (Checks tab)
         if: always()

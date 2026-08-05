@@ -16,13 +16,15 @@ once and is the **oracle** for every protocol — so no test in this kit pins an
 run into a traceability matrix and a release verdict (section 4).
 
 **📊 See it live — no license needed to READ it:** every push runs the REST + rules suite on GitHub Actions
-and publishes the HTML report (Coverage · **Traceability RTM** · run summary) to GitHub Pages — browse the
-latest at **<https://karatelabs.github.io/karate-agent-examples/policy-api/>**. Open the **Traceability**
-tab: it reads **NOT READY — blocker RATE-001** (the untested senior-driver rule), and each requirement id
-**clicks through to its heading in the markdown** (`requirements/rating.md`) here in this repo — the RTM is a
-live, auditable artifact anyone can inspect, not a screenshot. *(The published run is REST + the run-free
-rules RTM; the full REST + gRPC + Kafka cross-protocol coverage runs locally off the async jar — sections
-1–5 below.)*
+and publishes the HTML report (Coverage · **Traceability RTM** · **Contract** · run summary) to GitHub Pages
+— browse the latest at **<https://karatelabs.github.io/karate-agent-examples/policy-api/>**. Open the
+**Traceability** tab: it reads **NOT READY — blocker RATE-001** (the untested senior-driver rule), and each
+requirement id **clicks through to its heading in the markdown** (`requirements/rating.md`) here in this
+repo — the RTM is a live, auditable artifact anyone can inspect, not a screenshot. Then open the
+**Contract** tab: that CI job also starts this kit's Java backend and mints a **paired run** against it, so
+the published divergence set between the mock and a second, independent implementation is browsable too
+(section 3b). *(The published run is REST + the run-free rules RTM + the pair; the full REST + gRPC + Kafka
+cross-protocol coverage runs locally off the async jar — sections 1–5 below.)*
 
 ## What you need
 
@@ -120,7 +122,13 @@ curl -s -X POST localhost:4444/api/eval --data-binary "g.statusDetails"   # -> {
 ## 2. Crystallize the gRPC suite + Coverage
 
 `checks/rating.feature` drives the engine over `karate.channel('grpc')` and exercises **2 of the 4 RPCs**
-on purpose (`Rate` + `StreamQuotes`), so it lands at **50% method coverage** — the gap to close:
+on purpose (`Rate` + `StreamQuotes`), so it lands at **50% method coverage** — the gap to close.
+
+> **It is tagged `@grpc` because it needs a protocol leaf the lean engine does not carry.** Run the kit on
+> an engine that bundles them (the `karate-async` jar — mount it into the container's `/jars` to swap the
+> engine), or select around it: `Runner.run('checks', {tags:'~@grpc'})`. On the lean engine the feature
+> fails with *"cannot find [grpc]"* — an absent capability, not a broken one, and nothing else in the kit
+> depends on it.
 
 ```bash
 curl -s -X POST localhost:4444/api/eval --data-binary "Runner.run('checks/rating.feature')"
@@ -184,7 +192,26 @@ java -cp rating-server/target/rating-server.jar io.karatelabs.examples.insurance
 
 # one suite, both targets -> contract/pairs/<date>-<id>.json
 java -jar karate-async-2.1.2.RC2.jar launch contract.karate.js
+
+# ...against a deployed provider instead of the local one — the same file, nothing edited
+PROVIDER_URL=https://policy.staging.example.com PROVIDER_ENV=staging \
+  java -jar karate-async-2.1.2.RC2.jar launch contract.karate.js
 ```
+
+`contract.karate.js` reads both with `Settings.sysenv(name, default)`, so the local run needs no environment
+at all and CI sets one variable. `PROVIDER_ENV` is a label that rides into the evidence — a pair minted
+against staging should not read later as if it had been minted against a laptop.
+
+It also renders the reading as a **page** (`Contract.report`) into the report dir, beside Coverage and
+Traceability — which is what the CI job publishes as the **Contract** tab of the site linked at the top of
+this README. The page shows what `Contract.read` returns and re-derives nothing, so it and the verb cannot
+disagree about what the pair claims; freshness is derived at read time, so the page is a snapshot at the
+instant it was rendered (it says so) rather than a live badge.
+
+**In CI this step is the parity gate.** The two implementations are only known to agree because a pair says
+so — and they have disagreed before (a coerced field, a blank string, an empty body, each found this way
+and then aligned on both sides). Nothing else in the pipeline builds `rating-server`, so the workflow
+minting a pair on every push *is* what stops the mock and the provider drifting apart unnoticed.
 
 What comes back is not a pass/fail. It is a **rung** — what this evidence entitles you to say:
 
