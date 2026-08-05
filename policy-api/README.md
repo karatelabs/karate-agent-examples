@@ -170,6 +170,49 @@ curl -s -X POST localhost:4444/api/eval --data-binary "Coverage.gaps()"
 
 The quote price mirrors the gRPC engine; the mock keeps the REST surface honest so `cov.openapi` is real.
 
+### 3b. Contract testing — one suite, two targets, a measured divergence set
+
+A green suite against a mock proves the suite; it says nothing about whether the mock tells consuming teams
+the truth. So this kit ships the **same contract implemented twice**: `mock/policy-mock.feature` (the mock
+you hand to other teams) and **`rating-server`'s REST face** — a hand-written Java implementation of the
+same `openapi.yaml`, sharing the rate book with the gRPC engine and nothing else. A **paired run** runs
+`checks/policy.feature` against both, in one session, in one order, and reports where they DIFFERED.
+
+```bash
+# the provider — the same rating-server.jar you already built, wearing its REST face (a THIRD terminal)
+java -cp rating-server/target/rating-server.jar io.karatelabs.examples.insurance.PolicyServer 8080
+
+# one suite, both targets -> contract/pairs/<date>-<id>.json
+java -jar karate-async-2.1.2.RC2.jar launch contract.karate.js
+```
+
+What comes back is not a pass/fail. It is a **rung** — what this evidence entitles you to say:
+
+| | |
+|---|---|
+| `agreed` 12, everything else 0 | every scenario — the lifecycle AND the rejections — answered identically on both, at the verdict layer AND the response layer |
+| **rung 3 of 4** (`verified-against-provider`) | the aggregate is the FLOOR of the per-operation rungs, and it is **capped** while any declared operation is unexercised — `cancelPolicy` and `getClaim` are exactly that, and the claim names them rather than rounding them up |
+| **rung 4** per operation | each of the 5 operations the suite exercised is `proven-substitutable` — over the requests THIS suite sends, and no further: same answers, `seeded` data, a Background read-back that OBSERVED both legs starting equivalent, the mock this project actually ships, and a provider that carried no `Karate-Mock` header |
+| 54 differences `ignored` | surrogate keys (`id` · `quoteId` · `policyId`) — each excused by a named rule carrying a **reason and an owner**, kept in the artifact with both values, never suppressed |
+
+**A rung is only as wide as the suite.** The comparison sees exactly the requests `checks/policy.feature`
+sends, so a suite of happy paths certifies a mock over happy paths. That is why the suite also sends the
+rejections — an unrated territory, a coverage line we do not sell, an age outside the book, an age sent as a
+string, a flag sent as a string, a quote nobody issued, a claim for nothing — and why each bar above counts
+**12 scenarios**, not 5. Every one of those was a real disagreement between the two implementations before
+the pair was first run: the mock said 201 where the service said 400, and for `priorClaims: "true"` the two
+quoted **different premiums while both returned 201**. Nothing but a paired run finds that.
+
+The evidence is a **dated file you commit**. `Contract.read()` derives its freshness at read time — edit the
+spec, the suite or the mock and it reads `stale`, naming the binding that moved, and the rung is **withdrawn
+rather than lowered**. `Openapi.grade('openapi.yaml')` reads that same file: the `contract` dimension scores
+the rung normalised (3 ÷ 4 = 0.75), and the maturity level `Proven` is awarded at rung 4 and nowhere else.
+
+> **Start the provider clean for each run.** It is an in-memory backend, so a second run against a
+> still-running one compares a mock that starts empty against a provider that does not — the list endpoint
+> then returns more rows on one leg than the other. That is a setup mistake, not drift, and it is the one
+> the harness cannot tell apart for you. Restart the REST face before each paired run.
+
 ## 4. Requirements ⋈ rules — the RTM, and why no test pins a premium
 
 Coverage answers *what did we exercise*. This answers *what did we promise, and is it met* — the part a
@@ -263,6 +306,9 @@ lands as `policy-events#publish` **COVERED**, leaving `#subscribe` as the gap. T
 - **Requirements, joined and judged** — `calc.req` links each rule arm to an acceptance criterion, so a run
   produces an RTM and a release verdict (`Requirement.readiness()` → NOT READY, blocker RATE-001) that a
   business reader can click through to the markdown.
+- **A mock proven substitutable, not assumed** — one suite against the shipped mock AND a second, foreign
+  implementation of the same contract, with the divergence set measured and the claim graded as a rung
+  (section 3b). Two numbers, always: what agreed, and how much of the contract that covers.
 
 ## Files
 
@@ -279,9 +325,12 @@ policy-api/
     policy.feature              # the quote → bind → claim lifecycle (OpenAPI operations)
     rating.feature              # the gRPC lane — same rulebook, second protocol
     rating-dryrun.feature  policy-events.feature
-  mock/                # the in-process REST mock
+  mock/                # the in-process REST mock — and the subject of the paired run (3b)
+  contract.karate.js   # the PAIRED RUN: one suite, both targets, the divergence set + the rung (3b)
+  contract/pairs/      # where the evidence lands when you run it — dated, immutable, meant to be committed
   config/dimensions.js # the cross / covering-array binding for POST /quotes
   karate-config.js  karate-boot.js   # config + coverage-universe wiring
   kafka/               # docker-compose + Avro schema (optional)
-  rating-server/       # the standalone gRPC backend (Maven module → rating-server.jar)
+  rating-server/       # the standalone backend (Maven module → rating-server.jar): the gRPC rating engine
+                       #   AND PolicyServer, the REST face the paired run compares the mock against
 ```

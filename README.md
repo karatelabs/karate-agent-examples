@@ -35,6 +35,18 @@ report, in a browser, nothing installed and no license needed:
 | [`kiro-demo`](kiro-demo/) | **"done" is a claim, not evidence** — the requirements are read straight out of an AI coding tool's own spec folder, with its task list ticked complete. Every scenario passes and the verdict is still **NOT READY**: one criterion a completed task claims is implemented but never exercised. Rules + REST only, no browser, about half a second per run. |
 | [`store-api`](store-api/) | **start-from-scratch benchmark** — a bare OpenAPI spec and nothing else: the engine stands up a stateful mock from the spec, your AI agent authors the suite, and the gap lists define "done" deterministically. Includes a cheat-sheet for timing your own agent environment against a clean reference. |
 
+### Protocol examples
+
+Plain, self-contained examples of testing a non-HTTP protocol — no traceability or coverage story, just
+the protocol. Each ships the service under test, so it runs standalone, and each is driven by the
+`karate-async` engine jar rather than the container image.
+
+| kit | what it demonstrates |
+| --- | --- |
+| [`grpc`](grpc/) | unary, server-streaming, client-streaming and bidirectional calls, request/response metadata, and asserting a gRPC error status. **No generated stubs on the test side** — the `.proto` is read at run time, so there is nothing to regenerate when the contract changes. |
+| [`kafka`](kafka/) | produce and consume, as JSON and as Avro through a Schema Registry, with message headers and a filtering consumer. Broker and registry come up with `docker compose`. |
+| [`websocket`](websocket/) | raw text, JSON, and collecting a stream of messages — plus a **custom frame-based protocol** (STOMP) handled by a codec, so protocol handling stays out of the checks. Both demo servers compile against the engine jar alone: no build tool. |
+
 ## Drive it from your own AI agent (MCP)
 
 Every kit is drivable over the **Model Context Protocol**. Serve the project and point any MCP client

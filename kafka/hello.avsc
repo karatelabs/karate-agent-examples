@@ -1,0 +1,24 @@
+{
+  "type": "record",
+  "name": "Hello",
+  "namespace": "io.karatelabs.examples",
+  "fields": [
+    { "name": "message", "type": "string" },
+    {
+      "name": "status",
+      "type": { "name": "Status", "type": "enum", "symbols": ["NEW", "SHIPPED", "CANCELLED"], "default": "NEW" },
+      "default": "NEW"
+    },
+    {
+      "name": "info",
+      "type": {
+        "name": "Info",
+        "type": "record",
+        "fields": [
+          { "name": "first", "type": "long" },
+          { "name": "second", "type": "boolean" }
+        ]
+      }
+    }
+  ]
+}

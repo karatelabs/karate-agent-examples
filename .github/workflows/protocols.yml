@@ -1,0 +1,186 @@
+# Runs the protocol kits (gRPC · Kafka · WebSocket) the way a customer runs them: a bare project folder
+# driven by the karate-async engine jar. NOT the karate-agent container — that image carries the agent
+# engine only (no gRPC/Kafka/WebSocket), and these kits are plain protocol examples with no console story.
+#
+# ONE workflow for all three, deliberately. They share the engine download (~70 MB, fetched once instead
+# of three times), and — because they run in one job — their reports are staged and pushed to gh-pages in
+# a SINGLE commit rather than three, which is three times less exposure to the publish race below.
+#
+# The engine is DOWNLOADED at run time from the public release, never committed: this repo ships neither
+# an engine jar nor a licence. A release-asset download is served from a CDN and does not consume the
+# GitHub API rate limit, so the direct URL is used deliberately rather than an API call.
+#
+# One-time setup: add a repository secret KARATE_LICENSE (the inline karate.lic text). gRPC and Kafka
+# need the grpc / kafka entitlements; WebSocket rides the openapi bundle — a grpc+kafka-only licence
+# runs the first two and skips the third.
+#
+# EVERY precondition DEGRADES TO A SKIP, NEVER A FAILURE — no licence secret, or no published engine jar
+# for this version yet (the version is pinned at sync time, which can precede the release). A missing
+# precondition is not a broken kit. Only a kit that actually runs and fails turns this red.
+name: protocols
+
+on:
+  push:
+    paths: ['grpc/**', 'kafka/**', 'websocket/**', '.github/workflows/protocols.yml']
+  pull_request:
+    paths: ['grpc/**', 'kafka/**', 'websocket/**', '.github/workflows/protocols.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: write        # the gh-pages publish pushes to the repo
+
+env:
+  ENGINE_VERSION: 2.1.2.RC2
+  JAR: karate-async-2.1.2.RC2.jar
+
+jobs:
+  protocols:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: 21
+          cache: maven
+
+      # Gate 1 — the licence, as a step output so each kit skips cleanly instead of failing inside a
+      # feature with "not in license entitlements".
+      - name: Check for the licence secret
+        id: lic
+        env:
+          KARATE_LICENSE_TEXT: ${{ secrets.KARATE_LICENSE }}
+        run: |
+          if [ -z "$KARATE_LICENSE_TEXT" ]; then
+            echo "::warning::KARATE_LICENSE secret not set — the protocol kits will be skipped"
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Gate 2 — the engine. HEAD first: an unpublished release for this version is a skip, not a
+      # failure. A jar that downloads but is not runnable IS a failure — a truncated or wrong asset must
+      # not masquerade as "not ready yet".
+      - name: Download the engine
+        id: engine
+        if: steps.lic.outputs.ok == 'true'
+        run: |
+          URL="https://github.com/karatelabs/karate-addons/releases/download/agent-${ENGINE_VERSION}/${JAR}"
+          if ! curl -sIfL -o /dev/null "$URL"; then
+            echo "::warning::${JAR} is not published yet — skipping the protocol kits"
+            echo "ok=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          curl -sSfL -o "$JAR" "$URL"
+          unzip -p "$JAR" META-INF/MANIFEST.MF | grep -q '^Main-Class:' \
+            || { echo "::error::${JAR} downloaded but is not runnable"; exit 1; }
+          ls -lh "$JAR"
+          echo "ok=true" >> "$GITHUB_OUTPUT"
+
+      # ---- gRPC: a Maven build for the demo service (protoc stubs), then the checks off the engine ----
+      - name: gRPC kit
+        if: steps.engine.outputs.ok == 'true'
+        env:
+          KARATE_LICENSE_TEXT: ${{ secrets.KARATE_LICENSE }}
+        working-directory: grpc
+        run: |
+          mvn -B -ntp -f server/pom.xml package
+          java -cp "../${JAR}:server/target/classes" demo.DemoServer 50051 &
+          for _ in $(seq 1 30); do (echo > /dev/tcp/localhost/50051) 2>/dev/null && break; sleep 1; done
+          java -jar "../${JAR}" run -f html,junit:xml checks
+
+      # ---- Kafka: broker + schema registry via compose ----
+      - name: Kafka kit
+        if: steps.engine.outputs.ok == 'true'
+        env:
+          KARATE_LICENSE_TEXT: ${{ secrets.KARATE_LICENSE }}
+        working-directory: kafka
+        run: |
+          docker compose up -d
+          echo "waiting for the schema registry on :8081 …"
+          for _ in $(seq 1 60); do curl -sf localhost:8081/subjects >/dev/null 2>&1 && break; sleep 2; done
+          for t in json-topic avro-topic; do
+            docker compose exec -T kafka kafka-topics --create --if-not-exists \
+              --topic "$t" --partitions 1 --replication-factor 1 \
+              --bootstrap-server localhost:29092 >/dev/null 2>&1 || true
+          done
+          java -jar "../${JAR}" run -f html,junit:xml checks
+
+      - name: Stop the Kafka broker
+        if: always()
+        working-directory: kafka
+        run: docker compose down || true
+
+      # ---- WebSocket: the servers compile against the engine jar alone (no Maven, no codegen).
+      # The STOMP check resolves its codec by name, so the compiled classes join the classpath. ----
+      - name: WebSocket kit
+        if: steps.engine.outputs.ok == 'true'
+        env:
+          KARATE_LICENSE_TEXT: ${{ secrets.KARATE_LICENSE }}
+        working-directory: websocket
+        run: |
+          javac -cp "../${JAR}" -d server-classes server/*.java
+          java -cp "../${JAR}:server-classes" EchoServer 8090 &
+          java -cp "../${JAR}:server-classes" StompBroker 8091 &
+          for _ in $(seq 1 30); do (echo > /dev/tcp/localhost/8090) 2>/dev/null && break; sleep 1; done
+          java -cp "../${JAR}:server-classes" io.karatelabs.Main run -f html,junit:xml checks
+
+      # ---- results ----
+      - name: Publish test results (Checks tab)
+        if: always()
+        uses: dorny/test-reporter@v1
+        with:
+          name: karate protocol tests
+          path: '{grpc,kafka,websocket}/target/karate-reports/**/junit-xml/*.xml'
+          reporter: java-junit
+
+      - name: Upload the reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: protocol-kit-reports
+          retention-days: 7
+          path: '*/target/karate-reports'
+          if-no-files-found: ignore
+
+      # Stage whichever kits actually produced a report into ONE tree, so the publish below is a single
+      # commit covering all three (and a skipped kit simply contributes nothing).
+      - name: Stage the HTML reports
+        id: stage
+        if: always() && github.ref == 'refs/heads/main'
+        run: |
+          staged=0
+          for kit in grpc kafka websocket; do
+            if [ -d "$kit/target/karate-reports" ]; then
+              mkdir -p "_pages/$kit"
+              cp -R "$kit/target/karate-reports/." "_pages/$kit/"
+              staged=$((staged + 1))
+            fi
+          done
+          echo "staged ${staged} kit report(s)"
+          echo "any=$([ "$staged" -gt 0 ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+
+      # Every kit publishes into its own subdir of ONE shared gh-pages branch, so two workflows finishing
+      # together race on the push and the loser dies with `! [rejected] (fetch first)` — a red run whose
+      # tests all passed. Retry rather than serialize: a concurrency group queues only one run, so a third
+      # workflow would cancel the second outright. The retry re-clones gh-pages, so it rebases.
+      # Browsable at https://<owner>.github.io/karate-agent-examples/grpc/ (and /kafka/, /websocket/).
+      - name: Publish HTML reports to GitHub Pages
+        id: pages
+        continue-on-error: true
+        if: always() && github.ref == 'refs/heads/main' && steps.stage.outputs.any == 'true'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: _pages
+          keep_files: true
+
+      - name: Retry the publish (another kit won the race for gh-pages)
+        if: always() && github.ref == 'refs/heads/main' && steps.stage.outputs.any == 'true' && steps.pages.outcome == 'failure'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: _pages
+          keep_files: true

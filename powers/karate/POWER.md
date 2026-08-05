@@ -112,7 +112,7 @@ Match the user's task to a row, then read the steering file named on the right. 
 | pick a workflow, author or improve tests, migrate an existing suite, scaffold from a spec | `karate-workflows.md` |
 | know whether the work is actually verified — coverage, gaps, traceability, the report | `karate-evidence-loop.md` |
 
-The second one is the point of this power. Anything can run a test; the reason to reach for Karate is the evidence it leaves behind. 18 workflows ship with the server — `Skill.list()` on the live server is the authoritative roster.
+The second one is the point of this power. Anything can run a test; the reason to reach for Karate is the evidence it leaves behind. 19 workflows ship with the server — `Skill.list()` on the live server is the authoritative roster.
 
 ## Licensing, privacy and support
 
