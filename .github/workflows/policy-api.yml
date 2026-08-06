@@ -54,7 +54,7 @@ jobs:
       - name: Karate REST suite + rules RTM (pure-git RTM)
         # `karate:jsonl` is required: coverage + the RTM are computed from that event stream.
         run: |
-          IMAGE=ghcr.io/karatelabs/karate-agent:2.1.2.RC2
+          IMAGE=ghcr.io/karatelabs/karate-agent:2.1.2.RC3
           # Authenticated (see the login step) — no anonymous rate limit, so no retry loop. Each engine
           # release mirrors this tag to GHCR via the "Publish image -> GHCR (manual)" workflow.
           docker pull "$IMAGE"
@@ -127,7 +127,7 @@ jobs:
         # every green run would quietly replace requirement links pinned to the reviewed commit with links
         # to a moving branch (on a fork, to the wrong repo). The deep-link IS the kit's headline feature.
         run: |
-          IMAGE=ghcr.io/karatelabs/karate-agent:2.1.2.RC2
+          IMAGE=ghcr.io/karatelabs/karate-agent:2.1.2.RC3
           mkdir -p contract/pairs && chmod 777 contract contract/pairs
           docker run --rm --add-host=host.docker.internal:host-gateway \
             -v "$PWD":/work -w /work \
