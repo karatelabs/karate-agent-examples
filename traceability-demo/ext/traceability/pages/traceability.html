@@ -459,15 +459,16 @@
   <script>
     (function () {
       var d = window.KARATE_TRACE || {};
-      KarateReport.renderTopNav({
-        current: 'traceability',
-        summary: d.karateSummary,
-        tabs: [
-          // the Coverage sibling is always part of the deliverable — the writer stamps the href seam
-          { key: 'coverage', title: 'Coverage', href: d.coverageHref || '../../coverage/pages/coverage.html' },
-          { key: 'traceability', title: 'Traceability', href: 'traceability.html' }
-        ]
-      });
+      var tabs = [
+        // the Coverage sibling is always part of the deliverable — the writer stamps the href seam
+        { key: 'coverage', title: 'Coverage', href: d.coverageHref || '../../coverage/pages/coverage.html' },
+        { key: 'traceability', title: 'Traceability', href: 'traceability.html' }
+      ];
+      // the paired-run page, iff one was published beside this report (stamped only when it is there)
+      if (d.contractHref) {
+        tabs.push({ key: 'contract', title: 'Contract', href: d.contractHref });
+      }
+      KarateReport.renderTopNav({ current: 'traceability', summary: d.karateSummary, tabs: tabs });
     })();
   </script>
 </body>

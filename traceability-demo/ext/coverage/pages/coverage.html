@@ -403,6 +403,11 @@
         tabs.push({ key: 'traceability', title: 'Traceability',
                     href: d.traceabilityHref || '../../traceability/pages/traceability.html' });
       }
+      // the paired-run page, iff one was published beside this report (the writer stamps the href only
+      // when the page is really there — no dead tabs)
+      if (d.contractHref) {
+        tabs.push({ key: 'contract', title: 'Contract', href: d.contractHref });
+      }
       KarateReport.renderTopNav({ current: 'coverage', summary: d.karateSummary, tabs: tabs });
     })();
   </script>

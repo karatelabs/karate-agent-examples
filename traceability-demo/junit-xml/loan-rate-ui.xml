@@ -1,41 +1,41 @@
-<testsuite name="Loan Desk UI agrees with the personal-loan rules, per scenario" tests="7" failures="0" time="47.408" skipped="0"><testcase classname="loan-rate-ui" name="decline-low-score — credit score below 580 declines" time="7.043"><system-out>* Check.run(&apos;drive-quote.js&apos;, __row)
-*
-*
-*
+<testsuite name="Loan Desk UI agrees with the personal-loan rules, per scenario" tests="7" failures="0" time="47.725" skipped="0"><testcase classname="loan-rate-ui" name="decline-low-score — credit score below 580 declines" time="6.86"><system-out>* Check.run(&apos;drive-quote.js&apos;, __row)
+* Review screen echoes the entered credit score
+* Loan decision: declined @req=3/ac1
+* Decision = rules oracle (declined)
 </system-out></testcase>
-<testcase classname="loan-rate-ui" name="decline-high-dti — DTI over 50% declines" time="6.732"><system-out>* Check.run(&apos;drive-quote.js&apos;, __row)
-*
-*
-*
+<testcase classname="loan-rate-ui" name="decline-high-dti — DTI over 50% declines" time="6.832"><system-out>* Check.run(&apos;drive-quote.js&apos;, __row)
+* Review screen echoes the entered credit score
+* Loan decision: declined @req=3/ac1
+* Decision = rules oracle (declined)
 </system-out></testcase>
-<testcase classname="loan-rate-ui" name="review-score-band — score 580-669 routes to review" time="6.7"><system-out>* Check.run(&apos;drive-quote.js&apos;, __row)
-*
-*
-*
-*
+<testcase classname="loan-rate-ui" name="review-score-band — score 580-669 routes to review" time="7.051"><system-out>* Check.run(&apos;drive-quote.js&apos;, __row)
+* Review screen echoes the entered credit score
+* Loan decision: manual-review @req=3/ac1
+* Decision = rules oracle (manual-review)
+* APR % = rules oracle
 </system-out></testcase>
-<testcase classname="loan-rate-ui" name="review-dti-band — DTI 40-50% routes to review" time="6.614"><system-out>* Check.run(&apos;drive-quote.js&apos;, __row)
-*
-*
-*
-*
+<testcase classname="loan-rate-ui" name="review-dti-band — DTI 40-50% routes to review" time="6.564"><system-out>* Check.run(&apos;drive-quote.js&apos;, __row)
+* Review screen echoes the entered credit score
+* Loan decision: manual-review @req=3/ac1
+* Decision = rules oracle (manual-review)
+* APR % = rules oracle
 </system-out></testcase>
-<testcase classname="loan-rate-ui" name="approve-prime — prime, low DTI, auto-approves at 6.5%" time="6.617"><system-out>* Check.run(&apos;drive-quote.js&apos;, __row)
-*
-*
-*
-*
+<testcase classname="loan-rate-ui" name="approve-prime — prime, low DTI, auto-approves at 6.5%" time="6.797"><system-out>* Check.run(&apos;drive-quote.js&apos;, __row)
+* Review screen echoes the entered credit score
+* Loan decision: auto-approved @req=3/ac1
+* Decision = rules oracle (auto-approved)
+* APR % = rules oracle
 </system-out></testcase>
-<testcase classname="loan-rate-ui" name="approve-midband — 660-719 band, low DTI, auto-approve at 9.9%" time="6.614"><system-out>* Check.run(&apos;drive-quote.js&apos;, __row)
-*
-*
-*
-*
+<testcase classname="loan-rate-ui" name="approve-midband — 660-719 band, low DTI, auto-approve at 9.9%" time="6.565"><system-out>* Check.run(&apos;drive-quote.js&apos;, __row)
+* Review screen echoes the entered credit score
+* Loan decision: auto-approved @req=3/ac1
+* Decision = rules oracle (auto-approved)
+* APR % = rules oracle
 </system-out></testcase>
-<testcase classname="loan-rate-ui" name="approve-loyalty — existing customer loyalty discount" time="7.082"><system-out>* Check.run(&apos;drive-quote.js&apos;, __row)
-*
-*
-*
-*
+<testcase classname="loan-rate-ui" name="approve-loyalty — existing customer loyalty discount" time="7.047"><system-out>* Check.run(&apos;drive-quote.js&apos;, __row)
+* Review screen echoes the entered credit score
+* Loan decision: auto-approved @req=3/ac1
+* Decision = rules oracle (auto-approved)
+* APR % = rules oracle
 </system-out></testcase>
 </testsuite>
