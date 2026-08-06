@@ -1,11 +1,11 @@
-<testsuite name="WebSocket — raw text and JSON against the echo server" tests="3" failures="0" time="0.337" skipped="0"><testcase classname="checks.echo" name="send text, read it back" time="0.293"><system-out>* wsUrl = &apos;ws://localhost:8090/echo&apos;
+<testsuite name="WebSocket — raw text and JSON against the echo server" tests="3" failures="0" time="0.319" skipped="0"><testcase classname="checks.echo" name="send text, read it back" time="0.274"><system-out>* wsUrl = &apos;ws://localhost:8090/echo&apos;
 * session = karate.channel(&apos;websocket&apos;)
 * = wsUrl
 * session.start()
 * session.send(&apos;hello&apos;)
 * session.pop() == &apos;hello&apos;
 </system-out></testcase>
-<testcase classname="checks.echo" name="JSON in, JSON out" time="0.019"><system-out>* wsUrl = &apos;ws://localhost:8090/echo&apos;
+<testcase classname="checks.echo" name="JSON in, JSON out" time="0.02"><system-out>* wsUrl = &apos;ws://localhost:8090/echo&apos;
 * JsonTextCodec = Java.type(&apos;io.karatelabs.ext.websocket.JsonTextCodec&apos;)
 * session = karate.channel(&apos;websocket&apos;)
 * = wsUrl
@@ -14,7 +14,7 @@
 * session.send({ type: &apos;ping&apos;, seq: 1 })
 * session.pop() == { type: &apos;ping&apos;, seq: 1 }
 </system-out></testcase>
-<testcase classname="checks.echo" name="collect a stream of messages" time="0.007"><system-out>* wsUrl = &apos;ws://localhost:8090/echo&apos;
+<testcase classname="checks.echo" name="collect a stream of messages" time="0.008"><system-out>* wsUrl = &apos;ws://localhost:8090/echo&apos;
 * session = karate.channel(&apos;websocket&apos;)
 * = wsUrl
 * = 3
