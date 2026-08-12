@@ -30,8 +30,8 @@ permissions:
   contents: write        # the gh-pages publish pushes to the repo
 
 env:
-  ENGINE_VERSION: 2.1.2.RC3
-  JAR: karate-async-2.1.2.RC3.jar
+  ENGINE_VERSION: 2.1.2.RC4
+  JAR: karate-async-2.1.2.RC4.jar
 
 jobs:
   protocols:

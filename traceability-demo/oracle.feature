@@ -2,7 +2,9 @@ Feature: Loan Desk rules oracle — headless (the CI-safe pipeline stage)
 
   A browser-free suite: run the personal-loan rules over each scenario row and assert the decision (+ APR)
   matches the expected outcome. Every row's `Rule.execute` emits the rulebook's `calc.req` hits, so the RTM
-  lights each requirement (3..6). When the run supplies the ADO coordinates (KARATE_ADO_ORG /
+  lights each requirement (3..6). Deliberately NO `verify()` stamp here: this stage compares the RULES to an
+  expectation table, not the SYSTEM to the rules, so it must not clear the RTM's `rules only` disclosure —
+  the stamps live in the API and UI stages, which compare something real against the oracle. When the run supplies the ADO coordinates (KARATE_ADO_ORG /
   KARATE_ADO_PROJECT, see karate-boot.js) each id also click-throughs to its Azure DevOps User Story;
   otherwise the ids stay plain text (the pure-git / spec-driven posture). This is the CI-safe first stage;
   the flagship browser stage is `loan-rate-ui.feature` (drives the SUT with `bot`, non-headless + video).

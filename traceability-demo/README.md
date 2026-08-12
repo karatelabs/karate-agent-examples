@@ -43,7 +43,7 @@ as `KARATE_LICENSE_TEXT` (sent with your evaluation).
 # headless rules oracle — the CI-safe stage (no browser)
 docker run --rm -v "$PWD":/work -w /work \
   -e KARATE_LICENSE_TEXT="$(cat karate.lic)" \
-  public.ecr.aws/karatelabs/karate-agent:2.1.2.RC3 \
+  public.ecr.aws/karatelabs/karate-agent:2.1.2.RC4 \
   run oracle.feature -f junit:xml,html,karate:jsonl
 ```
 
@@ -57,7 +57,7 @@ RTM becomes a link to its User Story:
 docker run --rm -v "$PWD":/work -w /work \
   -e KARATE_LICENSE_TEXT="$(cat karate.lic)" \
   -e KARATE_ADO_ORG="your-org" -e KARATE_ADO_PROJECT="your-project" \
-  public.ecr.aws/karatelabs/karate-agent:2.1.2.RC3 \
+  public.ecr.aws/karatelabs/karate-agent:2.1.2.RC4 \
   run oracle.feature -f junit:xml,html,karate:jsonl
 ```
 
@@ -76,6 +76,13 @@ container reads it straight from the mounted work dir, and CI needs **no secret 
 **📊 See it live:** the GitHub Actions run publishes the HTML report (RTM · coverage · run summary) to GitHub
 Pages — browse the latest at **<https://karatelabs.github.io/karate-agent-examples/traceability-demo/>**.
 
+**Why does the live report say NOT READY when every test is green?** That's the demo. One acceptance
+criterion (the loyalty discount, `6/ac4`) is *deliberately* left without a `verify()` stamp: the rules
+realize it, the scenario even asserts it — but nothing **stamps** that the system was compared against the
+rules, so the RTM flags it `rules only` and the readiness verdict blocks on it. Tests passing and being
+ready to ship are different claims, and the report grades the second one. Add the missing stamp (drop the
+`if` in `checks/loan-api.feature` — the comment marks the spot) and re-run: the verdict goes READY.
+
 ## Drive it from your own AI agent (MCP)
 
 Serve the project and point any MCP client at it. **`serve` is the image's default** — a bare `docker run`
@@ -84,7 +91,7 @@ brings the console + MCP endpoint up on `:4444`, serving the mounted `/work` fol
 ```bash
 docker run --rm -p 4444:4444 -v "$PWD":/work -w /work \
   -e KARATE_LICENSE_TEXT="$(cat karate.lic)" \
-  public.ecr.aws/karatelabs/karate-agent:2.1.2.RC3
+  public.ecr.aws/karatelabs/karate-agent:2.1.2.RC4
 ```
 
 Then `claude mcp add --transport http karate http://localhost:4444/api/mcp` (or point Cursor / VS Code at the

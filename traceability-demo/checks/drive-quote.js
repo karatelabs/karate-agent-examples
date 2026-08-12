@@ -34,7 +34,8 @@ match(reviewScore, row.creditScore, 'Review screen echoes the entered credit sco
 bot.act('#submit', 'click');
 
 // ---- Step 3: Decision — WAIT for the delayed decision to appear, then oracle it against the rules ----
-var oracle = Rule.execute('personal-loan', row).output;
+var check = Rule.execute('personal-loan', row);
+var oracle = check.output;
 var labelOf = { 'auto-approved': 'approved', 'manual-review': 'refer', 'declined': 'declined' };
 
 // the SUT reveals the decision only after an artificial "Calculating…" delay — wait until the decision
@@ -53,4 +54,13 @@ match.contains(shownDecision, labelOf[oracle.decision], 'Decision = rules oracle
 if (oracle.apr != null) {
     var shownApr = parseFloat(('' + bot.eval("document.querySelector('#apr').textContent")).replace(/[^0-9.]/g, ''));
     match(shownApr, Math.round(oracle.apr * 10000) / 100, 'APR % = rules oracle');
+}
+
+// 3) stamp the comparison: the SCREEN agreed with the rules. Emits per criterion for the criteria this
+// rule run realized — what clears the RTM's `rules only` disclosure; only reached if the matches
+// above passed, and a drifted SUT fails the row before it stamps. The `approve-loyalty` row is the
+// DELIBERATE demo gap (same as checks/loan-api.feature — see its header): asserted, but never stamped,
+// so its criterion stays `rules only` on the published RTM and blocks the verdict.
+if (row._id !== 'approve-loyalty') {
+    check.verify(true, 'the Loan Desk screen agrees with the personal-loan rules');
 }

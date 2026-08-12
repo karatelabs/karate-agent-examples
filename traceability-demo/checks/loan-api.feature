@@ -5,7 +5,14 @@ Feature: Loan Decision API agrees with the personal-loan rules, per scenario
   `cov.openapi` for that operation — and asserts the API's decision + APR equal the personal-loan rules
   oracle (`Rule.execute`), row by row. The `@req=` tokens link the API coverage to the SAME requirements
   (3..6) the rules and the UI cover, so API hits + rule hits + requirement coverage land in ONE RTM.
-  (getDecision — GET /decisions/{id} — is left uncovered: the honest gap the RTM/Coverage.gaps() flags.)
+  The closing `check.verify(...)` stamps that the SYSTEM agreed with the rules — it emits per criterion
+  for exactly the criteria that rule run realized, which is what clears the RTM's `rules only`
+  (oracleOnly) disclosure; a drifted API turns the stamp into a test failure.
+  TWO gaps are left DELIBERATELY, so the published report demonstrates the governance teeth:
+    • getDecision — GET /decisions/{id} — is never called: the honest endpoint gap Coverage.gaps() flags;
+    • the `approve-loyalty` row is asserted like every other but NOT stamped, so its criterion (6/ac4)
+      stays `rules only` and blocks the readiness verdict — every test green, yet NOT READY.
+  Drop the `if` around the stamp (stamp every row) and the verdict goes READY — try it.
 
   Background:
     * url baseUrl
@@ -17,9 +24,12 @@ Feature: Loan Decision API agrees with the personal-loan rules, per scenario
     And request app
     When method post
     Then status 200
-    * def oracle = Rule.execute('personal-loan', __row).output
+    * def check = Rule.execute('personal-loan', __row)
+    * def oracle = check.output
     And match response.decision == oracle.decision
     And match response.apr == oracle.apr
+    # deliberate demo gap (see the feature header): the loyalty case is asserted above, but not STAMPED
+    * eval if (__row._id != 'approve-loyalty') check.verify(true, 'the Loan Decision API agrees with the personal-loan rules')
 
     Examples:
       | read('/rulebooks/personal-loan/scenarios.json') |
