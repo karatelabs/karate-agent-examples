@@ -76,14 +76,20 @@
     <!-- unified 3-source coverage — requirements + OpenAPI endpoints + rules in one view -->
     <div class="k-srcstrip" x-show="sources.length">
       <template x-for="s in sources" :key="s.namespace">
-        <div class="k-card" :title="(s.covered || 0) + ' of ' + (s.total || 0) + ' ' + srcUnit(s) + ' covered'">
+        <!-- hollow green (D194): the req tile's bar splits genuinely-verified (green) from rules-only
+             (indigo), so "100% covered" can't read as risk-free next to a NOT READY verdict -->
+        <div class="k-card" :title="(s.covered || 0) + ' of ' + (s.total || 0) + ' ' + srcUnit(s) + ' covered' + (srcHollow(s) ? ' — ' + srcHollow(s) + ' by the rules only, not independently verified (see Blockers)' : '')">
           <div class="k-num" x-text="pct(s) + '%'"></div>
           <div class="k-lbl">
             <span x-text="s.title || s.namespace"></span> &middot;
             <span x-text="(s.covered || 0) + '/' + (s.total || 0)"></span>
             <span class="k-unit" x-text="srcUnit(s)"></span>
+            <span class="k-prov k-sim" x-show="srcHollow(s)" x-text="srcHollow(s) + ' rules only'"></span>
           </div>
-          <div class="k-bar"><span :style="'width:' + pct(s) + '%'"></span></div>
+          <div class="k-bar">
+            <span :style="'width:' + srcPctGenuine(s) + '%'"></span>
+            <span class="k-bar-sim" x-show="srcHollow(s)" :style="'width:' + srcPctHollow(s) + '%'"></span>
+          </div>
         </div>
       </template>
     </div>
@@ -105,8 +111,11 @@
               <tr>
                 <th x-text="cr"></th>
                 <template x-for="st in statuses" :key="st">
+                  <!-- the RISK matrix: a hollow-green requirement (D194) is graded down the NOTCOVERED
+                       column, exactly like the readiness engine — so these cells always sum to the
+                       headline risk cards, and the COVERED column is only ever genuinely-verified green -->
                   <td class="k-cell" :class="heatClass(cr, st)" @click="setFilter(cr, st)"
-                      :title="cr + ' × ' + st + ' → ' + riskFor(cr, st) + ' risk'">
+                      :title="heatTitle(cr, st)">
                     <span class="k-badge" x-text="heatCount(cr, st) || ''"></span>
                   </td>
                 </template>
@@ -143,15 +152,22 @@
       </div>
     </div>
 
-    <!-- blockers: the high-risk requirements gating release -->
+    <!-- blockers: the high-risk requirements gating release. A COVERED blocker is the hollow-green case
+         (D194 / §2f) — the engine's trustGap says WHY the green cannot be trusted, and it must render
+         here, or the row reads as a contradiction ("COVERED, yet blocking"). -->
     <div class="k-blockers" x-show="blockers.length">
       <h2>Blockers <span class="k-muted" x-text="'(' + blockers.length + ')'"></span></h2>
       <template x-for="b in blockers" :key="b.reqId">
-        <div class="k-line">
-          <span class="k-pill" :class="statusClass(b.coverage)" x-text="b.coverage" :title="def('status', b.coverage)"></span>
-          <span class="k-crit k-crit-high" x-text="b.criticality" :title="def('criticality', b.criticality)"></span>
-          <strong x-text="b.reqId"></strong>
-          <span x-text="b.title"></span>
+        <div>
+          <div class="k-line">
+            <span class="k-pill" :class="statusClass(b.coverage)" x-text="b.coverage" :title="def('status', b.coverage)"></span>
+            <span class="k-crit k-crit-high" x-text="b.criticality" :title="def('criticality', b.criticality)"></span>
+            <strong x-text="b.reqId"></strong>
+            <span x-text="b.title"></span>
+            <span class="k-prov k-sim" x-show="b.oracleOnly" :title="b.trustGap">rules only</span>
+            <span class="k-prov k-warn" x-show="b.trustGap && !b.oracleOnly" :title="b.trustGap">not verified</span>
+          </div>
+          <div class="k-blocker-why" x-show="b.trustGap" x-text="b.trustGap"></div>
         </div>
       </template>
     </div>
@@ -269,7 +285,11 @@
         <tbody class="k-itembody">
           <tr class="k-row" @click="toggle(it.id)">
             <td><span class="k-caret" :class="isOpen(it.id) && 'k-open'">&#9654;</span></td>
-            <td><span class="k-pill" :class="statusClass(it.status)" :title="def('status', it.status)" x-text="statusIcon(it.status)"></span></td>
+            <!-- hollow green (D194): a COVERED row the engine still grades at risk wears the indigo
+                 pill, so the status column agrees with its own Risk column -->
+            <td><span class="k-pill" :class="it.status === 'COVERED' && it.risk && it.risk !== 'NONE' ? 'k-sim' : statusClass(it.status)"
+                      :title="it.status === 'COVERED' && it.risk && it.risk !== 'NONE' ? 'COVERED, but not independently verified — see Blockers' : def('status', it.status)"
+                      x-text="statusIcon(it.status)"></span></td>
             <td class="k-name">
               <a class="k-reqid" x-show="reqHref(it.reqId)" :href="reqHref(it.reqId)" target="_blank" rel="noopener" :title="'open ' + it.reqId + ' in tracker'" x-text="it.reqId"></a><span class="k-reqid" x-show="!reqHref(it.reqId)" x-text="it.reqId"></span>
               <span class="k-path" x-text="it.title || it.name"></span>
@@ -293,9 +313,13 @@
                   <template x-for="c in acceptOf(it)" :key="c.id">
                     <div>
                       <div class="k-line">
-                        <span class="k-pill" :class="statusClass(c.status)" :title="def('status', c.status)" x-text="statusIcon(c.status)"></span>
+                        <span class="k-pill" :class="c.oracleOnly && c.status === 'COVERED' ? 'k-sim' : statusClass(c.status)" :title="def('status', c.status)" x-text="statusIcon(c.status)"></span>
                         <code x-text="c.criterion"></code>
                         <span x-text="c.name"></span>
+                        <!-- the weak link behind a requirement-level "rules only" rollup (D194): name the
+                             criterion nothing outside the rulebook checked, so the auditor sees WHICH -->
+                        <span class="k-prov k-sim" x-show="c.oracleOnly && c.status === 'COVERED'"
+                              title="covered by the rules only — nothing outside the rulebook checked this criterion (a @req= test or a Rule.execute(…).verify(…) stamp clears it)">rules only</span>
                         <!-- §2f honest grading (D96): lit only by machine claims → flagged @ai (attested, review pending) -->
                         <span class="k-ai" x-show="attestedOnly(c.id)"
                               title="attested — a machine claim from a harness run (@ai, review pending); observed/verified evidence upgrades it">@ai attested</span>

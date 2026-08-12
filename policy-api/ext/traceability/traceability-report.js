@@ -63,7 +63,9 @@ document.addEventListener('alpine:init', function () {
         var self = this, q = this.q.trim().toLowerCase(), cf = this.critFilter, sf = this.statusFilter, pf = this.provFilter, risk = this.riskById;
         var out = this.reqs.filter(function (r) {
           if (cf && (r.criticality || 'medium') !== cf) return false;
-          if (sf && r.status !== sf) return false;
+          // a hollow-green row answers to its authored status AND its graded one (heatStatus), so
+          // clicking the heatmap's NOTCOVERED cell surfaces the rows that cell actually counted
+          if (sf && r.status !== sf && self.heatStatus(r) !== sf) return false;
           if (pf && self.prov(r) !== pf) return false;
           if (q) {
             var hay = (r.reqId + ' ' + (r.title || r.name || '') + ' ' + (r.body || '')).toLowerCase();
@@ -108,6 +110,15 @@ document.addEventListener('alpine:init', function () {
       // C-foundation 2c), so the requirements tile already agrees with the matrix + scorecard. We only
       // add the unit word for clarity ("1/4 requirements", "12/20 endpoints").
       srcUnit: function (s) { return { req: 'requirements', openapi: 'endpoints', grpc: 'methods', rules: 'rules' }[s.type] || 'items'; },
+      // hollow green (D194): reqs the per-source summary counts covered but the engine still grades at
+      // risk — the req tile splits them out of the green bar (indigo), so 100% can't read as risk-free
+      srcHollow: function (s) {
+        var self = this;
+        return s.type !== 'req' ? 0
+          : this.reqs.filter(function (r) { return r.status === 'COVERED' && self.memberRisk(r) !== 'NONE'; }).length;
+      },
+      srcPctHollow: function (s) { var t = s.total || 0; return t ? Math.round(this.srcHollow(s) * 100 / t) : 0; },
+      srcPctGenuine: function (s) { return Math.max(0, this.pct(s) - this.srcPctHollow(s)); },
 
       // ---- the two differentiators (T3): the risk heatmap + eval-independence ----
       pct: function (s) { return Math.round((s && s.percentage) || 0); },
@@ -122,12 +133,31 @@ document.addEventListener('alpine:init', function () {
         return failing ? 'HIGH' : 'MEDIUM';
       },
       riskOf: function (r) { return this.riskFor(r.criticality || 'medium', r.status, r.oracleOnly); },
-      heatCount: function (cr, st) {
-        return this.reqs.filter(function (r) { return (r.criticality || 'medium') === cr && r.status === st; }).length;
+      // the engine's per-requirement risk (authoritative), falling back to the static matrix cell
+      memberRisk: function (r) { return this.riskById[r.reqId] || this.riskOf(r); },
+      // hollow green (D194): a COVERED requirement the engine still grades at risk
+      hollow: function (r) { return r.status === 'COVERED' && this.memberRisk(r) !== 'NONE'; },
+      // the RISK matrix column a requirement lands in — a hollow-green one is graded down the
+      // NOTCOVERED column (RequirementReadiness.risk / MODEL §2f), so the heatmap tells the SAME story
+      // as the headline risk cards (cell colour stays the plain risk matrix, no third colour)
+      heatStatus: function (r) { return this.hollow(r) ? 'NOTCOVERED' : r.status; },
+      heatMembers: function (cr, st) {
+        var self = this;
+        return this.reqs.filter(function (r) { return (r.criticality || 'medium') === cr && self.heatStatus(r) === st; });
+      },
+      heatCount: function (cr, st) { return this.heatMembers(cr, st).length; },
+      heatHollow: function (cr, st) {
+        var self = this;
+        return this.heatMembers(cr, st).filter(function (r) { return self.hollow(r); }).length;
       },
       heatClass: function (cr, st) {
         var n = this.heatCount(cr, st);
         return this.riskClass(this.riskFor(cr, st)) + (n ? '' : ' k-cell-empty');
+      },
+      heatTitle: function (cr, st) {
+        var t = cr + ' × ' + st + ' → ' + this.riskFor(cr, st) + ' risk';
+        var h = this.heatHollow(cr, st);
+        return h ? t + ' — includes ' + h + ' COVERED-but-rules-only, graded as not covered (see Blockers)' : t;
       },
       setFilter: function (cr, st) {
         this.critFilter = (this.critFilter === cr && this.statusFilter === st) ? '' : cr;

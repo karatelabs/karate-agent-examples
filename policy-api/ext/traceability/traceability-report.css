@@ -124,7 +124,9 @@
 
 /* blockers */
 .k-coverage-ext .k-blockers { margin: 0 0 18px; }
-.k-coverage-ext .k-blockers .k-line { margin: 5px 0; }
+.k-coverage-ext .k-blockers .k-line { margin: 5px 0 0; }
+/* the trustGap one-liner under a hollow-green blocker (D194) — why the COVERED badge can't be trusted */
+.k-coverage-ext .k-blockers .k-blocker-why { margin: 1px 0 7px 2px; font-size: 11.5px; color: var(--k-muted); }
 
 /* filter toolbar (mirrors coverage-report.css) */
 .k-coverage-ext .k-toolbar {
