@@ -50,7 +50,10 @@
           <div class="k-shipsub" x-text="readyVerdict()"></div>
         </div>
         <div class="k-shipsplit">
-          <span class="k-shipcount k-ok" x-text="readyStatusCounts().COVERED + ' covered'"></span>
+          <!-- the green chip counts only GENUINELY covered reqs — a rules-only (hollow-green, D194) req
+               sits in its indigo chip instead, never in the green, so the chips can't out-green the verdict -->
+          <span class="k-shipcount k-ok" title="tested &amp; passed, verified outside the rulebook"
+                x-text="(readyStatusCounts().COVERED - oracleOnlyCount) + ' covered'"></span>
           <span class="k-shipcount k-no" x-show="readyStatusCounts().FAILING > 0" x-text="readyStatusCounts().FAILING + ' failing'"></span>
           <span class="k-shipcount k-sim" x-show="oracleOnlyCount > 0"
                 title="the rules realize it, but nothing outside the rulebook checked it"
@@ -119,7 +122,11 @@
         <tbody class="k-itembody">
           <tr class="k-row" @click="toggle(it.id)">
             <td><span class="k-caret" :class="isOpen(it.id) && 'k-open'">&#9654;</span></td>
-            <td><span class="k-pill" :class="statusClass(it.status)" :title="it.status" x-text="statusIcon(it.status)"></span></td>
+            <!-- a rules-only COVERED req wears the indigo pill (D194), not the green one — same honest
+                 grading as the ship banner, so the list can't read greener than the verdict -->
+            <td><span class="k-pill" :class="it.oracleOnly && it.status === 'COVERED' ? 'k-sim' : statusClass(it.status)"
+                      :title="it.oracleOnly && it.status === 'COVERED' ? 'COVERED, but only by the rules — nothing outside the rulebook checked it' : it.status"
+                      x-text="statusIcon(it.status)"></span></td>
             <td class="k-name">
               <template x-if="protoBadge(it)"><span class="k-proto" x-text="protoBadge(it)" :title="protoBadge(it) === 'GRPC' ? 'gRPC service' : 'Kafka topic'"></span></template>
               <template x-if="it.method && !protoBadge(it)"><span class="k-method" x-text="it.method"></span></template>
@@ -131,6 +138,7 @@
                    untouched and the ship banner is not split by it — a mock is a legitimate stand-in.
                    Absence means nothing, so this chip only ever appears, never certifies the opposite. -->
               <template x-if="it.mockOnly"><span class="k-mock" title="exercised only against a karate mock — the traffic was real, the responder was a stand-in we started">mock</span></template>
+              <template x-if="it.oracleOnly && it.status === 'COVERED'"><span class="k-rulesonly" title="the rules realize it, but nothing outside the rulebook checked it — add a test that exercises it">rules only</span></template>
             </td>
             <td>
               <template x-for="t in (it.tags || [])" :key="t"><span class="k-tag" x-text="t"></span></template>
