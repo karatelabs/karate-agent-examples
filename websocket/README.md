@@ -15,7 +15,7 @@ karate-boot.js         activates WebSocket support
 
 ## What you need
 
-1. **The engine** — `karate-async-2.1.3.RC1.jar` from the
+1. **The engine** — `karate-async-2.1.3.RC2.jar` from the
    [releases](https://github.com/karatelabs/karate-addons/releases). Put it beside this folder.
 2. **A licence** — a `karate.lic` file at `.karate/karate.lic` in this folder, or the same text in the
    `KARATE_LICENSE_TEXT` environment variable. WebSocket is part of the `openapi` entitlement.
@@ -26,16 +26,16 @@ karate-boot.js         activates WebSocket support
 Compile the demo servers and start them (one terminal each, or background them):
 
 ```bash
-javac -cp ../karate-async-2.1.3.RC1.jar -d server-classes server/*.java
+javac -cp ../karate-async-2.1.3.RC2.jar -d server-classes server/*.java
 
-java -cp "../karate-async-2.1.3.RC1.jar:server-classes" EchoServer 8090
-java -cp "../karate-async-2.1.3.RC1.jar:server-classes" StompBroker 8091
+java -cp "../karate-async-2.1.3.RC2.jar:server-classes" EchoServer 8090
+java -cp "../karate-async-2.1.3.RC2.jar:server-classes" StompBroker 8091
 ```
 
 Run the checks:
 
 ```bash
-java -cp "../karate-async-2.1.3.RC1.jar:server-classes" io.karatelabs.Main run checks
+java -cp "../karate-async-2.1.3.RC2.jar:server-classes" io.karatelabs.Main run checks
 ```
 
 Five scenarios should pass. The HTML report is written to `target/karate-reports/`.

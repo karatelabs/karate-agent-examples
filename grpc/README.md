@@ -14,7 +14,7 @@ server/                the demo service under test (stands in for your service)
 
 ## What you need
 
-1. **The engine** — `karate-async-2.1.3.RC1.jar` from the
+1. **The engine** — `karate-async-2.1.3.RC2.jar` from the
    [releases](https://github.com/karatelabs/karate-addons/releases). Put it beside this folder, or
    anywhere you like and adjust the paths below.
 2. **A licence** — a `karate.lic` file at `.karate/karate.lic` in this folder, or the same text in the
@@ -27,7 +27,7 @@ Build and start the demo service (one terminal):
 
 ```bash
 mvn -f server/pom.xml package
-java -cp "../karate-async-2.1.3.RC1.jar:server/target/classes" demo.DemoServer 50051
+java -cp "../karate-async-2.1.3.RC2.jar:server/target/classes" demo.DemoServer 50051
 ```
 
 The service needs no fat jar of its own — the engine jar already carries gRPC and protobuf, so putting it
@@ -36,7 +36,7 @@ on the classpath is enough.
 Run the checks (another terminal):
 
 ```bash
-java -jar ../karate-async-2.1.3.RC1.jar checks
+java -jar ../karate-async-2.1.3.RC2.jar checks
 ```
 
 You should see six scenarios pass. The HTML report is written to `target/karate-reports/`.

@@ -47,23 +47,23 @@ Further reading, in the same lineage (this kit is the productized form of both):
 
 ## Run it
 
-Drop the engine jar (`karate-agent-2.1.3.RC1.jar`) and your `karate.lic` into the kit folder —
+Drop the engine jar (`karate-agent-2.1.3.RC2.jar`) and your `karate.lic` into the kit folder —
 or use the container image the same way the CI workflow does.
 
 ```sh
 # the everyday lane — no server processes at all, the payments mock auto-starts in-process:
-java -jar karate-agent-2.1.3.RC1.jar launch suite.karate.js
+java -jar karate-agent-2.1.3.RC2.jar launch suite.karate.js
 
 # compile the kit's two servers, once (pure JDK — no maven):
 javac -d servers/classes servers/src/io/karatelabs/examples/checkout/*.java
 
 # the paired run — prove the mock against the real provider:
 java -cp servers/classes io.karatelabs.examples.checkout.PaymentsServer 8090 &
-java -jar karate-agent-2.1.3.RC1.jar launch contract.karate.js
+java -jar karate-agent-2.1.3.RC2.jar launch contract.karate.js
 
 # the full e2e lane — the real consumer through its real dependency:
 java -cp servers/classes io.karatelabs.examples.checkout.CheckoutServer 8080 http://localhost:8090 &
-java -Dcheckout.url=http://localhost:8080 -jar karate-agent-2.1.3.RC1.jar launch suite.karate.js
+java -Dcheckout.url=http://localhost:8080 -jar karate-agent-2.1.3.RC2.jar launch suite.karate.js
 ```
 
 ## What the pair will find — three teaching moments, all deliberate
@@ -105,11 +105,31 @@ What Pact optimizes for that this kit does not: cross-team **deployment coordina
 versions are compatible with which provider versions, decided in a broker. That is a real concern at
 many-consumer scale; it is scope, not a flaw, and the two approaches are not mutually exclusive.
 
-## The report
+## The report — see it live, nothing to install
 
-`suite.karate.js` renders Coverage + Traceability; `contract.karate.js` adds the **Contract tab** — the
-divergence set as a page anyone can read, beside the **Governance tab** where `Openapi.grade
-('payments-api.yaml')` scores the `contract` dimension as the pair's rung, normalised. The RTM joins the
-`CHK-*` requirements (the checkout flows) and the `PAY-*` requirements (what this team relies on the
-dependency for) to the runs that exercised them — a dependency expectation nobody wrote down is one
-nobody can verify a mock against, so here they are written down.
+This kit's CI publishes its **real output** to GitHub Pages on every run:
+
+- **The Contract page** — <https://karatelabs.github.io/karate-agent-examples/checkout/ext/contract/pages/contract.html>
+- Coverage — <https://karatelabs.github.io/karate-agent-examples/checkout/ext/coverage/pages/coverage.html>
+- Traceability (RTM) — <https://karatelabs.github.io/karate-agent-examples/checkout/ext/traceability/pages/traceability.html>
+- The run summary — <https://karatelabs.github.io/karate-agent-examples/checkout/karate-summary.html>
+
+**What to look for on the Contract page:**
+
+1. **The `unassertedDivergence` rows** — the network-casing difference (`VISA` vs `visa`) reported on
+   scenarios where *both legs passed*: the finding your assertions cannot see, attributed to the suite,
+   with both values shown. This is the deliberate demo divergence, not a defect.
+2. **The `ignored` register** — the surrogate-id differences (`pay-1` vs `p-1001`) excused by the two
+   named rules from `contract.karate.js`, each with its reason and owner, both values retained. Compare
+   with 1: a signed exception versus a finding — the same machinery, opposite decisions, both on the record.
+3. **The claim sentence and the rung** — scoped to the operations this suite exercised, dated, with the
+   provider environment named; the rehearsal check confirming the provider was *not* one of our own mocks.
+4. On the **Coverage** page: every payments operation the everyday mock lane covered reads
+   **`mockOnly`** — the structural admission that day-to-day evidence is mock-backed, which is exactly
+   the debt the pair pays off.
+
+`suite.karate.js` renders Coverage + Traceability; `contract.karate.js` adds the Contract page, beside
+the **Governance tab** where `Openapi.grade('payments-api.yaml')` scores the `contract` dimension as the
+pair's rung, normalised. The RTM joins the `CHK-*` requirements (the checkout flows) and the `PAY-*`
+requirements (what this team relies on the dependency for) to the runs that exercised them — a dependency
+expectation nobody wrote down is one nobody can verify a mock against, so here they are written down.
