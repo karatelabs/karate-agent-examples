@@ -84,6 +84,11 @@
 .k-coverage-ext .k-warn { background: var(--k-warn-bg); color: var(--k-warn-fg); }
 .k-coverage-ext .k-sim { background: var(--k-sim-bg); color: var(--k-sim-fg); }   /* oracle-only (D194) — indigo */
 .k-coverage-ext .k-tag { display: inline-block; font-size: 11px; color: var(--k-tag-fg); background: var(--k-tag-bg); border-radius: 4px; padding: 1px 6px; margin: 0 4px 4px 0; }
+/* error-path (outcome) chips, D228b — seen is NEUTRAL (a fact of the wire, not a grade); "never" is the
+   finding (a declared response code no run produced); happy-only is the amber worklist marker. */
+.k-coverage-ext .k-status-seen { display: inline-block; font-size: 10.5px; font-weight: 600; color: var(--k-tag-fg); background: var(--k-tag-bg); border-radius: 4px; padding: 1px 5px; margin: 0 3px 2px 0; }
+.k-coverage-ext .k-status-never { display: inline-block; font-size: 10.5px; font-weight: 600; color: var(--k-no-fg); background: var(--k-no-bg); border-radius: 4px; padding: 1px 5px; margin: 0 3px 2px 0; white-space: nowrap; }
+.k-coverage-ext .k-status-happy { display: inline-block; font-size: 10.5px; font-weight: 600; color: var(--k-warn-fg); background: var(--k-warn-bg); border-radius: 4px; padding: 1px 5px; margin: 0 3px 2px 0; white-space: nowrap; }
 .k-coverage-ext .k-muted { color: var(--k-faint); }
 .k-coverage-ext .k-source { border: 1px solid var(--k-border); border-radius: 12px; padding: 18px 20px; margin-bottom: 24px; }
 

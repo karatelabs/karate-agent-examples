@@ -115,6 +115,7 @@
           <th>Tags</th>
           <th style="width:64px" title="how many times this action was exercised at runtime">Times run</th>
           <th style="width:64px">Tests</th>
+          <th style="width:110px" title="the error-path (sad-path) grade — statuses the wire actually produced, and any response codes the spec declares that no run ever produced">Outcomes</th>
           <th style="width:96px" title="how thoroughly the inputs were varied — input-value and combination coverage, with any gaps">Inputs</th>
         </tr>
       </thead>
@@ -145,6 +146,14 @@
             </td>
             <td x-text="it.callCount || ''"></td>
             <td x-text="(it.tests || []).length || ''"></td>
+            <!-- error-path (outcome) cell, D228b: what the wire produced vs what the spec declares.
+                 A "never" badge is the spec-side gap — a declared response code no run ever produced;
+                 "happy-only" marks an exercised item whose failure modes were never witnessed. -->
+            <td>
+              <template x-for="s in observedStatuses(it)" :key="s"><span class="k-status-seen" x-text="s" :title="'produced on the wire'"></span></template>
+              <template x-for="s in neverProduced(it)" :key="'n' + s"><span class="k-status-never" :title="s + ' is declared in the spec but was never produced by any run — the sad-path gap'"><span x-text="s"></span> never</span></template>
+              <template x-if="happyOnly(it) && !neverProduced(it).length"><span class="k-status-happy" title="exercised, but only on the happy path — no failure mode ever produced">happy-only</span></template>
+            </td>
             <td>
               <template x-if="dimRollupFor(it.id)">
                 <span class="k-dimcell" :title="dimCellTip(it.id)">
@@ -158,7 +167,7 @@
             </td>
           </tr>
           <tr class="k-drill" x-show="isOpen(it.id)">
-            <td colspan="7">
+            <td colspan="8">
               <template x-if="criteria(it).length">
                 <div>
                   <h4>Acceptance criteria</h4>
@@ -304,6 +313,57 @@
               <div class="k-crossgaps">
                 <template x-for="(w, wi) in src.worklist" :key="wi">
                   <span class="k-cell k-deckcell" x-text="w.field + ' = ' + w.value"></span>
+                </template>
+              </div>
+            </div>
+          </template>
+        </div>
+      </template>
+    </div>
+
+    <!-- Error paths (D228b) — the response-side sibling of Input Coverage above: per exercised action, the
+         outcomes the wire produced vs the failure responses the spec declares. A red "never" chip is the
+         finding (a declared error code no run ever produced); happy-only marks an action whose failure
+         modes were never witnessed at all. Render-only over the per-item outcome the graph carries. -->
+    <div class="k-inputcov" x-show="errorPathCoverage().length">
+      <h2>Error paths <span class="k-muted">&middot; did we ever exercise each action's failure modes?</span>
+        <span class="k-info" @click="kaCopyHelp('model.coverage.axis.errors')" title="What is error-path coverage? Copy the help-id to paste into Help / your AI chat">&#9432;</span></h2>
+      <template x-for="src in errorPathCoverage()" :key="src.source">
+        <div class="k-rulebk">
+          <div class="k-rulehd">
+            <span class="k-rulebook" x-text="src.source"></span>
+            <span class="k-muted" x-text="src.tested + ' of ' + src.total + ' exercised actions produced an error'"></span>
+            <span class="k-notusedcount" x-show="(src.total - src.tested) > 0"
+                  title="these actions ran only on the happy path — their declared failure behavior has never been witnessed"
+                  x-text="(src.total - src.tested) + ' happy-path only'"></span>
+          </div>
+          <div class="k-inpfields">
+            <template x-for="r in src.rows" :key="r.id">
+              <div class="k-line k-inpfield">
+                <span class="k-inpname" x-text="r.label"></span>
+                <span class="k-inpchips">
+                  <template x-for="s in r.seen" :key="'s' + s">
+                    <span class="k-chip" :class="r.errors.indexOf(s) >= 0 ? 'k-chip-ok' : ''"
+                          :title="r.errors.indexOf(s) >= 0 ? 'an error outcome the run produced — this failure mode is exercised' : 'produced on the wire (success path)'">
+                      <span class="k-chipglyph" x-show="r.errors.indexOf(s) >= 0">&#10003;</span><span x-text="s"></span></span>
+                  </template>
+                  <template x-for="c in r.never" :key="'n' + c">
+                    <span class="k-chip k-chip-no" :title="c + ' is declared in the spec but was never produced by any run — the sad-path gap'">
+                      <span class="k-chipglyph">&#10007;</span><span x-text="c + ' never'"></span></span>
+                  </template>
+                  <template x-if="!r.tested && !r.never.length">
+                    <span class="k-status-happy" title="exercised, but only on the happy path — no failure mode ever produced (no declared error universe to name the gap)">happy-only</span>
+                  </template>
+                </span>
+              </div>
+            </template>
+          </div>
+          <template x-if="src.worklist.length">
+            <div class="k-deck">
+              <h5>What to test next for this area &middot; <span x-text="src.worklist.length + (src.worklist.length === 1 ? ' error path' : ' error paths')"></span></h5>
+              <div class="k-crossgaps">
+                <template x-for="(w, wi) in src.worklist" :key="wi">
+                  <span class="k-cell k-deckcell" x-text="w.item + ' → ' + w.ask"></span>
                 </template>
               </div>
             </div>
