@@ -1,28 +1,28 @@
-<testsuite name="Loan Decisioning rules oracle — every decision arm, headless" tests="5" failures="0" time="0.22" skipped="0"><testcase classname="oracle" name="decline-low-score — a credit score below 580 is declined" time="0.047"><system-out>* expected =
+<testsuite name="Loan Decisioning rules oracle — every decision arm, headless" tests="5" failures="0" time="0.284" skipped="0"><testcase classname="oracle" name="decline-low-score — a credit score below 580 is declined" time="0.065"><system-out>* expected =
 * result = Rule.execute(&apos;loan-decisioning&apos;, __row).output
 * exp = expected[__row._id]
 * result.outcome == exp.outcome
 * result.apr == exp.apr
 </system-out></testcase>
-<testcase classname="oracle" name="decline-high-dti — debt-to-income over 50% is declined" time="0.009"><system-out>* expected =
+<testcase classname="oracle" name="decline-high-dti — debt-to-income over 50% is declined" time="0.013"><system-out>* expected =
 * result = Rule.execute(&apos;loan-decisioning&apos;, __row).output
 * exp = expected[__row._id]
 * result.outcome == exp.outcome
 * result.apr == exp.apr
 </system-out></testcase>
-<testcase classname="oracle" name="review-borderline-score — a score of 580-669 goes to manual review" time="0.007"><system-out>* expected =
+<testcase classname="oracle" name="review-borderline-score — a score of 580-669 goes to manual review" time="0.013"><system-out>* expected =
 * result = Rule.execute(&apos;loan-decisioning&apos;, __row).output
 * exp = expected[__row._id]
 * result.outcome == exp.outcome
 * result.apr == exp.apr
 </system-out></testcase>
-<testcase classname="oracle" name="approve-prime — a prime applicant is approved at the top band" time="0.007"><system-out>* expected =
+<testcase classname="oracle" name="approve-prime — a prime applicant is approved at the top band" time="0.01"><system-out>* expected =
 * result = Rule.execute(&apos;loan-decisioning&apos;, __row).output
 * exp = expected[__row._id]
 * result.outcome == exp.outcome
 * result.apr == exp.apr
 </system-out></testcase>
-<testcase classname="oracle" name="approve-midband — a mid-band applicant is approved at 9.9%" time="0.007"><system-out>* expected =
+<testcase classname="oracle" name="approve-midband — a mid-band applicant is approved at 9.9%" time="0.009"><system-out>* expected =
 * result = Rule.execute(&apos;loan-decisioning&apos;, __row).output
 * exp = expected[__row._id]
 * result.outcome == exp.outcome
