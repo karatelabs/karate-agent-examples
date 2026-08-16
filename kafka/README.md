@@ -129,5 +129,8 @@ own topic names in the checks. Then delete `docker-compose.yml`; it exists only 
 standalone. Both values read an override at run time, so CI can point elsewhere without editing a file:
 
 ```bash
-java -jar ../karate-async-2.1.3.RC1.jar -Dkafka.bootstrap=broker.internal:9092 checks
+java -Dkafka.bootstrap=broker.internal:9092 -jar ../karate-async-2.1.3.RC1.jar checks
 ```
+
+The `-D` must come **before** `-jar` — that is where the JVM reads it. After the jar name it would be
+read as a CLI flag instead.
