@@ -26,6 +26,7 @@ document.addEventListener('alpine:init', function () {
       get level() { return this.grade.level || {}; },
       get weights() { return this.grade.weights || {}; },
       get waived() { return this.grade.waived || {}; },
+      get rehearsal() { return this.grade.rehearsal || {}; },
       get judged() { return this.grade.judged || {}; },
       get scoring() { return this.grade.scoring || {}; },
       get findings() { return this.lint.findings || []; },

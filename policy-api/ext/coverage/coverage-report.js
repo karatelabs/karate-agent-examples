@@ -190,8 +190,64 @@ document.addEventListener('alpine:init', function () {
               { cls: 'k-seg-none', n: cmb.total - cmb.covered, title: 'combination not tried' }
             ]));
         }
+        // 6) Error paths — the sad-path grade (D228b): of the actions exercised at all, which ever
+        // produced a failure outcome? A happy-only item is "covered" by every other measure while its
+        // declared error behavior has never once been witnessed.
+        var ep = this.sumSource('errorPaths', 'covered', 'total');
+        if (ep.total) {
+          cards.push(mk('errors', 'Error paths', 'actions whose failure modes we exercised', 'model.coverage.axis.errors',
+            ep.total, [
+              { cls: 'k-seg-ok', n: ep.covered, title: 'produced at least one error outcome' },
+              { cls: 'k-seg-none', n: ep.total - ep.covered, title: 'happy-path only — no failure mode ever produced' }
+            ]));
+        }
         return cards;
       },
+      // ── Error paths section (D228b) — the response-side sibling of Input Coverage: per source, each
+      // EXERCISED item's outcome (statuses produced · declared codes never produced), plus the
+      // "what to test next" worklist. Render-only over the per-item outcome the graph already carries.
+      errorPathCoverage: function () {
+        var self = this;
+        var bySource = {};
+        (this.data.items || []).forEach(function (it) {
+          if (!it.outcome) return;   // never exercised — no sad-path to grade until the happy path runs
+          var box = bySource[it.source] || (bySource[it.source] = {
+            source: it.source, total: 0, tested: 0, rows: [], worklist: [] });
+          box.total++;
+          if (it.outcome.tested) box.tested++;
+          var never = it.outcome.declaredUntested || [];
+          // the items table's own naming: `METHOD /path` for http, the bare name for grpc/kafka
+          var label = (it.method && !self.protoBadge(it) ? it.method + ' ' : '') + self.label(it);
+          box.rows.push({ id: it.id, label: label, tested: !!it.outcome.tested,
+                          seen: self.observedStatuses(it), errors: it.outcome.errors || [], never: never });
+          never.forEach(function (c) { box.worklist.push({ item: label, ask: c }); });
+          // no declared error universe to name (gRPC, or a spec with no 4xx/5xx) — the ask is generic
+          if (!it.outcome.tested && !never.length) box.worklist.push({ item: label, ask: 'any error' });
+        });
+        return Object.keys(bySource).map(function (k) {
+          var box = bySource[k];
+          // findings first: rows with a never-produced code, then happy-only, then fully error-tested
+          box.rows.sort(function (a, b) {
+            var ra = a.never.length ? 0 : (a.tested ? 2 : 1);
+            var rb = b.never.length ? 0 : (b.tested ? 2 : 1);
+            return ra - rb;
+          });
+          return box;
+        });
+      },
+      // ── error-path (outcome) row helpers (D228b) ──────────────────────────────────────────────────
+      // every status the wire actually produced for this item, across protocols
+      observedStatuses: function (it) {
+        var out = [];
+        ['statusCodes', 'grpcStatuses', 'kafkaStatuses'].forEach(function (k) {
+          if (it[k]) Object.keys(it[k]).forEach(function (s) { out.push(String(s)); });
+        });
+        return out;
+      },
+      // declared response codes no run ever produced — the honest spec-side gap
+      neverProduced: function (it) { return (it.outcome && it.outcome.declaredUntested) || []; },
+      // exercised, but never on an error path
+      happyOnly: function (it) { return !!(it.outcome && it.outcome.tested === false); },
       segWidth: function (seg, total) { return total ? (seg.n * 100 / total) + '%' : '0%'; },
 
       // ── Input Coverage drill-down (Part 3) ────────────────────────────────────────────────────────

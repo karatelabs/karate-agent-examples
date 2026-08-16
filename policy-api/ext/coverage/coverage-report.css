@@ -157,6 +157,8 @@
   padding: 1px 7px; border-radius: 10px; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .k-coverage-ext .k-chip-ok { background: var(--k-ok-bg); color: var(--k-ok-fg); }
 .k-coverage-ext .k-chip-miss { background: var(--k-warn-bg); color: var(--k-warn-fg); }
+/* the error-path finding chip (D228b) — red, matching the items table's "never" badge: same fact, same colour */
+.k-coverage-ext .k-chip-no { background: var(--k-no-bg); color: var(--k-no-fg); }
 .k-coverage-ext .k-chipglyph { font-weight: 700; font-size: 10px; }
 .k-coverage-ext .k-inpopen .k-inpname { color: var(--k-muted); font-weight: 400; }
 .k-coverage-ext .k-inpopen { opacity: .8; }
