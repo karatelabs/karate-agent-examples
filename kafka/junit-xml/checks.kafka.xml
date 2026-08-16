@@ -1,4 +1,4 @@
-<testsuite name="Kafka — produce and consume, as JSON and as Avro" tests="4" failures="0" time="7.811" skipped="0"><testcase classname="checks.kafka" name="JSON round-trip — no schema registry needed" time="2.191"><system-out>* channel = karate.channel(&apos;kafka&apos;)
+<testsuite name="Kafka — produce and consume, as JSON and as Avro" tests="4" failures="0" time="8.385" skipped="0"><testcase classname="checks.kafka" name="JSON round-trip — no schema registry needed" time="2.65"><system-out>* channel = karate.channel(&apos;kafka&apos;)
 * consumer = channel.consumer()
 * = &apos;json-topic&apos;
 * = 1
@@ -12,7 +12,7 @@
 * record.key == &apos;k1&apos;
 * record.value == { message: &apos;hello&apos;, n: 42 }
 </system-out></testcase>
-<testcase classname="checks.kafka" name="message headers, and reading them back" time="1.068"><system-out>* channel = karate.channel(&apos;kafka&apos;)
+<testcase classname="checks.kafka" name="message headers, and reading them back" time="1.066"><system-out>* channel = karate.channel(&apos;kafka&apos;)
 * consumer = channel.consumer()
 * = &apos;json-topic&apos;
 * = 1
@@ -26,7 +26,7 @@
 * record = consumer.pop()
 * record.headers contains { source: &apos;karate&apos;, tenant: &apos;acme&apos; }
 </system-out></testcase>
-<testcase classname="checks.kafka" name="Avro round-trip through the Schema Registry" time="1.421"><system-out>* channel = karate.channel(&apos;kafka&apos;)
+<testcase classname="checks.kafka" name="Avro round-trip through the Schema Registry" time="1.525"><system-out>* channel = karate.channel(&apos;kafka&apos;)
 * channel.register({ name: &apos;hello&apos;, path: &apos;/hello.avsc&apos; })
 * consumer = channel.consumer()
 * = &apos;avro-topic&apos;
@@ -40,7 +40,7 @@
 * producer.send()
 * consumer.pop().value == { message: &apos;hello&apos;, status: &apos;NEW&apos;, info: { first: 1, second: true } }
 </system-out></testcase>
-<testcase classname="checks.kafka" name="consume several messages, and filter which ones count" time="1.105"><system-out>* channel = karate.channel(&apos;kafka&apos;)
+<testcase classname="checks.kafka" name="consume several messages, and filter which ones count" time="1.112"><system-out>* channel = karate.channel(&apos;kafka&apos;)
 * consumer = channel.consumer()
 * = &apos;json-topic&apos;
 * = 2
