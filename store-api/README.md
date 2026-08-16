@@ -32,15 +32,15 @@ mkdir -p .karate && cp /path/to/karate.lic .karate/karate.lic
 
 ```bash
 docker run -d --name karate-agent -p 4444:4444 -v "$PWD":/work \
-  public.ecr.aws/karatelabs/karate-agent:2.1.2.RC4
+  public.ecr.aws/karatelabs/karate-agent:2.1.3.RC1
 ```
 
-**Or the plain JAR** (Java 21+) — download `karate-agent-2.1.2.RC4.jar` from
-<https://github.com/karatelabs/karate-addons/releases> (release tag `agent-2.1.2.RC4`), then from
+**Or the plain JAR** (Java 21+) — download `karate-agent-2.1.3.RC1.jar` from
+<https://github.com/karatelabs/karate-addons/releases> (release tag `agent-2.1.3.RC1`), then from
 this folder:
 
 ```bash
-java -jar karate-agent-2.1.2.RC4.jar serve
+java -jar karate-agent-2.1.3.RC1.jar serve
 ```
 
 Either way you get the console at **http://localhost:4444** and the MCP endpoint at

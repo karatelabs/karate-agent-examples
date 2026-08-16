@@ -1,0 +1,146 @@
+openapi: 3.0.3
+info:
+  title: Payments API
+  description: >
+    The EXTERNAL payments service this kit's checkout SUT depends on — owned by another team (or a
+    third party), consumed over HTTP. This document is the shared contract: the checkout team's mock
+    (mock/payments-mock.feature) and the "real" provider (servers/…/PaymentsServer.java) both implement
+    it, and contract.karate.js proves the mock can stand in for the provider on every operation the
+    checkout flows exercise. Amounts are integer cents throughout — money never rides a float.
+  version: 1.0.0
+paths:
+  /payments:
+    post:
+      operationId: createPayment
+      summary: Authorize and capture a card payment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [amount, currency, card]
+              properties:
+                amount:
+                  type: integer
+                  format: int32
+                  minimum: 1
+                  maximum: 2147483647
+                  description: integer cents — a 32-bit int, and both implementations refuse more
+                currency:
+                  type: string
+                  enum: [USD]
+                card:
+                  type: object
+                  required: [number, expiry]
+                  properties:
+                    number:
+                      type: string
+                      minLength: 1
+                    expiry:
+                      type: string
+                      minLength: 1
+                      description: as the issuer prints it, e.g. 12/29 — presence is validated, the shape is not
+      responses:
+        '201':
+          description: the payment decision — approved or declined, both are payments
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+        '400':
+          description: an unreadable or invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /payments/{id}:
+    get:
+      operationId: getPayment
+      summary: Read a payment back
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: the payment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Payment'
+        '404':
+          description: no such payment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /payments/{id}/refund:
+    post:
+      operationId: refundPayment
+      summary: Refund a captured payment, once
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '201':
+          description: the refund
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Refund'
+        '404':
+          description: no such payment
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: already refunded — a refund happens once
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  schemas:
+    Payment:
+      type: object
+      required: [id, status, amount, currency, network]
+      properties:
+        id:
+          type: string
+          description: minted by the provider — each implementation uses its own scheme
+        status:
+          type: string
+          enum: [approved, declined, refunded]
+        amount:
+          type: integer
+        currency:
+          type: string
+        network:
+          type: string
+          description: the card network, derived from the card number
+    Refund:
+      type: object
+      required: [id, paymentId, status]
+      properties:
+        id:
+          type: string
+        paymentId:
+          type: string
+        status:
+          type: string
+          enum: [refunded]
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+        field:
+          type: string

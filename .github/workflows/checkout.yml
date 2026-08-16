@@ -1,0 +1,159 @@
+# checkout on GitHub Actions — CONSUMER-SIDE contract testing: prove your mock of THEIR API.
+#
+# The kit's SUT is a consumer: a checkout service that cannot confirm an order without calling a payments
+# API another team owns. This workflow runs the two lanes that tell that story:
+#   1. the everyday MOCK lane — the consumer's contract suite (checks/payments-contract.feature) against
+#      the team's own payments mock, auto-started in-process: coverage over the DEPENDENCY's spec, with
+#      every covered operation reading `mockOnly: true` — the report disclosing that the dependency
+#      evidence is mock-backed;
+#   2. the PAIRED RUN — the same suite against the mock AND an independently implemented real provider
+#      (PaymentsServer, pure JDK, compiled here with plain javac), minting a measured divergence set.
+#      The kit ships one deliberate divergence the suite's assertions cannot see (the card-network
+#      casing) — expect it on the published Contract page; it is the demo, not a defect.
+#
+# One-time setup: add a repository secret KARATE_LICENSE (the inline karate.lic text). Without it the
+# engine's license check fails the run. Enable Pages (Settings -> Pages -> Deploy from a branch -> gh-pages).
+name: checkout (consumer-side contract testing)
+
+on:
+  push:
+    paths: [ 'checkout/**', '.github/workflows/checkout.yml' ]
+  pull_request:
+    paths: [ 'checkout/**' ]
+  workflow_dispatch:
+
+
+permissions:
+  contents: write        # peaceiris publishes the HTML report to the gh-pages branch
+  checks: write          # dorny/test-reporter writes the JUnit check
+  pull-requests: write
+  packages: read         # pull the engine image from GHCR (this block is explicit, so unlisted = none)
+
+jobs:
+  karate:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: checkout
+    steps:
+      - uses: actions/checkout@v4
+
+      # Authenticated GHCR pull: the package is private, this repo is granted read on it, and an
+      # authenticated pull avoids the anonymous per-IP rate limit on shared runners. The public ECR image
+      # (public.ecr.aws/karatelabs/karate-agent) stays the customer-facing, credential-free way to pull.
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: The everyday mock lane (coverage + RTM over the dependency's spec)
+        # `launch suite.karate.js` with no checkout.url runs the consumer's contract suite against the
+        # auto-started payments mock — no server process at all — and writes ONE consolidated report:
+        # HTML + JUnit (Checks tab) + JSONL (coverage/RTM) in target/karate-reports.
+        run: |
+          IMAGE=ghcr.io/karatelabs/karate-agent:2.1.3.RC1
+          docker pull "$IMAGE"
+          # the karate-agent image runs as a NON-root user; pre-make target/ world-writable so the container
+          # can write the report / JUnit / coverage into the runner-owned checkout.
+          mkdir -p target && chmod -R 777 target
+          docker run --rm \
+            -v "$PWD":/work -w /work \
+            -e KARATE_LICENSE_TEXT="$KARATE_LICENSE_TEXT" \
+            "$IMAGE" \
+            launch suite.karate.js
+        env:
+          KARATE_LICENSE_TEXT: ${{ secrets.KARATE_LICENSE }}
+
+      # ── the PAIRED RUN — the consumer's mock of its dependency, proven against the real thing ──
+      # PaymentsServer is an independent implementation of the same payments-api.yaml, sharing the business
+      # rules with the mock and nothing else — pure JDK, so plain javac is the whole build.
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
+      - name: Build + start the real payments provider — clean, on :8090
+        # In-memory backend: a fresh runner guarantees the clean start a paired run needs. The readiness
+        # probe expects 404 for an unknown payment id — that IS the provider answering.
+        run: |
+          javac -d servers/classes servers/src/io/karatelabs/examples/checkout/*.java
+          nohup java -cp servers/classes io.karatelabs.examples.checkout.PaymentsServer 8090 \
+            > payments-server.log 2>&1 &
+          for _ in $(seq 1 30); do
+            code="$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8090/payments/none || true)"
+            [ "$code" = "404" ] && break
+            sleep 1
+          done
+          code="$(curl -s -o /dev/null -w '%{http_code}' http://localhost:8090/payments/none || true)"
+          [ "$code" = "404" ] || { echo "the payments provider did not come up:"; cat payments-server.log; exit 1; }
+
+      - name: Contract pair (the team's dependency mock vs the real provider)
+        # The provider runs on the RUNNER and the pair's mock leg stands up inside the container, so the
+        # container needs a route back to the host: `--add-host …:host-gateway`. PAYMENTS_URL/PAYMENTS_ENV
+        # are read by contract.karate.js off the process, so CI hands it a target without editing the kit
+        # and the environment label rides INTO the evidence. The evidence file lands in contract/pairs/,
+        # which the container's NON-root user has to be able to write. A provider that never came up mints
+        # a pair that measured NOTHING, and the script fails the job on it.
+        run: |
+          IMAGE=ghcr.io/karatelabs/karate-agent:2.1.3.RC1
+          mkdir -p contract/pairs && chmod 777 contract contract/pairs
+          docker run --rm --add-host=host.docker.internal:host-gateway \
+            -v "$PWD":/work -w /work \
+            -e KARATE_LICENSE_TEXT="$KARATE_LICENSE_TEXT" \
+            -e PAYMENTS_URL=http://host.docker.internal:8090 \
+            -e PAYMENTS_ENV=ci \
+            "$IMAGE" \
+            launch contract.karate.js
+        env:
+          KARATE_LICENSE_TEXT: ${{ secrets.KARATE_LICENSE }}
+
+      - name: Upload the pair evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: contract-pair
+          path: checkout/contract/pairs
+
+      - name: Publish test results (Checks tab)
+        if: always()
+        uses: dorny/test-reporter@v1
+        with:
+          name: checkout tests
+          path: 'checkout/target/karate-reports/**/junit-xml/*.xml'
+          reporter: java-junit
+
+      - name: Upload report + RTM + Contract page
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: checkout-report
+          path: checkout/target/karate-reports
+
+      # Publish the HTML report to GitHub Pages, per-kit subdir so kits don't clobber each other. The
+      # Contract page is the one to link: the measured divergence set, browsable, beside Coverage and
+      # Traceability — the live "prove your mock of their API" artifact.
+      # Every kit publishes into its own destination_dir on ONE shared gh-pages branch, so two
+      # workflows finishing together race on the push and the loser dies with `! [rejected]
+      # (fetch first)` — a red run whose tests all passed. Retry rather than serialize: the retry
+      # re-clones gh-pages, so it rebases.
+      - name: Publish HTML report to GitHub Pages
+        id: pages
+        continue-on-error: true
+        if: always() && github.ref == 'refs/heads/main'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: checkout/target/karate-reports
+          destination_dir: checkout
+          keep_files: true
+
+      - name: Retry the publish (another kit won the race for gh-pages)
+        if: always() && github.ref == 'refs/heads/main' && steps.pages.outcome == 'failure'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: checkout/target/karate-reports
+          destination_dir: checkout
+          keep_files: true

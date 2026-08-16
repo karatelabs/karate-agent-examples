@@ -1,0 +1,4 @@
+servers/classes/
+target/
+.*.log
+.*.pid
