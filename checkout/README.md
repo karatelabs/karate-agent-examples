@@ -105,28 +105,18 @@ What Pact optimizes for that this kit does not: cross-team **deployment coordina
 versions are compatible with which provider versions, decided in a broker. That is a real concern at
 many-consumer scale; it is scope, not a flaw, and the two approaches are not mutually exclusive.
 
-## The report — see it live, nothing to install
+## The report
 
-This kit's CI publishes its **real output** to GitHub Pages on every run:
-
-- **The Contract page** — <https://karatelabs.github.io/karate-agent-examples/checkout/ext/contract/pages/contract.html>
-- Coverage — <https://karatelabs.github.io/karate-agent-examples/checkout/ext/coverage/pages/coverage.html>
-- Traceability (RTM) — <https://karatelabs.github.io/karate-agent-examples/checkout/ext/traceability/pages/traceability.html>
-- The run summary — <https://karatelabs.github.io/karate-agent-examples/checkout/karate-summary.html>
-
-**What to look for on the Contract page:**
-
-1. **The `unassertedDivergence` rows** — the network-casing difference (`VISA` vs `visa`) reported on
-   scenarios where *both legs passed*: the finding your assertions cannot see, attributed to the suite,
-   with both values shown. This is the deliberate demo divergence, not a defect.
-2. **The `ignored` register** — the surrogate-id differences (`pay-1` vs `p-1001`) excused by the two
-   named rules from `contract.karate.js`, each with its reason and owner, both values retained. Compare
-   with 1: a signed exception versus a finding — the same machinery, opposite decisions, both on the record.
-3. **The claim sentence and the rung** — scoped to the operations this suite exercised, dated, with the
-   provider environment named; the rehearsal check confirming the provider was *not* one of our own mocks.
-4. On the **Coverage** page: every payments operation the everyday mock lane covered reads
-   **`mockOnly`** — the structural admission that day-to-day evidence is mock-backed, which is exactly
-   the debt the pair pays off.
+**📊 See it live — no license needed to READ it:** every push runs this kit on GitHub Actions and
+publishes the HTML report (Coverage · Traceability · **Contract** · run summary) to GitHub Pages —
+browse the latest at **<https://karatelabs.github.io/karate-agent-examples/checkout/>**. Open the
+**Contract** tab: the `unassertedDivergence` rows are the network-casing difference (`VISA` vs `visa`)
+reported on scenarios where *both legs passed* — the deliberate demo divergence, attributed to the
+suite, with both values shown — beside the `ignored` register where the surrogate-id differences are
+excused by named rules with a reason and an owner, and the claim sentence with its rung, scoped, dated
+and rehearsal-checked. Then the **Coverage** tab: every payments operation the everyday mock lane
+covered reads **`mockOnly`** — the structural admission that day-to-day dependency evidence is
+mock-backed, which is exactly the debt the pair pays off.
 
 `suite.karate.js` renders Coverage + Traceability; `contract.karate.js` adds the Contract page, beside
 the **Governance tab** where `Openapi.grade('payments-api.yaml')` scores the `contract` dimension as the
