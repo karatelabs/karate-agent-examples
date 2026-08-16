@@ -1,0 +1,45 @@
+# engine-gate.yml — the SHARED publish-race gate for the image-based kits.
+#
+# Every image kit pins ghcr.io/karatelabs/karate-agent:2.1.3.RC1. During a beta the examples
+# tree may deliberately pin an RC whose image is re-cut on GHCR as the build iterates — which means the
+# pin can briefly point at a tag that is not published yet. Without a gate, every kit then dies at
+# `docker pull` with a cryptic "manifest unknown" and the whole repo reads red for a reason that has
+# nothing to do with the kits.
+#
+# This reusable workflow probes the pinned tag once, authenticated. Kit workflows call it as an `engine`
+# job and gate their `karate` job on its `present` output: a missing image becomes a SKIPPED kit run
+# (grey, workflow still green) with a warning annotation naming the cause and the fix — never a red run.
+# The jar-based protocols workflow needs no gate: it already degrades to a skip on a missing release.
+name: engine-gate
+
+on:
+  workflow_call:
+    outputs:
+      present:
+        description: 'true when the pinned engine image exists on GHCR'
+        value: ${{ jobs.check.outputs.present }}
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    outputs:
+      present: ${{ steps.probe.outputs.present }}
+    steps:
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Probe the pinned engine image
+        id: probe
+        run: |
+          IMAGE=ghcr.io/karatelabs/karate-agent:2.1.3.RC1
+          if docker manifest inspect "$IMAGE" >/dev/null 2>&1; then
+            echo "present=true" >> "$GITHUB_OUTPUT"
+            echo "engine image present: $IMAGE"
+          else
+            echo "present=false" >> "$GITHUB_OUTPUT"
+            echo "::warning title=engine image not published — kit runs skipped::$IMAGE is not on GHCR. The tree is pinned to a version whose image has not been published yet (the publish race). Publish the image for this tag, or re-sync the examples at the latest released version. Kit jobs skip until then — this is a gate, not a failure."
+          fi

@@ -49,23 +49,23 @@ Further reading — this kit is the productized form of both:
 
 ## Run it
 
-Drop the engine jar (`karate-agent-2.1.3.RC2.jar`) and your `karate.lic` into the kit folder
+Drop the engine jar (`karate-agent-2.1.3.RC1.jar`) and your `karate.lic` into the kit folder
 — or use the container image the same way the CI workflow does.
 
 ```sh
 # the everyday lane — no server processes at all, the payments mock auto-starts in-process:
-java -jar karate-agent-2.1.3.RC2.jar launch suite.karate.js
+java -jar karate-agent-2.1.3.RC1.jar launch suite.karate.js
 
 # compile the kit's two servers, once (pure JDK — no maven):
 javac -d servers/classes servers/src/io/karatelabs/examples/checkout/*.java
 
 # the paired run — prove the mock against the real provider:
 java -cp servers/classes io.karatelabs.examples.checkout.PaymentsServer 8090 &
-java -jar karate-agent-2.1.3.RC2.jar launch contract.karate.js
+java -jar karate-agent-2.1.3.RC1.jar launch contract.karate.js
 
 # the full e2e lane — the real consumer through its real dependency:
 java -cp servers/classes io.karatelabs.examples.checkout.CheckoutServer 8080 http://localhost:8090 &
-java -Dcheckout.url=http://localhost:8080 -jar karate-agent-2.1.3.RC2.jar launch suite.karate.js
+java -Dcheckout.url=http://localhost:8080 -jar karate-agent-2.1.3.RC1.jar launch suite.karate.js
 ```
 
 ## What the pair will find — three teaching moments, all deliberate
