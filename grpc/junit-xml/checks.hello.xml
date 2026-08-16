@@ -1,11 +1,11 @@
-<testsuite name="gRPC — unary, streaming, metadata and the error path" tests="6" failures="0" time="0.651" skipped="0"><testcase classname="checks.hello" name="unary — one request, one response" time="0.566"><system-out>* session = karate.channel(&apos;grpc&apos;)
+<testsuite name="gRPC — unary, streaming, metadata and the error path" tests="6" failures="0" time="1.067" skipped="0"><testcase classname="checks.hello" name="unary — one request, one response" time="0.931"><system-out>* session = karate.channel(&apos;grpc&apos;)
 * = &apos;/proto/hello.proto&apos;
 * = &apos;HelloService&apos;
 * = &apos;Hello&apos;
 * session.send({ name: &apos;John&apos; })
 * session.pop() == { message: &apos;hello John&apos; }
 </system-out></testcase>
-<testcase classname="checks.hello" name="request metadata, and reading the response metadata back" time="0.016"><system-out>* session = karate.channel(&apos;grpc&apos;)
+<testcase classname="checks.hello" name="request metadata, and reading the response metadata back" time="0.025"><system-out>* session = karate.channel(&apos;grpc&apos;)
 * = &apos;/proto/hello.proto&apos;
 * = &apos;HelloService&apos;
 * = &apos;Hello&apos;
@@ -14,7 +14,7 @@
 * session.pop() == { message: &apos;hello Smith&apos; }
 * session.metadataResponse contains { &apos;authorization-response&apos;: &apos;secret-response&apos; }
 </system-out></testcase>
-<testcase classname="checks.hello" name="the error path — an empty name is rejected" time="0.015"><system-out>* session = karate.channel(&apos;grpc&apos;)
+<testcase classname="checks.hello" name="the error path — an empty name is rejected" time="0.029"><system-out>* session = karate.channel(&apos;grpc&apos;)
 * = &apos;/proto/hello.proto&apos;
 * = &apos;HelloService&apos;
 * = &apos;Hello&apos;
@@ -22,7 +22,7 @@
 * session.collect() == []
 * session.status == &apos;INVALID_ARGUMENT&apos;
 </system-out></testcase>
-<testcase classname="checks.hello" name="server streaming — collect a known number of responses" time="0.016"><system-out>* session = karate.channel(&apos;grpc&apos;)
+<testcase classname="checks.hello" name="server streaming — collect a known number of responses" time="0.024"><system-out>* session = karate.channel(&apos;grpc&apos;)
 * = &apos;/proto/hello.proto&apos;
 * = &apos;HelloService&apos;
 * = &apos;LotsOfReplies&apos;
@@ -30,7 +30,7 @@
 * session.send({ name: &apos;John&apos; })
 * session.collect() == [{ message: &apos;hello John 1&apos; }, { message: &apos;hello John 2&apos; }, { message: &apos;hello John 3&apos; }]
 </system-out></testcase>
-<testcase classname="checks.hello" name="client streaming — many requests, one response" time="0.01"><system-out>* session = karate.channel(&apos;grpc&apos;)
+<testcase classname="checks.hello" name="client streaming — many requests, one response" time="0.015"><system-out>* session = karate.channel(&apos;grpc&apos;)
 * = &apos;/proto/hello.proto&apos;
 * = &apos;HelloService&apos;
 * = &apos;LotsOfGreetings&apos;
@@ -40,7 +40,7 @@
 * session.flush()
 * session.pop() == { message: &apos;hello [John, Smith]&apos; }
 </system-out></testcase>
-<testcase classname="checks.hello" name="bidirectional streaming — a response per request on one open stream" time="0.011"><system-out>* session = karate.channel(&apos;grpc&apos;)
+<testcase classname="checks.hello" name="bidirectional streaming — a response per request on one open stream" time="0.016"><system-out>* session = karate.channel(&apos;grpc&apos;)
 * = &apos;/proto/hello.proto&apos;
 * = &apos;HelloService&apos;
 * = &apos;BidiHello&apos;
