@@ -15,7 +15,7 @@ karate-boot.js         cluster coordinates for the whole suite, set once
 
 1. **The engine** — `karate-async-2.1.3.RC2.jar` from the
    [releases](https://github.com/karatelabs/karate-addons/releases). Put it beside this folder.
-2. **A licence** — a `karate.lic` file at `.karate/karate.lic` in this folder, or the same text in the
+2. **A license** — a `karate.lic` file at `.karate/karate.lic` in this folder, or the same text in the
    `KARATE_LICENSE_TEXT` environment variable. Kafka needs the `kafka` entitlement.
 3. **JDK 21+** and **Docker**.
 
@@ -71,8 +71,8 @@ Each record that comes back is `{ key, value, headers, offset }`.
 **Producer keys:** `topic` · `key` · `value` · `headers` · `schema` · `send()`
 **Consumer keys:** `topic` · `count` · `timeout` · `filter` · `schema` · `start()` · `pop()` · `collect()`
 
-`filter` takes a function and only records it accepts are counted — useful when a topic carries traffic
-your check does not care about:
+`filter` takes a function; only the records it accepts are counted. This is useful when a topic
+carries traffic your check does not care about:
 
 ```cucumber
 * consumer.filter = x => x.key != 'skip-me'
@@ -101,9 +101,9 @@ With no `schema` at all, values are plain JSON bytes — nothing to register.
 ### Paths
 
 A path is resolved against the project — this folder. `/hello.avsc` is anchored at the project root,
-`hello.avsc` is relative to it, and both find the same file. A file outside the project — a keystore
-mounted as a secret — is written as `file:/path/to/keystore.p12`. A leading `/` always means the project,
-never the file system root.
+`hello.avsc` is relative to it, and both find the same file. For a file outside the project — a
+keystore mounted as a secret — write `file:/path/to/keystore.p12`. A leading `/` always means the
+project, never the file system root.
 
 ## TLS
 
@@ -124,8 +124,8 @@ For SASL, put the usual `sasl.*` client properties in `kafka.props`.
 
 ## Pointing this at your own cluster
 
-Change `kafka.bootstrap` (and `kafka.schemaRegistry`, if you use Avro) in `karate-boot.js`, put your own
-topic names in the checks, and delete `docker-compose.yml` — it exists only so this example runs
+Set `kafka.bootstrap` in `karate-boot.js` — and `kafka.schemaRegistry` too, if you use Avro. Put your
+own topic names in the checks. Then delete `docker-compose.yml`; it exists only so this example runs
 standalone. Both values read an override at run time, so CI can point elsewhere without editing a file:
 
 ```bash

@@ -2,7 +2,7 @@
 
 Testing a gRPC service with Karate — unary, all three streaming shapes, request/response metadata, and
 the error path. **No generated stubs on the test side:** the engine reads the `.proto` at run time and
-builds dynamic descriptors, so there is nothing to generate and nothing to regenerate when the contract
+builds dynamic descriptors. There is nothing to generate, and nothing to regenerate when the contract
 changes. Your checks stay plain text.
 
 ```
@@ -17,7 +17,7 @@ server/                the demo service under test (stands in for your service)
 1. **The engine** — `karate-async-2.1.3.RC2.jar` from the
    [releases](https://github.com/karatelabs/karate-addons/releases). Put it beside this folder, or
    anywhere you like and adjust the paths below.
-2. **A licence** — a `karate.lic` file at `.karate/karate.lic` in this folder, or the same text in the
+2. **A license** — a `karate.lic` file at `.karate/karate.lic` in this folder, or the same text in the
    `KARATE_LICENSE_TEXT` environment variable. gRPC needs the `grpc` entitlement.
 3. **JDK 21+**, and Maven to build the demo service.
 
@@ -30,8 +30,8 @@ mvn -f server/pom.xml package
 java -cp "../karate-async-2.1.3.RC2.jar:server/target/classes" demo.DemoServer 50051
 ```
 
-The service needs no fat jar of its own — the engine jar already carries gRPC and protobuf, so putting it
-on the classpath is enough.
+The service needs no fat jar of its own. The engine jar already carries gRPC and protobuf, so putting
+it on the classpath is enough.
 
 Run the checks (another terminal):
 
@@ -73,8 +73,8 @@ check can assert a failure instead of `pop()` throwing.
 ### Paths
 
 A path is resolved against the project — this folder. `/proto/hello.proto` is anchored at the project
-root, `proto/hello.proto` is relative to it, and both find the same file. A path on the machine outside
-the project — a mounted secret, a cert in `/etc/ssl` — is written as `file:/etc/ssl/ca.pem`. A leading
+root, `proto/hello.proto` is relative to it, and both find the same file. For a path on the machine
+outside the project — a mounted secret, a cert in `/etc/ssl` — write `file:/etc/ssl/ca.pem`. A leading
 `/` always means the project, never the file system root.
 
 ## TLS and mTLS

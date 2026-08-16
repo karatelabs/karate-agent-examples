@@ -1,14 +1,14 @@
 # store-api — author a suite from a bare OpenAPI spec (and benchmark your agent doing it)
 
 One `openapi.yaml` — a products / customers / orders CRUD store — and **nothing else**. No backend to
-install, no tests yet: the Karate engine stands up a **stateful, schema-valid mock** straight from the
+install, no tests yet. The Karate engine stands up a **stateful, schema-valid mock** straight from the
 spec, and your AI agent authors the test suite against it.
 
-Because the kit starts empty and the finish line is deterministic (every spec operation exercised, every
-gap list empty — not "looks done"), it doubles as a **benchmark**: run it in your own environment, note
-the wall-clock time and tool-call count, and compare against the reference envelope below. If your run is
-much slower, the difference is almost always the *agent environment* (client, model, context size, other
-tools loaded) — and this kit gives you a clean way to prove that and tune it.
+The kit starts empty, and the finish line is deterministic: every spec operation exercised, every gap
+list empty — not "looks done". So it doubles as a **benchmark**. Run it in your own environment, note
+the wall-clock time and the tool-call count, and compare against the reference envelope below. If
+your run is much slower, the cause is almost always the *agent environment*, not the engine — and the
+last section shows how to prove that and tune it.
 
 ## What's in the kit
 
@@ -18,7 +18,8 @@ tools loaded) — and this kit gives you a clean way to prove that and tune it.
 | `karate-config.js` | binds `baseUrl` (default `http://localhost:8080` — where the engine's own mock listens) |
 | `.mcp.json` | auto-connects Claude Code when this folder is opened |
 
-You supply the engine and the license — neither ships in this repo (your `karate.lic` arrives separately).
+You supply the engine and the license — neither ships in this repo (your `karate.lic` arrives
+separately).
 
 ## 1 · Run the engine
 
@@ -36,8 +37,8 @@ docker run -d --name karate-agent -p 4444:4444 -v "$PWD":/work \
 ```
 
 **Or the plain JAR** (Java 21+) — download `karate-agent-2.1.3.RC2.jar` from
-<https://github.com/karatelabs/karate-addons/releases> (release tag `agent-2.1.3.RC2`), then from
-this folder:
+<https://github.com/karatelabs/karate-addons/releases> (release tag `agent-2.1.3.RC2`), then
+from this folder:
 
 ```bash
 java -jar karate-agent-2.1.3.RC2.jar serve
@@ -49,9 +50,9 @@ backend from the spec as its first step.
 
 ## 2 · Connect your agent
 
-Everything surfaces through a single MCP tool, `karate_eval` (the client sends JavaScript, gets JSON
-back), over **streamable HTTP** — so it works with any MCP-capable client: Claude Code, Codex, GitHub
-Copilot / Copilot CLI, Cursor, VS Code, or an internal agent.
+Everything surfaces through a single MCP tool, `karate_eval`: the client sends JavaScript and gets
+JSON back, over **streamable HTTP**. So it works with any MCP-capable client — Claude Code, Codex,
+GitHub Copilot / Copilot CLI, Cursor, VS Code, or an internal agent.
 
 ```bash
 # Claude Code / Copilot CLI:
@@ -72,9 +73,9 @@ codex mcp add karate --url http://localhost:4444/api/mcp
 folder is opened.)
 
 > **For a fair benchmark, connect a clean client**: karate as the only (or nearly only) MCP server, a
-> minimal agent config (`AGENTS.md` / `CLAUDE.md`), and a capable model. Every extra tool schema and every
-> page of standing instructions is re-processed on *every* model turn — it is the single biggest lever on
-> wall-clock time. Benchmark clean first; then re-run inside your everyday setup and compare.
+> minimal agent config (`AGENTS.md` / `CLAUDE.md`), and a capable model. Every extra tool schema and
+> every page of standing instructions is re-processed on *every* model turn — it is the single biggest
+> lever on wall-clock time. Benchmark clean first; then re-run inside your everyday setup and compare.
 
 ## 3 · The benchmark prompt
 
@@ -113,9 +114,9 @@ JavaScript, get JSON). Karate self-describes — never assume an API signature, 
 ### Variant — just good tests, nothing else
 
 Only want a strong functional test suite — no requirements, no traceability, no generated project
-plumbing? Use this instead. It is written for the usual real-world case: **your own live API**, with the
-spec as the operation inventory. (In this kit there is no backend, so keep step 1; against a live API,
-drop step 1 and point `baseUrl` at your service.)
+plumbing? Use this instead. It is written for the usual real-world case: **your own live API**, with
+the spec as the operation inventory. (In this kit there is no backend, so keep step 1; against a live
+API, drop step 1 and point `baseUrl` at your service.)
 
 ```text
 You are authoring end-to-end API tests with Karate over its MCP tool `karate_eval` (send
@@ -145,53 +146,54 @@ other artifacts.
 ```
 
 The finish line for this variant is simply: **suite green + `Coverage.gaps()` empty**. It skips the
-requirements/readiness layer entirely — you can add that later without redoing any of the tests (tag the
-scenarios and author the requirements; the coverage you built keeps counting).
+requirements/readiness layer entirely. You can add that later without redoing any tests — tag the
+scenarios and author the requirements; the coverage you built keeps counting.
 
-A measured reference run of this variant: OpenAI Codex CLI (GPT-5.6), **3m 06s wall-clock** — suite
-green, all 10 spec operations covered, `Coverage.gaps()` empty, 15 `karate_eval` calls with **zero
-shell-outs** (the suite ran via `Runner.suite` over MCP) and under a second of total time inside the
-engine.
+A measured reference run of this variant: OpenAI Codex CLI (GPT-5.6), **3m 06s wall-clock**. Suite
+green, all 10 spec operations covered, `Coverage.gaps()` empty. It took 15 `karate_eval` calls with
+**zero shell-outs** — the suite ran via `Runner.suite` over MCP — and under a second of total time
+inside the engine.
 
 ### A large spec? Work in passes, not one mega-prompt
 
-This kit's spec is 10 operations; real enterprise specs run to hundreds. Don't ask the agent to cover a
-200-operation spec in one shot — it gets slower *per turn* as its context fills, and it will run out of
-attention before it runs out of endpoints. The engine is built for slicing instead:
+This kit's spec is 10 operations; real enterprise specs run to hundreds. Don't ask the agent to cover
+a 200-operation spec in one shot. It gets slower *per turn* as its context fills, and it will run out
+of attention before it runs out of endpoints. The engine is built for slicing instead:
 
 - **Orient without reading the YAML**: `Openapi.summary(…)`, `Openapi.resources(…)`,
   `Openapi.operations(…)` — the agent asks the spec instead of loading it into context.
-- **One resource (or tag) per pass**: give the agent a scoped prompt — *"cover the `orders` operations"* —
-  and let each pass end with a run. `Openapi.subset(…)` can even carve a self-contained slice of a huge
-  spec into its own file.
-- **`Coverage.gaps()` is the worklist between passes** — each pass empties part of it, and "done" is still
-  deterministic across the whole spec, no matter how many sessions or even which agent did each pass.
+- **One resource (or tag) per pass**: give the agent a scoped prompt — *"cover the `orders`
+  operations"* — and let each pass end with a run. `Openapi.subset(…)` can even carve a
+  self-contained slice of a huge spec into its own file.
+- **`Coverage.gaps()` is the worklist between passes.** Each pass empties part of it, and "done"
+  stays deterministic across the whole spec — no matter how many sessions, or which agent did each
+  pass.
 
-Per-pass wall-clock stays flat this way (a fresh pass starts with a small context), which is usually
-*faster* in total than one long session — and each pass is independently reviewable.
+Per-pass wall-clock stays flat this way, because a fresh pass starts with a small context. That is
+usually *faster* in total than one long session — and each pass is independently reviewable.
 
 ### Splitting the prompt into stages? Hand off through files, gate on gaps
 
-Some teams split the prompt by *phase* instead — discover → author → review, one prompt each. That works
-too, with two rules:
+Some teams split the prompt by *phase* instead — discover → author → review, one prompt each. That
+works too, with two rules:
 
-- **Each stage writes its output to a file the next stage reads.** A new session starts blank — "take
-  into account what was discovered earlier" only works if stage 1 wrote it down (e.g. an
-  `e2e/discovery.md` listing every operation and every *declared* error response per operation, which
-  stage 2 is told to read first).
+- **Each stage writes its output to a file the next stage reads.** A new session starts blank —
+  "take into account what was discovered earlier" only works if stage 1 wrote it down (e.g. an
+  `e2e/discovery.md` listing every operation and every *declared* error response per operation,
+  which stage 2 is told to read first).
 - **The gate between stages is measured, not asserted.** End every authoring stage with a run plus
-  `Coverage.gaps()`, and don't advance until both its lists — `notcovered` and `happyOnly` — (or the
-  slice of them that stage owns) are empty. "Ensure everything is covered" in prose does nothing; the
-  gap lists are the contract.
+  `Coverage.gaps()`. Don't advance until both its lists, `notcovered` and `happyOnly`, are empty —
+  or at least the slice of them that stage owns. "Ensure everything is covered" in prose does
+  nothing; the gap lists are the contract.
 
 One completeness nuance that bites here: the agent is told **not to invent the contract**, so it only
-authors error tests it can *see* — a "client not found" test appears when the 404/422 is declared in the
-spec (or in a notes file you give it). And once declared, the engine *tracks* it: `Coverage.gaps()`
-flags every operation whose declared error codes were never exercised (the `happyOnly` list), so missing
-error tests show up as a measured gap. Errors you can induce through the API (reference an id that
-doesn't exist) belong in ordinary tests — ask for them explicitly. Failures of a *downstream dependency*
-(a 500 from a system your API calls) can only be tested if you can force them — that is exactly what
-Karate mocks are for.
+authors error tests it can *see*. A "client not found" test appears when the 404/422 is declared in
+the spec (or in a notes file you give it). Once declared, the engine *tracks* it: `Coverage.gaps()`
+flags every operation whose declared error codes were never exercised (the `happyOnly` list), so
+missing error tests show up as a measured gap. Errors you can induce through the API (reference an id
+that doesn't exist) belong in ordinary tests — ask for them explicitly. Failures of a *downstream
+dependency* (a 500 from a system your API calls) can only be tested if you can force them — that is
+exactly what Karate mocks are for.
 
 ## 4 · The finish line — deterministic, not vibes
 
@@ -199,21 +201,23 @@ Karate mocks are for.
 prompt-shot — it is what the gap loop is for:
 
 - **`Coverage.gaps()` is empty — both lists**: `notcovered` (every operation in `openapi.yaml` is
-  exercised by a passing test) *and* `happyOnly` (every operation has also been driven through an error
-  outcome — each `happyOnly` row names the spec's `declaredUntested` codes, so "are the error paths
-  covered?" is measured, not eyeballed).
-- **`Requirement.gaps()` is empty** — every acceptance criterion is covered by a `@req=`-tagged scenario.
+  exercised by a passing test) *and* `happyOnly` (every operation has also been driven through an
+  error outcome — each `happyOnly` row names the spec's `declaredUntested` codes, so "are the error
+  paths covered?" is measured, not eyeballed).
+- **`Requirement.gaps()` is empty** — every acceptance criterion is covered by a `@req=`-tagged
+  scenario.
 - The suite is green and the generated report shows the traceability matrix.
 
-One expected nuance: `Requirement.readiness()` may still report **NOT_READY** even at full coverage. The
-spec-derived mock is stateful but does not *validate* request bodies, so criteria about rejecting bad
-input can't be honestly proven against it — and the engine refuses to call them proven. That is the
-governance gate working, not a failure; point `baseUrl` at a real implementation of the spec and the same
-suite proves them.
+One expected nuance: `Requirement.readiness()` may still report **NOT_READY** even at full coverage.
+The spec-derived mock is stateful but does not *validate* request bodies, so criteria about rejecting
+bad input can't be honestly proven against it — and the engine refuses to call them proven. That is
+the governance gate working, not a failure. Point `baseUrl` at a real implementation of the spec and
+the same suite proves them.
 
-**Want it real?** Ask your agent to *build* a working backend from `openapi.yaml` in your own stack — and
-use the suite you just authored as its acceptance gate. Point `baseUrl` at the implementation and re-run:
-same tests, now proving real code. That is the same governance loop, applied to an AI-built backend.
+**Want it real?** Ask your agent to *build* a working backend from `openapi.yaml` in your own stack —
+and use the suite you just authored as its acceptance gate. Point `baseUrl` at the implementation and
+re-run: same tests, now proving real code. That is the same governance loop, applied to an AI-built
+backend.
 
 ## 5 · Score your run
 
@@ -225,19 +229,20 @@ Record three numbers:
 | tool calls | your client's transcript (count of `karate_eval` calls) |
 | result | both gap lists empty + suite green |
 
-**Reference envelope:** with a clean client (karate the only MCP server, minimal standing context) and a
-capable model, the full arc — scaffold → ground → author → run → close gaps → report — completes in
-**minutes, not tens of minutes**, at a few dozen `karate_eval` calls. A measured reference run: OpenAI
-Codex CLI (GPT-5.6), this exact prompt, **7m 27s wall-clock, 45 `karate_eval` calls — of which a total of
-1.3 seconds was spent inside the engine**. The other 99.7% is the model reading, reasoning, and writing —
-which is why the client, the model, and the context you load are what move the number. A run several
-times outside that envelope is telling you about the environment, not the task.
+**Reference envelope:** with a clean client (karate the only MCP server, minimal standing context)
+and a capable model, the full arc — scaffold → ground → author → run → close gaps → report —
+completes in **minutes, not tens of minutes**, at a few dozen `karate_eval` calls. A measured
+reference run: OpenAI Codex CLI (GPT-5.6), this exact prompt, **7m 27s wall-clock, 45 `karate_eval`
+calls — of which a total of 1.3 seconds was spent inside the engine**. The other 99.7% is the model
+reading, reasoning, and writing. That is why the client, the model, and the context you load are what
+move the number. A run several times outside that envelope is telling you about the environment, not
+the task.
 
 ## If your run is slow — find where the time actually goes
 
 The engine timestamps every MCP request. Restart with debug logging (`-e KARATE_LOG_LEVEL=DEBUG` on
-Docker, `export KARATE_LOG_LEVEL=DEBUG` for the JAR) and read `target/karate-agent.log` in this folder
-after a run:
+Docker, `export KARATE_LOG_LEVEL=DEBUG` for the JAR) and read `target/karate-agent.log` in this
+folder after a run:
 
 - **The karate calls themselves are slow** → that's on the engine — send us the log, we want it.
 - **Long gaps *between* calls** → the time is inside your agent client: model latency multiplied by

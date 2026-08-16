@@ -1,8 +1,8 @@
 # WebSocket
 
 Testing WebSockets with Karate — raw text, JSON, collecting a stream of messages, and a custom
-frame-based protocol (STOMP) handled by a codec. Both demo servers are included and need **no build
-tool**: they compile against the engine jar alone.
+frame-based protocol (STOMP) handled by a codec. Both demo servers are included, and they need **no
+build tool**: they compile against the engine jar alone.
 
 ```
 checks/echo.feature    text, JSON and streaming against the echo server
@@ -17,7 +17,7 @@ karate-boot.js         activates WebSocket support
 
 1. **The engine** — `karate-async-2.1.3.RC2.jar` from the
    [releases](https://github.com/karatelabs/karate-addons/releases). Put it beside this folder.
-2. **A licence** — a `karate.lic` file at `.karate/karate.lic` in this folder, or the same text in the
+2. **A license** — a `karate.lic` file at `.karate/karate.lic` in this folder, or the same text in the
    `KARATE_LICENSE_TEXT` environment variable. WebSocket is part of the `openapi` entitlement.
 3. **JDK 21+**. No Maven, no code generation.
 
@@ -72,8 +72,8 @@ Use `headers` for a handshake header — an auth token, say:
 
 ## Codecs — handling your own protocol
 
-Without a codec, messages are raw text. A codec converts between the wire form and a value your check can
-`match` on, which keeps protocol handling out of the checks:
+Without a codec, messages are raw text. A codec converts between the wire form and a value your check
+can `match` on. That keeps protocol handling out of the checks:
 
 - **`JsonTextCodec`** is built in — text on the wire, JSON in the check (see `echo.feature`).
 - **`StompCodec`** in `server/` is a worked example of a custom one: it turns STOMP frames into
