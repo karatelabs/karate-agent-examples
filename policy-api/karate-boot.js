@@ -61,14 +61,20 @@ req.provider = {
   basePath: gitBase ? gitBase : 'policy-api'
 };
 
-// Kafka — OPTIONAL fourth beat (the one protocol whose backend wants Docker, so it is OFF by default and
-// out of CI). Start Kafka (KRaft broker + Schema Registry via kafka/docker-compose.yml), then uncomment
-// below to add the event-side universe (policy-events topic, Avro policy-event schema). The producer that
-// exercises it is checks/policy-events.feature (@ignore'd — un-ignore it to run; see README section 5):
-// var kafka = boot.ext('kafka');
-// kafka.bootstrap = boot.sysprop('kafka.bootstrap', '127.0.0.1:29092');
-// kafka.schemaRegistry = boot.sysprop('kafka.schemaRegistry', 'http://localhost:8081');
-// cov.kafka = { schemaRegistry: kafka.schemaRegistry, topics: [ { topic: 'policy-events', schema: 'policy-event' } ] };
+// Kafka — the OPTIONAL fourth beat, and an explicit opt-IN (the one protocol whose backend wants Docker,
+// so it can never auto-enable the way grpc does off boot.has — a broker being reachable is not something
+// the runtime can know at boot). Set KARATE_KAFKA_ON (env or -D sysprop, same door and same precedence as
+// KARATE_GRPC_OFF above) with the broker + Schema Registry up (kafka/docker-compose.yml), then run the
+// producer beat checks/policy-events.feature (tagged @kafka; see README section 5). The produced
+// policy-event joins cov.kafka by topic#direction; the Avro eventType enum + rating.priorClaims bool
+// become reverse-inferred field dimensions.
+var kafkaOn = boot.sysprop('KARATE_KAFKA_ON') || boot.sysenv('KARATE_KAFKA_ON');
+if (kafkaOn) {
+  var kafka = boot.ext('kafka');
+  kafka.bootstrap = boot.sysprop('kafka.bootstrap', '127.0.0.1:29092');
+  kafka.schemaRegistry = boot.sysprop('kafka.schemaRegistry', 'http://localhost:8081');
+  cov.kafka = { schemaRegistry: kafka.schemaRegistry, topics: [ { topic: 'policy-events', schema: 'policy-event' } ] };
+}
 
 // This project does CONTRACT TESTING — one suite against the mock and against the real provider — so its
 // reports carry a Contract tab beside Coverage and Traceability. Booting it IS the declaration: the tab is

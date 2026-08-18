@@ -28,8 +28,11 @@ look at:
   one suite against both the mock and that second, independent implementation, so the published
   divergence set between the two is browsable (section 3b).
 
-The published run covers REST, the run-free rules RTM and the pair. The full REST + gRPC + Kafka
-cross-protocol coverage runs locally off the engine jar — sections 1–5 below.
+The published run covers all of it: the CI job runs the REST suite + rules RTM + the pair on the
+container image, then runs the **full cross-protocol lane** off the `karate-async` engine jar — the gRPC
+rating engine and a real Kafka broker are stood up in the job — so the published Coverage tab spans
+**REST + gRPC + Kafka in one report**. The same lane runs locally in one command (see section 5's
+one-shot); sections 1–5 below walk it beat by beat.
 
 ## What you need
 
@@ -323,17 +326,35 @@ real call proves it, and the verdict moves — with nothing to re-pin.
 
 ## 5. Kafka — the optional event side
 
-The producer beat ships as `checks/policy-events.feature`, tagged **`@ignore`** so it never runs
-without a broker up. Three steps enable it:
+The producer beat ships as `checks/policy-events.feature`, tagged **`@kafka`** (like `@grpc` on the
+gRPC lane: it needs a protocol leaf plus a live backend, so select around it — `{tags:'~@kafka'}` — in
+any sweep that lacks them). Kafka is an explicit **opt-in**: the `KARATE_KAFKA_ON` flag (env, or a `-D`
+sysprop) is what makes `karate-boot.js` boot the kafka ext and declare the `cov.kafka` universe.
 
 ```bash
 ( cd kafka && docker compose up -d )     # 1. KRaft broker (:29092) + Schema Registry (:8081)
-# 2. uncomment the cov.kafka block in karate-boot.js and restart the serve process
-# 3. remove the @ignore tag at the top of checks/policy-events.feature, then run it:
+# 2. restart the serve process with the flag on:
+KARATE_KAFKA_ON=1 java -jar karate-async-2.1.3.RC1.jar serve . --port 4444
+# 3. run the producer beat:
 curl -s -X POST localhost:4444/api/eval --data-binary "Runner.run('checks/policy-events.feature')"
 curl -s -X POST localhost:4444/api/eval --data-binary "Report.aggregate()"
 curl -s -X POST localhost:4444/api/eval --data-binary "Coverage.gaps().find(r => r.type=='kafka')"
 ```
+
+### The one-shot cross-protocol lane
+
+With the gRPC rating engine (`:50052`) and the Kafka stack up, one command runs the whole kit — REST +
+gRPC + Kafka + the acceptance RTM — and renders one report spanning all three protocols (this is the
+exact lane CI runs to produce the published GitHub Pages report):
+
+```bash
+KARATE_GRPC_ON=1 KARATE_KAFKA_ON=1 \
+  java -jar karate-async-2.1.3.RC1.jar launch suite.karate.js
+open target/karate-reports/ext/coverage/pages/coverage.html
+```
+
+`KARATE_GRPC_ON` adds the gRPC suite to the launch and `KARATE_KAFKA_ON` adds the producer beat (and
+switches the kafka ext on) — both are opt-ins because each needs its backend running.
 
 The produced `policy-event` (Avro, `kafka/policy-event.avsc`) joins `cov.kafka` by `topic#direction`.
 It lands as `policy-events#publish` **COVERED**, leaving `#subscribe` as the gap. The Avro `eventType`

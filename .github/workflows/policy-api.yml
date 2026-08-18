@@ -1,20 +1,30 @@
-# policy-api on GitHub Actions — the PURE-GIT / spec-driven posture, REST + rules + the paired run.
+# policy-api on GitHub Actions — the PURE-GIT / spec-driven posture: REST + rules + the paired run,
+# then the full cross-protocol lane.
 #
 # Runs the karate-agent container one-shot over the REST suite (the covering-array coverage demo + the
-# OpenAPI operations) plus the run-free rules RTM. KARATE_GRPC_OFF is set, so karate-boot.js skips the grpc
-# beat the container image can't serve — the full REST + gRPC + Kafka cross-protocol story runs live off the
-# async jar (see the README), not here. No ADO coordinates are set: the requirement ids deep-link to their
-# heading in the markdown source of truth on THIS repo + commit (requirements.provider, git), so anyone can
-# browse the published RTM and click RATE-001 through to requirements/rating.md — no license needed to READ.
+# OpenAPI operations) plus the run-free rules RTM. KARATE_GRPC_OFF is set on the container legs, so
+# karate-boot.js skips the grpc beat the container image can't serve. No ADO coordinates are set: the
+# requirement ids deep-link to their heading in the markdown source of truth on THIS repo + commit
+# (requirements.provider, git), so anyone can browse the published RTM and click RATE-001 through to
+# requirements/rating.md — no license needed to READ.
 #
 # It then starts the REST face of the kit's own Java backend and MINTS A PAIR against it — one suite, two
 # targets, a measured divergence set — so the published report carries a live contract-test page beside the
 # Coverage and Traceability ones. That step is also the parity gate between the kit's TWO implementations
 # of the same contract (the karate mock and rating-server), which nothing else in CI builds.
 #
-# One-time setup: add a repository secret KARATE_LICENSE (the inline karate.lic text). Without it the engine's
-# license check fails the run. Enable Pages (Settings -> Pages -> Deploy from a branch -> gh-pages).
-name: policy-api (pure-git RTM, REST + rules + the paired run)
+# LAST comes the ASYNC LEG: the karate-async engine jar (downloaded from the public karate-addons release,
+# the same way the protocols workflow does) runs the whole suite with the gRPC rating engine + a real
+# Kafka broker stood up in the job, and re-renders the report — so the PUBLISHED page carries REST + gRPC
+# + Kafka coverage in ONE graph, beside the RTM and the Contract page. It runs last on purpose: its boot
+# declares every coverage universe, so its render is the one that publishes. An unpublished async jar for
+# this version degrades the leg to a SKIP (the page then carries the REST-only report the earlier steps
+# produced), never a failure.
+#
+# One-time setup: add a repository secret KARATE_LICENSE (the inline karate.lic text; it must carry the
+# grpc + kafka entitlements for the async leg). Without it the engine's license check fails the run.
+# Enable Pages (Settings -> Pages -> Deploy from a branch -> gh-pages).
+name: policy-api (pure-git RTM, REST + rules + the paired run + cross-protocol)
 
 on:
   push:
@@ -29,6 +39,10 @@ permissions:
   checks: write          # dorny/test-reporter writes the JUnit check
   pull-requests: write
   packages: read         # pull the engine image from GHCR (this block is explicit, so unlisted = none)
+
+env:
+  ENGINE_VERSION: 2.1.3.RC1
+  ASYNC_JAR: karate-async-2.1.3.RC1.jar
 
 jobs:
   # the shared publish-race gate (engine-gate.yml) — a missing engine image SKIPS the kit, never fails it
@@ -155,6 +169,78 @@ jobs:
         with:
           name: contract-pair
           path: policy-api/contract/pairs
+
+      # ── the ASYNC LEG — the full cross-protocol lane: REST + gRPC + Kafka in ONE published report ──
+      # The container image carries no grpc/kafka ext, so this leg runs off the karate-async engine jar,
+      # downloaded from the public karate-addons release the same way the protocols workflow does (a CDN
+      # release-asset download — no API rate limit). HEAD first: an unpublished jar for this version is a
+      # SKIP, not a failure (the pinned version can precede the release) — the page then publishes the
+      # REST-only report the steps above already produced. A jar that downloads but is not runnable IS a
+      # failure — a truncated or wrong asset must not masquerade as "not ready yet".
+      - name: Download the async engine
+        id: async
+        working-directory: .
+        run: |
+          URL="https://github.com/karatelabs/karate-addons/releases/download/agent-${ENGINE_VERSION}/${ASYNC_JAR}"
+          if ! curl -sIfL -o /dev/null "$URL"; then
+            echo "::warning::${ASYNC_JAR} is not published yet — skipping the cross-protocol leg"
+            echo "ok=false" >> "$GITHUB_OUTPUT"; exit 0
+          fi
+          curl -sSfL -o "$ASYNC_JAR" "$URL"
+          unzip -p "$ASYNC_JAR" META-INF/MANIFEST.MF | grep -q '^Main-Class:' \
+            || { echo "::error::${ASYNC_JAR} downloaded but is not runnable"; exit 1; }
+          ls -lh "$ASYNC_JAR"
+          echo "ok=true" >> "$GITHUB_OUTPUT"
+
+      # The same rating-server.jar the pair step built, wearing its OTHER face: the shade main-class is
+      # the gRPC rating engine (RatingServer), the suite's primary protocol backend.
+      - name: Start the gRPC rating engine — :50052
+        if: steps.async.outputs.ok == 'true'
+        run: |
+          nohup java -jar rating-server/target/rating-server.jar 50052 > rating-server.log 2>&1 &
+          for _ in $(seq 1 30); do (echo > /dev/tcp/localhost/50052) 2>/dev/null && break; sleep 1; done
+          (echo > /dev/tcp/localhost/50052) 2>/dev/null \
+            || { echo "the rating engine did not come up:"; cat rating-server.log; exit 1; }
+
+      # The kit's own compose file (KRaft broker + Schema Registry) — the same stack the README's
+      # section 5 stands up locally. Topics auto-create; the registry answering is the readiness signal.
+      - name: Start Kafka + the Schema Registry
+        if: steps.async.outputs.ok == 'true'
+        run: |
+          ( cd kafka && docker compose up -d )
+          echo "waiting for the schema registry on :8081 …"
+          for _ in $(seq 1 60); do curl -sf localhost:8081/subjects >/dev/null 2>&1 && break; sleep 2; done
+          curl -sf localhost:8081/subjects >/dev/null \
+            || { echo "the schema registry did not come up:"; ( cd kafka && docker compose logs --tail 50 ); exit 1; }
+
+      # The container legs wrote target/ (and the run history) as the container's non-root user; this leg
+      # runs on the runner directly and re-renders those same files, so take the tree back first.
+      - name: Reclaim ownership of the container-written tree
+        if: steps.async.outputs.ok == 'true'
+        run: |
+          for d in target runs contract .karate; do
+            [ -e "$d" ] && sudo chown -R "$(id -u):$(id -g)" "$d"
+          done
+          true
+
+      # The full lane: KARATE_GRPC_ON adds the gRPC suite, KARATE_KAFKA_ON adds the producer beat AND
+      # makes karate-boot.js boot the kafka ext + declare cov.kafka (see the kit's suite.karate.js).
+      # KARATE_GRPC_OFF is NOT set here — the async engine has the leaf, and this run is the point.
+      # KARATE_GIT_* again, so the re-rendered RTM keeps its requirement deep-links pinned to this commit.
+      - name: Cross-protocol suite (REST + gRPC + Kafka, one report)
+        if: steps.async.outputs.ok == 'true'
+        env:
+          KARATE_LICENSE_TEXT: ${{ secrets.KARATE_LICENSE }}
+          KARATE_GRPC_ON: '1'
+          KARATE_KAFKA_ON: '1'
+          KARATE_GIT_REPO_URL: https://github.com/${{ github.repository }}
+          KARATE_GIT_REF: ${{ github.sha }}
+          KARATE_GIT_BASE: policy-api
+        run: java -jar "../${ASYNC_JAR}" launch suite.karate.js
+
+      - name: Stop the Kafka broker
+        if: always() && steps.async.outputs.ok == 'true'
+        run: ( cd kafka && docker compose down ) || true
 
       - name: Publish test results (Checks tab)
         if: always()

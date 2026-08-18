@@ -1,11 +1,14 @@
-@ignore
+@kafka
 Feature: policy-events — emit a bound-policy event (Avro) to the policy-events topic (Kafka)
 
-  # The OPTIONAL fourth beat (README section 4). It is @ignore'd so it never runs in a "run all checks"
-  # sweep without a broker up. To enable the Kafka beat:
+  # The OPTIONAL fourth beat (README section 5). Tagged @kafka: it needs the kafka protocol leaf (the
+  # karate-async engine) AND a live broker, so a "run all checks" sweep on a lean engine selects around it
+  # with {tags:'~@kafka'} — the same posture as the @grpc tag on rating.feature. To enable the beat:
   #   1. start the broker + registry:  ( cd kafka && docker compose up -d )
-  #   2. uncomment the cov.kafka block in karate-boot.js and restart the serve process
-  #   3. remove the @ignore tag above, then:  Runner.run('checks/policy-events.feature')
+  #   2. set KARATE_KAFKA_ON=1 (env, or a -D sysprop) — karate-boot.js boots the kafka ext + cov.kafka
+  #      off that flag (restart the serve process so boot re-reads it)
+  #   3. run it:  Runner.run('checks/policy-events.feature')  — or launch the whole cross-protocol
+  #      suite with the flag set: KARATE_GRPC_ON=1 KARATE_KAFKA_ON=1 … launch suite.karate.js
   # A produced policy-event lands on cov.kafka as policy-events#publish (COVERED); the Avro eventType enum
   # + rating.priorClaims bool become reverse-inferred field dimensions (Coverage.dimensions).
 
