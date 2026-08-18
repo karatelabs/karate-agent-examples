@@ -1,4 +1,4 @@
-<testsuite name="insurance rating — unary + streaming against the RatingService (gRPC)" tests="7" failures="0" time="0.823" skipped="0"><testcase classname="checks.rating" name="young-collision-ca — young driver, collision, California — the young-driver loading fires" time="0.62"><properties><property name="tags" value="@grpc"/></properties><system-out>* session = karate.channel(&apos;grpc&apos;)
+<testsuite name="insurance rating — unary + streaming against the RatingService (gRPC)" tests="7" failures="0" time="1.003" skipped="0"><testcase classname="checks.rating" name="young-collision-ca — young driver, collision, California — the young-driver loading fires" time="0.744"><properties><property name="tags" value="@grpc"/></properties><system-out>* session = karate.channel(&apos;grpc&apos;)
 * = &apos;proto/rating.proto&apos;
 * = &apos;RatingService&apos;
 * check = Rule.execute(&apos;rating&apos;, __row)
@@ -8,7 +8,7 @@
 * reply contains check.output
 * check.verify(true, &apos;the live RatingService agrees with the rulebook&apos;)
 </system-out></testcase>
-<testcase classname="checks.rating" name="prior-claims-comprehensive-ny — adult with prior claims, comprehensive, New York — the prior-claims surcharge fires" time="0.024"><properties><property name="tags" value="@grpc"/></properties><system-out>* session = karate.channel(&apos;grpc&apos;)
+<testcase classname="checks.rating" name="prior-claims-comprehensive-ny — adult with prior claims, comprehensive, New York — the prior-claims surcharge fires" time="0.044"><properties><property name="tags" value="@grpc"/></properties><system-out>* session = karate.channel(&apos;grpc&apos;)
 * = &apos;proto/rating.proto&apos;
 * = &apos;RatingService&apos;
 * check = Rule.execute(&apos;rating&apos;, __row)
@@ -18,7 +18,7 @@
 * reply contains check.output
 * check.verify(true, &apos;the live RatingService agrees with the rulebook&apos;)
 </system-out></testcase>
-<testcase classname="checks.rating" name="clean-liability-tx — adult, clean record, liability, Texas — the base case, no loadings" time="0.016"><properties><property name="tags" value="@grpc"/></properties><system-out>* session = karate.channel(&apos;grpc&apos;)
+<testcase classname="checks.rating" name="clean-liability-tx — adult, clean record, liability, Texas — the base case, no loadings" time="0.019"><properties><property name="tags" value="@grpc"/></properties><system-out>* session = karate.channel(&apos;grpc&apos;)
 * = &apos;proto/rating.proto&apos;
 * = &apos;RatingService&apos;
 * check = Rule.execute(&apos;rating&apos;, __row)
@@ -28,7 +28,7 @@
 * reply contains check.output
 * check.verify(true, &apos;the live RatingService agrees with the rulebook&apos;)
 </system-out></testcase>
-<testcase classname="checks.rating" name="policy classification — the field no oracle can price" time="0.016"><properties><property name="tags" value="@grpc"/></properties><system-out>* session = karate.channel(&apos;grpc&apos;)
+<testcase classname="checks.rating" name="policy classification — the field no oracle can price" time="0.022"><properties><property name="tags" value="@grpc"/></properties><system-out>* session = karate.channel(&apos;grpc&apos;)
 * = &apos;proto/rating.proto&apos;
 * = &apos;RatingService&apos;
 * = &apos;Rate&apos;
@@ -37,7 +37,7 @@
 * session.send({ state: &apos;CA&apos;, coverage: &apos;COLLISION&apos;, driverAge: 40, priorClaims: true })
 * session.pop().policyClass == &apos;SUBSTANDARD&apos;
 </system-out></testcase>
-<testcase classname="checks.rating" name="coverage + driver-age dimensions" time="0.023"><properties><property name="tags" value="@grpc"/></properties><system-out>* session = karate.channel(&apos;grpc&apos;)
+<testcase classname="checks.rating" name="coverage + driver-age dimensions" time="0.031"><properties><property name="tags" value="@grpc"/></properties><system-out>* session = karate.channel(&apos;grpc&apos;)
 * = &apos;proto/rating.proto&apos;
 * = &apos;RatingService&apos;
 * = &apos;Rate&apos;
@@ -52,7 +52,7 @@
 * adultReply contains Rule.execute(&apos;rating&apos;, adult).output
 * adultReply.policyClass == &apos;PREFERRED&apos;
 </system-out></testcase>
-<testcase classname="checks.rating" name="error path — an unsupported state is rejected (rich error details)" time="0.101"><properties><property name="tags" value="@grpc"/></properties><system-out>* session = karate.channel(&apos;grpc&apos;)
+<testcase classname="checks.rating" name="error path — an unsupported state is rejected (rich error details)" time="0.109"><properties><property name="tags" value="@grpc"/></properties><system-out>* session = karate.channel(&apos;grpc&apos;)
 * = &apos;proto/rating.proto&apos;
 * = &apos;RatingService&apos;
 * = &apos;Rate&apos;
@@ -62,7 +62,7 @@
 * session.statusDetails contains { message: &apos;unsupported state&apos; }
 * session.statusDetails.details[*] contains deep { reason: &apos;STATE_UNSUPPORTED&apos;, domain: &apos;rating.karatelabs.io&apos; }
 </system-out></testcase>
-<testcase classname="checks.rating" name="server streaming — term options" time="0.015"><properties><property name="tags" value="@grpc"/></properties><system-out>* session = karate.channel(&apos;grpc&apos;)
+<testcase classname="checks.rating" name="server streaming — term options" time="0.021"><properties><property name="tags" value="@grpc"/></properties><system-out>* session = karate.channel(&apos;grpc&apos;)
 * = &apos;proto/rating.proto&apos;
 * = &apos;RatingService&apos;
 * row = { state: &apos;WA&apos;, coverage: &apos;COMPREHENSIVE&apos;, driverAge: 50, priorClaims: false }
