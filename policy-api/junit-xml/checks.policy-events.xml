@@ -1,0 +1,9 @@
+<testsuite name="policy-events — emit a bound-policy event (Avro) to the policy-events topic (Kafka)" tests="1" failures="0" time="1.188" skipped="0"><testcase classname="checks.policy-events" name="a bound policy emits a BOUND policy-event" time="1.176"><properties><property name="tags" value="@kafka"/></properties><system-out>* channel = karate.channel(&apos;kafka&apos;)
+* channel.register({ name: &apos;policy-event&apos;, path: &apos;kafka/policy-event.avsc&apos; })
+* producer = channel.producer()
+* = &apos;policy-events&apos;
+* = &apos;policy-event&apos;
+* = { policyId: &apos;POL-1001&apos;, holder: &apos;Ada Lovelace&apos;, eventType: &apos;BOUND&apos;, rating: { monthlyPremium: 100, priorClaims: false } }
+* producer.send()
+</system-out></testcase>
+</testsuite>
