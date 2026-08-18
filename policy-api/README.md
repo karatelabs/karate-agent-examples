@@ -328,8 +328,11 @@ real call proves it, and the verdict moves — with nothing to re-pin.
 
 The producer beat ships as `checks/policy-events.feature`, tagged **`@kafka`** (like `@grpc` on the
 gRPC lane: it needs a protocol leaf plus a live backend, so select around it — `{tags:'~@kafka'}` — in
-any sweep that lacks them). Kafka is an explicit **opt-in**: the `KARATE_KAFKA_ON` flag (env, or a `-D`
-sysprop) is what makes `karate-boot.js` boot the kafka ext and declare the `cov.kafka` universe.
+any sweep that lacks them). On this engine the **coverage universe is always declared** — a run that
+never touches Kafka honestly shows `policy-events#publish` / `#subscribe` as red rows, the same way an
+untested gRPC method shows red. *Exercising* it is the explicit **opt-in**: the `KARATE_KAFKA_ON` flag
+(env, or a `-D` sysprop) makes `karate-boot.js` boot the kafka ext and switches the universe to the
+registry-backed shape (the `policy-event` Avro fields then become reverse-inferred dimensions).
 
 ```bash
 ( cd kafka && docker compose up -d )     # 1. KRaft broker (:29092) + Schema Registry (:8081)

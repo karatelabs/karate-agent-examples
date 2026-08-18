@@ -61,19 +61,25 @@ req.provider = {
   basePath: gitBase ? gitBase : 'policy-api'
 };
 
-// Kafka — the OPTIONAL fourth beat, and an explicit opt-IN (the one protocol whose backend wants Docker,
-// so it can never auto-enable the way grpc does off boot.has — a broker being reachable is not something
-// the runtime can know at boot). Set KARATE_KAFKA_ON (env or -D sysprop, same door and same precedence as
-// KARATE_GRPC_OFF above) with the broker + Schema Registry up (kafka/docker-compose.yml), then run the
-// producer beat checks/policy-events.feature (tagged @kafka; see README section 5). The produced
-// policy-event joins cov.kafka by topic#direction; the Avro eventType enum + rating.priorClaims bool
-// become reverse-inferred field dimensions.
+// Kafka — the event side, in two layers (mirroring how grpc splits "what the kit promises" from "what
+// this run can reach"):
+//   • the UNIVERSE (cov.kafka) is declared whenever the runtime carries the kafka leaf — like cov.grpc,
+//     the report should show an untested event side as an honest red row (policy-events#publish /
+//     #subscribe NOTCOVERED), never hide it because the broker happens to be down;
+//   • the EXT (a live channel factory) + the registry-backed declaration are the explicit opt-IN —
+//     KARATE_KAFKA_ON (env or -D sysprop, same door and precedence as KARATE_GRPC_OFF above) — since
+//     they need the Docker broker + Schema Registry up (kafka/docker-compose.yml; README section 5).
+// With the flag on, the registry-backed shape resolves the policy-event Avro subject so its fields become
+// reverse-inferred dimensions (the eventType enum, the rating.priorClaims bool); without it the same
+// universe is declared name-only off the entries list — no registry is contacted, the rows just exist.
 var kafkaOn = boot.sysprop('KARATE_KAFKA_ON') || boot.sysenv('KARATE_KAFKA_ON');
 if (kafkaOn) {
   var kafka = boot.ext('kafka');
   kafka.bootstrap = boot.sysprop('kafka.bootstrap', '127.0.0.1:29092');
   kafka.schemaRegistry = boot.sysprop('kafka.schemaRegistry', 'http://localhost:8081');
   cov.kafka = { schemaRegistry: kafka.schemaRegistry, topics: [ { topic: 'policy-events', schema: 'policy-event' } ] };
+} else if (boot.has('kafka')) {
+  cov.kafka = [ { topic: 'policy-events', schema: 'policy-event' } ];
 }
 
 // This project does CONTRACT TESTING — one suite against the mock and against the real provider — so its
