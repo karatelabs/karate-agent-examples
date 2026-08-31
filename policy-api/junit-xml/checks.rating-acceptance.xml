@@ -1,13 +1,13 @@
-<testsuite name="rating acceptance — the saved scenarios, LIVE against the /quotes API (the RTM spine)" tests="3" failures="0" time="0.85" skipped="0"><testcase classname="checks.rating-acceptance" name="young-collision-ca — young driver, collision, California — the young-driver loading fires" time="0.529"><system-out>* baseUrl
+<testsuite name="rating acceptance — the saved scenarios, LIVE against the /quotes API (the RTM spine)" tests="5" failures="2" time="0.633" skipped="0"><testcase classname="checks.rating-acceptance" name="young-collision-ca — young driver, collision, California — the young-driver loading fires" time="0.359"><system-out>* baseUrl
 * check = Rule.execute(&apos;rating&apos;, __row)
 * oracle = check.output
 Given &apos;quotes&apos;
 And { state: &apos;#(__row.state)&apos;, coverage: &apos;#(__row.coverage)&apos;, driverAge: &apos;#(__row.driverAge)&apos;, priorClaims: &apos;#(__row.priorClaims)&apos; }
 When post
 request:
-1 &gt; POST http://localhost:41315/quotes
+1 &gt; POST http://localhost:35573/quotes
 1 &gt; Content-Type: application/json; charset=UTF-8
-1 &gt; Host: localhost:41315
+1 &gt; Host: localhost:35573
 1 &gt; Content-Length: 72
 1 &gt; Connection: keep-alive
 1 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12)
@@ -18,8 +18,8 @@ request:
   &quot;priorClaims&quot;: false
 }
 
-response time in milliseconds: 251
-1 &lt; 201 POST http://localhost:41315/quotes
+response time in milliseconds: 124
+1 &lt; 201 POST http://localhost:35573/quotes
 1 &lt; content-length: 77
 1 &lt; Karate-Mock: true
 1 &lt; Content-Type: application/json; charset=UTF-8
@@ -30,23 +30,23 @@ response time in milliseconds: 251
   &quot;currency&quot;: &quot;USD&quot;
 }
 
-POST http://localhost:41315/quotes
-201 (251 ms)
+POST http://localhost:35573/quotes
+201 (124 ms)
 Then 201
 And response.monthlyPremium == oracle.monthlyPremium
 And response.currency == oracle.currency
 * check.verify(true, &apos;live /quotes matches the rulebook&apos;)
 </system-out></testcase>
-<testcase classname="checks.rating-acceptance" name="prior-claims-comprehensive-ny — adult with prior claims, comprehensive, New York — the prior-claims surcharge fires" time="0.019"><system-out>* baseUrl
+<testcase classname="checks.rating-acceptance" name="prior-claims-comprehensive-ny — adult with prior claims, comprehensive, New York — the prior-claims surcharge fires" time="0.018"><system-out>* baseUrl
 * check = Rule.execute(&apos;rating&apos;, __row)
 * oracle = check.output
 Given &apos;quotes&apos;
 And { state: &apos;#(__row.state)&apos;, coverage: &apos;#(__row.coverage)&apos;, driverAge: &apos;#(__row.driverAge)&apos;, priorClaims: &apos;#(__row.priorClaims)&apos; }
 When post
 request:
-1 &gt; POST http://localhost:41315/quotes
+1 &gt; POST http://localhost:35573/quotes
 1 &gt; Content-Type: application/json; charset=UTF-8
-1 &gt; Host: localhost:41315
+1 &gt; Host: localhost:35573
 1 &gt; Content-Length: 75
 1 &gt; Connection: keep-alive
 1 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12)
@@ -57,8 +57,8 @@ request:
   &quot;priorClaims&quot;: true
 }
 
-response time in milliseconds: 4
-1 &lt; 201 POST http://localhost:41315/quotes
+response time in milliseconds: 6
+1 &lt; 201 POST http://localhost:35573/quotes
 1 &lt; content-length: 80
 1 &lt; Karate-Mock: true
 1 &lt; Content-Type: application/json; charset=UTF-8
@@ -69,8 +69,8 @@ response time in milliseconds: 4
   &quot;currency&quot;: &quot;USD&quot;
 }
 
-POST http://localhost:41315/quotes
-201 (4 ms)
+POST http://localhost:35573/quotes
+201 (6 ms)
 Then 201
 And response.monthlyPremium == oracle.monthlyPremium
 And response.currency == oracle.currency
@@ -83,9 +83,9 @@ Given &apos;quotes&apos;
 And { state: &apos;#(__row.state)&apos;, coverage: &apos;#(__row.coverage)&apos;, driverAge: &apos;#(__row.driverAge)&apos;, priorClaims: &apos;#(__row.priorClaims)&apos; }
 When post
 request:
-1 &gt; POST http://localhost:41315/quotes
+1 &gt; POST http://localhost:35573/quotes
 1 &gt; Content-Type: application/json; charset=UTF-8
-1 &gt; Host: localhost:41315
+1 &gt; Host: localhost:35573
 1 &gt; Content-Length: 72
 1 &gt; Connection: keep-alive
 1 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12)
@@ -97,7 +97,7 @@ request:
 }
 
 response time in milliseconds: 5
-1 &lt; 201 POST http://localhost:41315/quotes
+1 &lt; 201 POST http://localhost:35573/quotes
 1 &lt; content-length: 77
 1 &lt; Karate-Mock: true
 1 &lt; Content-Type: application/json; charset=UTF-8
@@ -108,11 +108,85 @@ response time in milliseconds: 5
   &quot;currency&quot;: &quot;USD&quot;
 }
 
-POST http://localhost:41315/quotes
+POST http://localhost:35573/quotes
 201 (5 ms)
 Then 201
 And response.monthlyPremium == oracle.monthlyPremium
 And response.currency == oracle.currency
 * check.verify(true, &apos;live /quotes matches the rulebook&apos;)
 </system-out></testcase>
+<testcase classname="checks.rating-acceptance" name="reject-unfiled-state — a state we have not filed rates for is refused" time="0.02"><failure message="expected status: 201, actual: 400">* baseUrl
+* check = Rule.execute(&apos;rating&apos;, __row)
+* oracle = check.output
+Given &apos;quotes&apos;
+And { state: &apos;#(__row.state)&apos;, coverage: &apos;#(__row.coverage)&apos;, driverAge: &apos;#(__row.driverAge)&apos;, priorClaims: &apos;#(__row.priorClaims)&apos; }
+When post
+request:
+1 &gt; POST http://localhost:35573/quotes
+1 &gt; Content-Type: application/json; charset=UTF-8
+1 &gt; Host: localhost:35573
+1 &gt; Content-Length: 72
+1 &gt; Connection: keep-alive
+1 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12)
+{
+  &quot;state&quot;: &quot;ZZ&quot;,
+  &quot;coverage&quot;: &quot;COLLISION&quot;,
+  &quot;driverAge&quot;: 30,
+  &quot;priorClaims&quot;: false
+}
+
+response time in milliseconds: 5
+1 &lt; 400 POST http://localhost:35573/quotes
+1 &lt; content-length: 69
+1 &lt; Karate-Mock: true
+1 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;error&quot;: &quot;state must be one of [CA, NY, FL, TX, WA]&quot;,
+  &quot;field&quot;: &quot;state&quot;
+}
+
+POST http://localhost:35573/quotes
+400 (5 ms)
+Then 201
+And response.monthlyPremium == oracle.monthlyPremium
+And response.currency == oracle.currency
+* check.verify(true, &apos;live /quotes matches the rulebook&apos;)
+</failure></testcase>
+<testcase classname="checks.rating-acceptance" name="reject-age-not-a-number — a driver age that is not a number is refused before rating runs" time="0.015"><failure message="expected status: 201, actual: 400">* baseUrl
+* check = Rule.execute(&apos;rating&apos;, __row)
+* oracle = check.output
+Given &apos;quotes&apos;
+And { state: &apos;#(__row.state)&apos;, coverage: &apos;#(__row.coverage)&apos;, driverAge: &apos;#(__row.driverAge)&apos;, priorClaims: &apos;#(__row.priorClaims)&apos; }
+When post
+request:
+1 &gt; POST http://localhost:35573/quotes
+1 &gt; Content-Type: application/json; charset=UTF-8
+1 &gt; Host: localhost:35573
+1 &gt; Content-Length: 78
+1 &gt; Connection: keep-alive
+1 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12)
+{
+  &quot;state&quot;: &quot;CA&quot;,
+  &quot;coverage&quot;: &quot;COLLISION&quot;,
+  &quot;driverAge&quot;: &quot;thirty&quot;,
+  &quot;priorClaims&quot;: false
+}
+
+response time in milliseconds: 5
+1 &lt; 400 POST http://localhost:35573/quotes
+1 &lt; content-length: 67
+1 &lt; Karate-Mock: true
+1 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;error&quot;: &quot;driverAge must be between 18 and 80&quot;,
+  &quot;field&quot;: &quot;driverAge&quot;
+}
+
+POST http://localhost:35573/quotes
+400 (5 ms)
+Then 201
+And response.monthlyPremium == oracle.monthlyPremium
+And response.currency == oracle.currency
+* check.verify(true, &apos;live /quotes matches the rulebook&apos;)
+</failure></testcase>
 </testsuite>
