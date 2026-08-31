@@ -32,4 +32,4 @@ Feature: Loan Decision API agrees with the personal-loan rules, per scenario
     * eval if (__row._id != 'approve-loyalty') check.verify(true, 'the Loan Decision API agrees with the personal-loan rules')
 
     Examples:
-      | read('/rulebooks/personal-loan/scenarios.json') |
+      | Rule.load('personal-loan').scenarios |

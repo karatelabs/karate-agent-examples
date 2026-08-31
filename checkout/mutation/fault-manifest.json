@@ -1,0 +1,9 @@
+{
+  "subject": "the payments dependency, deliberately misbehaving. Verdicts are AUTHORED in checks/payments-resilience.feature — a fault checkout tolerates is a PASS — and this lane never enters any mutation score (the polarity law). Faults are frozen here so a resilience run is reproducible and diffable; the mock serves them via Http.mock(..., {faults}) and stamps every tampered response Karate-Mutant: <id>.",
+  "faults": [
+    { "id": "payments-500", "operator": "STATUS_SWAP", "operation": "POST /payments", "to": 500 },
+    { "id": "payments-dead", "operator": "TRANSPORT_RESET", "operation": "POST /payments" },
+    { "id": "payments-stall", "operator": "TRANSPORT_DELAY", "operation": "POST /payments", "delayMs": 2500 },
+    { "id": "payment-id-dropped", "operator": "FIELD_DROP", "operation": "POST /payments", "field": "id" }
+  ]
+}

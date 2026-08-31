@@ -37,6 +37,7 @@ When the workspace carries a spec whose tasks are ticked off as done — a task 
 | `Help.page(...)` | |
 |---|---|
 | `getting-started` | Getting started |
+| `console-ui` | Testing UIs with the console |
 | `install` | Install & licensing |
 | `paths` | Paths — one root, one rule |
 | `datasheet` | Product Datasheet |

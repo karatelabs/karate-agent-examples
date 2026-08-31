@@ -40,6 +40,7 @@ Not a task — look these up while doing one.
 | `Skill.help('grpc')` | karate.channel('grpc') + the live Grpc.* namespace; reuses REST scenario ergonomics. |
 | `Skill.help('kafka')` | karate.channel('kafka') + the live Kafka.* namespace; produce/consume; JSON/Avro/Protobuf serialization. (karate-kafka addon.) |
 | `Skill.help('websocket')` | karate.channel('websocket') over core's WsClient — send/collect frames, the WireCodec serde seam (raw/JSON/custom, e.g. STOMP) + the WebsocketLifecycle handshake mix-in, subprotocol + TLS. |
+| `Skill.help('twin-authoring')` | Author twin.js — the state machine behind a rulebook — and drive explore→check→promote→bless. The engine walks it under frozen ceilings; a walk is evidence about the declaration, never proof of the system. Concepts are Twin.help(). |
 | `Skill.help('markup')` | The design-language-of-record for Karate HTML apps: the karate-core template engine + Tailwind/Alpine/HTMX. Server returns HTML, no build step. |
 
 ## Deep dives
@@ -49,6 +50,8 @@ Some workflows carry topic files — pass the topic as the second argument.
 - `api` → `auth`, `hooks-config`, `data-driven`, `error-paths`, `reuse-call`
 - `assertions` → `match`, `fuzzy`, `schema-tools`
 - `coverage` → `suite-structure`, `dimensions`
+- `rule-authoring` → `requirements-linking`, `properties`, `negative-scenarios`, `check-findings`
+- `twin-authoring` → `plan`, `required-rows`, `sequences`, `findings`, `live`
 - `requirements` → `authoring`, `semantic-review`
 - `review` → `feature-file-review`, `assertion-strength`
 - `markup` → `app-setup`, `tailwind`, `catalog`, `alpine`, `components`, `forms`, `sse`

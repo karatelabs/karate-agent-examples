@@ -39,7 +39,7 @@ Feature: insurance rating — unary + streaming against the RatingService (gRPC)
     * check.verify(true, 'the live RatingService agrees with the rulebook')
 
     Examples:
-      | read('../rulebooks/rating/scenarios.json') |
+      | Rule.load('rating').scenarios |
 
   # policyClass is the one field the engine returns that the rulebook does NOT model (see the note above),
   # so it is asserted here — once, as the business rule it stands for — rather than per saved row.

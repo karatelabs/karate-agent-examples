@@ -27,6 +27,18 @@ rather than confirmed — and never lose the order.
 **Acceptance:**
 - 1: WHEN the payments provider declines the charge THE SYSTEM SHALL record the order as PAYMENT_DECLINED with the payment id
 
+### CHK-003: Checkout survives a misbehaving payments dependency
+@status=approved @priority=p2 @criticality=high
+When the payments dependency misbehaves — answers a server error, dies mid-request, stalls, or returns
+an answer missing what checkout needs — the system **shall** degrade gracefully: surface an honest
+failure, answer within its time budget, and never record an order it cannot tie to a payment.
+
+**Acceptance:**
+- 1: WHEN the payments provider answers a server error THE SYSTEM SHALL refuse the order as a dependency failure, never lose or confirm it
+- 2: WHEN the connection to the payments provider dies mid-request THE SYSTEM SHALL refuse the order as a dependency failure
+- 3: WHEN the payments provider stalls THE SYSTEM SHALL answer within its two-second budget rather than hang
+- 4: WHEN the payments provider's answer is missing the payment id THE SYSTEM SHALL never record a CONFIRMED order without a payment reference
+
 ## PAY: The payments dependency — what checkout relies on
 @type=feature
 

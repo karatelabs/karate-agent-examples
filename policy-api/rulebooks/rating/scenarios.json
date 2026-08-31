@@ -22,5 +22,23 @@
     "coverage": "LIABILITY",
     "driverAge": 60,
     "priorClaims": false
+  },
+  {
+    "_id": "reject-unfiled-state",
+    "_label": "a state we have not filed rates for is refused",
+    "_expect": "schema-reject",
+    "state": "ZZ",
+    "coverage": "COLLISION",
+    "driverAge": 30,
+    "priorClaims": false
+  },
+  {
+    "_id": "reject-age-not-a-number",
+    "_label": "a driver age that is not a number is refused before rating runs",
+    "_expect": "schema-reject",
+    "state": "CA",
+    "coverage": "COLLISION",
+    "driverAge": "thirty",
+    "priorClaims": false
   }
 ]

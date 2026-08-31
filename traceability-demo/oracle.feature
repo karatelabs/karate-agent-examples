@@ -32,4 +32,4 @@ Feature: Loan Desk rules oracle — headless (the CI-safe pipeline stage)
     * match result.apr == exp.apr
 
     Examples:
-      | read('rulebooks/personal-loan/scenarios.json') |
+      | Rule.load('personal-loan').scenarios |

@@ -1,0 +1,279 @@
+openapi: 3.0.3
+info:
+  title: Stonebridge Fleet Auto Quote API
+  version: 1.0.0
+  description: >
+    Quote, rate and bind commercial vehicle fleets per the Stonebridge Fleet Auto
+    Underwriting & Rating Guide. One submission, one premium, one policy.
+servers:
+  - url: http://localhost:8090
+tags:
+  - name: quotes
+  - name: clock
+paths:
+  /clock:
+    post:
+      operationId: setClock
+      tags: [clock]
+      summary: Fix the observation date (test-only control)
+      description: >
+        A test-only control that fixes the observation date used by every subsequent
+        request, so quote expiry can be exercised without waiting.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Clock'
+      responses:
+        '200':
+          description: Observation date fixed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Clock'
+        '400':
+          description: Missing or malformed date
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+    get:
+      operationId: getClock
+      tags: [clock]
+      summary: Read the observation date (test-only control)
+      description: >
+        A test-only control that reads the observation date every subsequent request
+        observes - the date fixed by setClock, or the real date when none was fixed.
+      responses:
+        '200':
+          description: The observation date in force
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Clock'
+  /quotes:
+    post:
+      operationId: submitQuote
+      tags: [quotes]
+      summary: Submit a fleet for quoting (lifecycle step 1)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Submission'
+      responses:
+        '201':
+          description: Submission recorded, awaiting rating
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quote'
+        '400':
+          description: Invalid submission (no vehicles, or a field outside its documented domain)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /quotes/{quoteId}:
+    get:
+      operationId: getQuote
+      tags: [quotes]
+      summary: Read a quote
+      parameters:
+        - $ref: '#/components/parameters/QuoteId'
+      responses:
+        '200':
+          description: The quote
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quote'
+        '404':
+          description: Unknown quote
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /quotes/{quoteId}/rate:
+    post:
+      operationId: rateQuote
+      tags: [quotes]
+      summary: Rate (or re-rate) a quote (lifecycle step 2; stamps the rating date)
+      parameters:
+        - $ref: '#/components/parameters/QuoteId'
+      responses:
+        '200':
+          description: Quote priced (status rated or referred) or declined (terminal, no premium)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quote'
+        '404':
+          description: Unknown quote
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Quote cannot be rated (declined quotes are terminal; bound quotes are never re-rated)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /quotes/{quoteId}/approve:
+    post:
+      operationId: approveQuote
+      tags: [quotes]
+      summary: Underwriter approval of a referred quote (lifecycle step 4; premium unchanged)
+      parameters:
+        - $ref: '#/components/parameters/QuoteId'
+      responses:
+        '200':
+          description: Quote cleared for binding
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quote'
+        '404':
+          description: Unknown quote
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: Quote is not referred, or is expired and must be re-rated first
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+  /quotes/{quoteId}/bind:
+    post:
+      operationId: bindQuote
+      tags: [quotes]
+      summary: Bind a rated, unexpired quote and issue the policy (lifecycle step 5)
+      parameters:
+        - $ref: '#/components/parameters/QuoteId'
+      responses:
+        '200':
+          description: Policy issued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Quote'
+        '404':
+          description: Unknown quote
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+        '409':
+          description: >
+            Quote cannot be bound - not rated yet, declined, expired (re-rate first),
+            referred without approval, or already bound
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+components:
+  parameters:
+    QuoteId:
+      name: quoteId
+      in: path
+      required: true
+      schema:
+        type: string
+  schemas:
+    Clock:
+      type: object
+      required: [today]
+      properties:
+        today:
+          type: string
+          format: date
+          description: The observation date, yyyy-mm-dd
+    Submission:
+      type: object
+      description: The quote submission data dictionary (guide section 2)
+      required:
+        - territory
+        - vans
+        - lightTrucks
+        - heavyTrucks
+        - avgExperience
+        - safetyProgram
+        - claimsCount
+        - hazmatCargo
+        - youngestDriverAge
+        - outOfStateOperations
+      properties:
+        territory:
+          type: string
+          enum: [urban, suburban, rural]
+        vans:
+          type: integer
+          minimum: 0
+          maximum: 25
+        lightTrucks:
+          type: integer
+          minimum: 0
+          maximum: 25
+        heavyTrucks:
+          type: integer
+          minimum: 0
+          maximum: 25
+        avgExperience:
+          type: integer
+          minimum: 0
+          maximum: 30
+        safetyProgram:
+          type: boolean
+        claimsCount:
+          type: integer
+          minimum: 0
+          maximum: 6
+        hazmatCargo:
+          type: boolean
+        youngestDriverAge:
+          type: integer
+          minimum: 18
+          maximum: 70
+        outOfStateOperations:
+          type: boolean
+    Quote:
+      type: object
+      required: [id, status, submission]
+      properties:
+        id:
+          type: string
+        status:
+          type: string
+          enum: [submitted, rated, referred, approved, declined, bound]
+        submission:
+          $ref: '#/components/schemas/Submission'
+        premium:
+          type: number
+          nullable: true
+          description: Final premium in dollars, null until rated and always null when declined
+        reason:
+          type: string
+          nullable: true
+          description: Decline reason when status is declined
+        ratingDate:
+          type: string
+          format: date
+          nullable: true
+          description: Stamped when the quote is rated; a quote is valid 60 days from this date
+        policyNumber:
+          type: string
+          nullable: true
+          description: Issued when the quote is bound
+    Error:
+      type: object
+      required: [error, message]
+      properties:
+        error:
+          type: string
+        message:
+          type: string

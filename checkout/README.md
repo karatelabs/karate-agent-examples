@@ -66,6 +66,12 @@ java -jar karate-agent-2.1.3.RC1.jar launch contract.karate.js
 # the full e2e lane — the real consumer through its real dependency:
 java -cp servers/classes io.karatelabs.examples.checkout.CheckoutServer 8080 http://localhost:8090 &
 java -Dcheckout.url=http://localhost:8080 -jar karate-agent-2.1.3.RC1.jar launch suite.karate.js
+
+# the resilience lane — the mock told to MISBEHAVE, grading checkout itself (expect red — see below).
+# NOTE: stop the e2e lane's CheckoutServer first — it holds :8080 (kill %1);
+# a leftover e2e checkout still points at the REAL provider, so no fault would ever reach it:
+java -cp servers/classes io.karatelabs.examples.checkout.CheckoutServer 8080 http://localhost:8091 &
+java -jar karate-agent-2.1.3.RC1.jar launch resilience.karate.js
 ```
 
 ## What the pair will find — three teaching moments, all deliberate
@@ -89,6 +95,45 @@ java -Dcheckout.url=http://localhost:8080 -jar karate-agent-2.1.3.RC1.jar launch
 And in the everyday report (`suite.karate.js`), every covered payments operation reads
 **`mockOnly: true`** — the coverage graph disclosing that only our own stand-in ever answered the
 dependency. That disclosure is exactly the debt the paired run pays off.
+
+## The resilience lane — the same mock, told to misbehave
+
+The paired run proves the mock *faithful*; the resilience lane turns that same artifact into an
+adversary. `resilience.karate.js` serves `mock/payments-mock.feature` with the **frozen fault deck**
+(`mutation/fault-manifest.json`): a payments 500, a connection that dies mid-request, a 2.5-second
+stall, an approval missing its `id`. Each scenario of `checks/payments-resilience.feature` **arms one
+fault** over the mock's own control endpoint (`POST <mock>/__karate/fault {id}` — plain HTTP, so a curl
+works too — only `{id: '<fault id>'}` arms and `{id: null}` disarms; anything else is refused), drives
+the **real checkout service** through it, and judges the consumer. Every tampered response is stamped
+`Karate-Mutant: <fault id>` — except the connection-reset fault, which sends nothing on the wire and is
+attributed in the served log instead — and the served log ties each fault to the calls it hit. The
+fault-armed mock binds **loopback only** by default: its control endpoint is unauthenticated, so
+reaching it from another machine requires an explicit `host` opt-in.
+
+**The verdicts are authored, never derived** — each assertion is this team's statement of what
+resilient looks like, so a fault checkout *tolerates* is a **pass**, and a red is a **finding about
+checkout**. This kit carries **two deliberate findings** — do not "fix" `CheckoutServer.java` to hide
+them, they are the demo:
+
+1. **No timeout on the dependency call.** Checkout's payments client waits forever, so a stalled
+   provider stalls every order (the 2.5s stall breaches the authored two-second budget — and a provider
+   that never answered would hang checkout indefinitely).
+2. **A CONFIRMED order with no payment reference.** When the provider's answer is missing its `id`,
+   checkout records the order as `CONFIRMED` with `paymentId: null` — an order it can never reconcile,
+   refund, or audit.
+
+No pact-style artifact could express either: a pact file records happy interactions and carries no
+fault deck, and broker-side contract comparison never *executes* the consumer at all. One artifact —
+the dependency's mock — now proves fidelity (the pair) **and** grades resilience (the fault feed).
+
+Two rails, both deliberate: fault-fed runs are **instrument runs** — the backend is deliberately
+broken, so nothing in them is evidence about the system. The quarantine is the launcher's job:
+`resilience.karate.js` writes under `target/resilience`, never `runs/`, which is what keeps the seeded
+failures out of readiness and the RTM — keep that output choice if you adapt the lane (the `CHK-003`
+criteria read as exercised in the resilience run's *own*
+report, which is exactly where evidence gathered against a sabotaged dependency belongs). And nothing
+here is a *mutation score* — grading your suite's oracles is the mutation lane; grading **your
+service** against a misbehaving dependency is this one, and the two numbers never mix.
 
 ## This is consumer-driven contract testing — without the ceremony
 

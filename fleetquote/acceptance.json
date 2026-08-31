@@ -1,0 +1,275 @@
+{
+  "rows": [
+    {
+      "id": "NEW",
+      "kind": "state",
+      "state": "NEW"
+    },
+    {
+      "id": "SUBMITTED",
+      "kind": "state",
+      "state": "SUBMITTED"
+    },
+    {
+      "id": "QUOTED",
+      "kind": "state",
+      "state": "QUOTED"
+    },
+    {
+      "id": "REFERRED",
+      "kind": "state",
+      "state": "REFERRED"
+    },
+    {
+      "id": "APPROVED",
+      "kind": "state",
+      "state": "APPROVED"
+    },
+    {
+      "id": "DECLINED",
+      "kind": "state",
+      "state": "DECLINED"
+    },
+    {
+      "id": "EXPIRED",
+      "kind": "state",
+      "state": "EXPIRED"
+    },
+    {
+      "id": "BOUND",
+      "kind": "state",
+      "state": "BOUND"
+    },
+    {
+      "id": "T01",
+      "kind": "transition",
+      "from": "NEW",
+      "to": "SUBMITTED",
+      "operation": "submit"
+    },
+    {
+      "id": "T02",
+      "kind": "transition",
+      "from": "SUBMITTED",
+      "to": "QUOTED",
+      "operation": "rate"
+    },
+    {
+      "id": "T03",
+      "kind": "transition",
+      "from": "SUBMITTED",
+      "to": "REFERRED",
+      "operation": "rate"
+    },
+    {
+      "id": "T04",
+      "kind": "transition",
+      "from": "SUBMITTED",
+      "to": "DECLINED",
+      "operation": "rate"
+    },
+    {
+      "id": "T05",
+      "kind": "transition",
+      "from": "SUBMITTED",
+      "to": "DECLINED",
+      "operation": "rate"
+    },
+    {
+      "id": "T06",
+      "kind": "transition",
+      "from": "SUBMITTED",
+      "to": "DECLINED",
+      "operation": "rate"
+    },
+    {
+      "id": "T07",
+      "kind": "transition",
+      "from": "SUBMITTED",
+      "to": "QUOTED",
+      "operation": "rate"
+    },
+    {
+      "id": "T08",
+      "kind": "transition",
+      "from": "SUBMITTED",
+      "to": "DECLINED",
+      "operation": "rate"
+    },
+    {
+      "id": "T09",
+      "kind": "transition",
+      "from": "QUOTED",
+      "to": "BOUND",
+      "operation": "bind"
+    },
+    {
+      "id": "T10",
+      "kind": "transition",
+      "from": "REFERRED",
+      "to": "APPROVED",
+      "operation": "approve"
+    },
+    {
+      "id": "T11",
+      "kind": "transition",
+      "from": "APPROVED",
+      "to": "BOUND",
+      "operation": "bind"
+    },
+    {
+      "id": "T12",
+      "kind": "transition",
+      "from": "QUOTED",
+      "to": "EXPIRED",
+      "operation": "observeAsOf"
+    },
+    {
+      "id": "T13",
+      "kind": "transition",
+      "from": "REFERRED",
+      "to": "EXPIRED",
+      "operation": "observeAsOf"
+    },
+    {
+      "id": "T14",
+      "kind": "transition",
+      "from": "APPROVED",
+      "to": "EXPIRED",
+      "operation": "observeAsOf"
+    },
+    {
+      "id": "T15",
+      "kind": "transition",
+      "from": "EXPIRED",
+      "to": "QUOTED",
+      "operation": "rate"
+    },
+    {
+      "id": "T16",
+      "kind": "transition",
+      "from": "EXPIRED",
+      "to": "REFERRED",
+      "operation": "rate"
+    },
+    {
+      "id": "T17",
+      "kind": "transition",
+      "from": "QUOTED",
+      "to": "BOUND",
+      "operation": "bind"
+    },
+    {
+      "id": "T18",
+      "kind": "transition",
+      "from": "QUOTED",
+      "to": "BOUND",
+      "operation": "bind",
+      "args": {
+        "day": 60
+      }
+    },
+    {
+      "id": "J01",
+      "kind": "rejection",
+      "from": "NEW",
+      "operation": "submit",
+      "reason": "a submission with no vehicles at all is not a quotable risk and must be rejected as invalid input"
+    },
+    {
+      "id": "J02",
+      "kind": "rejection",
+      "from": "SUBMITTED",
+      "operation": "bind",
+      "reason": "only a rated, unexpired quote may be bound — this quote has not been rated"
+    },
+    {
+      "id": "J03",
+      "kind": "rejection",
+      "from": "DECLINED",
+      "operation": "bind",
+      "reason": "a declined quote is terminal — it cannot be bound"
+    },
+    {
+      "id": "J04",
+      "kind": "rejection",
+      "from": "DECLINED",
+      "operation": "rate",
+      "reason": "a declined quote is terminal — it cannot be re-rated"
+    },
+    {
+      "id": "J05",
+      "kind": "rejection",
+      "from": "REFERRED",
+      "operation": "bind",
+      "reason": "a referred quote may be bound only after approval"
+    },
+    {
+      "id": "J06",
+      "kind": "rejection",
+      "from": "EXPIRED",
+      "operation": "bind",
+      "reason": "the quote is expired and must be re-rated before any further action"
+    },
+    {
+      "id": "J07",
+      "kind": "rejection",
+      "from": "EXPIRED",
+      "operation": "approve",
+      "reason": "the quote is expired; any further action includes underwriter approval, so it must be re-rated first"
+    },
+    {
+      "id": "J08",
+      "kind": "rejection",
+      "from": "EXPIRED",
+      "operation": "bind",
+      "world": {
+        "status": "APPROVED"
+      },
+      "reason": "approval does not survive expiry — validity runs from the rating date"
+    },
+    {
+      "id": "J09",
+      "kind": "rejection",
+      "from": "BOUND",
+      "operation": "bind",
+      "reason": "a quote that is already bound cannot be bound again"
+    },
+    {
+      "id": "J10",
+      "kind": "rejection",
+      "from": "BOUND",
+      "operation": "rate",
+      "reason": "a bound quote is no longer re-rated"
+    },
+    {
+      "id": "J11",
+      "kind": "rejection",
+      "from": "BOUND",
+      "operation": "bind",
+      "reason": "refused — a bound quote cannot be bound again"
+    },
+    {
+      "id": "J12",
+      "kind": "rejection",
+      "from": "SUBMITTED",
+      "operation": "approve",
+      "reason": "the quote was never referred — there is nothing to approve"
+    },
+    {
+      "id": "J13",
+      "kind": "rejection",
+      "from": "QUOTED",
+      "operation": "approve",
+      "reason": "the quote was never referred — there is nothing to approve"
+    },
+    {
+      "id": "J14",
+      "kind": "rejection",
+      "from": "DECLINED",
+      "operation": "approve",
+      "reason": "a declined quote is terminal and was never referred — there is nothing to approve"
+    }
+  ],
+  "sha": "ac56d7e5835f1bc690877fedd14c9c7c29088263b4e987f8f5a0e2462f52f7bd"
+}

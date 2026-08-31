@@ -38,4 +38,4 @@ Feature: rating acceptance — the saved scenarios, LIVE against the /quotes API
     * check.verify(true, 'live /quotes matches the rulebook')
 
     Examples:
-      | read('../rulebooks/rating/scenarios.json') |
+      | Rule.load('rating').scenarios |

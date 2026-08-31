@@ -1,0 +1,2012 @@
+{
+  "version": 1,
+  "provenance": {
+    "twin": "aebe0325757ce7043586c487f1e95b034a9fdcea126c71827a5d450237bd6894",
+    "calc": "307c624675907b517b850d4178ca5c9748a2f9a5582c44eb4718220bdf2e0693",
+    "schema": "11542e54bab7eda5c46dfbda410cdbeda6704c5536c0464c8c18e68dd294ce23",
+    "generator": "031582391201658b9fbb84edbea331338074d532968e8a7d32d0c8f712108792"
+  },
+  "sequences": [
+    {
+      "_id": "seq-new",
+      "_label": "NEW witness",
+      "_from": {
+        "kind": "explore",
+        "walk": "a5adeacab198be2945076ba621bf51ab05834342b393a30bec315b55a7b559b4",
+        "plan": {
+          "depth": {
+            "default": 12
+          },
+          "levels": {
+          },
+          "focus": [
+          ]
+        },
+        "planSha": "5dab244943f0d6f89a97e65124d8a4a74278950d0336398b5acb900c7a73677c",
+        "required": "NEW",
+        "requiredSha": "d8bf591f783158a677a2d6dba46849dabd5d398bf3aaa5ad67c1c899a9d3fbcd"
+      },
+      "steps": [
+      ]
+    },
+    {
+      "_id": "seq-submitted",
+      "_label": "SUBMITTED witness",
+      "_from": {
+        "kind": "explore",
+        "walk": "a5adeacab198be2945076ba621bf51ab05834342b393a30bec315b55a7b559b4",
+        "plan": {
+          "depth": {
+            "default": 12
+          },
+          "levels": {
+          },
+          "focus": [
+          ]
+        },
+        "planSha": "5dab244943f0d6f89a97e65124d8a4a74278950d0336398b5acb900c7a73677c",
+        "required": "SUBMITTED",
+        "requiredSha": "d8bf591f783158a677a2d6dba46849dabd5d398bf3aaa5ad67c1c899a9d3fbcd"
+      },
+      "steps": [
+        {
+          "command": "submit",
+          "args": {
+            "label": "rated",
+            "territory": "suburban",
+            "vans": 1,
+            "lightTrucks": 0,
+            "heavyTrucks": 0,
+            "avgExperience": 5,
+            "safetyProgram": false,
+            "claimsCount": 0,
+            "hazmatCargo": false,
+            "youngestDriverAge": 30,
+            "outOfStateOperations": false
+          }
+        }
+      ]
+    },
+    {
+      "_id": "seq-quoted",
+      "_label": "QUOTED witness",
+      "_from": {
+        "kind": "explore",
+        "walk": "a5adeacab198be2945076ba621bf51ab05834342b393a30bec315b55a7b559b4",
+        "plan": {
+          "depth": {
+            "default": 12
+          },
+          "levels": {
+          },
+          "focus": [
+          ]
+        },
+        "planSha": "5dab244943f0d6f89a97e65124d8a4a74278950d0336398b5acb900c7a73677c",
+        "required": "QUOTED",
+        "requiredSha": "d8bf591f783158a677a2d6dba46849dabd5d398bf3aaa5ad67c1c899a9d3fbcd"
+      },
+      "steps": [
+        {
+          "command": "submit",
+          "args": {
+            "label": "rated",
+            "territory": "suburban",
+            "vans": 1,
+            "lightTrucks": 0,
+            "heavyTrucks": 0,
+            "avgExperience": 5,
+            "safetyProgram": false,
+            "claimsCount": 0,
+            "hazmatCargo": false,
+            "youngestDriverAge": 30,
+            "outOfStateOperations": false
+          }
+        },
+        {
+          "command": "rate",
+          "args": {
+          }
+        }
+      ]
+    },
+    {
+      "_id": "seq-referred",
+      "_label": "REFERRED witness",
+      "_from": {
+        "kind": "explore",
+        "walk": "a5adeacab198be2945076ba621bf51ab05834342b393a30bec315b55a7b559b4",
+        "plan": {
+          "depth": {
+            "default": 12
+          },
+          "levels": {
+          },
+          "focus": [
+          ]
+        },
+        "planSha": "5dab244943f0d6f89a97e65124d8a4a74278950d0336398b5acb900c7a73677c",
+        "required": "REFERRED",
+        "requiredSha": "d8bf591f783158a677a2d6dba46849dabd5d398bf3aaa5ad67c1c899a9d3fbcd"
+      },
+      "steps": [
+        {
+          "command": "submit",
+          "args": {
+            "label": "referred",
+            "territory": "urban",
+            "vans": 0,
+            "lightTrucks": 0,
+            "heavyTrucks": 20,
+            "avgExperience": 5,
+            "safetyProgram": false,
+            "claimsCount": 0,
+            "hazmatCargo": false,
+            "youngestDriverAge": 40,
+            "outOfStateOperations": false
+          }
+        },
+        {
+          "command": "rate",
+          "args": {
+          }
+        }
+      ]
+    },
+    {
+      "_id": "seq-approved",
+      "_label": "APPROVED witness",
+      "_from": {
+        "kind": "explore",
+        "walk": "a5adeacab198be2945076ba621bf51ab05834342b393a30bec315b55a7b559b4",
+        "plan": {
+          "depth": {
+            "default": 12
+          },
+          "levels": {
+          },
+          "focus": [
+          ]
+        },
+        "planSha": "5dab244943f0d6f89a97e65124d8a4a74278950d0336398b5acb900c7a73677c",
+        "required": "APPROVED",
+        "requiredSha": "d8bf591f783158a677a2d6dba46849dabd5d398bf3aaa5ad67c1c899a9d3fbcd"
+      },
+      "steps": [
+        {
+          "command": "submit",
+          "args": {
+            "label": "referred",
+            "territory": "urban",
+            "vans": 0,
+            "lightTrucks": 0,
+            "heavyTrucks": 20,
+            "avgExperience": 5,
+            "safetyProgram": false,
+            "claimsCount": 0,
+            "hazmatCargo": false,
+            "youngestDriverAge": 40,
+            "outOfStateOperations": false
+          }
+        },
+        {
+          "command": "rate",
+          "args": {
+          }
+        },
+        {
+          "command": "approve",
+          "args": {
+          }
+        }
+      ]
+    },
+    {
+      "_id": "seq-declined",
+      "_label": "DECLINED witness",
+      "_from": {
+        "kind": "explore",
+        "walk": "a5adeacab198be2945076ba621bf51ab05834342b393a30bec315b55a7b559b4",
+        "plan": {
+          "depth": {
+            "default": 12
+          },
+          "levels": {
+          },
+          "focus": [
+          ]
+        },
+        "planSha": "5dab244943f0d6f89a97e65124d8a4a74278950d0336398b5acb900c7a73677c",
+        "required": "DECLINED",
+        "requiredSha": "d8bf591f783158a677a2d6dba46849dabd5d398bf3aaa5ad67c1c899a9d3fbcd"
+      },
+      "steps": [
+        {
+          "command": "submit",
+          "args": {
+            "label": "declined-young-driver",
+            "territory": "suburban",
+            "vans": 2,
+            "lightTrucks": 0,
+            "heavyTrucks": 0,
+            "avgExperience": 5,
+            "safetyProgram": false,
+            "claimsCount": 0,
+            "hazmatCargo": false,
+            "youngestDriverAge": 23,
+            "outOfStateOperations": false
+          }
+        },
+        {
+          "command": "rate",
+          "args": {
+          }
+        }
+      ]
+    },
+    {
+      "_id": "seq-expired",
+      "_label": "EXPIRED witness",
+      "_from": {
+        "kind": "explore",
+        "walk": "a5adeacab198be2945076ba621bf51ab05834342b393a30bec315b55a7b559b4",
+        "plan": {
+          "depth": {
+            "default": 12
+          },
+          "levels": {
+          },
+          "focus": [
+          ]
+        },
+        "planSha": "5dab244943f0d6f89a97e65124d8a4a74278950d0336398b5acb900c7a73677c",
+        "required": "EXPIRED",
+        "requiredSha": "d8bf591f783158a677a2d6dba46849dabd5d398bf3aaa5ad67c1c899a9d3fbcd"
+      },
+      "steps": [
+        {
+          "command": "submit",
+          "args": {
+            "label": "rated",
+            "territory": "suburban",
+            "vans": 1,
+            "lightTrucks": 0,
+            "heavyTrucks": 0,
+            "avgExperience": 5,
+            "safetyProgram": false,
+            "claimsCount": 0,
+            "hazmatCargo": false,
+            "youngestDriverAge": 30,
+            "outOfStateOperations": false
+          }
+        },
+        {
+          "command": "rate",
+          "args": {
+          }
+        },
+        {
+          "command": "observeAsOf",
+          "args": {
+            "day": 61
+          }
+        }
+      ]
+    },
+    {
+      "_id": "seq-bound",
+      "_label": "BOUND witness",
+      "_from": {
+        "kind": "explore",
+        "walk": "a5adeacab198be2945076ba621bf51ab05834342b393a30bec315b55a7b559b4",
+        "plan": {
+          "depth": {
+            "default": 12
+          },
+          "levels": {
+          },
+          "focus": [
+          ]
+        },
+        "planSha": "5dab244943f0d6f89a97e65124d8a4a74278950d0336398b5acb900c7a73677c",
+        "required": "BOUND",
+        "requiredSha": "d8bf591f783158a677a2d6dba46849dabd5d398bf3aaa5ad67c1c899a9d3fbcd"
+      },
+      "steps": [
+        {
+          "command": "submit",
+          "args": {
+            "label": "rated",
+            "territory": "suburban",
+            "vans": 1,
+            "lightTrucks": 0,
+            "heavyTrucks": 0,
+            "avgExperience": 5,
+            "safetyProgram": false,
+            "claimsCount": 0,
+            "hazmatCargo": false,
+            "youngestDriverAge": 30,
+            "outOfStateOperations": false
+          }
+        },
+        {
+          "command": "rate",
+          "args": {
+          }
+        },
+        {
+          "command": "bind",
+          "args": {
+          }
+        }
+      ]
+    },
+    {
+      "_id": "seq-t01",
+      "_label": "T01 witness",
+      "_from": {
+        "kind": "explore",
+        "walk": "a5adeacab198be2945076ba621bf51ab05834342b393a30bec315b55a7b559b4",
+        "plan": {
+          "depth": {
+            "default": 12
+          },
+          "levels": {
+          },
+          "focus": [
+          ]
+        },
+        "planSha": "5dab244943f0d6f89a97e65124d8a4a74278950d0336398b5acb900c7a73677c",
+        "required": "T01",
+        "requiredSha": "d8bf591f783158a677a2d6dba46849dabd5d398bf3aaa5ad67c1c899a9d3fbcd"
+      },
+      "steps": [
+        {
+          "command": "submit",
+          "args": {
+            "label": "rated",
+            "territory": "suburban",
+            "vans": 1,
+            "lightTrucks": 0,
+            "heavyTrucks": 0,
+            "avgExperience": 5,
+            "safetyProgram": false,
+            "claimsCount": 0,
+            "hazmatCargo": false,
+            "youngestDriverAge": 30,
+            "outOfStateOperations": false
+          }
+        }
+      ]
+    },
+    {
+      "_id": "seq-t02",
+      "_label": "T02 witness",
+      "_from": {
+        "kind": "explore",
+        "walk": "a5adeacab198be2945076ba621bf51ab05834342b393a30bec315b55a7b559b4",
+        "plan": {
+          "depth": {
+            "default": 12
+          },
+          "levels": {
+          },
+          "focus": [
+          ]
+        },
+        "planSha": "5dab244943f0d6f89a97e65124d8a4a74278950d0336398b5acb900c7a73677c",
+        "required": "T02",
+        "requiredSha": "d8bf591f783158a677a2d6dba46849dabd5d398bf3aaa5ad67c1c899a9d3fbcd"
+      },
+      "steps": [
+        {
+          "command": "submit",
+          "args": {
+            "label": "rated",
+            "territory": "suburban",
+            "vans": 1,
+            "lightTrucks": 0,
+            "heavyTrucks": 0,
+            "avgExperience": 5,
+            "safetyProgram": false,
+            "claimsCount": 0,
+            "hazmatCargo": false,
+            "youngestDriverAge": 30,
+            "outOfStateOperations": false
+          }
+        },
+        {
+          "command": "rate",
+          "args": {
+          }
+        }
+      ]
+    },
+    {
+      "_id": "seq-t03",
+      "_label": "T03 witness",
+      "_from": {
+        "kind": "explore",
+        "walk": "a5adeacab198be2945076ba621bf51ab05834342b393a30bec315b55a7b559b4",
+        "plan": {
+          "depth": {
+            "default": 12
+          },
+          "levels": {
+          },
+          "focus": [
+          ]
+        },
+        "planSha": "5dab244943f0d6f89a97e65124d8a4a74278950d0336398b5acb900c7a73677c",
+        "required": "T03",
+        "requiredSha": "d8bf591f783158a677a2d6dba46849dabd5d398bf3aaa5ad67c1c899a9d3fbcd"
+      },
+      "steps": [
+        {
+          "command": "submit",
+          "args": {
+            "label": "referred",
+            "territory": "urban",
+            "vans": 0,
+            "lightTrucks": 0,
+            "heavyTrucks": 20,
+            "avgExperience": 5,
+            "safetyProgram": false,
+            "claimsCount": 0,
+            "hazmatCargo": false,
+            "youngestDriverAge": 40,
+            "outOfStateOperations": false
+          }
+        },
+        {
+          "command": "rate",
+          "args": {
+          }
+        }
+      ]
+    },
+    {
+      "_id": "seq-t04",
+      "_label": "T04 witness",
+      "_from": {
+        "kind": "explore",
+        "walk": "a5adeacab198be2945076ba621bf51ab05834342b393a30bec315b55a7b559b4",
+        "plan": {
+          "depth": {
+            "default": 12
+          },
+          "levels": {
+          },
+          "focus": [
+          ]
+        },
+        "planSha": "5dab244943f0d6f89a97e65124d8a4a74278950d0336398b5acb900c7a73677c",
+        "required": "T04",
+        "requiredSha": "d8bf591f783158a677a2d6dba46849dabd5d398bf3aaa5ad67c1c899a9d3fbcd"
+      },
+      "steps": [
+        {
+          "command": "submit",
+          "args": {
+            "label": "declined-young-driver",
+            "territory": "suburban",
+            "vans": 2,
+            "lightTrucks": 0,
+            "heavyTrucks": 0,
+            "avgExperience": 5,
+            "safetyProgram": false,
+            "claimsCount": 0,
+            "hazmatCargo": false,
+            "youngestDriverAge": 23,
+            "outOfStateOperations": false
+          }
+        },
+        {
+          "command": "rate",
+          "args": {
+          }
+        }
+      ]
+    },
+    {
+      "_id": "seq-t05",
+      "_label": "T05 witness",
+      "_from": {
+        "kind": "explore",
+        "walk": "a5adeacab198be2945076ba621bf51ab05834342b393a30bec315b55a7b559b4",
+        "plan": {
+          "depth": {
+            "default": 12
+          },
+          "levels": {
+          },
+          "focus": [
+          ]
+        },
+        "planSha": "5dab244943f0d6f89a97e65124d8a4a74278950d0336398b5acb900c7a73677c",
+        "required": "T05",
+        "requiredSha": "d8bf591f783158a677a2d6dba46849dabd5d398bf3aaa5ad67c1c899a9d3fbcd"
+      },
+      "steps": [
+        {
+          "command": "submit",
+          "args": {
+            "label": "declined-young-driver",
+            "territory": "suburban",
+            "vans": 2,
+            "lightTrucks": 0,
+            "heavyTrucks": 0,
+            "avgExperience": 5,
+            "safetyProgram": false,
+            "claimsCount": 0,
+            "hazmatCargo": false,
+            "youngestDriverAge": 23,
+            "outOfStateOperations": false
+          }
+        },
+        {
+          "command": "rate",
+          "args": {
+          }
+        }
+      ]
+    },
+    {
+      "_id": "seq-t06",
+      "_label": "T06 witness",
+      "_from": {
+        "kind": "explore",
+        "walk": "a5adeacab198be2945076ba621bf51ab05834342b393a30bec315b55a7b559b4",
+        "plan": {
+          "depth": {
+            "default": 12
+          },
+          "levels": {
+          },
+          "focus": [
+          ]
+        },
+        "planSha": "5dab244943f0d6f89a97e65124d8a4a74278950d0336398b5acb900c7a73677c",
+        "required": "T06",
+        "requiredSha": "d8bf591f783158a677a2d6dba46849dabd5d398bf3aaa5ad67c1c899a9d3fbcd"
+      },
+      "steps": [
+        {
+          "command": "submit",
+          "args": {
+            "label": "declined-young-driver",
+            "territory": "suburban",
+            "vans": 2,
+            "lightTrucks": 0,
+            "heavyTrucks": 0,
+            "avgExperience": 5,
+            "safetyProgram": false,
+            "claimsCount": 0,
+            "hazmatCargo": false,
+            "youngestDriverAge": 23,
+            "outOfStateOperations": false
+          }
+        },
+        {
+          "command": "rate",
+          "args": {
+          }
+        }
+      ]
+    },
+    {
+      "_id": "seq-t07",
+      "_label": "T07 witness",
+      "_from": {
+        "kind": "explore",
+        "walk": "a5adeacab198be2945076ba621bf51ab05834342b393a30bec315b55a7b559b4",
+        "plan": {
+          "depth": {
+            "default": 12
+          },
+          "levels": {
+          },
+          "focus": [
+          ]
+        },
+        "planSha": "5dab244943f0d6f89a97e65124d8a4a74278950d0336398b5acb900c7a73677c",
+        "required": "T07",
+        "requiredSha": "d8bf591f783158a677a2d6dba46849dabd5d398bf3aaa5ad67c1c899a9d3fbcd"
+      },
+      "steps": [
+        {
+          "command": "submit",
+          "args": {
+            "label": "rated",
+            "territory": "suburban",
+            "vans": 1,
+            "lightTrucks": 0,
+            "heavyTrucks": 0,
+            "avgExperience": 5,
+            "safetyProgram": false,
+            "claimsCount": 0,
+            "hazmatCargo": false,
+            "youngestDriverAge": 30,
+            "outOfStateOperations": false
+          }
+        },
+        {
+          "command": "rate",
+          "args": {
+          }
+        }
+      ]
+    },
+    {
+      "_id": "seq-t08",
+      "_label": "T08 witness",
+      "_from": {
+        "kind": "explore",
+        "walk": "a5adeacab198be2945076ba621bf51ab05834342b393a30bec315b55a7b559b4",
+        "plan": {
+          "depth": {
+            "default": 12
+          },
+          "levels": {
+          },
+          "focus": [
+          ]
+        },
+        "planSha": "5dab244943f0d6f89a97e65124d8a4a74278950d0336398b5acb900c7a73677c",
+        "required": "T08",
+        "requiredSha": "d8bf591f783158a677a2d6dba46849dabd5d398bf3aaa5ad67c1c899a9d3fbcd"
+      },
+      "steps": [
+        {
+          "command": "submit",
+          "args": {
+            "label": "declined-young-driver",
+            "territory": "suburban",
+            "vans": 2,
+            "lightTrucks": 0,
+            "heavyTrucks": 0,
+            "avgExperience": 5,
+            "safetyProgram": false,
+            "claimsCount": 0,
+            "hazmatCargo": false,
+            "youngestDriverAge": 23,
+            "outOfStateOperations": false
+          }
+        },
+        {
+          "command": "rate",
+          "args": {
+          }
+        }
+      ]
+    },
+    {
+      "_id": "seq-t09",
+      "_label": "T09 witness",
+      "_from": {
+        "kind": "explore",
+        "walk": "a5adeacab198be2945076ba621bf51ab05834342b393a30bec315b55a7b559b4",
+        "plan": {
+          "depth": {
+            "default": 12
+          },
+          "levels": {
+          },
+          "focus": [
+          ]
+        },
+        "planSha": "5dab244943f0d6f89a97e65124d8a4a74278950d0336398b5acb900c7a73677c",
+        "required": "T09",
+        "requiredSha": "d8bf591f783158a677a2d6dba46849dabd5d398bf3aaa5ad67c1c899a9d3fbcd"
+      },
+      "steps": [
+        {
+          "command": "submit",
+          "args": {
+            "label": "rated",
+            "territory": "suburban",
+            "vans": 1,
+            "lightTrucks": 0,
+            "heavyTrucks": 0,
+            "avgExperience": 5,
+            "safetyProgram": false,
+            "claimsCount": 0,
+            "hazmatCargo": false,
+            "youngestDriverAge": 30,
+            "outOfStateOperations": false
+          }
+        },
+        {
+          "command": "rate",
+          "args": {
+          }
+        },
+        {
+          "command": "bind",
+          "args": {
+          }
+        }
+      ]
+    },
+    {
+      "_id": "seq-t10",
+      "_label": "T10 witness",
+      "_from": {
+        "kind": "explore",
+        "walk": "a5adeacab198be2945076ba621bf51ab05834342b393a30bec315b55a7b559b4",
+        "plan": {
+          "depth": {
+            "default": 12
+          },
+          "levels": {
+          },
+          "focus": [
+          ]
+        },
+        "planSha": "5dab244943f0d6f89a97e65124d8a4a74278950d0336398b5acb900c7a73677c",
+        "required": "T10",
+        "requiredSha": "d8bf591f783158a677a2d6dba46849dabd5d398bf3aaa5ad67c1c899a9d3fbcd"
+      },
+      "steps": [
+        {
+          "command": "submit",
+          "args": {
+            "label": "referred",
+            "territory": "urban",
+            "vans": 0,
+            "lightTrucks": 0,
+            "heavyTrucks": 20,
+            "avgExperience": 5,
+            "safetyProgram": false,
+            "claimsCount": 0,
+            "hazmatCargo": false,
+            "youngestDriverAge": 40,
+            "outOfStateOperations": false
+          }
+        },
+        {
+          "command": "rate",
+          "args": {
+          }
+        },
+        {
+          "command": "approve",
+          "args": {
+          }
+        }
+      ]
+    },
+    {
+      "_id": "seq-t11",
+      "_label": "T11 witness",
+      "_from": {
+        "kind": "explore",
+        "walk": "a5adeacab198be2945076ba621bf51ab05834342b393a30bec315b55a7b559b4",
+        "plan": {
+          "depth": {
+            "default": 12
+          },
+          "levels": {
+          },
+          "focus": [
+          ]
+        },
+        "planSha": "5dab244943f0d6f89a97e65124d8a4a74278950d0336398b5acb900c7a73677c",
+        "required": "T11",
+        "requiredSha": "d8bf591f783158a677a2d6dba46849dabd5d398bf3aaa5ad67c1c899a9d3fbcd"
+      },
+      "steps": [
+        {
+          "command": "submit",
+          "args": {
+            "label": "referred",
+            "territory": "urban",
+            "vans": 0,
+            "lightTrucks": 0,
+            "heavyTrucks": 20,
+            "avgExperience": 5,
+            "safetyProgram": false,
+            "claimsCount": 0,
+            "hazmatCargo": false,
+            "youngestDriverAge": 40,
+            "outOfStateOperations": false
+          }
+        },
+        {
+          "command": "rate",
+          "args": {
+          }
+        },
+        {
+          "command": "approve",
+          "args": {
+          }
+        },
+        {
+          "command": "bind",
+          "args": {
+          }
+        }
+      ]
+    },
+    {
+      "_id": "seq-t12",
+      "_label": "T12 witness",
+      "_from": {
+        "kind": "explore",
+        "walk": "a5adeacab198be2945076ba621bf51ab05834342b393a30bec315b55a7b559b4",
+        "plan": {
+          "depth": {
+            "default": 12
+          },
+          "levels": {
+          },
+          "focus": [
+          ]
+        },
+        "planSha": "5dab244943f0d6f89a97e65124d8a4a74278950d0336398b5acb900c7a73677c",
+        "required": "T12",
+        "requiredSha": "d8bf591f783158a677a2d6dba46849dabd5d398bf3aaa5ad67c1c899a9d3fbcd"
+      },
+      "steps": [
+        {
+          "command": "submit",
+          "args": {
+            "label": "rated",
+            "territory": "suburban",
+            "vans": 1,
+            "lightTrucks": 0,
+            "heavyTrucks": 0,
+            "avgExperience": 5,
+            "safetyProgram": false,
+            "claimsCount": 0,
+            "hazmatCargo": false,
+            "youngestDriverAge": 30,
+            "outOfStateOperations": false
+          }
+        },
+        {
+          "command": "rate",
+          "args": {
+          }
+        },
+        {
+          "command": "observeAsOf",
+          "args": {
+            "day": 61
+          }
+        }
+      ]
+    },
+    {
+      "_id": "seq-t13",
+      "_label": "T13 witness",
+      "_from": {
+        "kind": "explore",
+        "walk": "a5adeacab198be2945076ba621bf51ab05834342b393a30bec315b55a7b559b4",
+        "plan": {
+          "depth": {
+            "default": 12
+          },
+          "levels": {
+          },
+          "focus": [
+          ]
+        },
+        "planSha": "5dab244943f0d6f89a97e65124d8a4a74278950d0336398b5acb900c7a73677c",
+        "required": "T13",
+        "requiredSha": "d8bf591f783158a677a2d6dba46849dabd5d398bf3aaa5ad67c1c899a9d3fbcd"
+      },
+      "steps": [
+        {
+          "command": "submit",
+          "args": {
+            "label": "referred",
+            "territory": "urban",
+            "vans": 0,
+            "lightTrucks": 0,
+            "heavyTrucks": 20,
+            "avgExperience": 5,
+            "safetyProgram": false,
+            "claimsCount": 0,
+            "hazmatCargo": false,
+            "youngestDriverAge": 40,
+            "outOfStateOperations": false
+          }
+        },
+        {
+          "command": "rate",
+          "args": {
+          }
+        },
+        {
+          "command": "observeAsOf",
+          "args": {
+            "day": 61
+          }
+        }
+      ]
+    },
+    {
+      "_id": "seq-t14",
+      "_label": "T14 witness",
+      "_from": {
+        "kind": "explore",
+        "walk": "a5adeacab198be2945076ba621bf51ab05834342b393a30bec315b55a7b559b4",
+        "plan": {
+          "depth": {
+            "default": 12
+          },
+          "levels": {
+          },
+          "focus": [
+          ]
+        },
+        "planSha": "5dab244943f0d6f89a97e65124d8a4a74278950d0336398b5acb900c7a73677c",
+        "required": "T14",
+        "requiredSha": "d8bf591f783158a677a2d6dba46849dabd5d398bf3aaa5ad67c1c899a9d3fbcd"
+      },
+      "steps": [
+        {
+          "command": "submit",
+          "args": {
+            "label": "referred",
+            "territory": "urban",
+            "vans": 0,
+            "lightTrucks": 0,
+            "heavyTrucks": 20,
+            "avgExperience": 5,
+            "safetyProgram": false,
+            "claimsCount": 0,
+            "hazmatCargo": false,
+            "youngestDriverAge": 40,
+            "outOfStateOperations": false
+          }
+        },
+        {
+          "command": "rate",
+          "args": {
+          }
+        },
+        {
+          "command": "approve",
+          "args": {
+          }
+        },
+        {
+          "command": "observeAsOf",
+          "args": {
+            "day": 61
+          }
+        }
+      ]
+    },
+    {
+      "_id": "seq-t15",
+      "_label": "T15 witness",
+      "_from": {
+        "kind": "explore",
+        "walk": "a5adeacab198be2945076ba621bf51ab05834342b393a30bec315b55a7b559b4",
+        "plan": {
+          "depth": {
+            "default": 12
+          },
+          "levels": {
+          },
+          "focus": [
+          ]
+        },
+        "planSha": "5dab244943f0d6f89a97e65124d8a4a74278950d0336398b5acb900c7a73677c",
+        "required": "T15",
+        "requiredSha": "d8bf591f783158a677a2d6dba46849dabd5d398bf3aaa5ad67c1c899a9d3fbcd"
+      },
+      "steps": [
+        {
+          "command": "submit",
+          "args": {
+            "label": "rated",
+            "territory": "suburban",
+            "vans": 1,
+            "lightTrucks": 0,
+            "heavyTrucks": 0,
+            "avgExperience": 5,
+            "safetyProgram": false,
+            "claimsCount": 0,
+            "hazmatCargo": false,
+            "youngestDriverAge": 30,
+            "outOfStateOperations": false
+          }
+        },
+        {
+          "command": "rate",
+          "args": {
+          }
+        },
+        {
+          "command": "observeAsOf",
+          "args": {
+            "day": 61
+          }
+        },
+        {
+          "command": "rate",
+          "args": {
+          }
+        }
+      ]
+    },
+    {
+      "_id": "seq-t16",
+      "_label": "T16 witness",
+      "_from": {
+        "kind": "explore",
+        "walk": "a5adeacab198be2945076ba621bf51ab05834342b393a30bec315b55a7b559b4",
+        "plan": {
+          "depth": {
+            "default": 12
+          },
+          "levels": {
+          },
+          "focus": [
+          ]
+        },
+        "planSha": "5dab244943f0d6f89a97e65124d8a4a74278950d0336398b5acb900c7a73677c",
+        "required": "T16",
+        "requiredSha": "d8bf591f783158a677a2d6dba46849dabd5d398bf3aaa5ad67c1c899a9d3fbcd"
+      },
+      "steps": [
+        {
+          "command": "submit",
+          "args": {
+            "label": "referred",
+            "territory": "urban",
+            "vans": 0,
+            "lightTrucks": 0,
+            "heavyTrucks": 20,
+            "avgExperience": 5,
+            "safetyProgram": false,
+            "claimsCount": 0,
+            "hazmatCargo": false,
+            "youngestDriverAge": 40,
+            "outOfStateOperations": false
+          }
+        },
+        {
+          "command": "rate",
+          "args": {
+          }
+        },
+        {
+          "command": "observeAsOf",
+          "args": {
+            "day": 61
+          }
+        },
+        {
+          "command": "rate",
+          "args": {
+          }
+        }
+      ]
+    },
+    {
+      "_id": "seq-t17",
+      "_label": "T17 witness",
+      "_from": {
+        "kind": "explore",
+        "walk": "a5adeacab198be2945076ba621bf51ab05834342b393a30bec315b55a7b559b4",
+        "plan": {
+          "depth": {
+            "default": 12
+          },
+          "levels": {
+          },
+          "focus": [
+          ]
+        },
+        "planSha": "5dab244943f0d6f89a97e65124d8a4a74278950d0336398b5acb900c7a73677c",
+        "required": "T17",
+        "requiredSha": "d8bf591f783158a677a2d6dba46849dabd5d398bf3aaa5ad67c1c899a9d3fbcd"
+      },
+      "steps": [
+        {
+          "command": "submit",
+          "args": {
+            "label": "rated",
+            "territory": "suburban",
+            "vans": 1,
+            "lightTrucks": 0,
+            "heavyTrucks": 0,
+            "avgExperience": 5,
+            "safetyProgram": false,
+            "claimsCount": 0,
+            "hazmatCargo": false,
+            "youngestDriverAge": 30,
+            "outOfStateOperations": false
+          }
+        },
+        {
+          "command": "rate",
+          "args": {
+          }
+        },
+        {
+          "command": "bind",
+          "args": {
+          }
+        }
+      ]
+    },
+    {
+      "_id": "seq-j01",
+      "_label": "J01 witness",
+      "_from": {
+        "kind": "explore",
+        "walk": "a5adeacab198be2945076ba621bf51ab05834342b393a30bec315b55a7b559b4",
+        "plan": {
+          "depth": {
+            "default": 12
+          },
+          "levels": {
+          },
+          "focus": [
+          ]
+        },
+        "planSha": "5dab244943f0d6f89a97e65124d8a4a74278950d0336398b5acb900c7a73677c",
+        "required": "J01",
+        "requiredSha": "d8bf591f783158a677a2d6dba46849dabd5d398bf3aaa5ad67c1c899a9d3fbcd"
+      },
+      "steps": [
+        {
+          "command": "submit",
+          "args": {
+            "label": "no-vehicles",
+            "territory": "suburban",
+            "vans": 0,
+            "lightTrucks": 0,
+            "heavyTrucks": 0,
+            "avgExperience": 5,
+            "safetyProgram": false,
+            "claimsCount": 0,
+            "hazmatCargo": false,
+            "youngestDriverAge": 40,
+            "outOfStateOperations": false
+          }
+        }
+      ]
+    },
+    {
+      "_id": "seq-j02",
+      "_label": "J02 witness",
+      "_from": {
+        "kind": "explore",
+        "walk": "a5adeacab198be2945076ba621bf51ab05834342b393a30bec315b55a7b559b4",
+        "plan": {
+          "depth": {
+            "default": 12
+          },
+          "levels": {
+          },
+          "focus": [
+          ]
+        },
+        "planSha": "5dab244943f0d6f89a97e65124d8a4a74278950d0336398b5acb900c7a73677c",
+        "required": "J02",
+        "requiredSha": "d8bf591f783158a677a2d6dba46849dabd5d398bf3aaa5ad67c1c899a9d3fbcd"
+      },
+      "steps": [
+        {
+          "command": "submit",
+          "args": {
+            "label": "rated",
+            "territory": "suburban",
+            "vans": 1,
+            "lightTrucks": 0,
+            "heavyTrucks": 0,
+            "avgExperience": 5,
+            "safetyProgram": false,
+            "claimsCount": 0,
+            "hazmatCargo": false,
+            "youngestDriverAge": 30,
+            "outOfStateOperations": false
+          }
+        },
+        {
+          "command": "bind",
+          "args": {
+          }
+        }
+      ]
+    },
+    {
+      "_id": "seq-j03",
+      "_label": "J03 witness",
+      "_from": {
+        "kind": "explore",
+        "walk": "a5adeacab198be2945076ba621bf51ab05834342b393a30bec315b55a7b559b4",
+        "plan": {
+          "depth": {
+            "default": 12
+          },
+          "levels": {
+          },
+          "focus": [
+          ]
+        },
+        "planSha": "5dab244943f0d6f89a97e65124d8a4a74278950d0336398b5acb900c7a73677c",
+        "required": "J03",
+        "requiredSha": "d8bf591f783158a677a2d6dba46849dabd5d398bf3aaa5ad67c1c899a9d3fbcd"
+      },
+      "steps": [
+        {
+          "command": "submit",
+          "args": {
+            "label": "declined-young-driver",
+            "territory": "suburban",
+            "vans": 2,
+            "lightTrucks": 0,
+            "heavyTrucks": 0,
+            "avgExperience": 5,
+            "safetyProgram": false,
+            "claimsCount": 0,
+            "hazmatCargo": false,
+            "youngestDriverAge": 23,
+            "outOfStateOperations": false
+          }
+        },
+        {
+          "command": "rate",
+          "args": {
+          }
+        },
+        {
+          "command": "bind",
+          "args": {
+          }
+        }
+      ]
+    },
+    {
+      "_id": "seq-j04",
+      "_label": "J04 witness",
+      "_from": {
+        "kind": "explore",
+        "walk": "a5adeacab198be2945076ba621bf51ab05834342b393a30bec315b55a7b559b4",
+        "plan": {
+          "depth": {
+            "default": 12
+          },
+          "levels": {
+          },
+          "focus": [
+          ]
+        },
+        "planSha": "5dab244943f0d6f89a97e65124d8a4a74278950d0336398b5acb900c7a73677c",
+        "required": "J04",
+        "requiredSha": "d8bf591f783158a677a2d6dba46849dabd5d398bf3aaa5ad67c1c899a9d3fbcd"
+      },
+      "steps": [
+        {
+          "command": "submit",
+          "args": {
+            "label": "declined-young-driver",
+            "territory": "suburban",
+            "vans": 2,
+            "lightTrucks": 0,
+            "heavyTrucks": 0,
+            "avgExperience": 5,
+            "safetyProgram": false,
+            "claimsCount": 0,
+            "hazmatCargo": false,
+            "youngestDriverAge": 23,
+            "outOfStateOperations": false
+          }
+        },
+        {
+          "command": "rate",
+          "args": {
+          }
+        },
+        {
+          "command": "rate",
+          "args": {
+          }
+        }
+      ]
+    },
+    {
+      "_id": "seq-j05",
+      "_label": "J05 witness",
+      "_from": {
+        "kind": "explore",
+        "walk": "a5adeacab198be2945076ba621bf51ab05834342b393a30bec315b55a7b559b4",
+        "plan": {
+          "depth": {
+            "default": 12
+          },
+          "levels": {
+          },
+          "focus": [
+          ]
+        },
+        "planSha": "5dab244943f0d6f89a97e65124d8a4a74278950d0336398b5acb900c7a73677c",
+        "required": "J05",
+        "requiredSha": "d8bf591f783158a677a2d6dba46849dabd5d398bf3aaa5ad67c1c899a9d3fbcd"
+      },
+      "steps": [
+        {
+          "command": "submit",
+          "args": {
+            "label": "referred",
+            "territory": "urban",
+            "vans": 0,
+            "lightTrucks": 0,
+            "heavyTrucks": 20,
+            "avgExperience": 5,
+            "safetyProgram": false,
+            "claimsCount": 0,
+            "hazmatCargo": false,
+            "youngestDriverAge": 40,
+            "outOfStateOperations": false
+          }
+        },
+        {
+          "command": "rate",
+          "args": {
+          }
+        },
+        {
+          "command": "bind",
+          "args": {
+          }
+        }
+      ]
+    },
+    {
+      "_id": "seq-j06",
+      "_label": "J06 witness",
+      "_from": {
+        "kind": "explore",
+        "walk": "a5adeacab198be2945076ba621bf51ab05834342b393a30bec315b55a7b559b4",
+        "plan": {
+          "depth": {
+            "default": 12
+          },
+          "levels": {
+          },
+          "focus": [
+          ]
+        },
+        "planSha": "5dab244943f0d6f89a97e65124d8a4a74278950d0336398b5acb900c7a73677c",
+        "required": "J06",
+        "requiredSha": "d8bf591f783158a677a2d6dba46849dabd5d398bf3aaa5ad67c1c899a9d3fbcd"
+      },
+      "steps": [
+        {
+          "command": "submit",
+          "args": {
+            "label": "rated",
+            "territory": "suburban",
+            "vans": 1,
+            "lightTrucks": 0,
+            "heavyTrucks": 0,
+            "avgExperience": 5,
+            "safetyProgram": false,
+            "claimsCount": 0,
+            "hazmatCargo": false,
+            "youngestDriverAge": 30,
+            "outOfStateOperations": false
+          }
+        },
+        {
+          "command": "rate",
+          "args": {
+          }
+        },
+        {
+          "command": "observeAsOf",
+          "args": {
+            "day": 61
+          }
+        },
+        {
+          "command": "bind",
+          "args": {
+          }
+        }
+      ]
+    },
+    {
+      "_id": "seq-j07",
+      "_label": "J07 witness",
+      "_from": {
+        "kind": "explore",
+        "walk": "a5adeacab198be2945076ba621bf51ab05834342b393a30bec315b55a7b559b4",
+        "plan": {
+          "depth": {
+            "default": 12
+          },
+          "levels": {
+          },
+          "focus": [
+          ]
+        },
+        "planSha": "5dab244943f0d6f89a97e65124d8a4a74278950d0336398b5acb900c7a73677c",
+        "required": "J07",
+        "requiredSha": "d8bf591f783158a677a2d6dba46849dabd5d398bf3aaa5ad67c1c899a9d3fbcd"
+      },
+      "steps": [
+        {
+          "command": "submit",
+          "args": {
+            "label": "rated",
+            "territory": "suburban",
+            "vans": 1,
+            "lightTrucks": 0,
+            "heavyTrucks": 0,
+            "avgExperience": 5,
+            "safetyProgram": false,
+            "claimsCount": 0,
+            "hazmatCargo": false,
+            "youngestDriverAge": 30,
+            "outOfStateOperations": false
+          }
+        },
+        {
+          "command": "rate",
+          "args": {
+          }
+        },
+        {
+          "command": "observeAsOf",
+          "args": {
+            "day": 61
+          }
+        },
+        {
+          "command": "approve",
+          "args": {
+          }
+        }
+      ]
+    },
+    {
+      "_id": "seq-j08",
+      "_label": "J08 witness",
+      "_from": {
+        "kind": "explore",
+        "walk": "a5adeacab198be2945076ba621bf51ab05834342b393a30bec315b55a7b559b4",
+        "plan": {
+          "depth": {
+            "default": 12
+          },
+          "levels": {
+          },
+          "focus": [
+          ]
+        },
+        "planSha": "5dab244943f0d6f89a97e65124d8a4a74278950d0336398b5acb900c7a73677c",
+        "required": "J08",
+        "requiredSha": "d8bf591f783158a677a2d6dba46849dabd5d398bf3aaa5ad67c1c899a9d3fbcd"
+      },
+      "steps": [
+        {
+          "command": "submit",
+          "args": {
+            "label": "rated",
+            "territory": "suburban",
+            "vans": 1,
+            "lightTrucks": 0,
+            "heavyTrucks": 0,
+            "avgExperience": 5,
+            "safetyProgram": false,
+            "claimsCount": 0,
+            "hazmatCargo": false,
+            "youngestDriverAge": 30,
+            "outOfStateOperations": false
+          }
+        },
+        {
+          "command": "rate",
+          "args": {
+          }
+        },
+        {
+          "command": "observeAsOf",
+          "args": {
+            "day": 61
+          }
+        },
+        {
+          "command": "bind",
+          "args": {
+          }
+        }
+      ]
+    },
+    {
+      "_id": "seq-j09",
+      "_label": "J09 witness",
+      "_from": {
+        "kind": "explore",
+        "walk": "a5adeacab198be2945076ba621bf51ab05834342b393a30bec315b55a7b559b4",
+        "plan": {
+          "depth": {
+            "default": 12
+          },
+          "levels": {
+          },
+          "focus": [
+          ]
+        },
+        "planSha": "5dab244943f0d6f89a97e65124d8a4a74278950d0336398b5acb900c7a73677c",
+        "required": "J09",
+        "requiredSha": "d8bf591f783158a677a2d6dba46849dabd5d398bf3aaa5ad67c1c899a9d3fbcd"
+      },
+      "steps": [
+        {
+          "command": "submit",
+          "args": {
+            "label": "rated",
+            "territory": "suburban",
+            "vans": 1,
+            "lightTrucks": 0,
+            "heavyTrucks": 0,
+            "avgExperience": 5,
+            "safetyProgram": false,
+            "claimsCount": 0,
+            "hazmatCargo": false,
+            "youngestDriverAge": 30,
+            "outOfStateOperations": false
+          }
+        },
+        {
+          "command": "rate",
+          "args": {
+          }
+        },
+        {
+          "command": "bind",
+          "args": {
+          }
+        },
+        {
+          "command": "bind",
+          "args": {
+          }
+        }
+      ]
+    },
+    {
+      "_id": "seq-j10",
+      "_label": "J10 witness",
+      "_from": {
+        "kind": "explore",
+        "walk": "a5adeacab198be2945076ba621bf51ab05834342b393a30bec315b55a7b559b4",
+        "plan": {
+          "depth": {
+            "default": 12
+          },
+          "levels": {
+          },
+          "focus": [
+          ]
+        },
+        "planSha": "5dab244943f0d6f89a97e65124d8a4a74278950d0336398b5acb900c7a73677c",
+        "required": "J10",
+        "requiredSha": "d8bf591f783158a677a2d6dba46849dabd5d398bf3aaa5ad67c1c899a9d3fbcd"
+      },
+      "steps": [
+        {
+          "command": "submit",
+          "args": {
+            "label": "rated",
+            "territory": "suburban",
+            "vans": 1,
+            "lightTrucks": 0,
+            "heavyTrucks": 0,
+            "avgExperience": 5,
+            "safetyProgram": false,
+            "claimsCount": 0,
+            "hazmatCargo": false,
+            "youngestDriverAge": 30,
+            "outOfStateOperations": false
+          }
+        },
+        {
+          "command": "rate",
+          "args": {
+          }
+        },
+        {
+          "command": "bind",
+          "args": {
+          }
+        },
+        {
+          "command": "rate",
+          "args": {
+          }
+        }
+      ]
+    },
+    {
+      "_id": "seq-j11",
+      "_label": "J11 witness",
+      "_from": {
+        "kind": "explore",
+        "walk": "a5adeacab198be2945076ba621bf51ab05834342b393a30bec315b55a7b559b4",
+        "plan": {
+          "depth": {
+            "default": 12
+          },
+          "levels": {
+          },
+          "focus": [
+          ]
+        },
+        "planSha": "5dab244943f0d6f89a97e65124d8a4a74278950d0336398b5acb900c7a73677c",
+        "required": "J11",
+        "requiredSha": "d8bf591f783158a677a2d6dba46849dabd5d398bf3aaa5ad67c1c899a9d3fbcd"
+      },
+      "steps": [
+        {
+          "command": "submit",
+          "args": {
+            "label": "rated",
+            "territory": "suburban",
+            "vans": 1,
+            "lightTrucks": 0,
+            "heavyTrucks": 0,
+            "avgExperience": 5,
+            "safetyProgram": false,
+            "claimsCount": 0,
+            "hazmatCargo": false,
+            "youngestDriverAge": 30,
+            "outOfStateOperations": false
+          }
+        },
+        {
+          "command": "rate",
+          "args": {
+          }
+        },
+        {
+          "command": "bind",
+          "args": {
+          }
+        },
+        {
+          "command": "bind",
+          "args": {
+          }
+        }
+      ]
+    },
+    {
+      "_id": "seq-j12",
+      "_label": "J12 witness",
+      "_from": {
+        "kind": "explore",
+        "walk": "a5adeacab198be2945076ba621bf51ab05834342b393a30bec315b55a7b559b4",
+        "plan": {
+          "depth": {
+            "default": 12
+          },
+          "levels": {
+          },
+          "focus": [
+          ]
+        },
+        "planSha": "5dab244943f0d6f89a97e65124d8a4a74278950d0336398b5acb900c7a73677c",
+        "required": "J12",
+        "requiredSha": "d8bf591f783158a677a2d6dba46849dabd5d398bf3aaa5ad67c1c899a9d3fbcd"
+      },
+      "steps": [
+        {
+          "command": "submit",
+          "args": {
+            "label": "rated",
+            "territory": "suburban",
+            "vans": 1,
+            "lightTrucks": 0,
+            "heavyTrucks": 0,
+            "avgExperience": 5,
+            "safetyProgram": false,
+            "claimsCount": 0,
+            "hazmatCargo": false,
+            "youngestDriverAge": 30,
+            "outOfStateOperations": false
+          }
+        },
+        {
+          "command": "approve",
+          "args": {
+          }
+        }
+      ]
+    },
+    {
+      "_id": "seq-j13",
+      "_label": "J13 witness",
+      "_from": {
+        "kind": "explore",
+        "walk": "a5adeacab198be2945076ba621bf51ab05834342b393a30bec315b55a7b559b4",
+        "plan": {
+          "depth": {
+            "default": 12
+          },
+          "levels": {
+          },
+          "focus": [
+          ]
+        },
+        "planSha": "5dab244943f0d6f89a97e65124d8a4a74278950d0336398b5acb900c7a73677c",
+        "required": "J13",
+        "requiredSha": "d8bf591f783158a677a2d6dba46849dabd5d398bf3aaa5ad67c1c899a9d3fbcd"
+      },
+      "steps": [
+        {
+          "command": "submit",
+          "args": {
+            "label": "rated",
+            "territory": "suburban",
+            "vans": 1,
+            "lightTrucks": 0,
+            "heavyTrucks": 0,
+            "avgExperience": 5,
+            "safetyProgram": false,
+            "claimsCount": 0,
+            "hazmatCargo": false,
+            "youngestDriverAge": 30,
+            "outOfStateOperations": false
+          }
+        },
+        {
+          "command": "rate",
+          "args": {
+          }
+        },
+        {
+          "command": "approve",
+          "args": {
+          }
+        }
+      ]
+    },
+    {
+      "_id": "seq-j14",
+      "_label": "J14 witness",
+      "_from": {
+        "kind": "explore",
+        "walk": "a5adeacab198be2945076ba621bf51ab05834342b393a30bec315b55a7b559b4",
+        "plan": {
+          "depth": {
+            "default": 12
+          },
+          "levels": {
+          },
+          "focus": [
+          ]
+        },
+        "planSha": "5dab244943f0d6f89a97e65124d8a4a74278950d0336398b5acb900c7a73677c",
+        "required": "J14",
+        "requiredSha": "d8bf591f783158a677a2d6dba46849dabd5d398bf3aaa5ad67c1c899a9d3fbcd"
+      },
+      "steps": [
+        {
+          "command": "submit",
+          "args": {
+            "label": "declined-young-driver",
+            "territory": "suburban",
+            "vans": 2,
+            "lightTrucks": 0,
+            "heavyTrucks": 0,
+            "avgExperience": 5,
+            "safetyProgram": false,
+            "claimsCount": 0,
+            "hazmatCargo": false,
+            "youngestDriverAge": 23,
+            "outOfStateOperations": false
+          }
+        },
+        {
+          "command": "rate",
+          "args": {
+          }
+        },
+        {
+          "command": "approve",
+          "args": {
+          }
+        }
+      ]
+    },
+    {
+      "_id": "seq-approve-expired-referred",
+      "_label": "J07 as stated: approval refused once a REFERRED quote has expired",
+      "_from": {
+        "kind": "authored"
+      },
+      "steps": [
+        {
+          "command": "submit",
+          "args": {
+            "label": "referred",
+            "territory": "urban",
+            "vans": 0,
+            "lightTrucks": 0,
+            "heavyTrucks": 20,
+            "avgExperience": 5,
+            "safetyProgram": false,
+            "claimsCount": 0,
+            "hazmatCargo": false,
+            "youngestDriverAge": 40,
+            "outOfStateOperations": false
+          }
+        },
+        {
+          "command": "rate"
+        },
+        {
+          "command": "observeAsOf",
+          "args": {
+            "day": 61
+          }
+        },
+        {
+          "command": "approve"
+        }
+      ],
+      "_expect": {
+        "steps": [
+          {
+            "at": 3,
+            "outcome": "refused",
+            "stage": "apply"
+          }
+        ],
+        "final": {
+          "status": "REFERRED"
+        }
+      }
+    },
+    {
+      "_id": "seq-bind-expired-approved",
+      "_label": "J08 as stated: approval does not survive expiry - bind refused on an APPROVED, expired quote",
+      "_from": {
+        "kind": "authored"
+      },
+      "steps": [
+        {
+          "command": "submit",
+          "args": {
+            "label": "referred",
+            "territory": "urban",
+            "vans": 0,
+            "lightTrucks": 0,
+            "heavyTrucks": 20,
+            "avgExperience": 5,
+            "safetyProgram": false,
+            "claimsCount": 0,
+            "hazmatCargo": false,
+            "youngestDriverAge": 40,
+            "outOfStateOperations": false
+          }
+        },
+        {
+          "command": "rate"
+        },
+        {
+          "command": "approve"
+        },
+        {
+          "command": "observeAsOf",
+          "args": {
+            "day": 61
+          }
+        },
+        {
+          "command": "bind"
+        }
+      ],
+      "_expect": {
+        "steps": [
+          {
+            "at": 4,
+            "outcome": "refused",
+            "stage": "apply"
+          }
+        ],
+        "final": {
+          "status": "APPROVED"
+        }
+      }
+    },
+    {
+      "_id": "seq-bind-on-day-60",
+      "_label": "FLEET-OQ-004 boundary: still bindable on day 60 exactly",
+      "_from": {
+        "kind": "authored"
+      },
+      "steps": [
+        {
+          "command": "submit",
+          "args": {
+            "label": "rated",
+            "territory": "suburban",
+            "vans": 1,
+            "lightTrucks": 0,
+            "heavyTrucks": 0,
+            "avgExperience": 5,
+            "safetyProgram": false,
+            "claimsCount": 0,
+            "hazmatCargo": false,
+            "youngestDriverAge": 30,
+            "outOfStateOperations": false
+          }
+        },
+        {
+          "command": "rate"
+        },
+        {
+          "command": "observeAsOf",
+          "args": {
+            "day": 60
+          }
+        },
+        {
+          "command": "bind"
+        }
+      ],
+      "_expect": {
+        "steps": [
+          {
+            "at": 3,
+            "outcome": "applied"
+          }
+        ],
+        "final": {
+          "status": "BOUND"
+        }
+      }
+    },
+    {
+      "_id": "seq-submit-out-of-domain",
+      "_label": "FLEET-001/3: a field outside its documented domain is rejected as invalid input",
+      "_from": {
+        "kind": "authored"
+      },
+      "steps": [
+        {
+          "command": "submit",
+          "args": {
+            "label": "out-of-domain",
+            "territory": "suburban",
+            "vans": 30,
+            "lightTrucks": 0,
+            "heavyTrucks": 0,
+            "avgExperience": 5,
+            "safetyProgram": false,
+            "claimsCount": 0,
+            "hazmatCargo": false,
+            "youngestDriverAge": 40,
+            "outOfStateOperations": false
+          }
+        }
+      ],
+      "_expect": {
+        "steps": [
+          {
+            "at": 0,
+            "outcome": "refused",
+            "stage": "apply"
+          }
+        ],
+        "final": {
+          "status": "NEW"
+        }
+      }
+    }
+  ]
+}

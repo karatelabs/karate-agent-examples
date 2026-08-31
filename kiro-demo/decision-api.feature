@@ -37,4 +37,4 @@ Feature: POST /decisions agrees with the loan-decisioning rules
     And match response.apr == oracle.apr
 
     Examples:
-      | read('rulebooks/loan-decisioning/scenarios.json') |
+      | Rule.load('loan-decisioning').scenarios |

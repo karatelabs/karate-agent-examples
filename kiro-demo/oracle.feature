@@ -25,4 +25,4 @@ Feature: Loan Decisioning rules oracle — every decision arm, headless
     * match result.apr == exp.apr
 
     Examples:
-      | read('rulebooks/loan-decisioning/scenarios.json') |
+      | Rule.load('loan-decisioning').scenarios |

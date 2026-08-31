@@ -27,7 +27,7 @@
         <!-- keep these in step with what the engine jar bundles, or the server and the engine can
              disagree on the wire/runtime classes when they share a classpath -->
         <grpc.version>1.83.1</grpc.version>
-        <protobuf.version>4.35.1</protobuf.version>
+        <protobuf.version>4.36.0</protobuf.version>
     </properties>
 
     <dependencyManagement>

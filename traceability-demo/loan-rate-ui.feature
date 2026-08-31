@@ -10,4 +10,4 @@ Feature: Loan Desk UI agrees with the personal-loan rules, per scenario
     * eval Check.run('drive-quote.js', __row)
 
     Examples:
-      | read('rulebooks/personal-loan/scenarios.json') |
+      | Rule.load('personal-loan').scenarios |
