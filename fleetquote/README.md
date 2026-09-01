@@ -37,8 +37,8 @@ refuses every action until it is re-rated. The refusals are typed: `invalid_inpu
 ## Run it
 
 `java -jar karate-agent-2.1.3.RC2.jar serve` anchors a console (+ `/api/eval` + `/api/mcp`)
-on this project — no maven, no docker. It starts the console only, never the SUT. From that
-console:
+on this project — no maven, no docker — on `:4444`. It starts the console only, never the SUT.
+From that console:
 
 ```js
 var mock = File.call('/mock/start.js')   // Http.mock({openapi:'/openapi.yaml', port:8090, handlers})
