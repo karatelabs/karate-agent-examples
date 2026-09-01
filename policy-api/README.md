@@ -40,7 +40,7 @@ Two files, sent with your license, dropped into this folder:
 
 | file | what it is |
 | --- | --- |
-| `karate-async-2.1.3.RC1.jar` | the engine |
+| `karate-async-2.1.3.RC2.jar` | the engine |
 | `karate.lic` | your license |
 
 A JDK (21+) is required, and Maven to build the demo's gRPC backend. More: <https://karatelabs.io/agent>.
@@ -64,7 +64,7 @@ java -jar rating-server/target/rating-server.jar 50052
 
 ```bash
 export KARATE_LICENSE_PATH="$PWD/karate.lic"
-java -jar karate-async-2.1.3.RC1.jar serve . --port 4444
+java -jar karate-async-2.1.3.RC2.jar serve . --port 4444
 ```
 
 `KARATE_LICENSE_PATH` is one way to point at the license. A `karate.lic` file at `.karate/karate.lic`
@@ -208,11 +208,11 @@ they differed.
 java -cp rating-server/target/rating-server.jar io.karatelabs.examples.insurance.PolicyServer 8080
 
 # one suite, both targets -> contract/pairs/<date>-<id>.json
-java -jar karate-async-2.1.3.RC1.jar launch contract.karate.js
+java -jar karate-async-2.1.3.RC2.jar launch contract.karate.js
 
 # ...against a deployed provider instead of the local one — the same file, nothing edited
 PROVIDER_URL=https://policy.staging.example.com PROVIDER_ENV=staging \
-  java -jar karate-async-2.1.3.RC1.jar launch contract.karate.js
+  java -jar karate-async-2.1.3.RC2.jar launch contract.karate.js
 ```
 
 `contract.karate.js` reads both variables with `Settings.sysenv(name, default)`. The local run needs
@@ -337,7 +337,7 @@ registry-backed shape (the `policy-event` Avro fields then become reverse-inferr
 ```bash
 ( cd kafka && docker compose up -d )     # 1. KRaft broker (:29092) + Schema Registry (:8081)
 # 2. restart the serve process with the flag on:
-KARATE_KAFKA_ON=1 java -jar karate-async-2.1.3.RC1.jar serve . --port 4444
+KARATE_KAFKA_ON=1 java -jar karate-async-2.1.3.RC2.jar serve . --port 4444
 # 3. run the producer beat:
 curl -s -X POST localhost:4444/api/eval --data-binary "Runner.run('checks/policy-events.feature')"
 curl -s -X POST localhost:4444/api/eval --data-binary "Report.aggregate()"
@@ -352,7 +352,7 @@ exact lane CI runs to produce the published GitHub Pages report):
 
 ```bash
 KARATE_GRPC_ON=1 KARATE_KAFKA_ON=1 \
-  java -jar karate-async-2.1.3.RC1.jar launch suite.karate.js
+  java -jar karate-async-2.1.3.RC2.jar launch suite.karate.js
 open target/karate-reports/ext/coverage/pages/coverage.html
 ```
 

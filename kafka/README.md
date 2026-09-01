@@ -13,7 +13,7 @@ karate-boot.js         cluster coordinates for the whole suite, set once
 
 ## What you need
 
-1. **The engine** — `karate-async-2.1.3.RC1.jar` from the
+1. **The engine** — `karate-async-2.1.3.RC2.jar` from the
    [releases](https://github.com/karatelabs/karate-addons/releases). Put it beside this folder.
 2. **A license** — a `karate.lic` file at `.karate/karate.lic` in this folder, or the same text in the
    `KARATE_LICENSE_TEXT` environment variable. Kafka needs the `kafka` entitlement.
@@ -31,7 +31,7 @@ for t in json-topic avro-topic; do
     --topic "$t" --partitions 1 --replication-factor 1 --bootstrap-server localhost:29092
 done
 
-java -jar ../karate-async-2.1.3.RC1.jar checks
+java -jar ../karate-async-2.1.3.RC2.jar checks
 
 docker compose down
 ```
@@ -129,7 +129,7 @@ own topic names in the checks. Then delete `docker-compose.yml`; it exists only 
 standalone. Both values read an override at run time, so CI can point elsewhere without editing a file:
 
 ```bash
-java -Dkafka.bootstrap=broker.internal:9092 -jar ../karate-async-2.1.3.RC1.jar checks
+java -Dkafka.bootstrap=broker.internal:9092 -jar ../karate-async-2.1.3.RC2.jar checks
 ```
 
 The `-D` must come **before** `-jar` — that is where the JVM reads it. After the jar name it would be

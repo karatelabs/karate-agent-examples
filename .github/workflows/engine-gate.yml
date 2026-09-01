@@ -1,6 +1,6 @@
 # engine-gate.yml — the SHARED publish-race gate for the image-based kits.
 #
-# Every image kit pins ghcr.io/karatelabs/karate-agent:2.1.3.RC1. During a beta the examples
+# Every image kit pins ghcr.io/karatelabs/karate-agent:2.1.3.RC2. During a beta the examples
 # tree may deliberately pin an RC whose image is re-cut on GHCR as the build iterates — which means the
 # pin can briefly point at a tag that is not published yet. Without a gate, every kit then dies at
 # `docker pull` with a cryptic "manifest unknown" and the whole repo reads red for a reason that has
@@ -35,7 +35,7 @@ jobs:
       - name: Probe the pinned engine image
         id: probe
         run: |
-          IMAGE=ghcr.io/karatelabs/karate-agent:2.1.3.RC1
+          IMAGE=ghcr.io/karatelabs/karate-agent:2.1.3.RC2
           if docker manifest inspect "$IMAGE" >/dev/null 2>&1; then
             echo "present=true" >> "$GITHUB_OUTPUT"
             echo "engine image present: $IMAGE"
