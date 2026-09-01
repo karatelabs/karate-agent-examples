@@ -7,6 +7,9 @@ it (`requirements/fleet-auto.md`, EARS criteria + `open-questions.md` for what t
 open), the `rating` rulebook that realizes them, an OpenAPI contract, a stateful mock, and the checks
 that join all of it.
 
+**First visit? [`TUTORIAL.md`](TUTORIAL.md) walks the whole kit** — one rating to the full lifecycle,
+every command shown with its real output.
+
 **The state is the point.** The answer depends on what happened before — a quote must be rated before
 it binds, a referral needs approval, a declined quote is terminal, and a rated quote goes stale after
 60 days. Order is part of the answer, so the whole chain is exercised as a chain.
