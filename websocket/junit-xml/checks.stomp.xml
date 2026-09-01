@@ -1,4 +1,4 @@
-<testsuite name="STOMP over WebSocket — a custom wire protocol via a codec" tests="2" failures="0" time="0.207" skipped="0"><testcase classname="checks.stomp" name="connect, subscribe, send, and receive the broadcast" time="0.197"><system-out>* StompCodec = Java.type(&apos;StompCodec&apos;)
+<testsuite name="STOMP over WebSocket — a custom wire protocol via a codec" tests="2" failures="0" time="0.226" skipped="0"><testcase classname="checks.stomp" name="connect, subscribe, send, and receive the broadcast" time="0.216"><system-out>* StompCodec = Java.type(&apos;StompCodec&apos;)
 * session = karate.channel(&apos;websocket&apos;)
 * = &apos;ws://localhost:8091/stomp&apos;
 * = new StompCodec()

@@ -1,19 +1,11 @@
-<testsuite name="gRPC — unary, streaming, metadata and the error path" tests="6" failures="6" time="0.913" skipped="0"><testcase classname="checks.hello" name="unary — one request, one response" time="0.71"><failure message="js failed:
-==========
-  Code: session.pop()
-  Error: Index 0 out of bounds for length 0
-==========">* session = karate.channel(&apos;grpc&apos;)
+<testsuite name="gRPC — unary, streaming, metadata and the error path" tests="6" failures="0" time="0.928" skipped="0"><testcase classname="checks.hello" name="unary — one request, one response" time="0.822"><system-out>* session = karate.channel(&apos;grpc&apos;)
 * = &apos;/proto/hello.proto&apos;
 * = &apos;HelloService&apos;
 * = &apos;Hello&apos;
 * session.send({ name: &apos;John&apos; })
 * session.pop() == { message: &apos;hello John&apos; }
-</failure></testcase>
-<testcase classname="checks.hello" name="request metadata, and reading the response metadata back" time="0.139"><failure message="js failed:
-==========
-  Code: session.pop()
-  Error: Index 0 out of bounds for length 0
-==========">* session = karate.channel(&apos;grpc&apos;)
+</system-out></testcase>
+<testcase classname="checks.hello" name="request metadata, and reading the response metadata back" time="0.019"><system-out>* session = karate.channel(&apos;grpc&apos;)
 * = &apos;/proto/hello.proto&apos;
 * = &apos;HelloService&apos;
 * = &apos;Hello&apos;
@@ -21,36 +13,24 @@
 * session.send({ name: &apos;Smith&apos; })
 * session.pop() == { message: &apos;hello Smith&apos; }
 * session.metadataResponse contains { &apos;authorization-response&apos;: &apos;secret-response&apos; }
-</failure></testcase>
-<testcase classname="checks.hello" name="the error path — an empty name is rejected" time="0.017"><failure message="match failed: EQUALS
-  $ | not equal (STRING:STRING)
-  &apos;UNAVAILABLE&apos;
-  &apos;INVALID_ARGUMENT&apos;
-">* session = karate.channel(&apos;grpc&apos;)
+</system-out></testcase>
+<testcase classname="checks.hello" name="the error path — an empty name is rejected" time="0.022"><system-out>* session = karate.channel(&apos;grpc&apos;)
 * = &apos;/proto/hello.proto&apos;
 * = &apos;HelloService&apos;
 * = &apos;Hello&apos;
 * session.send({ name: &apos;&apos; })
 * session.collect() == []
 * session.status == &apos;INVALID_ARGUMENT&apos;
-</failure></testcase>
-<testcase classname="checks.hello" name="server streaming — collect a known number of responses" time="0.011"><failure message="match failed: EQUALS
-  $ | not equal | actual array length is not equal to expected - 0:3 (LIST:LIST)
-  []
-  [{&quot;message&quot;:&quot;hello John 1&quot;},{&quot;message&quot;:&quot;hello John 2&quot;},{&quot;message&quot;:&quot;hello John 3&quot;}]
-">* session = karate.channel(&apos;grpc&apos;)
+</system-out></testcase>
+<testcase classname="checks.hello" name="server streaming — collect a known number of responses" time="0.022"><system-out>* session = karate.channel(&apos;grpc&apos;)
 * = &apos;/proto/hello.proto&apos;
 * = &apos;HelloService&apos;
 * = &apos;LotsOfReplies&apos;
 * = 3
 * session.send({ name: &apos;John&apos; })
 * session.collect() == [{ message: &apos;hello John 1&apos; }, { message: &apos;hello John 2&apos; }, { message: &apos;hello John 3&apos; }]
-</failure></testcase>
-<testcase classname="checks.hello" name="client streaming — many requests, one response" time="0.008"><failure message="js failed:
-==========
-  Code: session.pop()
-  Error: Index 0 out of bounds for length 0
-==========">* session = karate.channel(&apos;grpc&apos;)
+</system-out></testcase>
+<testcase classname="checks.hello" name="client streaming — many requests, one response" time="0.012"><system-out>* session = karate.channel(&apos;grpc&apos;)
 * = &apos;/proto/hello.proto&apos;
 * = &apos;HelloService&apos;
 * = &apos;LotsOfGreetings&apos;
@@ -59,12 +39,8 @@
 * session.send({ name: &apos;Smith&apos; })
 * session.flush()
 * session.pop() == { message: &apos;hello [John, Smith]&apos; }
-</failure></testcase>
-<testcase classname="checks.hello" name="bidirectional streaming — a response per request on one open stream" time="0.008"><failure message="match failed: EQUALS
-  $ | not equal | actual array length is not equal to expected - 0:3 (LIST:LIST)
-  []
-  [{&quot;message&quot;:&quot;hello [John]&quot;},{&quot;message&quot;:&quot;hello [John, Smith]&quot;},{&quot;message&quot;:&quot;hello [John, Smith, Jane]&quot;}]
-">* session = karate.channel(&apos;grpc&apos;)
+</system-out></testcase>
+<testcase classname="checks.hello" name="bidirectional streaming — a response per request on one open stream" time="0.011"><system-out>* session = karate.channel(&apos;grpc&apos;)
 * = &apos;/proto/hello.proto&apos;
 * = &apos;HelloService&apos;
 * = &apos;BidiHello&apos;
@@ -74,5 +50,5 @@
 * session.send({ name: &apos;Smith&apos; })
 * session.send({ name: &apos;Jane&apos; })
 * session.collect() ==
-</failure></testcase>
+</system-out></testcase>
 </testsuite>
