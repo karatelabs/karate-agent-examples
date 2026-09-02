@@ -1,0 +1,47 @@
+{
+  "unknownTool": {
+    "tool": "karate_field_study_no_such_tool",
+    "args": {
+    },
+    "outcome": {
+      "content": [
+        {
+          "text": "Unknown tool: karate_field_study_no_such_tool",
+          "type": "text"
+        }
+      ],
+      "isError": true,
+      "resultType": "complete",
+      "_meta": {
+        "io.modelcontextprotocol/serverInfo": {
+          "name": "docling",
+          "version": ""
+        }
+      }
+    }
+  },
+  "missingRequired": {
+    "tool": "is_document_in_local_cache",
+    "args": {
+    },
+    "requiredParams": [
+      "document_key"
+    ],
+    "outcome": {
+      "content": [
+        {
+          "text": "Error executing tool is_document_in_local_cache: 1 validation error for is_document_in_local_cacheArguments\ndocument_key\n  Field required [type=missing, input_value={}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/missing",
+          "type": "text"
+        }
+      ],
+      "isError": true,
+      "resultType": "complete",
+      "_meta": {
+        "io.modelcontextprotocol/serverInfo": {
+          "name": "docling",
+          "version": ""
+        }
+      }
+    }
+  }
+}

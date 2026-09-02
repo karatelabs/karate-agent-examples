@@ -342,6 +342,132 @@ rejects other expired quotes — the same lapse *is* refused when the quote is m
 `approve` — but it forgets the expiry check after approval. A test that checks bind in isolation is unlikely to
 expose an order-dependent defect. Restart the mock without the option — `File.call('/mock/start.js')` — and it clears.
 
+### Shrink it
+
+A defect report arrives padded — the steps that mattered mixed in with steps that did not. Pin the
+failing order again with four that change nothing: two more clock readings, and two approves that
+the model and the service both refuse.
+
+```js
+var base = Rule.load('rating').sequences.sequences.filter(
+    function (r) { return r._id === 'seq-bind-expired-approved' })[0]
+var pad = [{ command: 'observeAsOf', args: { day: 61 } }, { command: 'approve' },
+           { command: 'observeAsOf', args: { day: 200 } }, { command: 'approve' }]
+Rule.sequence.create('rating', { _id: 'seq-padded',
+    steps: base.steps.slice(0, 4).concat(pad).concat(base.steps.slice(4)) })
+// -> { ids: ['seq-padded'], … }
+```
+
+Replay it and ask for the minimum:
+
+```js
+var s = Twin.live('rating', { baseUrl: mock.url, against: 'live', shrink: true,
+                              sequences: ['seq-padded'] }).sequences[0].shrink
+;({ from: s.from, to: s.to, replays: s.replays, verified: s.verified, mismatch: s.mismatch })
+// -> { from: 9, to: 5, replays: 5, verified: 'CONFIRMED',
+//      mismatch: { kind: 'noCandidateExplainsObservation', outcome: 'applied' } }
+s.steps.map(function (x) { return x.command })
+// -> ['submit', 'rate', 'approve', 'observeAsOf', 'bind']
+```
+
+Nine steps to five in five replays: the original re-run once to prove the failure repeats, three
+candidates tried, the survivor confirmed. The guarantee is minimal *context for this failure site* —
+the same command failing the same way — never a globally minimal failing subsequence. The engine
+proposes the order; it becomes a saved sequence only when you pin it:
+
+```js
+Rule.sequence.create('rating', { _id: 'seq-bind-expired-approved-minimal', steps: s.steps }).ids
+// -> ['seq-bind-expired-approved-minimal']
+```
+
+### When the reason disagrees
+
+A service can refuse and still be wrong. A second seeded option makes the expired bind refuse under
+the wrong code:
+
+```js
+mock.stop()
+var mock2 = File.call('/mock/start.js', { mislabel: true })
+Twin.live('rating', { baseUrl: mock2.url, against: 'live',
+                      sequences: ['seq-bind-expired-approved'] }).sequences[0].disposition
+// -> { kind: 'FAIL',
+//      mismatch: { kind: 'refusalReasonMismatch',
+//                  observed: 'a referred quote may be bound only after approval',
+//                  model: ['the quote is expired and must be re-rated before any further action'] },
+//      at: 4, … }
+```
+
+Both sides rejected the bind, so a comparison that asked only *was it rejected?* would have called
+this a pass. The wrong code sends an underwriter after an approval the quote already has, when what
+it needs is a re-rate. The model computes the reason, so the comparison includes the reason.
+
+### A history from anywhere
+
+Every comparison so far needed the service running. `Twin.allows` grades a *recorded* exchange log
+against the model with nothing deployed. Restart the mock clean, keep one replay's log, stop the
+service, and grade the recording:
+
+```js
+mock2.stop()
+var clean = File.call('/mock/start.js')
+var row = Twin.live('rating', { baseUrl: clean.url, against: 'live', detail: 'log',
+                                sequences: ['seq-bind-expired-approved'] }).sequences[0]
+row.disposition        // -> { kind: 'PASS' }   this build does refuse the expired bind
+clean.stop()
+var a = Twin.allows('rating', { sequenceId: row.sequenceId, log: row.log })
+;({ source: a.source, entries: a.entries, disposition: a.disposition })
+// -> { source: 'trace', entries: 8, disposition: { kind: 'PASS' } }
+```
+
+The live row's verdict, with nothing left to call. Now edit the history — make the recorded bind
+succeed, the way the defective build answered it:
+
+```js
+var edited = JSON.parse(JSON.stringify(row.log))
+edited[6].observed.response = { status: 200,
+    body: { quoteId: 'Q-100001', status: 'bound', policyNumber: 'POL-100001' } }
+Twin.allows('rating', { sequenceId: row.sequenceId, log: edited }).disposition
+// -> { kind: 'FAIL', mismatch: { kind: 'noCandidateExplainsObservation', outcome: 'applied' },
+//      at: 4, … }
+```
+
+The order-dependent defect, reproduced from a log alone. Every rejection is one of two things — a model
+wrong about reality, or a system breaking its own rules — and the engine cannot tell which: it names the
+step, a person decides. *Anywhere* is any log in the replay's own format; turning a raw production
+trace into that shape is the caller's job. The history is graded whole, so a gap is named by position:
+
+```js
+Twin.allows('rating', { sequenceId: row.sequenceId, log: row.log.slice(0, 7) }).disposition
+// -> { kind: 'INVALID', code: 'TRACE_INVALID',
+//      reason: "log[7]: the replay's readBack entry is missing", at: 7 }
+```
+
+### Every pair, walked
+
+The exploration proved which two-step moves are possible; the saved sequences are what gets replayed.
+Ask how much of the first the second walks:
+
+```js
+Twin.check('rating').transitionPairs      // -> { covered: 13, of: 508 }
+
+var g = Twin.check('rating').findings.transitionPairGaps[0]
+;({ from: JSON.parse(g.fromKey).status, command1: g.command1, mid: JSON.parse(g.midKey).status,
+    command2: g.command2, steps: g.candidate.steps.map(function (x) { return x.command }) })
+// -> { from: 'NEW', command1: 'submit', mid: 'SUBMITTED', command2: 'observeAsOf',
+//      steps: ['submit', 'observeAsOf'] }
+```
+
+The first gap: no saved sequence ever moved the clock on a quote that was only submitted. Each gap
+carries the shortest sequence that closes it, ready to pin:
+
+```js
+Rule.sequence.create('rating', { steps: g.candidate.steps }).ids   // -> ['seq-d81300']
+Twin.check('rating').transitionPairs                               // -> { covered: 14, of: 508 }
+```
+
+One row, one pair. The 508 is a floor rather than a target — it counts only the moves the exploration
+actually landed — and the gaps are a worklist: they report what is unwalked, and fail nothing.
+
 ## 8. Change one rate
 
 The last failure mode is the quiet one: a rule starts producing different business results while every test stays

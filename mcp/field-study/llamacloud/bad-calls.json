@@ -1,0 +1,28 @@
+{
+  "unknownTool": {
+    "tool": "karate_field_study_no_such_tool",
+    "args": {
+    },
+    "outcome": {
+      "error": "MCP error -32602: Tool karate_field_study_no_such_tool not found",
+      "code": -32602,
+      "kind": "jsonrpc",
+      "status": 200
+    }
+  },
+  "missingRequired": {
+    "tool": "uploadFileByUrl",
+    "args": {
+    },
+    "requiredParams": [
+      "url",
+      "fileName"
+    ],
+    "outcome": {
+      "error": "MCP error -32602: Invalid arguments for tool uploadFileByUrl: [\n  {\n    \"code\": \"invalid_type\",\n    \"expected\": \"string\",\n    \"received\": \"undefined\",\n    \"path\": [\n      \"url\"\n    ],\n    \"message\": \"Required\"\n  },\n  {\n    \"code\": \"invalid_type\",\n    \"expected\": \"string\",\n    \"received\": \"undefined\",\n    \"path\": [\n      \"fileName\"\n    ],\n    \"message\": \"Required\"\n  }\n]",
+      "code": -32602,
+      "kind": "jsonrpc",
+      "status": 200
+    }
+  }
+}

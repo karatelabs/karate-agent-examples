@@ -1,18 +1,20 @@
-# Runs the protocol kits (gRPC · Kafka · WebSocket) the way a customer runs them: a bare project folder
-# driven by the karate-async engine jar. NOT the karate-agent container — that image carries the agent
-# engine only (no gRPC/Kafka/WebSocket), and these kits are plain protocol examples with no console story.
+# Runs the protocol kits (gRPC · Kafka · WebSocket · MCP) the way a customer runs them: a bare project
+# folder driven by the karate-async engine jar. The container image carries the agent engine only (no
+# gRPC/Kafka/WebSocket libraries), so those three have no image lane — MCP needs no protocol library and
+# does, in mcp.yml, which runs the SAME kit through the image and publishes nothing (this workflow owns
+# the /mcp/ pages publish, so the two lanes never race).
 #
-# ONE workflow for all three, deliberately. They share the engine download (~70 MB, fetched once instead
-# of three times), and — because they run in one job — their reports are staged and pushed to gh-pages in
-# a SINGLE commit rather than three, which is three times less exposure to the publish race below.
+# ONE workflow for all four, deliberately. They share the engine download (~70 MB, fetched once instead
+# of four times), and — because they run in one job — their reports are staged and pushed to gh-pages in
+# a SINGLE commit rather than four, which is four times less exposure to the publish race below.
 #
 # The engine is DOWNLOADED at run time from the public release, never committed: this repo ships neither
 # an engine jar nor a licence. A release-asset download is served from a CDN and does not consume the
 # GitHub API rate limit, so the direct URL is used deliberately rather than an API call.
 #
 # One-time setup: add a repository secret KARATE_LICENSE (the inline karate.lic text). gRPC and Kafka
-# need the grpc / kafka entitlements; WebSocket rides the openapi bundle — a grpc+kafka-only licence
-# runs the first two and skips the third.
+# need the grpc / kafka entitlements; WebSocket and MCP ride the openapi bundle — a grpc+kafka-only
+# licence runs the first two and skips the other two.
 #
 # EVERY precondition DEGRADES TO A SKIP, NEVER A FAILURE — no licence secret, or no published engine jar
 # for this version yet (the version is pinned at sync time, which can precede the release). A missing
@@ -21,17 +23,17 @@ name: protocols
 
 on:
   push:
-    paths: ['grpc/**', 'kafka/**', 'websocket/**', '.github/workflows/protocols.yml']
+    paths: ['grpc/**', 'kafka/**', 'websocket/**', 'mcp/**', '.github/workflows/protocols.yml']
   pull_request:
-    paths: ['grpc/**', 'kafka/**', 'websocket/**', '.github/workflows/protocols.yml']
+    paths: ['grpc/**', 'kafka/**', 'websocket/**', 'mcp/**', '.github/workflows/protocols.yml']
   workflow_dispatch:
 
 permissions:
   contents: write        # the gh-pages publish pushes to the repo
 
 env:
-  ENGINE_VERSION: 2.1.3.RC2
-  JAR: karate-async-2.1.3.RC2.jar
+  ENGINE_VERSION: 2.1.3.RC3
+  JAR: karate-async-2.1.3.RC3.jar
 
 jobs:
   protocols:
@@ -127,6 +129,36 @@ jobs:
           for _ in $(seq 1 30); do (echo > /dev/tcp/localhost/8090) 2>/dev/null && break; sleep 1; done
           java -cp "../${JAR}:server-classes" io.karatelabs.Main run -f html,junit:xml checks
 
+      # ---- MCP: a Node server under test (the official TypeScript SDK), the checks off the engine ----
+      - name: Set up Node 20
+        if: steps.engine.outputs.ok == 'true'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: mcp/server/package-lock.json
+
+      - name: MCP kit
+        if: steps.engine.outputs.ok == 'true'
+        env:
+          KARATE_LICENSE_TEXT: ${{ secrets.KARATE_LICENSE }}
+        working-directory: mcp
+        run: |
+          npm --prefix server ci
+          npm --prefix server start &
+          for _ in $(seq 1 30); do (echo > /dev/tcp/localhost/3001) 2>/dev/null && break; sleep 1; done
+          java -jar "../${JAR}" run -f html,junit:xml checks
+
+      # The official conformance suite is the COMPANION, not a gate: most of its scenarios drive fixture
+      # tools/resources/prompts a six-tool inventory server does not implement, so it legitimately exits
+      # non-zero here. continue-on-error keeps that from turning the run red; the kit README states the
+      # observed numbers.
+      - name: MCP conformance suite (companion)
+        if: steps.engine.outputs.ok == 'true'
+        continue-on-error: true
+        working-directory: mcp
+        run: npx @modelcontextprotocol/conformance@0.1.16 server --url http://localhost:3001/mcp
+
       # ---- results ----
       # NOTE the glob: this action resolves paths with @actions/glob, which supports **, *, ? and [] but
       # NOT brace expansion — a '{grpc,kafka,websocket}/...' pattern matches nothing and the step fails
@@ -154,13 +186,13 @@ jobs:
           if-no-files-found: ignore
 
       # Stage whichever kits actually produced a report into ONE tree, so the publish below is a single
-      # commit covering all three (and a skipped kit simply contributes nothing).
+      # commit covering all four (and a skipped kit simply contributes nothing).
       - name: Stage the HTML reports
         id: stage
         if: always() && github.ref == 'refs/heads/main'
         run: |
           staged=0
-          for kit in grpc kafka websocket; do
+          for kit in grpc kafka websocket mcp; do
             if [ -d "$kit/target/karate-reports" ]; then
               mkdir -p "_pages/$kit"
               cp -R "$kit/target/karate-reports/." "_pages/$kit/"
@@ -174,7 +206,7 @@ jobs:
       # together race on the push and the loser dies with `! [rejected] (fetch first)` — a red run whose
       # tests all passed. Retry rather than serialize: a concurrency group queues only one run, so a third
       # workflow would cancel the second outright. The retry re-clones gh-pages, so it rebases.
-      # Browsable at https://<owner>.github.io/karate-agent-examples/grpc/ (and /kafka/, /websocket/).
+      # Browsable at https://<owner>.github.io/karate-agent-examples/grpc/ (and /kafka/, /websocket/, /mcp/).
       - name: Publish HTML reports to GitHub Pages
         id: pages
         continue-on-error: true

@@ -40,18 +40,20 @@ the actual report in a browser, with nothing to install and no license needed:
 
 ### Protocol examples
 
-Plain, self-contained examples of testing a non-HTTP protocol. No traceability or coverage story — just
-the protocol. Each kit ships the service under test, so it runs standalone, and each runs off the
-`karate-async` engine jar rather than the container image. All three run on every push and publish
-their reports: [grpc](https://karatelabs.github.io/karate-agent-examples/grpc/) ·
+Plain, self-contained examples of testing a non-HTTP protocol. Each kit ships the service under test, so
+it runs standalone, and each runs off the `karate-async` engine jar; MCP needs no protocol libraries, so
+it runs off the container image too. All four run on every push and publish their reports:
+[grpc](https://karatelabs.github.io/karate-agent-examples/grpc/) ·
 [kafka](https://karatelabs.github.io/karate-agent-examples/kafka/) ·
-[websocket](https://karatelabs.github.io/karate-agent-examples/websocket/).
+[websocket](https://karatelabs.github.io/karate-agent-examples/websocket/) ·
+[mcp](https://karatelabs.github.io/karate-agent-examples/mcp/).
 
 | kit | what it demonstrates |
 | --- | --- |
 | [`grpc`](grpc/) | unary, server-streaming, client-streaming and bidirectional calls, request/response metadata, and asserting a gRPC error status. **No generated stubs on the test side** — the engine reads the `.proto` at run time, so there is nothing to regenerate when the contract changes. |
 | [`kafka`](kafka/) | produce and consume, as JSON and as Avro through a Schema Registry, with message headers and a filtering consumer. `docker compose` starts the broker and the registry. |
 | [`websocket`](websocket/) | raw text, JSON, and collecting a stream of messages — plus a **custom frame-based protocol** (STOMP) handled by a codec, so protocol handling stays out of the checks. Both demo servers compile against the engine jar alone: no build tool. |
+| [`mcp`](mcp/) | discover an MCP server's tool catalog, call tools, and assert results and side effects — with the two kinds of failure kept apart: a tool's own error is a *result* you assert, a protocol error is a failed step. The client negotiates the protocol era, and a saved `tools/list` catalog gives the run **tool coverage**, so an uncalled tool is reported. Runs the official conformance suite alongside as the companion step. |
 
 ## Drive it from your own AI agent (MCP)
 

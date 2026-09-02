@@ -39,7 +39,7 @@ refuses every action until it is re-rated. The refusals are typed: `invalid_inpu
 
 ## Run it
 
-`java -jar karate-agent-2.1.3.RC2.jar serve` anchors a console (+ `/api/eval` + `/api/mcp`)
+`java -jar karate-agent-2.1.3.RC3.jar serve` anchors a console (+ `/api/eval` + `/api/mcp`)
 on this project — no maven, no docker — on `:4444`. It starts the console only, never the SUT.
 From that console:
 
@@ -49,7 +49,16 @@ mock.url                                 // -> http://localhost:8090
 Runner.run('checks')                     // the lifecycle + rating suites against it
 ```
 
-`start.js` also accepts an options object: `File.call('/mock/start.js', { … })`.
+The container image carries the same console, with no jar to stage — the kit mounts as the project:
+
+```bash
+docker run --rm -p 4444:4444 -v "$PWD":/work/fleetquote \
+  -e KARATE_LICENSE_TEXT="$(cat karate.lic)" \
+  public.ecr.aws/karatelabs/karate-agent:2.1.3.RC3 serve
+```
+
+`start.js` also accepts an options object: `File.call('/mock/start.js', { … })` — `rollout` seeds the
+order-dependent bind defect, `mislabel` refuses the expired bind under the wrong reason code.
 
 `karate-boot.js` binds the rules ext (so the mock can call `Rule.execute`) and `karate-config.js`
 points `baseUrl` at `:8090`. The mock is stateful in one shared session — quotes and the clock

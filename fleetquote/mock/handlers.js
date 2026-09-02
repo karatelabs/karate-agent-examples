@@ -38,6 +38,12 @@
         return session.rollout === true;
     };
 
+    // mislabel: the expired bind is still refused, but under the wrong reason code - the refusal a
+    // verdict-only comparison reads as correct.
+    var mislabel = function (session) {
+        return session.mislabel === true;
+    };
+
     var nextId = function (session) {
         session.seq = (session.seq || 0) + 1;
         return 'Q-' + (100000 + session.seq);
@@ -133,7 +139,11 @@
         if (quote.status === 'declined') return refuse(response, 409, 'declined_terminal', 'a declined quote cannot be bound');
         if (quote.status === 'bound') return refuse(response, 409, 'already_bound', 'a quote that is already bound cannot be bound again');
         var cleared = rollout(session) && quote.status === 'approved';
-        if (!cleared && isExpired(quote, todayFrom(session))) return refuse(response, 409, 'quote_expired', 'quote expired - re-rate before any further action');
+        if (!cleared && isExpired(quote, todayFrom(session))) {
+            return mislabel(session)
+                ? refuse(response, 409, 'approval_required', 'a referred quote may be bound only after underwriter approval')
+                : refuse(response, 409, 'quote_expired', 'quote expired - re-rate before any further action');
+        }
         if (quote.status === 'referred') return refuse(response, 409, 'approval_required', 'a referred quote may be bound only after underwriter approval');
         quote.status = 'bound';
         quote.policyNumber = 'POL-' + quote.id.substring(2);

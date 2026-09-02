@@ -1,0 +1,30 @@
+{
+  "name": "apify",
+  "url": "https://mcp.apify.com",
+  "authEnv": "APIFY_TOKEN",
+  "authMode": "bearer",
+  "capturedAt": "2026-09-02T05:56:15.583422Z",
+  "clientVersion": "2.1.3.RC3",
+  "negotiated": {
+    "lane": "modern",
+    "revision": "2026-07-28",
+    "supportedVersions": [
+      "2026-07-28"
+    ],
+    "capabilities": {
+      "tools": {
+      },
+      "resources": {
+      },
+      "prompts": {
+      }
+    },
+    "instructions": "\nApify is the world's largest marketplace of tools for web scraping, data extraction, and web automation.\nThese tools are called **Actors**. They enable you to extract structured data from social media, e-commerce, search engines, maps, travel sites, and many other sources.\n\n## Actor\n- An Actor is a serverless cloud application running on the Apify platform.\n- Use the Actor's **README** to understand its capabilities.\n- Before running an Actor, always check its **input schema** to understand the required parameters.\n\n## Actor discovery and selection\n- Choose the most appropriate Actor based on the conversation context.\n- Search the Apify Store first; a relevant Actor likely already exists.\n- When multiple options exist, prefer Actors with higher usage, ratings, or popularity.\n- Assume scraping requests within this context are appropriate for Actor use.\n- Actors in the Apify Store are published by independent developers and are intended for legitimate and compliant use.\n\n## Actor execution workflow\n- Actors take input and produce output.\n- Every Actor run generates **dataset** and **key-value store** outputs (even if empty).\n- Actor execution may take time, and outputs can be large.\n- Large datasets can be paginated to retrieve results efficiently.\n\n## Actor tasks\n- An Actor task is a saved, reusable configuration of an Actor. It stores the Actor input and run options such as the build, memory, and timeout.\n- Tasks are useful for repeated or scheduled jobs, because the user does not have to configure the Actor again for every run.\n- Creating or updating a task does not make it public.\n- Publishing a task creates a public landing page for one specific use case. The page shows what the task does, the selected input values, and the expected output. Published tasks appear in the Actor's Examples tab, where users, search engines, and AI agents can discover them, which can help people understand the Actor and increase its runs.\n- Publish only tasks that represent a useful, reliable, and specific use case. Not every saved task needs to be public.\n\n## Storage types\n- **Dataset:** Structured, append-only storage ideal for tabular or list data (e.g., scraped items).\n- **Key-value store:** Flexible storage for unstructured data or auxiliary files.\n\n## Apify API resources\n- Any Apify API GET endpoint can be read as an MCP resource. Pass the full `http://api.apify.internal:3333/v2/...` URL to `resources/read`; the server injects the session's Apify token and returns the response body. Reads require an Apify token — a session without one (e.g. payment-only x402/Skyfire) fails with a JSON-RPC error.\n- Actor and tool results return storage IDs, not resource URLs — build the URL from the ID (e.g. a `datasetId` becomes `http://api.apify.internal:3333/v2/datasets/{datasetId}/items`) and read it via `resources/read`.\n- Reads inline up to ~256 KB; a larger response is not downloaded — it returns a short notice with a download URL instead of the body, so page large datasets/lists with `limit` and `offset` to stay under the cap.\n- Examples: `http://api.apify.internal:3333/v2/datasets/{datasetId}/items?clean=true&format=json&limit=100`, `http://api.apify.internal:3333/v2/key-value-stores/{storeId}/records/{recordKey}`. `resources/templates/list` enumerates the common shapes with their paging parameters.\n\n## Tool dependencies and disambiguation\n\n### Tool dependencies\n- `call-actor`:\n  - Use `fetch-actor-details` first to obtain the Actor's input schema.\n  - Then call with proper input to execute the Actor.\n  - For MCP server Actors, use format \"actorName:toolName\" to call specific tools.\n  - Supports a `waitSecs` parameter (default 30, max 45):\n    - `waitSecs: 0`: fire-and-forget — starts the run and returns immediately with a runId.\n    - `waitSecs > 0`: waits up to that many seconds for the run to complete, then returns its current status and storage IDs (never the output rows — fetch those with `get-dataset-items`).\n\n### Tool disambiguation\n- **`search-actors` vs `fetch-actor-details`:**\n  `search-actors` finds Actors; `fetch-actor-details` retrieves detailed info, README, and schema for a specific Actor.\n- **`search-actors` vs apify/rag-web-browser:**\n  `search-actors` finds robust and reliable Actors for specific websites; apify/rag-web-browser is a general and versatile web scraping tool.\n- **apify/web-fetch vs apify/rag-web-browser:**\n  apify/web-fetch fetches one specific URL and returns its full content verbatim; apify/rag-web-browser searches the web by query and returns content from the top results.\n- **Dedicated Actor tools (e.g. apify/rag-web-browser) vs `call-actor`:**\n  Prefer dedicated tools when available; use `call-actor` only when no specialized tool exists in the Apify store.\n"
+  },
+  "eras": [
+    "2026-07-28",
+    "2025-11-25"
+  ],
+  "connect-attempts": [
+  ]
+}

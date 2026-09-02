@@ -1,0 +1,50 @@
+[
+  {
+    "key": "cloudflare-docs",
+    "url": "https://docs.mcp.cloudflare.com/mcp",
+    "authEnv": null,
+    "notes": "dual-era control"
+  },
+  {
+    "key": "microsoft-learn",
+    "url": "https://learn.microsoft.com/api/mcp",
+    "authEnv": null,
+    "notes": "legacy only; answers over SSE"
+  },
+  {
+    "key": "context7",
+    "url": "https://mcp.context7.com/mcp",
+    "authEnv": null,
+    "notes": "dual-era"
+  },
+  {
+    "key": "deepwiki",
+    "url": "https://mcp.deepwiki.com/mcp",
+    "authEnv": null,
+    "notes": "legacy"
+  },
+  {
+    "key": "apify",
+    "url": "https://mcp.apify.com",
+    "authEnv": "APIFY_TOKEN",
+    "notes": "discovery is pre-auth, initialize needs the token"
+  },
+  {
+    "key": "exa",
+    "url": "https://mcp.exa.ai/mcp",
+    "authEnv": "EXA_API_KEY",
+    "notes": "legacy; auth mode discovered by retry"
+  },
+  {
+    "key": "llamacloud",
+    "url": "https://mcp.llamaindex.ai/mcp",
+    "authEnv": null,
+    "notes": "legacy 2025-06-18"
+  },
+  {
+    "key": "docling",
+    "url": "http://localhost:8765/mcp",
+    "authEnv": null,
+    "notes": "local docker"
+  }
+]

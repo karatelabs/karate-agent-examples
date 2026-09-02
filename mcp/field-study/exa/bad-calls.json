@@ -1,0 +1,33 @@
+{
+  "unknownTool": {
+    "tool": "karate_field_study_no_such_tool",
+    "args": {
+    },
+    "outcome": {
+      "content": [
+        {
+          "type": "text",
+          "text": "MCP error -32602: Tool karate_field_study_no_such_tool not found"
+        }
+      ],
+      "isError": true
+    }
+  },
+  "missingRequired": {
+    "tool": "web_search_exa",
+    "args": {
+    },
+    "requiredParams": [
+      "query"
+    ],
+    "outcome": {
+      "content": [
+        {
+          "type": "text",
+          "text": "MCP error -32602: Input validation error: Invalid arguments for tool web_search_exa: [\n  {\n    \"code\": \"invalid_type\",\n    \"expected\": \"string\",\n    \"received\": \"undefined\",\n    \"path\": [\n      \"query\"\n    ],\n    \"message\": \"Required\"\n  }\n]"
+        }
+      ],
+      "isError": true
+    }
+  }
+}

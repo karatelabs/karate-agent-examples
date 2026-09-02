@@ -1,0 +1,34 @@
+{
+  "unknownTool": {
+    "tool": "karate_field_study_no_such_tool",
+    "args": {
+    },
+    "outcome": {
+      "content": [
+        {
+          "type": "text",
+          "text": "Unknown tool: karate_field_study_no_such_tool"
+        }
+      ],
+      "isError": true
+    }
+  },
+  "missingRequired": {
+    "tool": "ask_question",
+    "args": {
+    },
+    "requiredParams": [
+      "repoName",
+      "question"
+    ],
+    "outcome": {
+      "content": [
+        {
+          "type": "text",
+          "text": "2 validation errors for call[ask_question]\nrepoName\n  Missing required argument [type=missing_argument, input_value={}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/missing_argument\nquestion\n  Missing required argument [type=missing_argument, input_value={}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.12/v/missing_argument"
+        }
+      ],
+      "isError": true
+    }
+  }
+}

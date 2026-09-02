@@ -1,0 +1,281 @@
+{
+  "tools": [
+    {
+      "name": "add_item",
+      "description": "Add a new item to the inventory. Fails if the sku already exists.",
+      "inputSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "sku": {
+            "type": "string",
+            "description": "Stock keeping unit — unique across the inventory"
+          },
+          "name": {
+            "type": "string",
+            "description": "Human readable item name"
+          },
+          "qty": {
+            "description": "Starting quantity, defaults to 1",
+            "type": "number"
+          }
+        },
+        "required": [
+          "sku",
+          "name"
+        ]
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "outputSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "sku": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "qty": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "sku",
+          "name",
+          "qty"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "get_item",
+      "description": "Read one item by sku.",
+      "inputSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "sku": {
+            "type": "string",
+            "description": "Stock keeping unit"
+          }
+        },
+        "required": [
+          "sku"
+        ]
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "outputSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "sku": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "qty": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "sku",
+          "name",
+          "qty"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "adjust_stock",
+      "description": "Add to or subtract from an item quantity. The result may not go below zero.",
+      "inputSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "sku": {
+            "type": "string",
+            "description": "Stock keeping unit"
+          },
+          "delta": {
+            "type": "number",
+            "description": "Signed change to apply to the quantity"
+          }
+        },
+        "required": [
+          "sku",
+          "delta"
+        ]
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "outputSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "sku": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "qty": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "sku",
+          "name",
+          "qty"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "list_items",
+      "description": "List every item in the inventory.",
+      "inputSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "limit": {
+            "description": "Maximum number of items to return",
+            "type": "string"
+          }
+        }
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "outputSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "sku": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "qty": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "sku",
+                "name",
+                "qty"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "search_items",
+      "description": "Search.",
+      "inputSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "q": {
+            "type": "string",
+            "description": "Text matched against sku and name"
+          },
+          "limit": {
+            "description": "Maximum number of items to return",
+            "type": "number"
+          }
+        },
+        "required": [
+          "q"
+        ]
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "outputSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "items": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "sku": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "qty": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "sku",
+                "name",
+                "qty"
+              ],
+              "additionalProperties": false
+            }
+          }
+        },
+        "required": [
+          "items"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "remove_item",
+      "description": "Remove an item from the inventory.",
+      "inputSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "sku": {
+            "type": "string",
+            "description": "Stock keeping unit"
+          }
+        },
+        "required": [
+          "sku"
+        ]
+      },
+      "execution": {
+        "taskSupport": "forbidden"
+      },
+      "outputSchema": {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "object",
+        "properties": {
+          "removed": {
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "removed"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ]
+}

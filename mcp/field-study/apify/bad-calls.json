@@ -1,0 +1,27 @@
+{
+  "unknownTool": {
+    "tool": "karate_field_study_no_such_tool",
+    "args": {
+    },
+    "outcome": {
+      "error": "Tool \"karate_field_study_no_such_tool\" was not found.\nAvailable tools: search-actors, fetch-actor-details, call-actor, get-actor-run, get-dataset-items, get-key-value-store-record, abort-actor-run, search-apify-docs, fetch-apify-docs, report-problem, apify--rag-web-browser, apify--web-fetch.\nPlease verify the tool name is correct. You can list all available tools using the tools/list request.",
+      "code": -32602,
+      "kind": "jsonrpc",
+      "status": 200
+    }
+  },
+  "missingRequired": {
+    "tool": "fetch-actor-details",
+    "args": {
+    },
+    "requiredParams": [
+      "actor"
+    ],
+    "outcome": {
+      "error": "Invalid arguments for tool \"fetch-actor-details\".\nValidation errors: root: must have required property 'actor'.\nPlease check the tool's input schema using fetch-actor-details tool and ensure all required parameters are provided with correct types and values.",
+      "code": -32602,
+      "kind": "jsonrpc",
+      "status": 200
+    }
+  }
+}

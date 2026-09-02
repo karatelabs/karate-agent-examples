@@ -1,0 +1,898 @@
+{
+  "cacheScope": "private",
+  "resultType": "complete",
+  "tools": [
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Verify if a Docling document is already converted and in the local cache.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "document_key": {
+            "description": "The unique identifier of the document in the local cache.",
+            "title": "Document Key",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_key"
+        ],
+        "title": "is_document_in_local_cacheArguments"
+      },
+      "name": "is_document_in_local_cache",
+      "outputSchema": {
+        "properties": {
+          "in_cache": {
+            "title": "In Cache",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "in_cache"
+        ],
+        "title": "IsDoclingDocumentInCacheOutput",
+        "type": "object"
+      },
+      "title": "Is Docling document in cache"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Convert a document of any type from a URL or local path and store in local cache.\n\n    This tool takes a document's URL or local file path, converts it using\n    the configured converter (remote API or local), and stores the resulting\n    Docling document in a local cache. It returns an output with a boolean\n    set to False along with the document's unique cache key. If the document\n    was already in the local cache, the conversion is skipped and the output\n    boolean is set to True.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "description": "The URL or local file path to the document. Object-storage URIs (abfs://, az://, gcs://, gs://, s3://) are supported when the matching provider extra is installed.",
+            "title": "Source",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source"
+        ],
+        "title": "convert_document_into_docling_documentArguments"
+      },
+      "name": "convert_document_into_docling_document",
+      "outputSchema": {
+        "properties": {
+          "from_cache": {
+            "title": "From Cache",
+            "type": "boolean"
+          },
+          "document_key": {
+            "title": "Document Key",
+            "type": "string"
+          }
+        },
+        "required": [
+          "from_cache",
+          "document_key"
+        ],
+        "title": "ConversionOutput",
+        "type": "object"
+      },
+      "title": "Convert document into Docling document"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Convert all files from a local directory path and store them in local cache.\n\n    This tool takes a local directory path, converts every file in the directory using\n    the configured converter (remote API or local) and stores the resulting Docling\n    documents in a local cache. It returns a list of conversion outputs, where each\n    output consists of a boolean set to False along with a document's unique cache key.\n    If a document was already in the local cache, the conversion is skipped and the\n    output boolean is set to True.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "source": {
+            "description": "The path to a local directory",
+            "title": "Source",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source"
+        ],
+        "title": "convert_directory_files_into_docling_documentArguments"
+      },
+      "name": "convert_directory_files_into_docling_document",
+      "outputSchema": {
+        "$defs": {
+          "ConversionOutput": {
+            "description": "Output of document conversion.",
+            "properties": {
+              "from_cache": {
+                "description": "Whether the document was served from the local cache.",
+                "title": "From Cache",
+                "type": "boolean"
+              },
+              "document_key": {
+                "description": "The unique identifier of the document in the local cache.",
+                "title": "Document Key",
+                "type": "string"
+              }
+            },
+            "required": [
+              "from_cache",
+              "document_key"
+            ],
+            "title": "ConversionOutput",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "result": {
+            "items": {
+              "$ref": "#/$defs/ConversionOutput"
+            },
+            "title": "Result",
+            "type": "array"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "convert_directory_files_into_docling_documentOutput",
+        "type": "object"
+      },
+      "title": "Convert files from directory into Docling document"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Create a new Docling document from a provided prompt string.\n\n    This function generates a new document in the local document cache with the\n    provided prompt text. The document is assigned a unique key derived from an MD5\n    hash of the prompt text.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "prompt": {
+            "description": "The prompt text to include in the new document.",
+            "title": "Prompt",
+            "type": "string"
+          }
+        },
+        "required": [
+          "prompt"
+        ],
+        "title": "create_new_docling_documentArguments"
+      },
+      "name": "create_new_docling_document",
+      "outputSchema": {
+        "properties": {
+          "document_key": {
+            "title": "Document Key",
+            "type": "string"
+          },
+          "prompt": {
+            "title": "Prompt",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_key",
+          "prompt"
+        ],
+        "title": "NewDoclingDocumentOutput",
+        "type": "object"
+      },
+      "title": "Create new Docling document"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Export a document from the local document cache to markdown format.\n\n    This tool converts a Docling document that exists in the local cache into\n    a markdown formatted string, which can be used for display or further processing.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "document_key": {
+            "description": "The unique identifier of the document in the local cache.",
+            "title": "Document Key",
+            "type": "string"
+          },
+          "max_size": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "The maximum number of characters to return.",
+            "title": "Max Size"
+          }
+        },
+        "required": [
+          "document_key"
+        ],
+        "title": "export_docling_document_to_markdownArguments"
+      },
+      "name": "export_docling_document_to_markdown",
+      "outputSchema": {
+        "properties": {
+          "document_key": {
+            "title": "Document Key",
+            "type": "string"
+          },
+          "markdown": {
+            "title": "Markdown",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_key",
+          "markdown"
+        ],
+        "title": "ExportDocumentMarkdownOutput",
+        "type": "object"
+      },
+      "title": "Export Docling document to markdown format"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Save a document from the local document cache to disk in both markdown and JSON formats.\n\n    This tool takes a document that exists in the local cache and saves it to the specified\n    cache directory with filenames based on the document key. Both markdown and JSON versions\n    of the document are saved.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "document_key": {
+            "description": "The unique identifier of the document in the local cache.",
+            "title": "Document Key",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_key"
+        ],
+        "title": "save_docling_documentArguments"
+      },
+      "name": "save_docling_document",
+      "outputSchema": {
+        "properties": {
+          "md_file": {
+            "title": "Md File",
+            "type": "string"
+          },
+          "json_file": {
+            "title": "Json File",
+            "type": "string"
+          }
+        },
+        "required": [
+          "md_file",
+          "json_file"
+        ],
+        "title": "SaveDocumentOutput",
+        "type": "object"
+      },
+      "title": "Save Docling document"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Generate a thumbnail image for the requested page.\n\n    This tool takes a document that exists in the local cache and generates a thumbnail image for the requested page.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "document_key": {
+            "description": "The unique identifier of the document in the local cache.",
+            "title": "Document Key",
+            "type": "string"
+          },
+          "page_no": {
+            "default": 1,
+            "description": "The number of the page starting at 1",
+            "title": "Page No",
+            "type": "integer"
+          },
+          "size": {
+            "default": 300,
+            "description": "The width of the thumbnail in pixels",
+            "title": "Size",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "document_key"
+        ],
+        "title": "page_thumbnailArguments"
+      },
+      "name": "page_thumbnail",
+      "title": "Generate the thumbnail of a page in the Docling document"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Add or update the title of a document in the local document cache.\n\n    This tool modifies an existing document that has already been processed\n    and stored in the local cache. It requires that the document already exists\n    in the cache before a title can be added.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "document_key": {
+            "description": "The unique identifier of the document in the local cache.",
+            "title": "Document Key",
+            "type": "string"
+          },
+          "title": {
+            "description": "The title text to add or update to the document.",
+            "title": "Title",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_key",
+          "title"
+        ],
+        "title": "add_title_to_docling_documentArguments"
+      },
+      "name": "add_title_to_docling_document",
+      "outputSchema": {
+        "properties": {
+          "document_key": {
+            "title": "Document Key",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_key"
+        ],
+        "title": "UpdateDocumentOutput",
+        "type": "object"
+      },
+      "title": "Add or update title to Docling document"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Add a section heading to an existing document in the local document cache.\n\n    This tool inserts a section heading with the specified heading text and level\n    into a document that has already been processed and stored in the local cache.\n    Section levels typically represent heading hierarchy (e.g., 1 for H1, 2 for H2).\n    ",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "document_key": {
+            "description": "The unique identifier of the document in the local cache.",
+            "title": "Document Key",
+            "type": "string"
+          },
+          "section_heading": {
+            "description": "The text to use for the section heading.",
+            "title": "Section Heading",
+            "type": "string"
+          },
+          "section_level": {
+            "description": "The level of the heading, starting from 1, where 1 is the highest level.",
+            "maximum": 100,
+            "minimum": 1,
+            "title": "Section Level",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "document_key",
+          "section_heading",
+          "section_level"
+        ],
+        "title": "add_section_heading_to_docling_documentArguments"
+      },
+      "name": "add_section_heading_to_docling_document",
+      "outputSchema": {
+        "properties": {
+          "document_key": {
+            "title": "Document Key",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_key"
+        ],
+        "title": "UpdateDocumentOutput",
+        "type": "object"
+      },
+      "title": "Add section heading to Docling document"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Add a paragraph of text to an existing document in the local document cache.\n\n    This tool inserts a new paragraph under the specified section header and level\n    into a document that has already been processed and stored in the cache.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "document_key": {
+            "description": "The unique identifier of the document in the local cache.",
+            "title": "Document Key",
+            "type": "string"
+          },
+          "paragraph": {
+            "description": "The text content to add as a paragraph.",
+            "title": "Paragraph",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_key",
+          "paragraph"
+        ],
+        "title": "add_paragraph_to_docling_documentArguments"
+      },
+      "name": "add_paragraph_to_docling_document",
+      "outputSchema": {
+        "properties": {
+          "document_key": {
+            "title": "Document Key",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_key"
+        ],
+        "title": "UpdateDocumentOutput",
+        "type": "object"
+      },
+      "title": "Add paragraph to Docling document"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Open a new list group in an existing document in the local document cache.\n\n    This tool creates a new list structure within a document that has already been\n    processed and stored in the local cache. It requires that the document already exists\n    and that there is at least one item in the document's stack cache.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "document_key": {
+            "description": "The unique identifier of the document in the local cache.",
+            "title": "Document Key",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_key"
+        ],
+        "title": "open_list_in_docling_documentArguments"
+      },
+      "name": "open_list_in_docling_document",
+      "outputSchema": {
+        "properties": {
+          "document_key": {
+            "title": "Document Key",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_key"
+        ],
+        "title": "UpdateDocumentOutput",
+        "type": "object"
+      },
+      "title": "Open list in Docling document"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Closes a list group in an existing document in the local document cache.\n\n    This tool closes a previously opened list structure within a document.\n    It requires that the document exists and that there is more than one item\n    in the document's stack cache.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "document_key": {
+            "description": "The unique identifier of the document in the local cache.",
+            "title": "Document Key",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_key"
+        ],
+        "title": "close_list_in_docling_documentArguments"
+      },
+      "name": "close_list_in_docling_document",
+      "outputSchema": {
+        "properties": {
+          "document_key": {
+            "title": "Document Key",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_key"
+        ],
+        "title": "UpdateDocumentOutput",
+        "type": "object"
+      },
+      "title": "Close list in Docling document"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Add list items to an open list in an existing document in the local document cache.\n\n    This tool inserts new list items with the specified text and marker into an\n    open list within a document. It requires that the document exists and that\n    there is at least one item in the document's stack cache.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "$defs": {
+          "ListItem": {
+            "description": "A class to represent a list item pairing.",
+            "properties": {
+              "list_item_text": {
+                "description": "The text of a list item.",
+                "title": "List Item Text",
+                "type": "string"
+              },
+              "list_marker_text": {
+                "description": "The marker of a list item.",
+                "title": "List Marker Text",
+                "type": "string"
+              }
+            },
+            "required": [
+              "list_item_text",
+              "list_marker_text"
+            ],
+            "title": "ListItem",
+            "type": "object"
+          }
+        },
+        "properties": {
+          "document_key": {
+            "description": "The unique identifier of the document in the local cache.",
+            "title": "Document Key",
+            "type": "string"
+          },
+          "list_items": {
+            "description": "A list of list_item_text and list_marker_text items.",
+            "items": {
+              "$ref": "#/$defs/ListItem"
+            },
+            "title": "List Items",
+            "type": "array"
+          }
+        },
+        "required": [
+          "document_key",
+          "list_items"
+        ],
+        "title": "add_list_items_to_list_in_docling_documentArguments"
+      },
+      "name": "add_list_items_to_list_in_docling_document",
+      "outputSchema": {
+        "properties": {
+          "document_key": {
+            "title": "Document Key",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_key"
+        ],
+        "title": "UpdateDocumentOutput",
+        "type": "object"
+      },
+      "title": "Add items to list in Docling document"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "readOnlyHint": false
+      },
+      "description": "Add an HTML-formatted table to an existing document in the local document cache.\n\n    This tool parses the provided HTML table string, converts it to a structured table\n    representation, and adds it to the specified document. It also supports optional\n    captions and footnotes for the table.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "document_key": {
+            "description": "The unique identifier of the document in the local cache.",
+            "title": "Document Key",
+            "type": "string"
+          },
+          "html_table": {
+            "description": "The HTML string representation of the table to add.",
+            "examples": [
+              "<table><tr><th>Name</th><th>Age</th></tr><tr><td>John</td><td>30</td></tr></table>",
+              "<table><tr><th colspan='2'>Demographics</th></tr><tr><th>Name</th><th>Age</th></tr><tr><td>John</td><td rowspan='2'>30</td></tr><tr><td>Jane</td></tr></table>"
+            ],
+            "title": "Html Table",
+            "type": "string"
+          },
+          "table_captions": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "A list of caption strings to associate with the table..",
+            "title": "Table Captions"
+          },
+          "table_footnotes": {
+            "anyOf": [
+              {
+                "items": {
+                  "type": "string"
+                },
+                "type": "array"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "default": null,
+            "description": "A list of footnote strings to associate with the table.",
+            "title": "Table Footnotes"
+          }
+        },
+        "required": [
+          "document_key",
+          "html_table"
+        ],
+        "title": "add_table_in_html_format_to_docling_documentArguments"
+      },
+      "name": "add_table_in_html_format_to_docling_document",
+      "outputSchema": {
+        "properties": {
+          "document_key": {
+            "title": "Document Key",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_key"
+        ],
+        "title": "UpdateDocumentOutput",
+        "type": "object"
+      },
+      "title": "Add HTML table to Docling document"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Retrieve a structured overview of a document from the local document cache.\n\n    This tool returns a text representation of the Docling document's structure,\n    showing the hierarchy and types of elements within the document. Each line in the\n    output includes the document anchor reference and item label.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "document_key": {
+            "description": "The unique identifier of the document in the local cache.",
+            "title": "Document Key",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_key"
+        ],
+        "title": "get_overview_of_document_anchorsArguments"
+      },
+      "name": "get_overview_of_document_anchors",
+      "outputSchema": {
+        "properties": {
+          "structure": {
+            "title": "Structure",
+            "type": "string"
+          }
+        },
+        "required": [
+          "structure"
+        ],
+        "title": "DocumentAnchorOutput",
+        "type": "object"
+      },
+      "title": "Get overview of Docling document anchors"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Search for specific text and keywords within a document's anchors.\n\n    This tool takes a string of text to search for and returns a string of all\n    document anchors that contain the exact text. The search is case-insensitive.\n    If the exact text is not found, the tool will search for individual keywords\n    within the text, splitting it on non-alphanumeric characters. If keywords\n    are found, they are listed alongside their number of occurrences in parentheses.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "document_key": {
+            "description": "The unique identifier of the document in the local cache.",
+            "title": "Document Key",
+            "type": "string"
+          },
+          "text": {
+            "description": "The string of text to search for in the document's anchors.",
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_key",
+          "text"
+        ],
+        "title": "search_for_text_in_document_anchorsArguments"
+      },
+      "name": "search_for_text_in_document_anchors",
+      "outputSchema": {
+        "properties": {
+          "result": {
+            "title": "Result",
+            "type": "string"
+          }
+        },
+        "required": [
+          "result"
+        ],
+        "title": "TextSearchOutput",
+        "type": "object"
+      },
+      "title": "Search for text in Docling document anchors"
+    },
+    {
+      "annotations": {
+        "destructiveHint": false,
+        "readOnlyHint": true
+      },
+      "description": "Retrieve the text content of a specific document item identified by its anchor.\n\n    This tool extracts the text from a Docling document item at the specified anchor\n    location within a document that exists in the local document cache.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "document_key": {
+            "description": "The unique identifier of the document in the local cache.",
+            "title": "Document Key",
+            "type": "string"
+          },
+          "document_anchor": {
+            "description": "The anchor reference that identifies the specific item within the document.",
+            "examples": [
+              "#/texts/2"
+            ],
+            "title": "Document Anchor",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_key",
+          "document_anchor"
+        ],
+        "title": "get_text_of_document_item_at_anchorArguments"
+      },
+      "name": "get_text_of_document_item_at_anchor",
+      "outputSchema": {
+        "properties": {
+          "text": {
+            "title": "Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "text"
+        ],
+        "title": "DocumentItemText",
+        "type": "object"
+      },
+      "title": "Get text of Docling document item at anchor"
+    },
+    {
+      "annotations": {
+        "destructiveHint": true,
+        "readOnlyHint": false
+      },
+      "description": "Update the text content of a specific document item identified by its anchor.\n\n    This tool modifies the text of an existing document item at the specified anchor\n    location within a document that exists in the local document cache. It requires\n    that the document already exists in the cache before a modification can be made.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "document_key": {
+            "description": "The unique identifier of the document in the local cache.",
+            "title": "Document Key",
+            "type": "string"
+          },
+          "document_anchor": {
+            "description": "The anchor reference that identifies the specific item within the document.",
+            "examples": [
+              "#/texts/6"
+            ],
+            "title": "Document Anchor",
+            "type": "string"
+          },
+          "updated_text": {
+            "description": "The new text content to replace the existing content.",
+            "title": "Updated Text",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_key",
+          "document_anchor",
+          "updated_text"
+        ],
+        "title": "update_text_of_document_item_at_anchorArguments"
+      },
+      "name": "update_text_of_document_item_at_anchor",
+      "outputSchema": {
+        "properties": {
+          "document_key": {
+            "title": "Document Key",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_key"
+        ],
+        "title": "UpdateDocumentOutput",
+        "type": "object"
+      },
+      "title": "Update text of Docling document item at anchor"
+    },
+    {
+      "annotations": {
+        "destructiveHint": true,
+        "readOnlyHint": false
+      },
+      "description": "Delete multiple document items identified by their anchors.\n\n    This tool removes specified items from a Docling document that exists in the local\n    document cache, based on their anchor references. It requires that the document\n    already exists in the cache before performing the deletion.\n    ",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "document_key": {
+            "description": "The unique identifier of the document in the local cache.",
+            "title": "Document Key",
+            "type": "string"
+          },
+          "document_anchors": {
+            "description": "A list of anchor references identifying the items to be deleted from the document.",
+            "examples": [
+              "#/texts/2",
+              "#/tables/1"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "title": "Document Anchors",
+            "type": "array"
+          }
+        },
+        "required": [
+          "document_key",
+          "document_anchors"
+        ],
+        "title": "delete_document_items_at_anchorsArguments"
+      },
+      "name": "delete_document_items_at_anchors",
+      "outputSchema": {
+        "properties": {
+          "document_key": {
+            "title": "Document Key",
+            "type": "string"
+          }
+        },
+        "required": [
+          "document_key"
+        ],
+        "title": "UpdateDocumentOutput",
+        "type": "object"
+      },
+      "title": "Delete Docling document items at anchors"
+    }
+  ],
+  "ttlMs": 0,
+  "_meta": {
+    "io.modelcontextprotocol/serverInfo": {
+      "name": "docling",
+      "version": ""
+    }
+  }
+}
