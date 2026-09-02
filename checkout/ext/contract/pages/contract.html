@@ -205,6 +205,12 @@
         <div class="k-sub" x-text="specMismatch.note"></div>
       </div>
     </template>
+    <template x-if="noSpec">
+      <div class="k-warnbox">
+        <h2>This pair is bound to no contract document</h2>
+        <div class="k-sub" x-text="noSpec"></div>
+      </div>
+    </template>
 
     <!-- ── 4. UNEXPECTED DIFFERENCES — the findings, and the work queue on a red run ─────────────────── -->
     <h2 x-show="!pair.absent">Unexpected differences <span class="k-muted" x-text="'(' + divergences.length + ')'"></span><span

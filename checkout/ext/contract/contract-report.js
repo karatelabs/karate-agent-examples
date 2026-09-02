@@ -47,6 +47,7 @@ document.addEventListener('alpine:init', function () {
       get coverage() { return this.claim.claimCoverage || {}; },
       get measured() { return this.claim.measured === true; },
       get specMismatch() { return this.claim.specMismatch || {}; },
+      get noSpec() { return this.claim.noSpec || null; },
       get freshness() { return this.pair.freshness || {}; },
       get refresh() { return this.pair.refresh || {}; },
       get warnings() { return this.pair.warnings || {}; },
@@ -176,7 +177,7 @@ document.addEventListener('alpine:init', function () {
             + 'provider — and the run reports every place the two answers differed.',
           terms: [
             { t: 'provider', d: 'The real service. A URL you hand in: a deployed environment, a staging box, a local build.' },
-            { t: 'mock', d: 'The stand-in your project ships to consuming teams. Name it, or the harness synthesizes one from your spec — which agrees with spec-shaped assertions by construction, and is a different subject from the mock you ship.' },
+            { t: 'mock', d: 'The stand-in your project ships to consuming teams. Name it, or the harness synthesizes one from your spec — which agrees with spec-shaped assertions by construction, and is a different subject from the mock you ship. A pair minted without a spec must name its mock: there is no document to synthesize one from.' },
             { t: 'leg', d: 'One of the two runs: the mock leg and the provider leg. Same suite, same scenario order, one session.' },
             { t: 'paired run', d: 'The two legs together, plus the difference set they produce. One pair id is stamped at the top and both legs carry it.' },
             { t: 'operation', d: 'One endpoint in your contract — the unit everything here is counted in (GET /policies/{id}, and so on).' }

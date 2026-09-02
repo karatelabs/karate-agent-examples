@@ -1,14 +1,14 @@
-<testsuite name="the payments dependency, as the checkout service actually uses it — the consumer&apos;s contract suite" tests="6" failures="0" time="0.589" skipped="0"><testcase classname="checks.payments-contract" name="a payment within the limit is approved, and the amount echoes back exactly" time="0.346"><properties><property name="req" value="PAY-001/ac1"/></properties><system-out>* paymentsUrl
+<testsuite name="the payments dependency, as the checkout service actually uses it — the consumer&apos;s contract suite" tests="6" failures="0" time="0.554" skipped="0"><testcase classname="checks.payments-contract" name="a payment within the limit is approved, and the amount echoes back exactly" time="0.308"><properties><property name="req" value="PAY-001/ac1"/></properties><system-out>* paymentsUrl
 Given &apos;payments&apos;
 And { amount: 12500, currency: &apos;USD&apos;, card: { number: &apos;4242424242424242&apos;, expiry: &apos;12/29&apos; } }
 When post
 request:
-1 &gt; POST http://localhost:33411/payments
+1 &gt; POST http://localhost:33481/payments
 1 &gt; Content-Type: application/json; charset=UTF-8
-1 &gt; Host: localhost:33411
+1 &gt; Host: localhost:33481
 1 &gt; Content-Length: 88
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12)
+1 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 {
   &quot;amount&quot;: 12500,
   &quot;currency&quot;: &quot;USD&quot;,
@@ -18,8 +18,8 @@ request:
   }
 }
 
-response time in milliseconds: 141
-1 &lt; 201 POST http://localhost:33411/payments
+response time in milliseconds: 119
+1 &lt; 201 POST http://localhost:33481/payments
 1 &lt; content-length: 83
 1 &lt; Karate-Mock: true
 1 &lt; Content-Type: application/json; charset=UTF-8
@@ -31,22 +31,22 @@ response time in milliseconds: 141
   &quot;network&quot;: &quot;VISA&quot;
 }
 
-POST http://localhost:33411/payments
-201 (141 ms)
+POST http://localhost:33481/payments
+201 (119 ms)
 Then 201
 And response == { id: &apos;#string&apos;, status: &apos;approved&apos;, amount: 12500, currency: &apos;USD&apos;, network: &apos;#string&apos; }
 </system-out></testcase>
-<testcase classname="checks.payments-contract" name="a payment over the limit is declined — a decision, not an error" time="0.014"><properties><property name="req" value="PAY-001/ac2"/></properties><system-out>* paymentsUrl
+<testcase classname="checks.payments-contract" name="a payment over the limit is declined — a decision, not an error" time="0.009"><properties><property name="req" value="PAY-001/ac2"/></properties><system-out>* paymentsUrl
 Given &apos;payments&apos;
 And { amount: 50001, currency: &apos;USD&apos;, card: { number: &apos;4242424242424242&apos;, expiry: &apos;12/29&apos; } }
 When post
 request:
-1 &gt; POST http://localhost:33411/payments
+1 &gt; POST http://localhost:33481/payments
 1 &gt; Content-Type: application/json; charset=UTF-8
-1 &gt; Host: localhost:33411
+1 &gt; Host: localhost:33481
 1 &gt; Content-Length: 88
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12)
+1 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 {
   &quot;amount&quot;: 50001,
   &quot;currency&quot;: &quot;USD&quot;,
@@ -56,8 +56,8 @@ request:
   }
 }
 
-response time in milliseconds: 8
-1 &lt; 201 POST http://localhost:33411/payments
+response time in milliseconds: 4
+1 &lt; 201 POST http://localhost:33481/payments
 1 &lt; content-length: 83
 1 &lt; Karate-Mock: true
 1 &lt; Content-Type: application/json; charset=UTF-8
@@ -69,22 +69,22 @@ response time in milliseconds: 8
   &quot;network&quot;: &quot;VISA&quot;
 }
 
-POST http://localhost:33411/payments
-201 (8 ms)
+POST http://localhost:33481/payments
+201 (4 ms)
 Then 201
 And response contains { status: &apos;declined&apos; }
 </system-out></testcase>
-<testcase classname="checks.payments-contract" name="a payment reads back by the id the provider minted for it" time="0.017"><properties><property name="req" value="PAY-002/ac1"/></properties><system-out>* paymentsUrl
+<testcase classname="checks.payments-contract" name="a payment reads back by the id the provider minted for it" time="0.015"><properties><property name="req" value="PAY-002/ac1"/></properties><system-out>* paymentsUrl
 Given &apos;payments&apos;
 And { amount: 900, currency: &apos;USD&apos;, card: { number: &apos;5500005555555559&apos;, expiry: &apos;01/30&apos; } }
 When post
 request:
-1 &gt; POST http://localhost:33411/payments
+1 &gt; POST http://localhost:33481/payments
 1 &gt; Content-Type: application/json; charset=UTF-8
-1 &gt; Host: localhost:33411
+1 &gt; Host: localhost:33481
 1 &gt; Content-Length: 86
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12)
+1 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 {
   &quot;amount&quot;: 900,
   &quot;currency&quot;: &quot;USD&quot;,
@@ -95,7 +95,7 @@ request:
 }
 
 response time in milliseconds: 6
-1 &lt; 201 POST http://localhost:33411/payments
+1 &lt; 201 POST http://localhost:33481/payments
 1 &lt; content-length: 87
 1 &lt; Karate-Mock: true
 1 &lt; Content-Type: application/json; charset=UTF-8
@@ -107,20 +107,20 @@ response time in milliseconds: 6
   &quot;network&quot;: &quot;MASTERCARD&quot;
 }
 
-POST http://localhost:33411/payments
+POST http://localhost:33481/payments
 201 (6 ms)
 Then 201
 * paymentId = response.id
 Given &apos;payments&apos;, paymentId
 When get
 request:
-2 &gt; GET http://localhost:33411/payments/pay-3
-2 &gt; Host: localhost:33411
+2 &gt; GET http://localhost:33481/payments/pay-3
+2 &gt; Host: localhost:33481
 2 &gt; Connection: keep-alive
-2 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12)
+2 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
 response time in milliseconds: 3
-2 &lt; 200 GET http://localhost:33411/payments/pay-3
+2 &lt; 200 GET http://localhost:33481/payments/pay-3
 2 &lt; content-length: 87
 2 &lt; Karate-Mock: true
 2 &lt; Content-Type: application/json; charset=UTF-8
@@ -132,22 +132,22 @@ response time in milliseconds: 3
   &quot;network&quot;: &quot;MASTERCARD&quot;
 }
 
-GET http://localhost:33411/payments/pay-3
+GET http://localhost:33481/payments/pay-3
 200 (3 ms)
 Then 200
 And response contains { id: &apos;#(paymentId)&apos;, status: &apos;approved&apos;, amount: 900 }
 </system-out></testcase>
-<testcase classname="checks.payments-contract" name="a refund happens exactly once — the second attempt is a 409, not a second refund" time="0.025"><properties><property name="req" value="PAY-003/ac1"/></properties><system-out>* paymentsUrl
+<testcase classname="checks.payments-contract" name="a refund happens exactly once — the second attempt is a 409, not a second refund" time="0.021"><properties><property name="req" value="PAY-003/ac1"/></properties><system-out>* paymentsUrl
 Given &apos;payments&apos;
 And { amount: 3300, currency: &apos;USD&apos;, card: { number: &apos;4000056655665556&apos;, expiry: &apos;03/28&apos; } }
 When post
 request:
-1 &gt; POST http://localhost:33411/payments
+1 &gt; POST http://localhost:33481/payments
 1 &gt; Content-Type: application/json; charset=UTF-8
-1 &gt; Host: localhost:33411
+1 &gt; Host: localhost:33481
 1 &gt; Content-Length: 87
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12)
+1 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 {
   &quot;amount&quot;: 3300,
   &quot;currency&quot;: &quot;USD&quot;,
@@ -157,8 +157,8 @@ request:
   }
 }
 
-response time in milliseconds: 8
-1 &lt; 201 POST http://localhost:33411/payments
+response time in milliseconds: 4
+1 &lt; 201 POST http://localhost:33481/payments
 1 &lt; content-length: 82
 1 &lt; Karate-Mock: true
 1 &lt; Content-Type: application/json; charset=UTF-8
@@ -170,21 +170,21 @@ response time in milliseconds: 8
   &quot;network&quot;: &quot;VISA&quot;
 }
 
-POST http://localhost:33411/payments
-201 (8 ms)
+POST http://localhost:33481/payments
+201 (4 ms)
 Then 201
 * paymentId = response.id
 Given &apos;payments&apos;, paymentId, &apos;refund&apos;
 When post
 request:
-2 &gt; POST http://localhost:33411/payments/pay-4/refund
-2 &gt; Host: localhost:33411
+2 &gt; POST http://localhost:33481/payments/pay-4/refund
+2 &gt; Host: localhost:33481
 2 &gt; Content-Length: 0
 2 &gt; Connection: keep-alive
-2 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12)
+2 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
 response time in milliseconds: 2
-2 &lt; 201 POST http://localhost:33411/payments/pay-4/refund
+2 &lt; 201 POST http://localhost:33481/payments/pay-4/refund
 2 &lt; content-length: 54
 2 &lt; Karate-Mock: true
 2 &lt; Content-Type: application/json; charset=UTF-8
@@ -194,20 +194,20 @@ response time in milliseconds: 2
   &quot;status&quot;: &quot;refunded&quot;
 }
 
-POST http://localhost:33411/payments/pay-4/refund
+POST http://localhost:33481/payments/pay-4/refund
 201 (2 ms)
 Then 201
 And response == { id: &apos;#string&apos;, paymentId: &apos;#(paymentId)&apos;, status: &apos;refunded&apos; }
 Given &apos;payments&apos;, paymentId
 When get
 request:
-3 &gt; GET http://localhost:33411/payments/pay-4
-3 &gt; Host: localhost:33411
+3 &gt; GET http://localhost:33481/payments/pay-4
+3 &gt; Host: localhost:33481
 3 &gt; Connection: keep-alive
-3 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12)
+3 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
 response time in milliseconds: 2
-3 &lt; 200 GET http://localhost:33411/payments/pay-4
+3 &lt; 200 GET http://localhost:33481/payments/pay-4
 3 &lt; content-length: 82
 3 &lt; Karate-Mock: true
 3 &lt; Content-Type: application/json; charset=UTF-8
@@ -219,21 +219,21 @@ response time in milliseconds: 2
   &quot;network&quot;: &quot;VISA&quot;
 }
 
-GET http://localhost:33411/payments/pay-4
+GET http://localhost:33481/payments/pay-4
 200 (2 ms)
 Then 200
 And response contains { status: &apos;refunded&apos; }
 Given &apos;payments&apos;, paymentId, &apos;refund&apos;
 When post
 request:
-4 &gt; POST http://localhost:33411/payments/pay-4/refund
-4 &gt; Host: localhost:33411
+4 &gt; POST http://localhost:33481/payments/pay-4/refund
+4 &gt; Host: localhost:33481
 4 &gt; Content-Length: 0
 4 &gt; Connection: keep-alive
-4 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12)
+4 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
 response time in milliseconds: 3
-4 &lt; 409 POST http://localhost:33411/payments/pay-4/refund
+4 &lt; 409 POST http://localhost:33481/payments/pay-4/refund
 4 &lt; content-length: 49
 4 &lt; Karate-Mock: true
 4 &lt; Content-Type: application/json; charset=UTF-8
@@ -242,7 +242,7 @@ response time in milliseconds: 3
   &quot;field&quot;: &quot;id&quot;
 }
 
-POST http://localhost:33411/payments/pay-4/refund
+POST http://localhost:33481/payments/pay-4/refund
 409 (3 ms)
 Then 409
 </system-out></testcase>
@@ -250,13 +250,13 @@ Then 409
 Given &apos;payments&apos;, &apos;does-not-exist&apos;
 When get
 request:
-1 &gt; GET http://localhost:33411/payments/does-not-exist
-1 &gt; Host: localhost:33411
+1 &gt; GET http://localhost:33481/payments/does-not-exist
+1 &gt; Host: localhost:33481
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12)
+1 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
-response time in milliseconds: 2
-1 &lt; 404 GET http://localhost:33411/payments/does-not-exist
+response time in milliseconds: 4
+1 &lt; 404 GET http://localhost:33481/payments/does-not-exist
 1 &lt; content-length: 40
 1 &lt; Karate-Mock: true
 1 &lt; Content-Type: application/json; charset=UTF-8
@@ -265,8 +265,8 @@ response time in milliseconds: 2
   &quot;field&quot;: &quot;id&quot;
 }
 
-GET http://localhost:33411/payments/does-not-exist
-404 (2 ms)
+GET http://localhost:33481/payments/does-not-exist
+404 (4 ms)
 Then 404
 And response contains { error: &apos;#string&apos; }
 </system-out></testcase>
@@ -275,12 +275,12 @@ Given &apos;payments&apos;
 And { amount: 0, currency: &apos;USD&apos;, card: { number: &apos;4242424242424242&apos;, expiry: &apos;12/29&apos; } }
 When post
 request:
-1 &gt; POST http://localhost:33411/payments
+1 &gt; POST http://localhost:33481/payments
 1 &gt; Content-Type: application/json; charset=UTF-8
-1 &gt; Host: localhost:33411
+1 &gt; Host: localhost:33481
 1 &gt; Content-Length: 84
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12)
+1 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 {
   &quot;amount&quot;: 0,
   &quot;currency&quot;: &quot;USD&quot;,
@@ -291,7 +291,7 @@ request:
 }
 
 response time in milliseconds: 4
-1 &lt; 400 POST http://localhost:33411/payments
+1 &lt; 400 POST http://localhost:33481/payments
 1 &lt; content-length: 70
 1 &lt; Karate-Mock: true
 1 &lt; Content-Type: application/json; charset=UTF-8
@@ -300,7 +300,7 @@ response time in milliseconds: 4
   &quot;field&quot;: &quot;amount&quot;
 }
 
-POST http://localhost:33411/payments
+POST http://localhost:33481/payments
 400 (4 ms)
 Then 400
 And response contains { field: &apos;amount&apos; }
