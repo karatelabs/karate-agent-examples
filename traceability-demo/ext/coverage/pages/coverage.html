@@ -378,9 +378,14 @@
     <div class="k-rulecov" x-show="ruleCoverage.length">
       <h2>Rule branches <span class="k-muted">&middot; each yes/no path in your business rules, checked separately</span>
         <span class="k-info" @click="kaCopyHelp('model.coverage.rules')" title="What is a rule branch? Copy the help-id">&#9432;</span></h2>
+      <!-- collapsed by default (the same expanded-map idiom as the RTM rows): a real-life rulebook
+           carries dozens of branches, and the headline (pct bar + checked / not-checked / not-reachable
+           counts) is the scannable part — the arm list is the drill-down, one click away. -->
       <template x-for="r in ruleCoverage" :key="r.rule">
         <div class="k-rulebk">
-          <div class="k-rulehd">
+          <div class="k-rulehd" style="cursor:pointer" @click="toggle('rule:' + r.rule)"
+               :title="(isOpen('rule:' + r.rule) ? 'collapse' : 'expand') + ' the branch list'">
+            <span class="k-caret" :class="isOpen('rule:' + r.rule) && 'k-open'">&#9654;</span>
             <span class="k-rulebook" x-text="r.rule" :title="'rulebook: ' + r.rule"></span>
             <span class="k-bar"><span :class="ruleBarClass(r)" :style="'width:' + rulePct(r) + '%'"></span></span>
             <span class="k-rulepct" x-text="rulePct(r) + '%'"></span>
@@ -391,7 +396,7 @@
                   :title="'these branches show raw rule source — add a calc.label(...) at each site for a readable business name'"
                   x-text="ruleUnlabeled(r) + ' not named'"></span>
           </div>
-          <div class="k-rulearms">
+          <div class="k-rulearms" x-show="isOpen('rule:' + r.rule)">
             <template x-for="(a, idx) in ruleArms(r)" :key="idx">
               <div class="k-line k-rulearm">
                 <span class="k-pill" :class="armClass(a.status)"

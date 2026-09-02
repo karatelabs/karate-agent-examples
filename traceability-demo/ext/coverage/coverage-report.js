@@ -482,6 +482,7 @@ document.addEventListener('alpine:init', function () {
         var t = this.srcType(it);
         if (t === 'grpc') return 'GRPC';
         if (t === 'kafka') return 'KAFKA';
+        if (t === 'mcp') return 'MCP';
         return '';
       },
       // labels
