@@ -197,4 +197,9 @@
 .k-coverage-ext .k-gloss-hi { outline: 2px solid var(--k-bar-fill); transition: outline-color .3s; }
 /* a note that explains the table above it — flush against the last row otherwise */
 .k-coverage-ext table + .k-sub { margin-top: 10px; }
+
+/* a JSON pointer is one long unbroken token — without a forced break it dictates the table's width and
+   starves the message column into a one-word-per-line sliver. break-all over overflow-wrap: a pointer has
+   no natural break points, so even wrapping beats one giant overflow. */
+.k-coverage-ext td.k-pointer code { word-break: break-all; overflow-wrap: anywhere; }
 .k-coverage-ext .k-gloss-foot { font-size: 12px; color: var(--k-muted); padding: 4px 12px 0; }

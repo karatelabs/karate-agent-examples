@@ -212,7 +212,7 @@
             <td class="k-muted" x-text="where(f)"></td>
             <!-- a rule whose selector could not pin a position says nothing rather than guessing: a wrong
                  line number is worse than none, and the page may not invent one either -->
-            <td><code x-show="f.pointer" x-text="f.pointer"></code><span class="k-muted" x-show="!f.pointer">(document)</span></td>
+            <td class="k-pointer"><code x-show="f.pointer" x-text="f.pointer"></code><span class="k-muted" x-show="!f.pointer">(document)</span></td>
             <td x-text="f.message"></td>
           </tr>
         </template>
@@ -234,7 +234,7 @@
             <template x-for="(w, wi) in waivers" :key="wi">
               <tr :class="w.rejected ? 'k-rejected' : ''">
                 <td><code x-show="w.rule" x-text="w.rule"></code><span class="k-muted" x-show="!w.rule" x-text="'unreadable directive at line ' + w.line"></span></td>
-                <td><code x-show="w.scope" x-text="w.scope"></code><span class="k-muted" x-show="!w.scope">(whole document)</span></td>
+                <td class="k-pointer"><code x-show="w.scope" x-text="w.scope"></code><span class="k-muted" x-show="!w.scope">(whole document)</span></td>
                 <td class="k-muted" x-text="w.source"></td>
                 <td><span x-show="w.owner" x-text="w.owner"></span><span class="k-muted" x-show="!w.owner">&mdash;</span></td>
                 <td>
