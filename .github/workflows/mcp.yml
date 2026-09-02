@@ -3,10 +3,14 @@
 # so the standard agent image already carries the client, and the image is published ahead of the jar
 # release — this is how the kit goes live first.
 #
-# This workflow publishes NOTHING to gh-pages: protocols.yml owns the /mcp/ report, so the two lanes
-# never race on the same destination.
+# This lane also PUBLISHES the /mcp/ report to gh-pages. The jar lane (protocols.yml) skips entirely
+# until the engine jar is released, so without this the kit README's "see it without running anything"
+# link 404s. Both lanes write the SAME kit subdir with keep_files, so once the jar ships they simply
+# overwrite each other with the same report — never a sibling kit's, and the retry below absorbs the push
+# race.
 #
 # One-time setup: the KARATE_LICENSE repository secret (the inline karate.lic text).
+# Enable Pages (Settings -> Pages -> Deploy from a branch -> gh-pages).
 name: mcp (container image)
 
 on:
@@ -17,6 +21,7 @@ on:
   workflow_dispatch:
 
 permissions:
+  contents: write        # peaceiris publishes the HTML report to the gh-pages branch
   checks: write          # dorny/test-reporter writes the JUnit check
   packages: read         # pull the engine image from GHCR
 
@@ -94,3 +99,45 @@ jobs:
           retention-days: 7
           path: mcp/target/karate-reports
           if-no-files-found: ignore
+
+      # A kit step that died before rendering leaves no report, and peaceiris fails hard on a missing
+      # publish_dir — which would turn the retry below red on top of an already-red run. Gate on the tree
+      # actually existing instead.
+      - name: Check for the HTML report
+        id: report
+        if: always()
+        run: |
+          if [ -d target/karate-reports ]; then
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::no HTML report was rendered — nothing to publish"
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # The IMAGE lane publishes /mcp/ because the jar lane (protocols.yml) skips until the engine jar is
+      # released — until then this is the only run that has a report, and the kit README links to the page.
+      # destination_dir scopes the push to the mcp/ subdir of the shared gh-pages branch and keep_files
+      # leaves every sibling kit's directory untouched. Two workflows finishing together race on the push
+      # and the loser dies with `! [rejected] (fetch first)` — a red run whose tests all passed. Retry
+      # rather than serialize: a concurrency group queues only one run, so a third kit would cancel the
+      # second outright. The retry re-clones gh-pages, so it rebases.
+      # Browsable at https://<owner>.github.io/karate-agent-examples/mcp/.
+      - name: Publish HTML report to GitHub Pages
+        id: pages
+        continue-on-error: true
+        if: always() && github.ref == 'refs/heads/main' && steps.report.outputs.ok == 'true'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: mcp/target/karate-reports
+          destination_dir: mcp
+          keep_files: true
+
+      - name: Retry the publish (another kit won the race for gh-pages)
+        if: always() && github.ref == 'refs/heads/main' && steps.report.outputs.ok == 'true' && steps.pages.outcome == 'failure'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: mcp/target/karate-reports
+          destination_dir: mcp
+          keep_files: true
