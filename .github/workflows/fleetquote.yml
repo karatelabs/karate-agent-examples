@@ -1,0 +1,119 @@
+# fleetquote on GitHub Actions — the rulebook as the only pricing authority.
+#
+# `launch suite.karate.js` is self-contained: it starts the kit's own stateful mock in-process, runs the
+# lifecycle + rating checks against it as ONE report, and renders the rating rulebook's Analysis report into
+# the same directory. No SUT process, no browser, no host networking — the whole kit in one container run.
+#
+# One-time setup: add a repository secret KARATE_LICENSE (the inline karate.lic text). Without it the
+# engine's license check fails the run.
+name: fleetquote (the rulebook and its twin)
+
+on:
+  push:
+    paths: [ 'fleetquote/**', '.github/workflows/fleetquote.yml' ]
+  pull_request:
+    paths: [ 'fleetquote/**' ]
+  workflow_dispatch:
+
+
+permissions:
+  contents: write        # peaceiris publishes the HTML report to the gh-pages branch
+  checks: write          # dorny/test-reporter writes the JUnit check
+  packages: read         # pull the engine image from GHCR (this block is explicit, so unlisted = none)
+
+jobs:
+  # the shared publish-race gate (engine-gate.yml) — a missing engine image SKIPS the kit, never fails it
+  engine:
+    uses: ./.github/workflows/engine-gate.yml
+
+  karate:
+    needs: engine
+    if: needs.engine.outputs.present == 'true'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: fleetquote
+    steps:
+      - uses: actions/checkout@v4
+
+      # Authenticated GHCR pull: the package is private, this repo is granted read on it, and an
+      # authenticated pull avoids the anonymous per-IP rate limit on shared runners. The public ECR image
+      # (public.ecr.aws/karatelabs/karate-agent) stays the customer-facing, credential-free way to pull.
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Lifecycle + rating checks, and the rulebook analysis
+        run: |
+          IMAGE=ghcr.io/karatelabs/karate-agent:2.1.3.RC3
+          docker pull "$IMAGE"
+          # the karate-agent image runs as a NON-root user; pre-make target/ world-writable so the container
+          # can write the report / JUnit / coverage into the runner-owned checkout.
+          mkdir -p target && chmod -R 777 target
+          docker run --rm \
+            -v "$PWD":/work -w /work \
+            -e KARATE_LICENSE_TEXT="$KARATE_LICENSE_TEXT" \
+            "$IMAGE" \
+            launch suite.karate.js
+        env:
+          KARATE_LICENSE_TEXT: ${{ secrets.KARATE_LICENSE }}
+
+      - name: Publish test results (Checks tab)
+        if: always()
+        uses: dorny/test-reporter@v1
+        with:
+          name: fleetquote tests
+          path: 'fleetquote/target/karate-reports/**/junit-xml/*.xml'
+          reporter: java-junit
+
+      - name: Upload report + RTM + rule analysis
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: fleetquote-report
+          path: fleetquote/target/karate-reports
+          if-no-files-found: ignore
+
+      # A failed run can die before anything is rendered, and peaceiris fails hard on a missing publish_dir
+      # — which would add a red publish step on top of an already-red run. Gate on the tree existing.
+      - name: Check for the HTML report
+        id: report
+        if: always()
+        run: |
+          if [ -d target/karate-reports ]; then
+            echo "ok=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::no HTML report was rendered — nothing to publish"
+            echo "ok=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Publish the run report (summary · Coverage · Traceability) and rating-rule-analysis.html to GitHub
+      # Pages, per-kit subdir so kits don't clobber each other. Browsable at
+      # https://<owner>.github.io/karate-agent-examples/fleetquote/.
+      # Every kit publishes into its own destination_dir on ONE shared gh-pages branch, so two
+      # workflows finishing together race on the push and the loser dies with `! [rejected]
+      # (fetch first)` — a red run whose tests all passed. Retry rather than serialize: a
+      # concurrency group queues only one run, so a third kit cancels the second outright. The retry
+      # re-clones gh-pages, so it rebases.
+      - name: Publish HTML report to GitHub Pages
+        id: pages
+        continue-on-error: true
+        if: always() && github.ref == 'refs/heads/main' && steps.report.outputs.ok == 'true'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: fleetquote/target/karate-reports
+          destination_dir: fleetquote
+          keep_files: true
+
+      - name: Retry the publish (another kit won the race for gh-pages)
+        if: always() && github.ref == 'refs/heads/main' && steps.report.outputs.ok == 'true' && steps.pages.outcome == 'failure'
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: fleetquote/target/karate-reports
+          destination_dir: fleetquote
+          keep_files: true
