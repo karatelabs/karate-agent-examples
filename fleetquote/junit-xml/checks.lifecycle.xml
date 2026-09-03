@@ -1,0 +1,2297 @@
+<testsuite name="Stonebridge Fleet Auto - quote lifecycle checks (SOT-prose section 5)." tests="15" failures="0" time="1.148" skipped="0"><testcase classname="checks.lifecycle" name="a valid submission is recorded and awaits rating" time="0.441"><properties><property name="req" value="FLEET-001/1"/><property name="req" value="FLEET-010/1"/></properties><system-out>* baseUrl
+* setToday = function(d){ return karate.http(baseUrl).path(&apos;clock&apos;).post({ today: d }).body.today }
+* saved = Rule.load(&apos;rating&apos;).scenarios
+* rowById = function(id){ return karate.filter(saved, function(s){ return s._id == id })[0] }
+* validSubmission = rowById(&apos;baseline-suburban-mixed&apos;)
+* check = Rule.execute(&apos;rating&apos;, validSubmission)
+Given &apos;quotes&apos;
+And check.input
+When post
+request:
+1 &gt; POST http://localhost:8090/quotes
+1 &gt; Content-Type: application/json; charset=UTF-8
+1 &gt; Host: localhost:8090
+1 &gt; Content-Length: 193
+1 &gt; Connection: keep-alive
+1 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+{
+  &quot;territory&quot;: &quot;suburban&quot;,
+  &quot;vans&quot;: 2,
+  &quot;lightTrucks&quot;: 2,
+  &quot;heavyTrucks&quot;: 1,
+  &quot;avgExperience&quot;: 5,
+  &quot;safetyProgram&quot;: false,
+  &quot;claimsCount&quot;: 0,
+  &quot;hazmatCargo&quot;: false,
+  &quot;youngestDriverAge&quot;: 30,
+  &quot;outOfStateOperations&quot;: false
+}
+
+response time in milliseconds: 115
+1 &lt; 201 POST http://localhost:8090/quotes
+1 &lt; content-length: 312
+1 &lt; Karate-Mock: true
+1 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;id&quot;: &quot;Q-100001&quot;,
+  &quot;status&quot;: &quot;submitted&quot;,
+  &quot;submission&quot;: {
+    &quot;territory&quot;: &quot;suburban&quot;,
+    &quot;vans&quot;: 2,
+    &quot;lightTrucks&quot;: 2,
+    &quot;heavyTrucks&quot;: 1,
+    &quot;avgExperience&quot;: 5,
+    &quot;safetyProgram&quot;: false,
+    &quot;claimsCount&quot;: 0,
+    &quot;hazmatCargo&quot;: false,
+    &quot;youngestDriverAge&quot;: 30,
+    &quot;outOfStateOperations&quot;: false
+  },
+  &quot;premium&quot;: null,
+  &quot;reason&quot;: null,
+  &quot;ratingDate&quot;: null,
+  &quot;policyNumber&quot;: null
+}
+
+POST http://localhost:8090/quotes
+201 (115 ms)
+Then 201
+And response == { id: &apos;#string&apos;, status: &apos;submitted&apos;, submission: &apos;#(check.input)&apos;, premium: null, reason: null, ratingDate: null, policyNumber: null }
+* id = response.id
+Given &apos;quotes&apos;, id
+When get
+request:
+2 &gt; GET http://localhost:8090/quotes/Q-100001
+2 &gt; Host: localhost:8090
+2 &gt; Connection: keep-alive
+2 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+
+response time in milliseconds: 3
+2 &lt; 200 GET http://localhost:8090/quotes/Q-100001
+2 &lt; content-length: 312
+2 &lt; Karate-Mock: true
+2 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;id&quot;: &quot;Q-100001&quot;,
+  &quot;status&quot;: &quot;submitted&quot;,
+  &quot;submission&quot;: {
+    &quot;territory&quot;: &quot;suburban&quot;,
+    &quot;vans&quot;: 2,
+    &quot;lightTrucks&quot;: 2,
+    &quot;heavyTrucks&quot;: 1,
+    &quot;avgExperience&quot;: 5,
+    &quot;safetyProgram&quot;: false,
+    &quot;claimsCount&quot;: 0,
+    &quot;hazmatCargo&quot;: false,
+    &quot;youngestDriverAge&quot;: 30,
+    &quot;outOfStateOperations&quot;: false
+  },
+  &quot;premium&quot;: null,
+  &quot;reason&quot;: null,
+  &quot;ratingDate&quot;: null,
+  &quot;policyNumber&quot;: null
+}
+
+GET http://localhost:8090/quotes/Q-100001
+200 (3 ms)
+Then 200
+And response == { id: &apos;#(id)&apos;, status: &apos;submitted&apos;, submission: &apos;#(check.input)&apos;, premium: null, reason: null, ratingDate: null, policyNumber: null }
+</system-out></testcase>
+<testcase classname="checks.lifecycle" name="a submission with no vehicles is rejected as invalid input, not priced" time="0.05"><properties><property name="req" value="FLEET-001/2"/></properties><system-out>* baseUrl
+* setToday = function(d){ return karate.http(baseUrl).path(&apos;clock&apos;).post({ today: d }).body.today }
+* saved = Rule.load(&apos;rating&apos;).scenarios
+* rowById = function(id){ return karate.filter(saved, function(s){ return s._id == id })[0] }
+* validSubmission = rowById(&apos;baseline-suburban-mixed&apos;)
+* noVehicles = karate.merge(Rule.execute(&apos;rating&apos;, validSubmission).input, { vans: 0, lightTrucks: 0, heavyTrucks: 0 })
+Given &apos;quotes&apos;
+And noVehicles
+When post
+request:
+1 &gt; POST http://localhost:8090/quotes
+1 &gt; Content-Type: application/json; charset=UTF-8
+1 &gt; Host: localhost:8090
+1 &gt; Content-Length: 193
+1 &gt; Connection: keep-alive
+1 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+{
+  &quot;territory&quot;: &quot;suburban&quot;,
+  &quot;vans&quot;: 0,
+  &quot;lightTrucks&quot;: 0,
+  &quot;heavyTrucks&quot;: 0,
+  &quot;avgExperience&quot;: 5,
+  &quot;safetyProgram&quot;: false,
+  &quot;claimsCount&quot;: 0,
+  &quot;hazmatCargo&quot;: false,
+  &quot;youngestDriverAge&quot;: 30,
+  &quot;outOfStateOperations&quot;: false
+}
+
+response time in milliseconds: 6
+1 &lt; 400 POST http://localhost:8090/quotes
+1 &lt; content-length: 82
+1 &lt; Karate-Mock: true
+1 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;error&quot;: &quot;no_vehicles&quot;,
+  &quot;message&quot;: &quot;a submission must include at least one vehicle&quot;
+}
+
+POST http://localhost:8090/quotes
+400 (6 ms)
+Then 400
+And response == { error: &apos;no_vehicles&apos;, message: &apos;#string&apos; }
+</system-out></testcase>
+<testcase classname="checks.lifecycle" name="a submission with a field outside its documented domain is rejected" time="0.039"><properties><property name="req" value="FLEET-001/3"/></properties><system-out>* baseUrl
+* setToday = function(d){ return karate.http(baseUrl).path(&apos;clock&apos;).post({ today: d }).body.today }
+* saved = Rule.load(&apos;rating&apos;).scenarios
+* rowById = function(id){ return karate.filter(saved, function(s){ return s._id == id })[0] }
+* validSubmission = rowById(&apos;baseline-suburban-mixed&apos;)
+* base = Rule.execute(&apos;rating&apos;, validSubmission).input
+Given &apos;quotes&apos;
+And karate.merge(base, { territory: &apos;offshore&apos; })
+When post
+request:
+1 &gt; POST http://localhost:8090/quotes
+1 &gt; Content-Type: application/json; charset=UTF-8
+1 &gt; Host: localhost:8090
+1 &gt; Content-Length: 193
+1 &gt; Connection: keep-alive
+1 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+{
+  &quot;territory&quot;: &quot;offshore&quot;,
+  &quot;vans&quot;: 2,
+  &quot;lightTrucks&quot;: 2,
+  &quot;heavyTrucks&quot;: 1,
+  &quot;avgExperience&quot;: 5,
+  &quot;safetyProgram&quot;: false,
+  &quot;claimsCount&quot;: 0,
+  &quot;hazmatCargo&quot;: false,
+  &quot;youngestDriverAge&quot;: 30,
+  &quot;outOfStateOperations&quot;: false
+}
+
+response time in milliseconds: 3
+1 &lt; 400 POST http://localhost:8090/quotes
+1 &lt; content-length: 80
+1 &lt; Karate-Mock: true
+1 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;error&quot;: &quot;invalid_input&quot;,
+  &quot;message&quot;: &quot;territory is outside its documented domain&quot;
+}
+
+POST http://localhost:8090/quotes
+400 (3 ms)
+Then 400
+And response == { error: &apos;invalid_input&apos;, message: &apos;#string&apos; }
+Given &apos;quotes&apos;
+And karate.merge(base, { claimsCount: 7 })
+When post
+request:
+2 &gt; POST http://localhost:8090/quotes
+2 &gt; Content-Type: application/json
+2 &gt; Host: localhost:8090
+2 &gt; Content-Length: 193
+2 &gt; Connection: keep-alive
+2 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+{
+  &quot;territory&quot;: &quot;suburban&quot;,
+  &quot;vans&quot;: 2,
+  &quot;lightTrucks&quot;: 2,
+  &quot;heavyTrucks&quot;: 1,
+  &quot;avgExperience&quot;: 5,
+  &quot;safetyProgram&quot;: false,
+  &quot;claimsCount&quot;: 7,
+  &quot;hazmatCargo&quot;: false,
+  &quot;youngestDriverAge&quot;: 30,
+  &quot;outOfStateOperations&quot;: false
+}
+
+response time in milliseconds: 2
+2 &lt; 400 POST http://localhost:8090/quotes
+2 &lt; content-length: 82
+2 &lt; Karate-Mock: true
+2 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;error&quot;: &quot;invalid_input&quot;,
+  &quot;message&quot;: &quot;claimsCount is outside its documented domain&quot;
+}
+
+POST http://localhost:8090/quotes
+400 (2 ms)
+Then 400
+And response == { error: &apos;invalid_input&apos;, message: &apos;#string&apos; }
+Given &apos;quotes&apos;
+And karate.merge(base, { youngestDriverAge: 17 })
+When post
+request:
+3 &gt; POST http://localhost:8090/quotes
+3 &gt; Content-Type: application/json
+3 &gt; Host: localhost:8090
+3 &gt; Content-Length: 193
+3 &gt; Connection: keep-alive
+3 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+{
+  &quot;territory&quot;: &quot;suburban&quot;,
+  &quot;vans&quot;: 2,
+  &quot;lightTrucks&quot;: 2,
+  &quot;heavyTrucks&quot;: 1,
+  &quot;avgExperience&quot;: 5,
+  &quot;safetyProgram&quot;: false,
+  &quot;claimsCount&quot;: 0,
+  &quot;hazmatCargo&quot;: false,
+  &quot;youngestDriverAge&quot;: 17,
+  &quot;outOfStateOperations&quot;: false
+}
+
+response time in milliseconds: 2
+3 &lt; 400 POST http://localhost:8090/quotes
+3 &lt; content-length: 88
+3 &lt; Karate-Mock: true
+3 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;error&quot;: &quot;invalid_input&quot;,
+  &quot;message&quot;: &quot;youngestDriverAge is outside its documented domain&quot;
+}
+
+POST http://localhost:8090/quotes
+400 (2 ms)
+Then 400
+And response == { error: &apos;invalid_input&apos;, message: &apos;#string&apos; }
+</system-out></testcase>
+<testcase classname="checks.lifecycle" name="rating prices the quote per the rating rules and stamps the rating date" time="0.093"><properties><property name="req" value="FLEET-010/2"/></properties><system-out>* baseUrl
+* setToday = function(d){ return karate.http(baseUrl).path(&apos;clock&apos;).post({ today: d }).body.today }
+* saved = Rule.load(&apos;rating&apos;).scenarios
+* rowById = function(id){ return karate.filter(saved, function(s){ return s._id == id })[0] }
+* validSubmission = rowById(&apos;baseline-suburban-mixed&apos;)
+* check = Rule.execute(&apos;rating&apos;, validSubmission)
+Given &apos;quotes&apos;
+And check.input
+When post
+request:
+1 &gt; POST http://localhost:8090/quotes
+1 &gt; Content-Type: application/json; charset=UTF-8
+1 &gt; Host: localhost:8090
+1 &gt; Content-Length: 193
+1 &gt; Connection: keep-alive
+1 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+{
+  &quot;territory&quot;: &quot;suburban&quot;,
+  &quot;vans&quot;: 2,
+  &quot;lightTrucks&quot;: 2,
+  &quot;heavyTrucks&quot;: 1,
+  &quot;avgExperience&quot;: 5,
+  &quot;safetyProgram&quot;: false,
+  &quot;claimsCount&quot;: 0,
+  &quot;hazmatCargo&quot;: false,
+  &quot;youngestDriverAge&quot;: 30,
+  &quot;outOfStateOperations&quot;: false
+}
+
+response time in milliseconds: 10
+1 &lt; 201 POST http://localhost:8090/quotes
+1 &lt; content-length: 312
+1 &lt; Karate-Mock: true
+1 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;id&quot;: &quot;Q-100002&quot;,
+  &quot;status&quot;: &quot;submitted&quot;,
+  &quot;submission&quot;: {
+    &quot;territory&quot;: &quot;suburban&quot;,
+    &quot;vans&quot;: 2,
+    &quot;lightTrucks&quot;: 2,
+    &quot;heavyTrucks&quot;: 1,
+    &quot;avgExperience&quot;: 5,
+    &quot;safetyProgram&quot;: false,
+    &quot;claimsCount&quot;: 0,
+    &quot;hazmatCargo&quot;: false,
+    &quot;youngestDriverAge&quot;: 30,
+    &quot;outOfStateOperations&quot;: false
+  },
+  &quot;premium&quot;: null,
+  &quot;reason&quot;: null,
+  &quot;ratingDate&quot;: null,
+  &quot;policyNumber&quot;: null
+}
+
+POST http://localhost:8090/quotes
+201 (10 ms)
+Then 201
+* id = response.id
+* setToday(&apos;2026-02-01&apos;) == &apos;2026-02-01&apos;
+request:
+2 &gt; POST http://localhost:8090/clock
+2 &gt; Content-Type: application/json
+2 &gt; Host: localhost:8090
+2 &gt; Content-Length: 22
+2 &gt; Connection: keep-alive
+2 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+{
+  &quot;today&quot;: &quot;2026-02-01&quot;
+}
+
+response time in milliseconds: 13
+2 &lt; 200 POST http://localhost:8090/clock
+2 &lt; content-length: 22
+2 &lt; Karate-Mock: true
+2 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;today&quot;: &quot;2026-02-01&quot;
+}
+
+Given &apos;quotes&apos;, id, &apos;rate&apos;
+When post
+request:
+3 &gt; POST http://localhost:8090/quotes/Q-100002/rate
+3 &gt; Host: localhost:8090
+3 &gt; Content-Length: 0
+3 &gt; Connection: keep-alive
+3 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+
+response time in milliseconds: 19
+3 &lt; 200 POST http://localhost:8090/quotes/Q-100002/rate
+3 &lt; content-length: 316
+3 &lt; Karate-Mock: true
+3 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;id&quot;: &quot;Q-100002&quot;,
+  &quot;status&quot;: &quot;rated&quot;,
+  &quot;submission&quot;: {
+    &quot;territory&quot;: &quot;suburban&quot;,
+    &quot;vans&quot;: 2,
+    &quot;lightTrucks&quot;: 2,
+    &quot;heavyTrucks&quot;: 1,
+    &quot;avgExperience&quot;: 5,
+    &quot;safetyProgram&quot;: false,
+    &quot;claimsCount&quot;: 0,
+    &quot;hazmatCargo&quot;: false,
+    &quot;youngestDriverAge&quot;: 30,
+    &quot;outOfStateOperations&quot;: false
+  },
+  &quot;premium&quot;: 3952,
+  &quot;reason&quot;: null,
+  &quot;ratingDate&quot;: &quot;2026-02-01&quot;,
+  &quot;policyNumber&quot;: null
+}
+
+POST http://localhost:8090/quotes/Q-100002/rate
+200 (19 ms)
+Then 200
+And response.status == check.outcome
+And response.premium == check.output.premium
+And response.ratingDate == &apos;2026-02-01&apos;
+* check.verify(true, &apos;rating a submitted quote priced it per the rulebook and stamped the rating date&apos;)
+</system-out></testcase>
+<testcase classname="checks.lifecycle" name="rating an excluded risk (young driver) records the decline with no premium" time="0.041"><properties><property name="req" value="FLEET-002/1"/><property name="req" value="FLEET-002/3"/><property name="req" value="FLEET-010/2"/></properties><system-out>* baseUrl
+* setToday = function(d){ return karate.http(baseUrl).path(&apos;clock&apos;).post({ today: d }).body.today }
+* saved = Rule.load(&apos;rating&apos;).scenarios
+* rowById = function(id){ return karate.filter(saved, function(s){ return s._id == id })[0] }
+* validSubmission = rowById(&apos;baseline-suburban-mixed&apos;)
+* row = rowById(&apos;declined-young-driver&apos;)
+* check = Rule.execute(&apos;rating&apos;, row)
+Given &apos;quotes&apos;
+And check.input
+When post
+request:
+1 &gt; POST http://localhost:8090/quotes
+1 &gt; Content-Type: application/json; charset=UTF-8
+1 &gt; Host: localhost:8090
+1 &gt; Content-Length: 193
+1 &gt; Connection: keep-alive
+1 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+{
+  &quot;territory&quot;: &quot;suburban&quot;,
+  &quot;vans&quot;: 1,
+  &quot;lightTrucks&quot;: 0,
+  &quot;heavyTrucks&quot;: 0,
+  &quot;avgExperience&quot;: 5,
+  &quot;safetyProgram&quot;: false,
+  &quot;claimsCount&quot;: 0,
+  &quot;hazmatCargo&quot;: false,
+  &quot;youngestDriverAge&quot;: 23,
+  &quot;outOfStateOperations&quot;: false
+}
+
+response time in milliseconds: 6
+1 &lt; 201 POST http://localhost:8090/quotes
+1 &lt; content-length: 312
+1 &lt; Karate-Mock: true
+1 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;id&quot;: &quot;Q-100003&quot;,
+  &quot;status&quot;: &quot;submitted&quot;,
+  &quot;submission&quot;: {
+    &quot;territory&quot;: &quot;suburban&quot;,
+    &quot;vans&quot;: 1,
+    &quot;lightTrucks&quot;: 0,
+    &quot;heavyTrucks&quot;: 0,
+    &quot;avgExperience&quot;: 5,
+    &quot;safetyProgram&quot;: false,
+    &quot;claimsCount&quot;: 0,
+    &quot;hazmatCargo&quot;: false,
+    &quot;youngestDriverAge&quot;: 23,
+    &quot;outOfStateOperations&quot;: false
+  },
+  &quot;premium&quot;: null,
+  &quot;reason&quot;: null,
+  &quot;ratingDate&quot;: null,
+  &quot;policyNumber&quot;: null
+}
+
+POST http://localhost:8090/quotes
+201 (6 ms)
+Then 201
+* id = response.id
+Given &apos;quotes&apos;, id, &apos;rate&apos;
+When post
+request:
+2 &gt; POST http://localhost:8090/quotes/Q-100003/rate
+2 &gt; Host: localhost:8090
+2 &gt; Content-Length: 0
+2 &gt; Connection: keep-alive
+2 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+
+response time in milliseconds: 11
+2 &lt; 200 POST http://localhost:8090/quotes/Q-100003/rate
+2 &lt; content-length: 350
+2 &lt; Karate-Mock: true
+2 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;id&quot;: &quot;Q-100003&quot;,
+  &quot;status&quot;: &quot;declined&quot;,
+  &quot;submission&quot;: {
+    &quot;territory&quot;: &quot;suburban&quot;,
+    &quot;vans&quot;: 1,
+    &quot;lightTrucks&quot;: 0,
+    &quot;heavyTrucks&quot;: 0,
+    &quot;avgExperience&quot;: 5,
+    &quot;safetyProgram&quot;: false,
+    &quot;claimsCount&quot;: 0,
+    &quot;hazmatCargo&quot;: false,
+    &quot;youngestDriverAge&quot;: 23,
+    &quot;outOfStateOperations&quot;: false
+  },
+  &quot;premium&quot;: null,
+  &quot;reason&quot;: &quot;youngest listed driver aged 23 or younger&quot;,
+  &quot;ratingDate&quot;: null,
+  &quot;policyNumber&quot;: null
+}
+
+POST http://localhost:8090/quotes/Q-100003/rate
+200 (11 ms)
+Then 200
+And response == { id: &apos;#(id)&apos;, status: &apos;declined&apos;, submission: &apos;#(check.input)&apos;, premium: null, reason: &apos;#string&apos;, ratingDate: null, policyNumber: null }
+And response.status == check.outcome
+And response.reason == check.output.reason
+* check.verify(true, &apos;the mock declined the young-driver fleet exactly as the rulebook rules&apos;)
+</system-out></testcase>
+<testcase classname="checks.lifecycle" name="rating a fleet with out-of-state operations records the decline with no premium" time="0.045"><properties><property name="req" value="FLEET-002/2"/><property name="req" value="FLEET-002/3"/></properties><system-out>* baseUrl
+* setToday = function(d){ return karate.http(baseUrl).path(&apos;clock&apos;).post({ today: d }).body.today }
+* saved = Rule.load(&apos;rating&apos;).scenarios
+* rowById = function(id){ return karate.filter(saved, function(s){ return s._id == id })[0] }
+* validSubmission = rowById(&apos;baseline-suburban-mixed&apos;)
+* row = rowById(&apos;declined-out-of-state&apos;)
+* check = Rule.execute(&apos;rating&apos;, row)
+Given &apos;quotes&apos;
+And check.input
+When post
+request:
+1 &gt; POST http://localhost:8090/quotes
+1 &gt; Content-Type: application/json; charset=UTF-8
+1 &gt; Host: localhost:8090
+1 &gt; Content-Length: 192
+1 &gt; Connection: keep-alive
+1 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+{
+  &quot;territory&quot;: &quot;suburban&quot;,
+  &quot;vans&quot;: 2,
+  &quot;lightTrucks&quot;: 0,
+  &quot;heavyTrucks&quot;: 0,
+  &quot;avgExperience&quot;: 5,
+  &quot;safetyProgram&quot;: false,
+  &quot;claimsCount&quot;: 0,
+  &quot;hazmatCargo&quot;: false,
+  &quot;youngestDriverAge&quot;: 30,
+  &quot;outOfStateOperations&quot;: true
+}
+
+response time in milliseconds: 4
+1 &lt; 201 POST http://localhost:8090/quotes
+1 &lt; content-length: 311
+1 &lt; Karate-Mock: true
+1 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;id&quot;: &quot;Q-100004&quot;,
+  &quot;status&quot;: &quot;submitted&quot;,
+  &quot;submission&quot;: {
+    &quot;territory&quot;: &quot;suburban&quot;,
+    &quot;vans&quot;: 2,
+    &quot;lightTrucks&quot;: 0,
+    &quot;heavyTrucks&quot;: 0,
+    &quot;avgExperience&quot;: 5,
+    &quot;safetyProgram&quot;: false,
+    &quot;claimsCount&quot;: 0,
+    &quot;hazmatCargo&quot;: false,
+    &quot;youngestDriverAge&quot;: 30,
+    &quot;outOfStateOperations&quot;: true
+  },
+  &quot;premium&quot;: null,
+  &quot;reason&quot;: null,
+  &quot;ratingDate&quot;: null,
+  &quot;policyNumber&quot;: null
+}
+
+POST http://localhost:8090/quotes
+201 (4 ms)
+Then 201
+* id = response.id
+Given &apos;quotes&apos;, id, &apos;rate&apos;
+When post
+request:
+2 &gt; POST http://localhost:8090/quotes/Q-100004/rate
+2 &gt; Host: localhost:8090
+2 &gt; Content-Length: 0
+2 &gt; Connection: keep-alive
+2 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+
+response time in milliseconds: 19
+2 &lt; 200 POST http://localhost:8090/quotes/Q-100004/rate
+2 &lt; content-length: 339
+2 &lt; Karate-Mock: true
+2 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;id&quot;: &quot;Q-100004&quot;,
+  &quot;status&quot;: &quot;declined&quot;,
+  &quot;submission&quot;: {
+    &quot;territory&quot;: &quot;suburban&quot;,
+    &quot;vans&quot;: 2,
+    &quot;lightTrucks&quot;: 0,
+    &quot;heavyTrucks&quot;: 0,
+    &quot;avgExperience&quot;: 5,
+    &quot;safetyProgram&quot;: false,
+    &quot;claimsCount&quot;: 0,
+    &quot;hazmatCargo&quot;: false,
+    &quot;youngestDriverAge&quot;: 30,
+    &quot;outOfStateOperations&quot;: true
+  },
+  &quot;premium&quot;: null,
+  &quot;reason&quot;: &quot;regular out-of-state operations&quot;,
+  &quot;ratingDate&quot;: null,
+  &quot;policyNumber&quot;: null
+}
+
+POST http://localhost:8090/quotes/Q-100004/rate
+200 (19 ms)
+Then 200
+And response == { id: &apos;#(id)&apos;, status: &apos;declined&apos;, submission: &apos;#(check.input)&apos;, premium: null, reason: &apos;#string&apos;, ratingDate: null, policyNumber: null }
+And response.reason == check.output.reason
+* check.verify(true, &apos;the mock declined the out-of-state fleet exactly as the rulebook rules&apos;)
+</system-out></testcase>
+<testcase classname="checks.lifecycle" name="a declined quote is terminal - it can be neither re-rated nor bound" time="0.036"><properties><property name="req" value="FLEET-010/3"/></properties><system-out>* baseUrl
+* setToday = function(d){ return karate.http(baseUrl).path(&apos;clock&apos;).post({ today: d }).body.today }
+* saved = Rule.load(&apos;rating&apos;).scenarios
+* rowById = function(id){ return karate.filter(saved, function(s){ return s._id == id })[0] }
+* validSubmission = rowById(&apos;baseline-suburban-mixed&apos;)
+* row = rowById(&apos;declined-young-driver&apos;)
+* check = Rule.execute(&apos;rating&apos;, row)
+Given &apos;quotes&apos;
+And check.input
+When post
+request:
+1 &gt; POST http://localhost:8090/quotes
+1 &gt; Content-Type: application/json; charset=UTF-8
+1 &gt; Host: localhost:8090
+1 &gt; Content-Length: 193
+1 &gt; Connection: keep-alive
+1 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+{
+  &quot;territory&quot;: &quot;suburban&quot;,
+  &quot;vans&quot;: 1,
+  &quot;lightTrucks&quot;: 0,
+  &quot;heavyTrucks&quot;: 0,
+  &quot;avgExperience&quot;: 5,
+  &quot;safetyProgram&quot;: false,
+  &quot;claimsCount&quot;: 0,
+  &quot;hazmatCargo&quot;: false,
+  &quot;youngestDriverAge&quot;: 23,
+  &quot;outOfStateOperations&quot;: false
+}
+
+response time in milliseconds: 2
+1 &lt; 201 POST http://localhost:8090/quotes
+1 &lt; content-length: 312
+1 &lt; Karate-Mock: true
+1 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;id&quot;: &quot;Q-100005&quot;,
+  &quot;status&quot;: &quot;submitted&quot;,
+  &quot;submission&quot;: {
+    &quot;territory&quot;: &quot;suburban&quot;,
+    &quot;vans&quot;: 1,
+    &quot;lightTrucks&quot;: 0,
+    &quot;heavyTrucks&quot;: 0,
+    &quot;avgExperience&quot;: 5,
+    &quot;safetyProgram&quot;: false,
+    &quot;claimsCount&quot;: 0,
+    &quot;hazmatCargo&quot;: false,
+    &quot;youngestDriverAge&quot;: 23,
+    &quot;outOfStateOperations&quot;: false
+  },
+  &quot;premium&quot;: null,
+  &quot;reason&quot;: null,
+  &quot;ratingDate&quot;: null,
+  &quot;policyNumber&quot;: null
+}
+
+POST http://localhost:8090/quotes
+201 (2 ms)
+Then 201
+* id = response.id
+Given &apos;quotes&apos;, id, &apos;rate&apos;
+When post
+request:
+2 &gt; POST http://localhost:8090/quotes/Q-100005/rate
+2 &gt; Host: localhost:8090
+2 &gt; Content-Length: 0
+2 &gt; Connection: keep-alive
+2 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+
+response time in milliseconds: 7
+2 &lt; 200 POST http://localhost:8090/quotes/Q-100005/rate
+2 &lt; content-length: 350
+2 &lt; Karate-Mock: true
+2 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;id&quot;: &quot;Q-100005&quot;,
+  &quot;status&quot;: &quot;declined&quot;,
+  &quot;submission&quot;: {
+    &quot;territory&quot;: &quot;suburban&quot;,
+    &quot;vans&quot;: 1,
+    &quot;lightTrucks&quot;: 0,
+    &quot;heavyTrucks&quot;: 0,
+    &quot;avgExperience&quot;: 5,
+    &quot;safetyProgram&quot;: false,
+    &quot;claimsCount&quot;: 0,
+    &quot;hazmatCargo&quot;: false,
+    &quot;youngestDriverAge&quot;: 23,
+    &quot;outOfStateOperations&quot;: false
+  },
+  &quot;premium&quot;: null,
+  &quot;reason&quot;: &quot;youngest listed driver aged 23 or younger&quot;,
+  &quot;ratingDate&quot;: null,
+  &quot;policyNumber&quot;: null
+}
+
+POST http://localhost:8090/quotes/Q-100005/rate
+200 (7 ms)
+Then 200
+And response.status == &apos;declined&apos;
+Given &apos;quotes&apos;, id, &apos;rate&apos;
+When post
+request:
+3 &gt; POST http://localhost:8090/quotes/Q-100005/rate
+3 &gt; Host: localhost:8090
+3 &gt; Content-Length: 0
+3 &gt; Connection: keep-alive
+3 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+
+response time in milliseconds: 1
+3 &lt; 409 POST http://localhost:8090/quotes/Q-100005/rate
+3 &lt; content-length: 94
+3 &lt; Karate-Mock: true
+3 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;error&quot;: &quot;declined_terminal&quot;,
+  &quot;message&quot;: &quot;a declined quote is terminal - it cannot be re-rated&quot;
+}
+
+POST http://localhost:8090/quotes/Q-100005/rate
+409 (1 ms)
+Then 409
+And response == { error: &apos;declined_terminal&apos;, message: &apos;#string&apos; }
+Given &apos;quotes&apos;, id, &apos;bind&apos;
+When post
+request:
+4 &gt; POST http://localhost:8090/quotes/Q-100005/bind
+4 &gt; Host: localhost:8090
+4 &gt; Content-Length: 0
+4 &gt; Connection: keep-alive
+4 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+
+response time in milliseconds: 1
+4 &lt; 409 POST http://localhost:8090/quotes/Q-100005/bind
+4 &lt; content-length: 74
+4 &lt; Karate-Mock: true
+4 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;error&quot;: &quot;declined_terminal&quot;,
+  &quot;message&quot;: &quot;a declined quote cannot be bound&quot;
+}
+
+POST http://localhost:8090/quotes/Q-100005/bind
+409 (1 ms)
+Then 409
+And response == { error: &apos;declined_terminal&apos;, message: &apos;#string&apos; }
+</system-out></testcase>
+<testcase classname="checks.lifecycle" name="an expired quote refuses binding until re-rated; re-rating restores it" time="0.089"><properties><property name="req" value="FLEET-010/4"/></properties><system-out>* baseUrl
+* setToday = function(d){ return karate.http(baseUrl).path(&apos;clock&apos;).post({ today: d }).body.today }
+* saved = Rule.load(&apos;rating&apos;).scenarios
+* rowById = function(id){ return karate.filter(saved, function(s){ return s._id == id })[0] }
+* validSubmission = rowById(&apos;baseline-suburban-mixed&apos;)
+* check = Rule.execute(&apos;rating&apos;, validSubmission)
+Given &apos;quotes&apos;
+And check.input
+When post
+request:
+1 &gt; POST http://localhost:8090/quotes
+1 &gt; Content-Type: application/json; charset=UTF-8
+1 &gt; Host: localhost:8090
+1 &gt; Content-Length: 193
+1 &gt; Connection: keep-alive
+1 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+{
+  &quot;territory&quot;: &quot;suburban&quot;,
+  &quot;vans&quot;: 2,
+  &quot;lightTrucks&quot;: 2,
+  &quot;heavyTrucks&quot;: 1,
+  &quot;avgExperience&quot;: 5,
+  &quot;safetyProgram&quot;: false,
+  &quot;claimsCount&quot;: 0,
+  &quot;hazmatCargo&quot;: false,
+  &quot;youngestDriverAge&quot;: 30,
+  &quot;outOfStateOperations&quot;: false
+}
+
+response time in milliseconds: 4
+1 &lt; 201 POST http://localhost:8090/quotes
+1 &lt; content-length: 312
+1 &lt; Karate-Mock: true
+1 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;id&quot;: &quot;Q-100006&quot;,
+  &quot;status&quot;: &quot;submitted&quot;,
+  &quot;submission&quot;: {
+    &quot;territory&quot;: &quot;suburban&quot;,
+    &quot;vans&quot;: 2,
+    &quot;lightTrucks&quot;: 2,
+    &quot;heavyTrucks&quot;: 1,
+    &quot;avgExperience&quot;: 5,
+    &quot;safetyProgram&quot;: false,
+    &quot;claimsCount&quot;: 0,
+    &quot;hazmatCargo&quot;: false,
+    &quot;youngestDriverAge&quot;: 30,
+    &quot;outOfStateOperations&quot;: false
+  },
+  &quot;premium&quot;: null,
+  &quot;reason&quot;: null,
+  &quot;ratingDate&quot;: null,
+  &quot;policyNumber&quot;: null
+}
+
+POST http://localhost:8090/quotes
+201 (4 ms)
+Then 201
+* id = response.id
+* setToday(&apos;2026-01-01&apos;) == &apos;2026-01-01&apos;
+request:
+2 &gt; POST http://localhost:8090/clock
+2 &gt; Content-Type: application/json
+2 &gt; Host: localhost:8090
+2 &gt; Content-Length: 22
+2 &gt; Connection: keep-alive
+2 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+{
+  &quot;today&quot;: &quot;2026-01-01&quot;
+}
+
+response time in milliseconds: 2
+2 &lt; 200 POST http://localhost:8090/clock
+2 &lt; content-length: 22
+2 &lt; Karate-Mock: true
+2 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;today&quot;: &quot;2026-01-01&quot;
+}
+
+Given &apos;quotes&apos;, id, &apos;rate&apos;
+When post
+request:
+3 &gt; POST http://localhost:8090/quotes/Q-100006/rate
+3 &gt; Host: localhost:8090
+3 &gt; Content-Length: 0
+3 &gt; Connection: keep-alive
+3 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+
+response time in milliseconds: 13
+3 &lt; 200 POST http://localhost:8090/quotes/Q-100006/rate
+3 &lt; content-length: 316
+3 &lt; Karate-Mock: true
+3 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;id&quot;: &quot;Q-100006&quot;,
+  &quot;status&quot;: &quot;rated&quot;,
+  &quot;submission&quot;: {
+    &quot;territory&quot;: &quot;suburban&quot;,
+    &quot;vans&quot;: 2,
+    &quot;lightTrucks&quot;: 2,
+    &quot;heavyTrucks&quot;: 1,
+    &quot;avgExperience&quot;: 5,
+    &quot;safetyProgram&quot;: false,
+    &quot;claimsCount&quot;: 0,
+    &quot;hazmatCargo&quot;: false,
+    &quot;youngestDriverAge&quot;: 30,
+    &quot;outOfStateOperations&quot;: false
+  },
+  &quot;premium&quot;: 3952,
+  &quot;reason&quot;: null,
+  &quot;ratingDate&quot;: &quot;2026-01-01&quot;,
+  &quot;policyNumber&quot;: null
+}
+
+POST http://localhost:8090/quotes/Q-100006/rate
+200 (13 ms)
+Then 200
+And response.ratingDate == &apos;2026-01-01&apos;
+* setToday(&apos;2026-03-03&apos;) == &apos;2026-03-03&apos;
+request:
+4 &gt; POST http://localhost:8090/clock
+4 &gt; Content-Type: application/json
+4 &gt; Host: localhost:8090
+4 &gt; Content-Length: 22
+4 &gt; Connection: keep-alive
+4 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+{
+  &quot;today&quot;: &quot;2026-03-03&quot;
+}
+
+response time in milliseconds: 2
+4 &lt; 200 POST http://localhost:8090/clock
+4 &lt; content-length: 22
+4 &lt; Karate-Mock: true
+4 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;today&quot;: &quot;2026-03-03&quot;
+}
+
+Given &apos;quotes&apos;, id, &apos;bind&apos;
+When post
+request:
+5 &gt; POST http://localhost:8090/quotes/Q-100006/bind
+5 &gt; Host: localhost:8090
+5 &gt; Content-Length: 0
+5 &gt; Connection: keep-alive
+5 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+
+response time in milliseconds: 2
+5 &lt; 409 POST http://localhost:8090/quotes/Q-100006/bind
+5 &lt; content-length: 87
+5 &lt; Karate-Mock: true
+5 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;error&quot;: &quot;quote_expired&quot;,
+  &quot;message&quot;: &quot;quote expired - re-rate before any further action&quot;
+}
+
+POST http://localhost:8090/quotes/Q-100006/bind
+409 (2 ms)
+Then 409
+And response == { error: &apos;quote_expired&apos;, message: &apos;#string&apos; }
+* setToday(&apos;2026-03-03&apos;) == &apos;2026-03-03&apos;
+request:
+6 &gt; POST http://localhost:8090/clock
+6 &gt; Content-Type: application/json
+6 &gt; Host: localhost:8090
+6 &gt; Content-Length: 22
+6 &gt; Connection: keep-alive
+6 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+{
+  &quot;today&quot;: &quot;2026-03-03&quot;
+}
+
+response time in milliseconds: 4
+6 &lt; 200 POST http://localhost:8090/clock
+6 &lt; content-length: 22
+6 &lt; Karate-Mock: true
+6 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;today&quot;: &quot;2026-03-03&quot;
+}
+
+Given &apos;quotes&apos;, id, &apos;rate&apos;
+When post
+request:
+7 &gt; POST http://localhost:8090/quotes/Q-100006/rate
+7 &gt; Host: localhost:8090
+7 &gt; Content-Length: 0
+7 &gt; Connection: keep-alive
+7 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+
+response time in milliseconds: 14
+7 &lt; 200 POST http://localhost:8090/quotes/Q-100006/rate
+7 &lt; content-length: 316
+7 &lt; Karate-Mock: true
+7 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;id&quot;: &quot;Q-100006&quot;,
+  &quot;status&quot;: &quot;rated&quot;,
+  &quot;submission&quot;: {
+    &quot;territory&quot;: &quot;suburban&quot;,
+    &quot;vans&quot;: 2,
+    &quot;lightTrucks&quot;: 2,
+    &quot;heavyTrucks&quot;: 1,
+    &quot;avgExperience&quot;: 5,
+    &quot;safetyProgram&quot;: false,
+    &quot;claimsCount&quot;: 0,
+    &quot;hazmatCargo&quot;: false,
+    &quot;youngestDriverAge&quot;: 30,
+    &quot;outOfStateOperations&quot;: false
+  },
+  &quot;premium&quot;: 3952,
+  &quot;reason&quot;: null,
+  &quot;ratingDate&quot;: &quot;2026-03-03&quot;,
+  &quot;policyNumber&quot;: null
+}
+
+POST http://localhost:8090/quotes/Q-100006/rate
+200 (14 ms)
+Then 200
+And response.ratingDate == &apos;2026-03-03&apos;
+And response.premium == check.output.premium
+* setToday(&apos;2026-03-04&apos;) == &apos;2026-03-04&apos;
+request:
+8 &gt; POST http://localhost:8090/clock
+8 &gt; Content-Type: application/json
+8 &gt; Host: localhost:8090
+8 &gt; Content-Length: 22
+8 &gt; Connection: keep-alive
+8 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+{
+  &quot;today&quot;: &quot;2026-03-04&quot;
+}
+
+response time in milliseconds: 2
+8 &lt; 200 POST http://localhost:8090/clock
+8 &lt; content-length: 22
+8 &lt; Karate-Mock: true
+8 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;today&quot;: &quot;2026-03-04&quot;
+}
+
+Given &apos;quotes&apos;, id, &apos;bind&apos;
+When post
+request:
+9 &gt; POST http://localhost:8090/quotes/Q-100006/bind
+9 &gt; Host: localhost:8090
+9 &gt; Content-Length: 0
+9 &gt; Connection: keep-alive
+9 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+
+response time in milliseconds: 8
+9 &lt; 200 POST http://localhost:8090/quotes/Q-100006/bind
+9 &lt; content-length: 324
+9 &lt; Karate-Mock: true
+9 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;id&quot;: &quot;Q-100006&quot;,
+  &quot;status&quot;: &quot;bound&quot;,
+  &quot;submission&quot;: {
+    &quot;territory&quot;: &quot;suburban&quot;,
+    &quot;vans&quot;: 2,
+    &quot;lightTrucks&quot;: 2,
+    &quot;heavyTrucks&quot;: 1,
+    &quot;avgExperience&quot;: 5,
+    &quot;safetyProgram&quot;: false,
+    &quot;claimsCount&quot;: 0,
+    &quot;hazmatCargo&quot;: false,
+    &quot;youngestDriverAge&quot;: 30,
+    &quot;outOfStateOperations&quot;: false
+  },
+  &quot;premium&quot;: 3952,
+  &quot;reason&quot;: null,
+  &quot;ratingDate&quot;: &quot;2026-03-03&quot;,
+  &quot;policyNumber&quot;: &quot;POL-100006&quot;
+}
+
+POST http://localhost:8090/quotes/Q-100006/bind
+200 (8 ms)
+Then 200
+And response.status == &apos;bound&apos;
+</system-out></testcase>
+<testcase classname="checks.lifecycle" name="a quote is still bindable on day 60 exactly (working assumption FLEET-OQ-004)" time="0.05"><properties><property name="req" value="FLEET-010/4"/></properties><system-out>* baseUrl
+* setToday = function(d){ return karate.http(baseUrl).path(&apos;clock&apos;).post({ today: d }).body.today }
+* saved = Rule.load(&apos;rating&apos;).scenarios
+* rowById = function(id){ return karate.filter(saved, function(s){ return s._id == id })[0] }
+* validSubmission = rowById(&apos;baseline-suburban-mixed&apos;)
+* check = Rule.execute(&apos;rating&apos;, validSubmission)
+Given &apos;quotes&apos;
+And check.input
+When post
+request:
+1 &gt; POST http://localhost:8090/quotes
+1 &gt; Content-Type: application/json; charset=UTF-8
+1 &gt; Host: localhost:8090
+1 &gt; Content-Length: 193
+1 &gt; Connection: keep-alive
+1 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+{
+  &quot;territory&quot;: &quot;suburban&quot;,
+  &quot;vans&quot;: 2,
+  &quot;lightTrucks&quot;: 2,
+  &quot;heavyTrucks&quot;: 1,
+  &quot;avgExperience&quot;: 5,
+  &quot;safetyProgram&quot;: false,
+  &quot;claimsCount&quot;: 0,
+  &quot;hazmatCargo&quot;: false,
+  &quot;youngestDriverAge&quot;: 30,
+  &quot;outOfStateOperations&quot;: false
+}
+
+response time in milliseconds: 4
+1 &lt; 201 POST http://localhost:8090/quotes
+1 &lt; content-length: 312
+1 &lt; Karate-Mock: true
+1 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;id&quot;: &quot;Q-100007&quot;,
+  &quot;status&quot;: &quot;submitted&quot;,
+  &quot;submission&quot;: {
+    &quot;territory&quot;: &quot;suburban&quot;,
+    &quot;vans&quot;: 2,
+    &quot;lightTrucks&quot;: 2,
+    &quot;heavyTrucks&quot;: 1,
+    &quot;avgExperience&quot;: 5,
+    &quot;safetyProgram&quot;: false,
+    &quot;claimsCount&quot;: 0,
+    &quot;hazmatCargo&quot;: false,
+    &quot;youngestDriverAge&quot;: 30,
+    &quot;outOfStateOperations&quot;: false
+  },
+  &quot;premium&quot;: null,
+  &quot;reason&quot;: null,
+  &quot;ratingDate&quot;: null,
+  &quot;policyNumber&quot;: null
+}
+
+POST http://localhost:8090/quotes
+201 (4 ms)
+Then 201
+* id = response.id
+* setToday(&apos;2026-01-01&apos;) == &apos;2026-01-01&apos;
+request:
+2 &gt; POST http://localhost:8090/clock
+2 &gt; Content-Type: application/json
+2 &gt; Host: localhost:8090
+2 &gt; Content-Length: 22
+2 &gt; Connection: keep-alive
+2 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+{
+  &quot;today&quot;: &quot;2026-01-01&quot;
+}
+
+response time in milliseconds: 3
+2 &lt; 200 POST http://localhost:8090/clock
+2 &lt; content-length: 22
+2 &lt; Karate-Mock: true
+2 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;today&quot;: &quot;2026-01-01&quot;
+}
+
+Given &apos;quotes&apos;, id, &apos;rate&apos;
+When post
+request:
+3 &gt; POST http://localhost:8090/quotes/Q-100007/rate
+3 &gt; Host: localhost:8090
+3 &gt; Content-Length: 0
+3 &gt; Connection: keep-alive
+3 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+
+response time in milliseconds: 11
+3 &lt; 200 POST http://localhost:8090/quotes/Q-100007/rate
+3 &lt; content-length: 316
+3 &lt; Karate-Mock: true
+3 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;id&quot;: &quot;Q-100007&quot;,
+  &quot;status&quot;: &quot;rated&quot;,
+  &quot;submission&quot;: {
+    &quot;territory&quot;: &quot;suburban&quot;,
+    &quot;vans&quot;: 2,
+    &quot;lightTrucks&quot;: 2,
+    &quot;heavyTrucks&quot;: 1,
+    &quot;avgExperience&quot;: 5,
+    &quot;safetyProgram&quot;: false,
+    &quot;claimsCount&quot;: 0,
+    &quot;hazmatCargo&quot;: false,
+    &quot;youngestDriverAge&quot;: 30,
+    &quot;outOfStateOperations&quot;: false
+  },
+  &quot;premium&quot;: 3952,
+  &quot;reason&quot;: null,
+  &quot;ratingDate&quot;: &quot;2026-01-01&quot;,
+  &quot;policyNumber&quot;: null
+}
+
+POST http://localhost:8090/quotes/Q-100007/rate
+200 (11 ms)
+Then 200
+* setToday(&apos;2026-03-02&apos;) == &apos;2026-03-02&apos;
+request:
+4 &gt; POST http://localhost:8090/clock
+4 &gt; Content-Type: application/json
+4 &gt; Host: localhost:8090
+4 &gt; Content-Length: 22
+4 &gt; Connection: keep-alive
+4 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+{
+  &quot;today&quot;: &quot;2026-03-02&quot;
+}
+
+response time in milliseconds: 1
+4 &lt; 200 POST http://localhost:8090/clock
+4 &lt; content-length: 22
+4 &lt; Karate-Mock: true
+4 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;today&quot;: &quot;2026-03-02&quot;
+}
+
+Given &apos;quotes&apos;, id, &apos;bind&apos;
+When post
+request:
+5 &gt; POST http://localhost:8090/quotes/Q-100007/bind
+5 &gt; Host: localhost:8090
+5 &gt; Content-Length: 0
+5 &gt; Connection: keep-alive
+5 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+
+response time in milliseconds: 3
+5 &lt; 200 POST http://localhost:8090/quotes/Q-100007/bind
+5 &lt; content-length: 324
+5 &lt; Karate-Mock: true
+5 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;id&quot;: &quot;Q-100007&quot;,
+  &quot;status&quot;: &quot;bound&quot;,
+  &quot;submission&quot;: {
+    &quot;territory&quot;: &quot;suburban&quot;,
+    &quot;vans&quot;: 2,
+    &quot;lightTrucks&quot;: 2,
+    &quot;heavyTrucks&quot;: 1,
+    &quot;avgExperience&quot;: 5,
+    &quot;safetyProgram&quot;: false,
+    &quot;claimsCount&quot;: 0,
+    &quot;hazmatCargo&quot;: false,
+    &quot;youngestDriverAge&quot;: 30,
+    &quot;outOfStateOperations&quot;: false
+  },
+  &quot;premium&quot;: 3952,
+  &quot;reason&quot;: null,
+  &quot;ratingDate&quot;: &quot;2026-01-01&quot;,
+  &quot;policyNumber&quot;: &quot;POL-100007&quot;
+}
+
+POST http://localhost:8090/quotes/Q-100007/bind
+200 (3 ms)
+Then 200
+And response.status == &apos;bound&apos;
+</system-out></testcase>
+<testcase classname="checks.lifecycle" name="a high-premium quote is referred - priced, but not bindable before approval" time="0.048"><properties><property name="req" value="FLEET-009/1"/><property name="req" value="FLEET-010/6"/></properties><system-out>* baseUrl
+* setToday = function(d){ return karate.http(baseUrl).path(&apos;clock&apos;).post({ today: d }).body.today }
+* saved = Rule.load(&apos;rating&apos;).scenarios
+* rowById = function(id){ return karate.filter(saved, function(s){ return s._id == id })[0] }
+* validSubmission = rowById(&apos;baseline-suburban-mixed&apos;)
+* row = rowById(&apos;referred-over-threshold&apos;)
+* check = Rule.execute(&apos;rating&apos;, row)
+Given &apos;quotes&apos;
+And check.input
+When post
+request:
+1 &gt; POST http://localhost:8090/quotes
+1 &gt; Content-Type: application/json; charset=UTF-8
+1 &gt; Host: localhost:8090
+1 &gt; Content-Length: 191
+1 &gt; Connection: keep-alive
+1 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+{
+  &quot;territory&quot;: &quot;urban&quot;,
+  &quot;vans&quot;: 0,
+  &quot;lightTrucks&quot;: 0,
+  &quot;heavyTrucks&quot;: 20,
+  &quot;avgExperience&quot;: 5,
+  &quot;safetyProgram&quot;: false,
+  &quot;claimsCount&quot;: 0,
+  &quot;hazmatCargo&quot;: false,
+  &quot;youngestDriverAge&quot;: 30,
+  &quot;outOfStateOperations&quot;: false
+}
+
+response time in milliseconds: 2
+1 &lt; 201 POST http://localhost:8090/quotes
+1 &lt; content-length: 310
+1 &lt; Karate-Mock: true
+1 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;id&quot;: &quot;Q-100008&quot;,
+  &quot;status&quot;: &quot;submitted&quot;,
+  &quot;submission&quot;: {
+    &quot;territory&quot;: &quot;urban&quot;,
+    &quot;vans&quot;: 0,
+    &quot;lightTrucks&quot;: 0,
+    &quot;heavyTrucks&quot;: 20,
+    &quot;avgExperience&quot;: 5,
+    &quot;safetyProgram&quot;: false,
+    &quot;claimsCount&quot;: 0,
+    &quot;hazmatCargo&quot;: false,
+    &quot;youngestDriverAge&quot;: 30,
+    &quot;outOfStateOperations&quot;: false
+  },
+  &quot;premium&quot;: null,
+  &quot;reason&quot;: null,
+  &quot;ratingDate&quot;: null,
+  &quot;policyNumber&quot;: null
+}
+
+POST http://localhost:8090/quotes
+201 (2 ms)
+Then 201
+* id = response.id
+* setToday(&apos;2026-01-01&apos;) == &apos;2026-01-01&apos;
+request:
+2 &gt; POST http://localhost:8090/clock
+2 &gt; Content-Type: application/json
+2 &gt; Host: localhost:8090
+2 &gt; Content-Length: 22
+2 &gt; Connection: keep-alive
+2 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+{
+  &quot;today&quot;: &quot;2026-01-01&quot;
+}
+
+response time in milliseconds: 2
+2 &lt; 200 POST http://localhost:8090/clock
+2 &lt; content-length: 22
+2 &lt; Karate-Mock: true
+2 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;today&quot;: &quot;2026-01-01&quot;
+}
+
+Given &apos;quotes&apos;, id, &apos;rate&apos;
+When post
+request:
+3 &gt; POST http://localhost:8090/quotes/Q-100008/rate
+3 &gt; Host: localhost:8090
+3 &gt; Content-Length: 0
+3 &gt; Connection: keep-alive
+3 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+
+response time in milliseconds: 12
+3 &lt; 200 POST http://localhost:8090/quotes/Q-100008/rate
+3 &lt; content-length: 320
+3 &lt; Karate-Mock: true
+3 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;id&quot;: &quot;Q-100008&quot;,
+  &quot;status&quot;: &quot;referred&quot;,
+  &quot;submission&quot;: {
+    &quot;territory&quot;: &quot;urban&quot;,
+    &quot;vans&quot;: 0,
+    &quot;lightTrucks&quot;: 0,
+    &quot;heavyTrucks&quot;: 20,
+    &quot;avgExperience&quot;: 5,
+    &quot;safetyProgram&quot;: false,
+    &quot;claimsCount&quot;: 0,
+    &quot;hazmatCargo&quot;: false,
+    &quot;youngestDriverAge&quot;: 30,
+    &quot;outOfStateOperations&quot;: false
+  },
+  &quot;premium&quot;: 30037.5,
+  &quot;reason&quot;: null,
+  &quot;ratingDate&quot;: &quot;2026-01-01&quot;,
+  &quot;policyNumber&quot;: null
+}
+
+POST http://localhost:8090/quotes/Q-100008/rate
+200 (12 ms)
+Then 200
+And response.status == &apos;referred&apos;
+And response.status == check.outcome
+And response.premium == check.output.premium
+* check.verify(true, &apos;the mock referred the over-threshold fleet at the rulebook premium&apos;)
+* setToday(&apos;2026-01-02&apos;) == &apos;2026-01-02&apos;
+request:
+4 &gt; POST http://localhost:8090/clock
+4 &gt; Content-Type: application/json
+4 &gt; Host: localhost:8090
+4 &gt; Content-Length: 22
+4 &gt; Connection: keep-alive
+4 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+{
+  &quot;today&quot;: &quot;2026-01-02&quot;
+}
+
+response time in milliseconds: 3
+4 &lt; 200 POST http://localhost:8090/clock
+4 &lt; content-length: 22
+4 &lt; Karate-Mock: true
+4 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;today&quot;: &quot;2026-01-02&quot;
+}
+
+Given &apos;quotes&apos;, id, &apos;bind&apos;
+When post
+request:
+5 &gt; POST http://localhost:8090/quotes/Q-100008/bind
+5 &gt; Host: localhost:8090
+5 &gt; Content-Length: 0
+5 &gt; Connection: keep-alive
+5 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+
+response time in milliseconds: 2
+5 &lt; 409 POST http://localhost:8090/quotes/Q-100008/bind
+5 &lt; content-length: 103
+5 &lt; Karate-Mock: true
+5 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;error&quot;: &quot;approval_required&quot;,
+  &quot;message&quot;: &quot;a referred quote may be bound only after underwriter approval&quot;
+}
+
+POST http://localhost:8090/quotes/Q-100008/bind
+409 (2 ms)
+Then 409
+And response == { error: &apos;approval_required&apos;, message: &apos;#string&apos; }
+</system-out></testcase>
+<testcase classname="checks.lifecycle" name="approval clears a referred quote for binding without changing the premium" time="0.054"><properties><property name="req" value="FLEET-010/5"/><property name="req" value="FLEET-010/7"/></properties><system-out>* baseUrl
+* setToday = function(d){ return karate.http(baseUrl).path(&apos;clock&apos;).post({ today: d }).body.today }
+* saved = Rule.load(&apos;rating&apos;).scenarios
+* rowById = function(id){ return karate.filter(saved, function(s){ return s._id == id })[0] }
+* validSubmission = rowById(&apos;baseline-suburban-mixed&apos;)
+* row = rowById(&apos;referred-over-threshold&apos;)
+* check = Rule.execute(&apos;rating&apos;, row)
+Given &apos;quotes&apos;
+And check.input
+When post
+request:
+1 &gt; POST http://localhost:8090/quotes
+1 &gt; Content-Type: application/json; charset=UTF-8
+1 &gt; Host: localhost:8090
+1 &gt; Content-Length: 191
+1 &gt; Connection: keep-alive
+1 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+{
+  &quot;territory&quot;: &quot;urban&quot;,
+  &quot;vans&quot;: 0,
+  &quot;lightTrucks&quot;: 0,
+  &quot;heavyTrucks&quot;: 20,
+  &quot;avgExperience&quot;: 5,
+  &quot;safetyProgram&quot;: false,
+  &quot;claimsCount&quot;: 0,
+  &quot;hazmatCargo&quot;: false,
+  &quot;youngestDriverAge&quot;: 30,
+  &quot;outOfStateOperations&quot;: false
+}
+
+response time in milliseconds: 2
+1 &lt; 201 POST http://localhost:8090/quotes
+1 &lt; content-length: 310
+1 &lt; Karate-Mock: true
+1 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;id&quot;: &quot;Q-100009&quot;,
+  &quot;status&quot;: &quot;submitted&quot;,
+  &quot;submission&quot;: {
+    &quot;territory&quot;: &quot;urban&quot;,
+    &quot;vans&quot;: 0,
+    &quot;lightTrucks&quot;: 0,
+    &quot;heavyTrucks&quot;: 20,
+    &quot;avgExperience&quot;: 5,
+    &quot;safetyProgram&quot;: false,
+    &quot;claimsCount&quot;: 0,
+    &quot;hazmatCargo&quot;: false,
+    &quot;youngestDriverAge&quot;: 30,
+    &quot;outOfStateOperations&quot;: false
+  },
+  &quot;premium&quot;: null,
+  &quot;reason&quot;: null,
+  &quot;ratingDate&quot;: null,
+  &quot;policyNumber&quot;: null
+}
+
+POST http://localhost:8090/quotes
+201 (2 ms)
+Then 201
+* id = response.id
+* setToday(&apos;2026-01-01&apos;) == &apos;2026-01-01&apos;
+request:
+2 &gt; POST http://localhost:8090/clock
+2 &gt; Content-Type: application/json
+2 &gt; Host: localhost:8090
+2 &gt; Content-Length: 22
+2 &gt; Connection: keep-alive
+2 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+{
+  &quot;today&quot;: &quot;2026-01-01&quot;
+}
+
+response time in milliseconds: 2
+2 &lt; 200 POST http://localhost:8090/clock
+2 &lt; content-length: 22
+2 &lt; Karate-Mock: true
+2 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;today&quot;: &quot;2026-01-01&quot;
+}
+
+Given &apos;quotes&apos;, id, &apos;rate&apos;
+When post
+request:
+3 &gt; POST http://localhost:8090/quotes/Q-100009/rate
+3 &gt; Host: localhost:8090
+3 &gt; Content-Length: 0
+3 &gt; Connection: keep-alive
+3 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+
+response time in milliseconds: 14
+3 &lt; 200 POST http://localhost:8090/quotes/Q-100009/rate
+3 &lt; content-length: 320
+3 &lt; Karate-Mock: true
+3 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;id&quot;: &quot;Q-100009&quot;,
+  &quot;status&quot;: &quot;referred&quot;,
+  &quot;submission&quot;: {
+    &quot;territory&quot;: &quot;urban&quot;,
+    &quot;vans&quot;: 0,
+    &quot;lightTrucks&quot;: 0,
+    &quot;heavyTrucks&quot;: 20,
+    &quot;avgExperience&quot;: 5,
+    &quot;safetyProgram&quot;: false,
+    &quot;claimsCount&quot;: 0,
+    &quot;hazmatCargo&quot;: false,
+    &quot;youngestDriverAge&quot;: 30,
+    &quot;outOfStateOperations&quot;: false
+  },
+  &quot;premium&quot;: 30037.5,
+  &quot;reason&quot;: null,
+  &quot;ratingDate&quot;: &quot;2026-01-01&quot;,
+  &quot;policyNumber&quot;: null
+}
+
+POST http://localhost:8090/quotes/Q-100009/rate
+200 (14 ms)
+Then 200
+And response.status == &apos;referred&apos;
+* referredPremium = response.premium
+* setToday(&apos;2026-01-02&apos;) == &apos;2026-01-02&apos;
+request:
+4 &gt; POST http://localhost:8090/clock
+4 &gt; Content-Type: application/json
+4 &gt; Host: localhost:8090
+4 &gt; Content-Length: 22
+4 &gt; Connection: keep-alive
+4 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+{
+  &quot;today&quot;: &quot;2026-01-02&quot;
+}
+
+response time in milliseconds: 2
+4 &lt; 200 POST http://localhost:8090/clock
+4 &lt; content-length: 22
+4 &lt; Karate-Mock: true
+4 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;today&quot;: &quot;2026-01-02&quot;
+}
+
+Given &apos;quotes&apos;, id, &apos;approve&apos;
+When post
+request:
+5 &gt; POST http://localhost:8090/quotes/Q-100009/approve
+5 &gt; Host: localhost:8090
+5 &gt; Content-Length: 0
+5 &gt; Connection: keep-alive
+5 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+
+response time in milliseconds: 2
+5 &lt; 200 POST http://localhost:8090/quotes/Q-100009/approve
+5 &lt; content-length: 320
+5 &lt; Karate-Mock: true
+5 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;id&quot;: &quot;Q-100009&quot;,
+  &quot;status&quot;: &quot;approved&quot;,
+  &quot;submission&quot;: {
+    &quot;territory&quot;: &quot;urban&quot;,
+    &quot;vans&quot;: 0,
+    &quot;lightTrucks&quot;: 0,
+    &quot;heavyTrucks&quot;: 20,
+    &quot;avgExperience&quot;: 5,
+    &quot;safetyProgram&quot;: false,
+    &quot;claimsCount&quot;: 0,
+    &quot;hazmatCargo&quot;: false,
+    &quot;youngestDriverAge&quot;: 30,
+    &quot;outOfStateOperations&quot;: false
+  },
+  &quot;premium&quot;: 30037.5,
+  &quot;reason&quot;: null,
+  &quot;ratingDate&quot;: &quot;2026-01-01&quot;,
+  &quot;policyNumber&quot;: null
+}
+
+POST http://localhost:8090/quotes/Q-100009/approve
+200 (2 ms)
+Then 200
+And response.status == &apos;approved&apos;
+And response.premium == referredPremium
+And response.premium == check.output.premium
+* setToday(&apos;2026-01-03&apos;) == &apos;2026-01-03&apos;
+request:
+6 &gt; POST http://localhost:8090/clock
+6 &gt; Content-Type: application/json
+6 &gt; Host: localhost:8090
+6 &gt; Content-Length: 22
+6 &gt; Connection: keep-alive
+6 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+{
+  &quot;today&quot;: &quot;2026-01-03&quot;
+}
+
+response time in milliseconds: 2
+6 &lt; 200 POST http://localhost:8090/clock
+6 &lt; content-length: 22
+6 &lt; Karate-Mock: true
+6 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;today&quot;: &quot;2026-01-03&quot;
+}
+
+Given &apos;quotes&apos;, id, &apos;bind&apos;
+When post
+request:
+7 &gt; POST http://localhost:8090/quotes/Q-100009/bind
+7 &gt; Host: localhost:8090
+7 &gt; Content-Length: 0
+7 &gt; Connection: keep-alive
+7 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+
+response time in milliseconds: 2
+7 &lt; 200 POST http://localhost:8090/quotes/Q-100009/bind
+7 &lt; content-length: 325
+7 &lt; Karate-Mock: true
+7 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;id&quot;: &quot;Q-100009&quot;,
+  &quot;status&quot;: &quot;bound&quot;,
+  &quot;submission&quot;: {
+    &quot;territory&quot;: &quot;urban&quot;,
+    &quot;vans&quot;: 0,
+    &quot;lightTrucks&quot;: 0,
+    &quot;heavyTrucks&quot;: 20,
+    &quot;avgExperience&quot;: 5,
+    &quot;safetyProgram&quot;: false,
+    &quot;claimsCount&quot;: 0,
+    &quot;hazmatCargo&quot;: false,
+    &quot;youngestDriverAge&quot;: 30,
+    &quot;outOfStateOperations&quot;: false
+  },
+  &quot;premium&quot;: 30037.5,
+  &quot;reason&quot;: null,
+  &quot;ratingDate&quot;: &quot;2026-01-01&quot;,
+  &quot;policyNumber&quot;: &quot;POL-100009&quot;
+}
+
+POST http://localhost:8090/quotes/Q-100009/bind
+200 (2 ms)
+Then 200
+And response.status == &apos;bound&apos;
+And response.policyNumber == &apos;#string&apos;
+</system-out></testcase>
+<testcase classname="checks.lifecycle" name="binding a rated unexpired quote issues the policy" time="0.04"><properties><property name="req" value="FLEET-010/7"/></properties><system-out>* baseUrl
+* setToday = function(d){ return karate.http(baseUrl).path(&apos;clock&apos;).post({ today: d }).body.today }
+* saved = Rule.load(&apos;rating&apos;).scenarios
+* rowById = function(id){ return karate.filter(saved, function(s){ return s._id == id })[0] }
+* validSubmission = rowById(&apos;baseline-suburban-mixed&apos;)
+* check = Rule.execute(&apos;rating&apos;, validSubmission)
+Given &apos;quotes&apos;
+And check.input
+When post
+request:
+1 &gt; POST http://localhost:8090/quotes
+1 &gt; Content-Type: application/json; charset=UTF-8
+1 &gt; Host: localhost:8090
+1 &gt; Content-Length: 193
+1 &gt; Connection: keep-alive
+1 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+{
+  &quot;territory&quot;: &quot;suburban&quot;,
+  &quot;vans&quot;: 2,
+  &quot;lightTrucks&quot;: 2,
+  &quot;heavyTrucks&quot;: 1,
+  &quot;avgExperience&quot;: 5,
+  &quot;safetyProgram&quot;: false,
+  &quot;claimsCount&quot;: 0,
+  &quot;hazmatCargo&quot;: false,
+  &quot;youngestDriverAge&quot;: 30,
+  &quot;outOfStateOperations&quot;: false
+}
+
+response time in milliseconds: 3
+1 &lt; 201 POST http://localhost:8090/quotes
+1 &lt; content-length: 312
+1 &lt; Karate-Mock: true
+1 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;id&quot;: &quot;Q-100010&quot;,
+  &quot;status&quot;: &quot;submitted&quot;,
+  &quot;submission&quot;: {
+    &quot;territory&quot;: &quot;suburban&quot;,
+    &quot;vans&quot;: 2,
+    &quot;lightTrucks&quot;: 2,
+    &quot;heavyTrucks&quot;: 1,
+    &quot;avgExperience&quot;: 5,
+    &quot;safetyProgram&quot;: false,
+    &quot;claimsCount&quot;: 0,
+    &quot;hazmatCargo&quot;: false,
+    &quot;youngestDriverAge&quot;: 30,
+    &quot;outOfStateOperations&quot;: false
+  },
+  &quot;premium&quot;: null,
+  &quot;reason&quot;: null,
+  &quot;ratingDate&quot;: null,
+  &quot;policyNumber&quot;: null
+}
+
+POST http://localhost:8090/quotes
+201 (3 ms)
+Then 201
+* id = response.id
+* setToday(&apos;2026-01-01&apos;) == &apos;2026-01-01&apos;
+request:
+2 &gt; POST http://localhost:8090/clock
+2 &gt; Content-Type: application/json
+2 &gt; Host: localhost:8090
+2 &gt; Content-Length: 22
+2 &gt; Connection: keep-alive
+2 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+{
+  &quot;today&quot;: &quot;2026-01-01&quot;
+}
+
+response time in milliseconds: 2
+2 &lt; 200 POST http://localhost:8090/clock
+2 &lt; content-length: 22
+2 &lt; Karate-Mock: true
+2 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;today&quot;: &quot;2026-01-01&quot;
+}
+
+Given &apos;quotes&apos;, id, &apos;rate&apos;
+When post
+request:
+3 &gt; POST http://localhost:8090/quotes/Q-100010/rate
+3 &gt; Host: localhost:8090
+3 &gt; Content-Length: 0
+3 &gt; Connection: keep-alive
+3 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+
+response time in milliseconds: 8
+3 &lt; 200 POST http://localhost:8090/quotes/Q-100010/rate
+3 &lt; content-length: 316
+3 &lt; Karate-Mock: true
+3 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;id&quot;: &quot;Q-100010&quot;,
+  &quot;status&quot;: &quot;rated&quot;,
+  &quot;submission&quot;: {
+    &quot;territory&quot;: &quot;suburban&quot;,
+    &quot;vans&quot;: 2,
+    &quot;lightTrucks&quot;: 2,
+    &quot;heavyTrucks&quot;: 1,
+    &quot;avgExperience&quot;: 5,
+    &quot;safetyProgram&quot;: false,
+    &quot;claimsCount&quot;: 0,
+    &quot;hazmatCargo&quot;: false,
+    &quot;youngestDriverAge&quot;: 30,
+    &quot;outOfStateOperations&quot;: false
+  },
+  &quot;premium&quot;: 3952,
+  &quot;reason&quot;: null,
+  &quot;ratingDate&quot;: &quot;2026-01-01&quot;,
+  &quot;policyNumber&quot;: null
+}
+
+POST http://localhost:8090/quotes/Q-100010/rate
+200 (8 ms)
+Then 200
+And response.status == &apos;rated&apos;
+* setToday(&apos;2026-01-15&apos;) == &apos;2026-01-15&apos;
+request:
+4 &gt; POST http://localhost:8090/clock
+4 &gt; Content-Type: application/json
+4 &gt; Host: localhost:8090
+4 &gt; Content-Length: 22
+4 &gt; Connection: keep-alive
+4 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+{
+  &quot;today&quot;: &quot;2026-01-15&quot;
+}
+
+response time in milliseconds: 2
+4 &lt; 200 POST http://localhost:8090/clock
+4 &lt; content-length: 22
+4 &lt; Karate-Mock: true
+4 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;today&quot;: &quot;2026-01-15&quot;
+}
+
+Given &apos;quotes&apos;, id, &apos;bind&apos;
+When post
+request:
+5 &gt; POST http://localhost:8090/quotes/Q-100010/bind
+5 &gt; Host: localhost:8090
+5 &gt; Content-Length: 0
+5 &gt; Connection: keep-alive
+5 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+
+response time in milliseconds: 2
+5 &lt; 200 POST http://localhost:8090/quotes/Q-100010/bind
+5 &lt; content-length: 324
+5 &lt; Karate-Mock: true
+5 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;id&quot;: &quot;Q-100010&quot;,
+  &quot;status&quot;: &quot;bound&quot;,
+  &quot;submission&quot;: {
+    &quot;territory&quot;: &quot;suburban&quot;,
+    &quot;vans&quot;: 2,
+    &quot;lightTrucks&quot;: 2,
+    &quot;heavyTrucks&quot;: 1,
+    &quot;avgExperience&quot;: 5,
+    &quot;safetyProgram&quot;: false,
+    &quot;claimsCount&quot;: 0,
+    &quot;hazmatCargo&quot;: false,
+    &quot;youngestDriverAge&quot;: 30,
+    &quot;outOfStateOperations&quot;: false
+  },
+  &quot;premium&quot;: 3952,
+  &quot;reason&quot;: null,
+  &quot;ratingDate&quot;: &quot;2026-01-01&quot;,
+  &quot;policyNumber&quot;: &quot;POL-100010&quot;
+}
+
+POST http://localhost:8090/quotes/Q-100010/bind
+200 (2 ms)
+Then 200
+And response == { id: &apos;#(id)&apos;, status: &apos;bound&apos;, submission: &apos;#(check.input)&apos;, premium: &apos;#(check.output.premium)&apos;, reason: null, ratingDate: &apos;2026-01-01&apos;, policyNumber: &apos;#string&apos; }
+Given &apos;quotes&apos;, id
+When get
+request:
+6 &gt; GET http://localhost:8090/quotes/Q-100010
+6 &gt; Host: localhost:8090
+6 &gt; Connection: keep-alive
+6 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+
+response time in milliseconds: 1
+6 &lt; 200 GET http://localhost:8090/quotes/Q-100010
+6 &lt; content-length: 324
+6 &lt; Karate-Mock: true
+6 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;id&quot;: &quot;Q-100010&quot;,
+  &quot;status&quot;: &quot;bound&quot;,
+  &quot;submission&quot;: {
+    &quot;territory&quot;: &quot;suburban&quot;,
+    &quot;vans&quot;: 2,
+    &quot;lightTrucks&quot;: 2,
+    &quot;heavyTrucks&quot;: 1,
+    &quot;avgExperience&quot;: 5,
+    &quot;safetyProgram&quot;: false,
+    &quot;claimsCount&quot;: 0,
+    &quot;hazmatCargo&quot;: false,
+    &quot;youngestDriverAge&quot;: 30,
+    &quot;outOfStateOperations&quot;: false
+  },
+  &quot;premium&quot;: 3952,
+  &quot;reason&quot;: null,
+  &quot;ratingDate&quot;: &quot;2026-01-01&quot;,
+  &quot;policyNumber&quot;: &quot;POL-100010&quot;
+}
+
+GET http://localhost:8090/quotes/Q-100010
+200 (1 ms)
+Then 200
+And response.status == &apos;bound&apos;
+And response.policyNumber == &apos;#string&apos;
+</system-out></testcase>
+<testcase classname="checks.lifecycle" name="a bound quote can be neither bound again nor re-rated" time="0.051"><properties><property name="req" value="FLEET-010/8"/></properties><system-out>* baseUrl
+* setToday = function(d){ return karate.http(baseUrl).path(&apos;clock&apos;).post({ today: d }).body.today }
+* saved = Rule.load(&apos;rating&apos;).scenarios
+* rowById = function(id){ return karate.filter(saved, function(s){ return s._id == id })[0] }
+* validSubmission = rowById(&apos;baseline-suburban-mixed&apos;)
+* check = Rule.execute(&apos;rating&apos;, validSubmission)
+Given &apos;quotes&apos;
+And check.input
+When post
+request:
+1 &gt; POST http://localhost:8090/quotes
+1 &gt; Content-Type: application/json; charset=UTF-8
+1 &gt; Host: localhost:8090
+1 &gt; Content-Length: 193
+1 &gt; Connection: keep-alive
+1 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+{
+  &quot;territory&quot;: &quot;suburban&quot;,
+  &quot;vans&quot;: 2,
+  &quot;lightTrucks&quot;: 2,
+  &quot;heavyTrucks&quot;: 1,
+  &quot;avgExperience&quot;: 5,
+  &quot;safetyProgram&quot;: false,
+  &quot;claimsCount&quot;: 0,
+  &quot;hazmatCargo&quot;: false,
+  &quot;youngestDriverAge&quot;: 30,
+  &quot;outOfStateOperations&quot;: false
+}
+
+response time in milliseconds: 2
+1 &lt; 201 POST http://localhost:8090/quotes
+1 &lt; content-length: 312
+1 &lt; Karate-Mock: true
+1 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;id&quot;: &quot;Q-100011&quot;,
+  &quot;status&quot;: &quot;submitted&quot;,
+  &quot;submission&quot;: {
+    &quot;territory&quot;: &quot;suburban&quot;,
+    &quot;vans&quot;: 2,
+    &quot;lightTrucks&quot;: 2,
+    &quot;heavyTrucks&quot;: 1,
+    &quot;avgExperience&quot;: 5,
+    &quot;safetyProgram&quot;: false,
+    &quot;claimsCount&quot;: 0,
+    &quot;hazmatCargo&quot;: false,
+    &quot;youngestDriverAge&quot;: 30,
+    &quot;outOfStateOperations&quot;: false
+  },
+  &quot;premium&quot;: null,
+  &quot;reason&quot;: null,
+  &quot;ratingDate&quot;: null,
+  &quot;policyNumber&quot;: null
+}
+
+POST http://localhost:8090/quotes
+201 (2 ms)
+Then 201
+* id = response.id
+* setToday(&apos;2026-01-01&apos;) == &apos;2026-01-01&apos;
+request:
+2 &gt; POST http://localhost:8090/clock
+2 &gt; Content-Type: application/json
+2 &gt; Host: localhost:8090
+2 &gt; Content-Length: 22
+2 &gt; Connection: keep-alive
+2 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+{
+  &quot;today&quot;: &quot;2026-01-01&quot;
+}
+
+response time in milliseconds: 1
+2 &lt; 200 POST http://localhost:8090/clock
+2 &lt; content-length: 22
+2 &lt; Karate-Mock: true
+2 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;today&quot;: &quot;2026-01-01&quot;
+}
+
+Given &apos;quotes&apos;, id, &apos;rate&apos;
+When post
+request:
+3 &gt; POST http://localhost:8090/quotes/Q-100011/rate
+3 &gt; Host: localhost:8090
+3 &gt; Content-Length: 0
+3 &gt; Connection: keep-alive
+3 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+
+response time in milliseconds: 11
+3 &lt; 200 POST http://localhost:8090/quotes/Q-100011/rate
+3 &lt; content-length: 316
+3 &lt; Karate-Mock: true
+3 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;id&quot;: &quot;Q-100011&quot;,
+  &quot;status&quot;: &quot;rated&quot;,
+  &quot;submission&quot;: {
+    &quot;territory&quot;: &quot;suburban&quot;,
+    &quot;vans&quot;: 2,
+    &quot;lightTrucks&quot;: 2,
+    &quot;heavyTrucks&quot;: 1,
+    &quot;avgExperience&quot;: 5,
+    &quot;safetyProgram&quot;: false,
+    &quot;claimsCount&quot;: 0,
+    &quot;hazmatCargo&quot;: false,
+    &quot;youngestDriverAge&quot;: 30,
+    &quot;outOfStateOperations&quot;: false
+  },
+  &quot;premium&quot;: 3952,
+  &quot;reason&quot;: null,
+  &quot;ratingDate&quot;: &quot;2026-01-01&quot;,
+  &quot;policyNumber&quot;: null
+}
+
+POST http://localhost:8090/quotes/Q-100011/rate
+200 (11 ms)
+Then 200
+* setToday(&apos;2026-01-02&apos;) == &apos;2026-01-02&apos;
+request:
+4 &gt; POST http://localhost:8090/clock
+4 &gt; Content-Type: application/json
+4 &gt; Host: localhost:8090
+4 &gt; Content-Length: 22
+4 &gt; Connection: keep-alive
+4 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+{
+  &quot;today&quot;: &quot;2026-01-02&quot;
+}
+
+response time in milliseconds: 2
+4 &lt; 200 POST http://localhost:8090/clock
+4 &lt; content-length: 22
+4 &lt; Karate-Mock: true
+4 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;today&quot;: &quot;2026-01-02&quot;
+}
+
+Given &apos;quotes&apos;, id, &apos;bind&apos;
+When post
+request:
+5 &gt; POST http://localhost:8090/quotes/Q-100011/bind
+5 &gt; Host: localhost:8090
+5 &gt; Content-Length: 0
+5 &gt; Connection: keep-alive
+5 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+
+response time in milliseconds: 4
+5 &lt; 200 POST http://localhost:8090/quotes/Q-100011/bind
+5 &lt; content-length: 324
+5 &lt; Karate-Mock: true
+5 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;id&quot;: &quot;Q-100011&quot;,
+  &quot;status&quot;: &quot;bound&quot;,
+  &quot;submission&quot;: {
+    &quot;territory&quot;: &quot;suburban&quot;,
+    &quot;vans&quot;: 2,
+    &quot;lightTrucks&quot;: 2,
+    &quot;heavyTrucks&quot;: 1,
+    &quot;avgExperience&quot;: 5,
+    &quot;safetyProgram&quot;: false,
+    &quot;claimsCount&quot;: 0,
+    &quot;hazmatCargo&quot;: false,
+    &quot;youngestDriverAge&quot;: 30,
+    &quot;outOfStateOperations&quot;: false
+  },
+  &quot;premium&quot;: 3952,
+  &quot;reason&quot;: null,
+  &quot;ratingDate&quot;: &quot;2026-01-01&quot;,
+  &quot;policyNumber&quot;: &quot;POL-100011&quot;
+}
+
+POST http://localhost:8090/quotes/Q-100011/bind
+200 (4 ms)
+Then 200
+And response.status == &apos;bound&apos;
+* setToday(&apos;2026-01-03&apos;) == &apos;2026-01-03&apos;
+request:
+6 &gt; POST http://localhost:8090/clock
+6 &gt; Content-Type: application/json
+6 &gt; Host: localhost:8090
+6 &gt; Content-Length: 22
+6 &gt; Connection: keep-alive
+6 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+{
+  &quot;today&quot;: &quot;2026-01-03&quot;
+}
+
+response time in milliseconds: 3
+6 &lt; 200 POST http://localhost:8090/clock
+6 &lt; content-length: 22
+6 &lt; Karate-Mock: true
+6 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;today&quot;: &quot;2026-01-03&quot;
+}
+
+Given &apos;quotes&apos;, id, &apos;bind&apos;
+When post
+request:
+7 &gt; POST http://localhost:8090/quotes/Q-100011/bind
+7 &gt; Host: localhost:8090
+7 &gt; Content-Length: 0
+7 &gt; Connection: keep-alive
+7 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+
+response time in milliseconds: 1
+7 &lt; 409 POST http://localhost:8090/quotes/Q-100011/bind
+7 &lt; content-length: 89
+7 &lt; Karate-Mock: true
+7 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;error&quot;: &quot;already_bound&quot;,
+  &quot;message&quot;: &quot;a quote that is already bound cannot be bound again&quot;
+}
+
+POST http://localhost:8090/quotes/Q-100011/bind
+409 (1 ms)
+Then 409
+And response == { error: &apos;already_bound&apos;, message: &apos;#string&apos; }
+Given &apos;quotes&apos;, id, &apos;rate&apos;
+When post
+request:
+8 &gt; POST http://localhost:8090/quotes/Q-100011/rate
+8 &gt; Host: localhost:8090
+8 &gt; Content-Length: 0
+8 &gt; Connection: keep-alive
+8 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+
+response time in milliseconds: 1
+8 &lt; 409 POST http://localhost:8090/quotes/Q-100011/rate
+8 &lt; content-length: 73
+8 &lt; Karate-Mock: true
+8 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;error&quot;: &quot;already_bound&quot;,
+  &quot;message&quot;: &quot;a bound quote is no longer re-rated&quot;
+}
+
+POST http://localhost:8090/quotes/Q-100011/rate
+409 (1 ms)
+Then 409
+And response == { error: &apos;already_bound&apos;, message: &apos;#string&apos; }
+</system-out></testcase>
+<testcase classname="checks.lifecycle" name="approving a non-referred quote is refused (working assumption FLEET-OQ-005)" time="0.032"><properties><property name="tags" value="@noreq"/></properties><system-out>* baseUrl
+* setToday = function(d){ return karate.http(baseUrl).path(&apos;clock&apos;).post({ today: d }).body.today }
+* saved = Rule.load(&apos;rating&apos;).scenarios
+* rowById = function(id){ return karate.filter(saved, function(s){ return s._id == id })[0] }
+* validSubmission = rowById(&apos;baseline-suburban-mixed&apos;)
+* check = Rule.execute(&apos;rating&apos;, validSubmission)
+Given &apos;quotes&apos;
+And check.input
+When post
+request:
+1 &gt; POST http://localhost:8090/quotes
+1 &gt; Content-Type: application/json; charset=UTF-8
+1 &gt; Host: localhost:8090
+1 &gt; Content-Length: 193
+1 &gt; Connection: keep-alive
+1 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+{
+  &quot;territory&quot;: &quot;suburban&quot;,
+  &quot;vans&quot;: 2,
+  &quot;lightTrucks&quot;: 2,
+  &quot;heavyTrucks&quot;: 1,
+  &quot;avgExperience&quot;: 5,
+  &quot;safetyProgram&quot;: false,
+  &quot;claimsCount&quot;: 0,
+  &quot;hazmatCargo&quot;: false,
+  &quot;youngestDriverAge&quot;: 30,
+  &quot;outOfStateOperations&quot;: false
+}
+
+response time in milliseconds: 3
+1 &lt; 201 POST http://localhost:8090/quotes
+1 &lt; content-length: 312
+1 &lt; Karate-Mock: true
+1 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;id&quot;: &quot;Q-100012&quot;,
+  &quot;status&quot;: &quot;submitted&quot;,
+  &quot;submission&quot;: {
+    &quot;territory&quot;: &quot;suburban&quot;,
+    &quot;vans&quot;: 2,
+    &quot;lightTrucks&quot;: 2,
+    &quot;heavyTrucks&quot;: 1,
+    &quot;avgExperience&quot;: 5,
+    &quot;safetyProgram&quot;: false,
+    &quot;claimsCount&quot;: 0,
+    &quot;hazmatCargo&quot;: false,
+    &quot;youngestDriverAge&quot;: 30,
+    &quot;outOfStateOperations&quot;: false
+  },
+  &quot;premium&quot;: null,
+  &quot;reason&quot;: null,
+  &quot;ratingDate&quot;: null,
+  &quot;policyNumber&quot;: null
+}
+
+POST http://localhost:8090/quotes
+201 (3 ms)
+Then 201
+* id = response.id
+Given &apos;quotes&apos;, id, &apos;approve&apos;
+When post
+request:
+2 &gt; POST http://localhost:8090/quotes/Q-100012/approve
+2 &gt; Host: localhost:8090
+2 &gt; Content-Length: 0
+2 &gt; Connection: keep-alive
+2 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+
+response time in milliseconds: 1
+2 &lt; 409 POST http://localhost:8090/quotes/Q-100012/approve
+2 &lt; content-length: 74
+2 &lt; Karate-Mock: true
+2 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;error&quot;: &quot;not_referred&quot;,
+  &quot;message&quot;: &quot;only a referred quote can be approved&quot;
+}
+
+POST http://localhost:8090/quotes/Q-100012/approve
+409 (1 ms)
+Then 409
+And response == { error: &apos;not_referred&apos;, message: &apos;#string&apos; }
+Given &apos;quotes&apos;, id, &apos;rate&apos;
+When post
+request:
+3 &gt; POST http://localhost:8090/quotes/Q-100012/rate
+3 &gt; Host: localhost:8090
+3 &gt; Content-Length: 0
+3 &gt; Connection: keep-alive
+3 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+
+response time in milliseconds: 6
+3 &lt; 200 POST http://localhost:8090/quotes/Q-100012/rate
+3 &lt; content-length: 316
+3 &lt; Karate-Mock: true
+3 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;id&quot;: &quot;Q-100012&quot;,
+  &quot;status&quot;: &quot;rated&quot;,
+  &quot;submission&quot;: {
+    &quot;territory&quot;: &quot;suburban&quot;,
+    &quot;vans&quot;: 2,
+    &quot;lightTrucks&quot;: 2,
+    &quot;heavyTrucks&quot;: 1,
+    &quot;avgExperience&quot;: 5,
+    &quot;safetyProgram&quot;: false,
+    &quot;claimsCount&quot;: 0,
+    &quot;hazmatCargo&quot;: false,
+    &quot;youngestDriverAge&quot;: 30,
+    &quot;outOfStateOperations&quot;: false
+  },
+  &quot;premium&quot;: 3952,
+  &quot;reason&quot;: null,
+  &quot;ratingDate&quot;: &quot;2026-01-03&quot;,
+  &quot;policyNumber&quot;: null
+}
+
+POST http://localhost:8090/quotes/Q-100012/rate
+200 (6 ms)
+Then 200
+And response.status == &apos;rated&apos;
+Given &apos;quotes&apos;, id, &apos;approve&apos;
+When post
+request:
+4 &gt; POST http://localhost:8090/quotes/Q-100012/approve
+4 &gt; Host: localhost:8090
+4 &gt; Content-Length: 0
+4 &gt; Connection: keep-alive
+4 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+
+response time in milliseconds: 1
+4 &lt; 409 POST http://localhost:8090/quotes/Q-100012/approve
+4 &lt; content-length: 74
+4 &lt; Karate-Mock: true
+4 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;error&quot;: &quot;not_referred&quot;,
+  &quot;message&quot;: &quot;only a referred quote can be approved&quot;
+}
+
+POST http://localhost:8090/quotes/Q-100012/approve
+409 (1 ms)
+Then 409
+And response == { error: &apos;not_referred&apos;, message: &apos;#string&apos; }
+</system-out></testcase>
+<testcase classname="checks.lifecycle" name="an unknown quote id is a 404 on every lifecycle verb" time="0.018"><properties><property name="tags" value="@noreq"/></properties><system-out>* baseUrl
+* setToday = function(d){ return karate.http(baseUrl).path(&apos;clock&apos;).post({ today: d }).body.today }
+* saved = Rule.load(&apos;rating&apos;).scenarios
+* rowById = function(id){ return karate.filter(saved, function(s){ return s._id == id })[0] }
+* validSubmission = rowById(&apos;baseline-suburban-mixed&apos;)
+Given &apos;quotes&apos;, &apos;Q-000000&apos;
+When get
+request:
+1 &gt; GET http://localhost:8090/quotes/Q-000000
+1 &gt; Host: localhost:8090
+1 &gt; Connection: keep-alive
+1 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+
+response time in milliseconds: 2
+1 &lt; 404 GET http://localhost:8090/quotes/Q-000000
+1 &lt; content-length: 47
+1 &lt; Karate-Mock: true
+1 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;error&quot;: &quot;not_found&quot;,
+  &quot;message&quot;: &quot;unknown quote&quot;
+}
+
+GET http://localhost:8090/quotes/Q-000000
+404 (2 ms)
+Then 404
+And response == { error: &apos;not_found&apos;, message: &apos;#string&apos; }
+Given &apos;quotes&apos;, &apos;Q-000000&apos;, &apos;rate&apos;
+When post
+request:
+2 &gt; POST http://localhost:8090/quotes/Q-000000/rate
+2 &gt; Host: localhost:8090
+2 &gt; Content-Length: 0
+2 &gt; Connection: keep-alive
+2 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+
+response time in milliseconds: 1
+2 &lt; 404 POST http://localhost:8090/quotes/Q-000000/rate
+2 &lt; content-length: 47
+2 &lt; Karate-Mock: true
+2 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;error&quot;: &quot;not_found&quot;,
+  &quot;message&quot;: &quot;unknown quote&quot;
+}
+
+POST http://localhost:8090/quotes/Q-000000/rate
+404 (1 ms)
+Then 404
+And response == { error: &apos;not_found&apos;, message: &apos;#string&apos; }
+Given &apos;quotes&apos;, &apos;Q-000000&apos;, &apos;bind&apos;
+When post
+request:
+3 &gt; POST http://localhost:8090/quotes/Q-000000/bind
+3 &gt; Host: localhost:8090
+3 &gt; Content-Length: 0
+3 &gt; Connection: keep-alive
+3 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
+
+response time in milliseconds: 2
+3 &lt; 404 POST http://localhost:8090/quotes/Q-000000/bind
+3 &lt; content-length: 47
+3 &lt; Karate-Mock: true
+3 &lt; Content-Type: application/json; charset=UTF-8
+{
+  &quot;error&quot;: &quot;not_found&quot;,
+  &quot;message&quot;: &quot;unknown quote&quot;
+}
+
+POST http://localhost:8090/quotes/Q-000000/bind
+404 (2 ms)
+Then 404
+And response == { error: &apos;not_found&apos;, message: &apos;#string&apos; }
+</system-out></testcase>
+</testsuite>
