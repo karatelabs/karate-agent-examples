@@ -55,6 +55,12 @@ it runs off the container image too. All four run on every push and publish thei
 | [`websocket`](websocket/) | raw text, JSON, and collecting a stream of messages — plus a **custom frame-based protocol** (STOMP) handled by a codec, so protocol handling stays out of the checks. Both demo servers compile against the engine jar alone: no build tool. |
 | [`mcp`](mcp/) | discover an MCP server's tool catalog, call tools, and assert results and side effects — with the two kinds of failure kept apart: a tool's own error is a *result* you assert, a protocol error is a failed step. The client negotiates the protocol era, and a saved `tools/list` catalog gives the run **tool coverage**, so an uncalled tool is reported. Runs the official conformance suite alongside as the companion step. |
 
+### Companion repositories
+
+| | |
+|---|---|
+| [`quick-meetings-karate`](https://github.com/karatelabs/quick-meetings-karate) | **property-based testing, measured against.** The InfoQ "Beyond Accidental Quality" sample — a Spring Boot meeting scheduler with five seeded bugs and the jqwik property tests that find them — with a rulebook and twin as a thin overlay that re-finds all five deterministically: a deck, a bounded walk, live replay with shrink, and negative probes. The original source is untouched, so the two approaches sit side by side. |
+
 ## Drive it from your own AI agent (MCP)
 
 Every kit can be driven over the **Model Context Protocol**. Serve the project, point any MCP client

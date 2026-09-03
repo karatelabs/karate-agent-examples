@@ -22,6 +22,7 @@ const execute = function (calc) {
     const totalVehicles = input.vans + input.lightTrucks + input.heavyTrucks;
     // a submission with no vehicles is not a quotable risk — invalid input, never priced (SOT-prose 2)
     if (totalVehicles === 0) {
+        calc.req('FLEET-001/2');
         throw 'a submission must include at least one vehicle';
     }
 
@@ -40,6 +41,7 @@ const execute = function (calc) {
         reason = 'youngest listed driver aged 23 or younger';
         calc.outcome('declined');
     } else {
+        calc.req('FLEET-002/4');
         calc.label('Out-of-state exclusion');
         if (input.outOfStateOperations) {
             calc.req('FLEET-002/2');
@@ -145,6 +147,7 @@ const execute = function (calc) {
             calc.log('final premium ' + premium + ' exceeds ' + lookup.referralThreshold + ': referred to underwriting');
             calc.outcome('referred');
         } else {
+            calc.req('FLEET-009/2');
             calc.outcome('rated');
         }
 

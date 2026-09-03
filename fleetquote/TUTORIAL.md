@@ -1,506 +1,320 @@
-# fleetquote tutorial — from one rating to the whole lifecycle
+# Evaluate karate-agent on the fleetquote kit
 
-This tutorial follows a commercial fleet insurance quote from calculation through referral, approval, expiry and
-binding. You describe the business intent; the product turns it into rules the computer can run, and shows you the
-calculations, diagrams, test data and lifecycle behaviour that follow. Nothing below asks you to draw a flowchart,
-write a state machine by hand, or paste an expected premium into a test.
+This tutorial is an evaluation path. Each section asks one question. Each section gives the commands and
+the output the engine produces. A test runs every call below. The test asserts every number shown.
 
-## What you will see
+## 1. What this kit is, and how to start it
 
-- [Use one rulebook for four jobs](#1-one-artifact-four-jobs)
-- [Calculate and explain one quote](#2-run-one-rating)
-- [See the flowchart and table nobody maintained](#3-see-the-model-you-didnt-draw)
-- [Generate meaningful test inputs](#4-learn-the-input-space)
-- [Ask the rules to find their own gaps](#5-let-the-rules-critique-themselves)
-- [Turn rating rules into a quote lifecycle](#6-now-the-lifecycle)
-- [Find an order-dependent service defect](#7-walk-it)
-- [See the full impact of one rate change](#8-change-one-rate)
-- [What this demonstrated](#9-what-this-demonstrated)
-
-*Technical note.* Serve the project first — see **Run it** in `README.md`. Every block below runs in that interactive
-workspace; an AI agent runs the same calls over the `/api/eval` and `/api/mcp` programmatic interfaces.
-
-## 1. One artifact, four jobs
-
-The **rulebook** is the agreed way to calculate and explain a quote. Because it can run, the same rules also predict
-correct results, power a simulated service, and generate the views used later here. `rulebooks/rating/calc.js` holds
-the Stonebridge rating rules — rate tables first, then the decisions in the guide's own order. Four jobs at once:
-
-- **the written definition of correct behaviour** — `calc.label` names each rule, `calc.req` links each decision
-  result to the requirement it demonstrates;
-- **the calculator that determines the expected answer** — so no check in this kit hard-codes a premium;
-- **the rules behind the simulated service** — `mock/handlers.js` calls `Rule.execute('rating', submission)`;
-- **the model behind every view below** — each diagram and table is generated from these rules.
+Stonebridge Fleet Auto rates commercial vehicle fleets. Submit a quote. Rate it. Refer and approve it
+when required. Bind it into a policy. The **rulebook** `rulebooks/rating/` is the only pricing authority
+in the kit. It does four jobs at once. One rule change updates the calculation, the service, the
+diagrams, and the test data.
 
 ```mermaid
 flowchart LR
-    R["Executable rating rulebook"]
-    S["Readable definition<br/>of correct behavior"]
-    O["Expected answers<br/>and explanations"]
-    M["Simulated service<br/>behavior"]
-    V["Generated views<br/>and lifecycle model"]
-
+    R["rulebooks/rating/"]
+    S["The readable rules"]
+    O["The expected answer"]
+    M["The simulated service"]
+    V["The diagrams and decks"]
     R --> S
     R --> O
     R --> M
     R --> V
 ```
 
-*Change the rulebook once, and all four uses change together.* The practical benefit is that a rate change cannot
-leave four separately maintained artifacts quietly disagreeing.
+Start the console. Read **Run it** in `README.md` for the command. Type each block into the console. An
+agent uses `/api/eval` or `/api/mcp` for the same calls.
 
-## 2. Run one rating
-
-Start with one fleet submission: the rulebook returns the premium, the outcome, and which requirements it used.
+## 2. Ask the rules for an answer, and its audit trail
 
 ```js
 var quote = { territory: 'urban', vans: 2, lightTrucks: 1, heavyTrucks: 0, avgExperience: 5,
               safetyProgram: false, claimsCount: 0, hazmatCargo: false,
               youngestDriverAge: 30, outOfStateOperations: false }
-
 var r = Rule.execute('rating', quote)
-r.output      // -> { premium: 2422, reason: null }
-r.outcome     // -> 'rated'
-r.reqs        // -> ['FLEET-003/1','FLEET-003/2','FLEET-003/3','FLEET-004/3','FLEET-006/3','FLEET-008/1']
-```
+r.output    // -> { premium: 2422, reason: null }
+r.outcome   // -> 'rated'
+r.reqs      // -> ['FLEET-002/4','FLEET-003/1','FLEET-003/2','FLEET-003/3','FLEET-004/3',
+            //     'FLEET-006/3','FLEET-008/1','FLEET-009/2']
 
-`reqs` is a free link from the result back to the requirements: the decisions this quote took name the business
-requirements they demonstrate. The rules also write their own step-by-step calculation explanation as they run:
-
-```js
 Rule.audit('rating', quote, { output: 'markdown' }).markdown
 // # Fleet base premium
 // - 2 cargo vans in urban territory: 1525
-// - 1 light trucks in urban territory: 896.9999999999999
 // - fleet base premium (sum over vehicles): 2422
 // # Driver experience
 // - average experience 5 years: no adjustment
-// # Minimum premium and rounding
+// …
 // - computed 2422 -> floored at minimum 390: 2422
+// - final premium rounded to the cent: 2422
 ```
 
-The answer *and* the reasoning, in the underwriter's words. When the real service returns a different number, this
-shows exactly where the two calculations diverged, and a reviewer can then decide which one matches the rule.
+`reqs` names the acceptance criteria this quote demonstrates. When a service returns a different number,
+compare it with the audit. The first differing step names the cause.
 
-## 3. See the model you didn't draw
-
-Next the same rulebook becomes two review views: a flowchart for following decisions, a table for what it covers.
+## 3. See the rules as a diagram and a table
 
 ```js
 var d = Rule.diagram('rating')
-d.outline           // -> 10 items in the diagram outline: the '#' sections and the big decisions
-d.collapsed         // -> ['L35#0','L54#0']  — two large parts of the flowchart start folded
-d.svg               // the rendered flowchart; d.mermaid is the same graph as text
+d.outline.length             // -> 10   outline items
+d.collapsed                  // -> ['L36#0','L56#0']   two large branches start folded
+d.svg                        // the flowchart; d.mermaid is the same graph as text
 
 var t = Rule.table('rating')
-t.stats             // -> { rows: 22, scenarios: 22, generated: 0, distinctPaths: 13 }
-t.columns.decisions // -> 12 columns named by calc.label: 'Young-driver exclusion',
-                    //    'Fleet-size discount', 'Surcharge cap', 'Referral to underwriting' …
+t.stats                      // -> { rows: 22, scenarios: 22, generated: 0, distinctPaths: 13 }
+t.columns.decisions.length   // -> 12   one column per named decision
 Rule.table('rating', { output: 'markdown' }).markdown
 ```
 
-The flowchart is generated from the rules, not maintained beside them, and is read-only on purpose: a diagram you
-can edit becomes a second authoritative version, and second versions quietly become inconsistent. The table shows 22
-saved examples taking only **13 different routes** — it groups examples that produced the same sequence of decision
-results, so duplicated coverage is visible instead of counted twice. The two views let business and test reviewers
-inspect the same logic without maintaining separate diagrams or spreadsheets.
+The engine generates both views from the rules. Nobody maintains them beside the rules. The 22 saved
+scenarios take only 13 distinct paths, so duplicated coverage stays visible.
 
-## 4. Learn the input space
-
-Now the engine looks for meaningful test values: limits, values beside them, and combinations that expose interactions.
+## 4. Get test data with the answers filled in
 
 ```js
-Rule.ranges('rating').dimensions    // -> 10 input fields, each with the value ranges expected to behave the same way
+Rule.ranges('rating').dimensions.length   // -> 10   input fields, each split into value classes
+// youngestDriverAge classes: = 18 · 18–23 · = 23 · = 24 · 24–70 · = 70
 
 Rule.explore('rating').summary
 // -> RulePathExplorer: 28/28 site-outcomes (100%), suite of 0 rows, 1 rounds, 120 runs
-//    youngestDriverAge (number): [18, 22, 23, 24, 25, 70]
-//    avgExperience     (number): [0, 1, 2, 3, 4, 7, 8, 9, 10, 30]
+
+Rule.explore('rating', { suite: 'boundary' }).suite.length   // -> 38
+var deck = Rule.explore('rating', { suite: 'pairwise' }).suite
+deck.length                                                  // -> 97
 ```
 
-For `youngestDriverAge` the ranges read `= 18 · 18–23 · = 23 · = 24 · 24–70 · = 70`. The repeated endpoints are
-deliberate: the limit itself is tested as well as the values either side of it, because behaviour often changes
-exactly there. Two origins are mixed into the explored values. `generator.js` declares the *allowed input range* and
-the values the business already cares about — for age, `18` to `70` with `23` and `24` called out. The rest (`22`
-and `25` here; `1`, `4`, `7` and `10` around the two experience bands) appear because the engine watched each
-comparison as the rules ran, learned where the decision changes, and stepped across it — never written down anywhere.
-
-`28/28 site-outcomes` means every possible result at every decision point was reached, and `suite of 0 rows` is the
-honest reading of that: the 22 saved examples already reach all of them, so the generator has nothing to add. Ask
-for a complete generated test set instead, then attach the answers by running each row through the rulebook:
+The boundary suite includes each limit and the values beside it. `28/28 site-outcomes` means the saved
+scenarios reach every decision arm. No additional rows are required. Run each usable row through the
+rulebook to attach the answers.
 
 ```js
-Rule.explore('rating', { suite: 'boundary' }).suite.length    // -> 38  values at and beside each limit
-var deck = Rule.explore('rating', { suite: 'pairwise' }).suite
-deck.length                                                   // -> 97  every pair of field choices appears together
-
-var rows = []
-for (var i = 0; i < deck.length; i++) {
-  var input = deck[i].input
-  if (deck[i].domain === 'out') continue                                  // outside the allowed input range
-  if (input.vans + input.lightTrucks + input.heavyTrucks < 1) continue    // no vehicles: not a quotable risk
-  var x = Rule.execute('rating', input)
-  rows.push({ input: input, outcome: x.outcome, premium: x.output.premium, reqs: x.reqs })
-}
+var rows = deck.filter(function (x) {
+  return x.domain !== 'out' && x.input.vans + x.input.lightTrucks + x.input.heavyTrucks > 0
+}).map(function (x) {
+  var y = Rule.execute('rating', x.input)
+  return { input: x.input, outcome: y.outcome, premium: y.output.premium, reqs: y.reqs }
+})
 rows.length     // -> 31
 ```
 
-Rows outside the allowed range, and rows describing no vehicles, are filtered out — leaving 31 usable quote examples,
-each with its expected premium, outcome and requirement links: test data with the answers attached, generated.
+Each row carries its expected result, its outcome, and the criterion ids it demonstrates.
 
-## 5. Let the rules critique themselves
-
-Before trusting the rulebook, ask whether any rule is unused, unreachable, stuck on one answer, or breaks a guarantee.
+## 5. Is the rulebook complete and healthy?
 
 ```js
 var c = Rule.check('rating')
-c.verdict                 // -> { status: 'CLEAN', findings: 0, review: 0, reasons: [] }
-c.notused                 // -> []   rule choices a valid input can reach, but no saved example covers
-c.notreachable            // -> []   rule choices no valid input can reach at all
-c.deadBranches            // -> []   decisions that can only ever produce one answer
-c.notproduced             // -> []   declared results that never occur
+c.verdict         // -> { status: 'CLEAN', findings: 0, review: 0, reasons: [] }
+c.unclaimed       // -> []   decision arms no acceptance criterion claims
+c.notused         // -> []   arms a valid input reaches, but no saved scenario covers
+c.notreachable    // -> []   arms no valid input can reach
+c.deadBranches    // -> []   decisions that can only ever produce one answer
+c.notproduced     // -> []   declared outcomes that never occur
 c.properties
 // 'a declined quote has no premium'            always     HOLDS  checks 53, searched 424
 // 'a priced premium is at least the minimum'   always     HOLDS  checks 53, searched 424
 // 'minimum premium floor engaged'              sometimes  satisfied 1 + the witness input
 ```
 
-A **property** is a business guarantee checked across many inputs, and there are two kinds. An `always` guarantee
-looks for any counterexample — a violation comes back with the smallest input that breaks it. A `sometimes`
-guarantee looks for at least one concrete example proving the situation can occur; one never reached is reported as
-a gap rather than quietly passing. Beside the 53 in-range evaluations, the checker reports 424 more used while
-hunting for violations. `c.notderivable` lists the grey areas honestly — comparisons on values calculated from other
-inputs (the vehicle total, the computed premium) that no single input field explains; informational, never a
-misleading pass. Clean therefore means more than "the saved examples passed": unreachable logic is reported too, and
-counterexamples are actively hunted.
+A **property** is a business guarantee checked over many inputs. The engine searches each `always`
+guarantee for a counterexample. A violation returns the smallest failing input. A `sometimes` guarantee
+needs one witness. A situation never reached is reported, not passed.
 
-## 6. Now the lifecycle
-
-Everything so far priced *one* submission. The rest of the answer depends on what happened before: a quote must be
-rated before it binds, a referral needs approval, a declined quote is terminal, a rated quote goes stale after 60
-days. The lifecycle has eight recognizable situations — **new, submitted, quoted, referred, approved, declined,
-expired** and **bound** — and the next step turns the guide into explicit rules for moving among them.
-
-That intent is prose today: section 5 of `SOT-prose.md`, plus the named rejection reasons listed in `README.md`.
-This kit deliberately ships **no** model of it. You ask for one:
-
-> Read section 5 of `SOT-prose.md` and the rejection reasons in `README.md`, and write me a twin of the quote
-> lifecycle: the states the guide names, one business operation per endpoint, the condition that allows or rejects
-> each one, and the facts that must always remain true. Price every rated step through the `rating` rulebook, not
-> with your own arithmetic; grade it against `acceptance.json` and show me what you reached.
-
-A **twin** is a behavioural model: a small map of the quote's situations and the operations allowed in each. Your
-agent pulls the build instructions itself (`Skill.help('twin-authoring')`, `Twin.help()`) and produces a `twin.js`
-shaped like this:
+**Try it.** Delete the line `calc.req('FLEET-009/2');` from `rulebooks/rating/calc.js`. Run the check
+again. Restore the line afterwards.
 
 ```js
-t.state('QUOTED',  function (w) { return w.status === 'QUOTED' && !isExpired(w); })
-t.state('EXPIRED', function (w) { return isExpired(w); })
-
-t.command('bind', {
-    when: function (w) { return w.status !== 'NEW'; },
-    apply: function (w) {
-        if (w.status === 'SUBMITTED') { t.reject(BIND_NOT_RATED); }
-        if (isExpired(w))             { t.reject(BIND_EXPIRED); }
-        if (w.status === 'REFERRED')  { t.reject(BIND_APPROVAL); }
-        w.status = 'BOUND';
-    },
-    request: function (w) { return { method: 'POST', path: '/quotes/' + w.quoteId + '/bind' }; }
-})
-
-t.always('a bound quote carries a premium', function (w) {
-    return w.status !== 'BOUND' || (w.premium !== null && w.premium > 0);
-})
+Rule.check('rating').verdict
+// -> { status: 'REVIEW', findings: 0, review: 1,
+//      reasons: ['1 decision arm(s) no requirement claims — see unclaimed'] }
+Rule.check('rating').unclaimed
+// -> [ { label: 'Referral to underwriting', line: 145, outcome: false, source: 'if(premium>…' } ]
 ```
 
-It installs that with `Rule.twin.update('rating', source)`. Technical readers can inspect the model; everyone else
-can review the behaviour it produces:
+That arm now decides something no acceptance criterion mentions. The engine reports `REVIEW`, never a
+defect. It cannot tell a missing criterion from a rule to delete.
+
+## 6. Does the schema refuse bad input?
+
+`rulebooks/rating/schema.js` declares the input shape. Three rows in `scenarios.json` carry the marker
+`_expect: 'schema-reject'`. Each row claims the shape refuses it.
+
+```js
+Rule.check('rating').rejects
+// [ { _id: 'reject-unknown-territory',           status: 'REFUSED', pass: true,
+//     why: "the schema refused it: $.territory is 'coastal' — not one of ['urban', 'suburban', 'rural']…" },
+//   { _id: 'reject-vans-not-a-number',           status: 'REFUSED', pass: true,
+//     why: 'the schema refused it: $.vans not a number…' },
+//   { _id: 'reject-safety-program-not-boolean',  status: 'REFUSED', pass: true,
+//     why: 'the schema refused it: $.safetyProgram not a boolean…' } ]
+
+Rule.check('rating').accepts
+// -> { status: 'ACCEPTED', checked: 22, incomplete: 0, refused: [] }
+```
+
+`REFUSED` confirms the rejection. `ACCEPTED` shows a loose shape. `NOTCHECKED` marks a row with no
+business input. `accepts` proves the same shape still admits all 22 valid scenarios. A shape that refuses
+everything cannot read green.
+
+## 7. Pin the analyst's figures
+
+An unpinned scenario uses the current rule result. Add `_expect` to keep an approved result.
+
+```js
+// scenarios.json, on the row 'baseline-suburban-mixed':
+//   "_expect": { "output": { "premium": 3952 }, "outcome": "rated" }
+// three more rows pin: null declined · 390 rated · 30037.5 referred
+
+Rule.check('rating').expectations
+// -> { status: 'MATCHED', checked: 4, failed: [] }
+```
+
+A rule change that moves a pinned figure reads `MISMATCHED`. The message does not say which artifact is
+wrong.
+
+## 8. Would your tests notice a broken rule?
+
+Mutation testing seeds defects into a copy of the rulebook. It then asks whether anything notices.
+
+```js
+var m = Rule.mutate('rating')
+m.counts                     // -> { KILLED: 28, SURVIVED: 15, SCREENED: 13, INVALID: 0 }
+m.denominator                // -> 43
+m.selfRunScore               // -> 0.6512
+m.oracleBook.always.length   // -> 4   the guarantees that graded
+m.oracleBook.expectations    // -> 4   the pinned figures that graded
+
+m.mutants.filter(function (x) { return x.status === 'KILLED' })[6].id
+// -> 'CONDITIONALS_BOUNDARY@L36#0'      the young-driver limit moving from 23 to 22
+m.worklist[6]
+// -> id: 'INLINE_CONSTANT@lookup.claims.perClaim'
+//    finding: "nothing in the rulebook's own oracle book would notice
+//              lookup.claims.perClaim changing (0.17 -> 0.34)"
+//    fix: 'store the counterexample row as a scenario with an _expect, or declare the
+//          calc.always property that forbids it'
+```
+
+The oracle notices 28 of 43 graded mutants. 15 mutants change a rule and nothing notices. `SCREENED`
+mutants are indistinguishable on the enumerated deck and sit outside the score. Remove the four pins of
+section 7. The score falls to `0.1395`, and the run kills 6 mutants.
+
+## 9. Test the lifecycle, not just the price
+
+The answer depends on the earlier commands. A quote must be rated before it binds. A referral needs
+approval. A declined quote is terminal. A rated quote expires 60 days after its rating date.
+
+`rulebooks/rating/twin.js` models that lifecycle. It declares 8 states and 5 commands. Each command
+carries the condition that allows or refuses it. The model also declares the facts that stay true.
+Compare the model with the prose guide and `acceptance.json`.
 
 ```js
 var e = Twin.explore('rating')
-e.states                    // -> reached: NEW SUBMITTED QUOTED REFERRED APPROVED DECLINED EXPIRED BOUND
-                            //    notReached: []
-e.transitions.observed      // -> 23 observed moves, each { from, command, to }
-e.transitions.notObserved   // -> []
+e.states.reached         // -> NEW SUBMITTED QUOTED REFERRED APPROVED DECLINED EXPIRED BOUND
+e.states.notReached      // -> []
+e.transitions.observed   // -> 23 transitions, each { from, command, to }
+e.ceilings.hit           // -> 'exhausted'   no new path exists within the depth limit
+e.stats                  // -> { nodes: 90, edges: 270, refusals: 730, errors: 0 }
+e.fidelity.steps         // -> { oracle: 46, bare: 224 }
 ```
 
-```mermaid
-stateDiagram-v2
-    [*] --> NEW
-    NEW --> SUBMITTED: submit
-    SUBMITTED --> QUOTED: rate
-    SUBMITTED --> REFERRED: rate
-    SUBMITTED --> DECLINED: rate
-    QUOTED --> BOUND: bind
-    QUOTED --> EXPIRED: observeAsOf
-    REFERRED --> APPROVED: approve
-    REFERRED --> EXPIRED: observeAsOf
-    APPROVED --> BOUND: bind
-    APPROVED --> REFERRED: rate
-    APPROVED --> EXPIRED: observeAsOf
-    EXPIRED --> QUOTED: rate
-    EXPIRED --> REFERRED: rate
-```
-
-*Drawn from the exploration's own `transitions.observed` list — the 13 moves that change state. The other 10 observed
-moves return to the state they started in (a clock tick that does not expire the quote, a re-rate that lands back
-where it was) and are left out for legibility.* `DECLINED` and `BOUND` have no outgoing arrows: the guide makes them
-terminal. If an expected state is missing, there is a focused question to investigate — is the model incomplete, is
-the exploration limit too low, or is the expected lifecycle itself unclear?
-
-## 7. Walk it
-
-### Explore every short path
+Each refusal records a command the model rejects, for example a bind before rating. Use them as
+generated negative-test candidates.
 
 ```js
-e.ceilings      // -> { hit: 'exhausted', usage: { maxDepthReached: 6, nodesVisited: 90, … } }
-e.stats         // -> { nodes: 90, edges: 270, refusals: 730, errors: 0 }
-e.fidelity      // -> steps: { oracle: 46, bare: 224 }, clock: 'declared'
+var c = Twin.check('rating', { required: JSON.parse(File.read('/acceptance.json')) })
+c.required.rows                // -> 40   business examples the guide demands
+c.requiredWitness.length       // -> 39   reached, each with the shortest order that shows it
+c.findings.requiredUnreached   // -> [ { id: 'T18', kind: 'transition', status: 'unreached' } ]
+c.ci                           // -> { verdict: 'FAIL', pass: false,
+                               //      reasons: ['required T18 (transition) unreached'] }
+c.transitionPairs              // -> { covered: 12, of: 508 }
+c.evidence                     // -> model 8/8, oracle 46/270, mock 0/43, live 0/43
 ```
 
-The explorer tried every command sequence it could reach within a six-step limit and had none left unexplored inside
-that limit — that is what `hit: 'exhausted'` reports. It examined 90 distinct situations and 270 moves between them;
-`fidelity.steps` splits those by who supplied the expected answer — 46 priced by the rulebook, 224 lifecycle-only.
+`T18` binds on the exact 60th day, and the walk never reached it. Add a saved sequence that binds on day
+60 to close it. `transitionPairs` counts two-step orders the saved sequences walk. Each remaining pair
+carries the shortest sequence that closes it.
 
-**730 refusals** is the by-product nobody writes by hand: each is an operation attempted in a situation where the
-model's condition rejects it — binding before rating, binding a declined quote, approving something never referred,
-acting on an expired quote. Once the model is accepted as correct, that becomes a reusable collection of attempts
-the real service should reject, with no negative test authored by hand.
-
-### Check the required business examples
+Now replay the 43 pinned sequences against the running service. The `rollout` option seeds one defect.
 
 ```js
-var c = Twin.check('rating', { required: read('/acceptance.json') })
-c.required.rows                  // -> 40   business examples the guide demands
-c.requiredWitness.length         // -> 39   reached, each with the shortest sequence that shows it
-c.findings.requiredUnreached     // -> [ { id: 'T18', kind: 'transition', status: 'unreached' } ]
-c.ci                             // -> { verdict: 'FAIL', reasons: ['required T18 (transition) unreached'] }
-```
-
-39 of the 40 required examples are demonstrated. `T18` — binding on the *exact* 60th day — is not. The required set
-asked for a demonstration the model never gave: a finding about the model, not a flaky test.
-
-### Compare with the running service
-
-Those shortest sequences are saved (`Rule.sequence.create`) as ordered command sequences whose order must not
-change, and replayed against a running service:
-
-```js
-var mock = File.call('/mock/start.js', { rollout: true })   // a seeded defect rides this option
+var mock = File.call('/mock/start.js', { rollout: true })
 Twin.live('rating', { baseUrl: mock.url, against: 'live' }).summary
 // -> { PASS: 42, FAIL: 1, UNRESOLVED: 0, exchanges: 248, wireRefusals: [ … ] }
-```
+// the one failure:
+// { sequenceId: 'seq-bind-expired-approved', disposition: { kind: 'FAIL', at: 4,
+//   mismatch: { kind: 'noCandidateExplainsObservation', outcome: 'applied' } } }
 
-`wireRefusals` are the rejections the running service actually returned; `UNRESOLVED` would count a replay that could
-not be settled either way. Here: one real disagreement. First replay the model's expected five-step path — it says
-the final bind must be refused because the quote expired:
-
-```js
 Twin.run('rating', 'seq-bind-expired-approved').steps
-// submit  { label: 'referred', heavyTrucks: 20, … }  -> applied   EXPECTED
-// rate    {}                                          -> applied   premium 30037.5, status REFERRED
-// approve {}                                          -> applied   status APPROVED
-// observeAsOf { day: 61 }                             -> applied   clock moved past the 60-day window
-// bind    {}                                          -> refused   'the quote is expired and must be
-//                                                                   re-rated before any further action'
+// submit      { label: 'referred', heavyTrucks: 20, … }  -> applied
+// rate        {}                                          -> applied
+// approve     {}                                          -> applied
+// observeAsOf { day: 61 }                                 -> applied
+// bind        {}                                          -> refused
+//             'the quote is expired and must be re-rated before any further action'
 ```
 
-The live service accepted that same final bind. Its recorded response to the fifth step:
+The model refuses the final bind. The service accepted it and issued a policy. The defect needs this
+order: refer, approve, wait, then bind. A test of `bind` alone cannot reach it. Stop the mock. Start it
+without `rollout`. Run `Twin.live` again: all 43 sequences pass.
+
+## 10. Trace it to requirements
 
 ```js
-var log = read('/rulebooks/rating/.baseline/live.json').runs['seq-bind-expired-approved'].log
-var last = log[log.length - 1];
-({ request: last.observed.request, status: last.observed.response.status,
-   quoteStatus: last.observed.response.body.status,
-   policyNumber: last.observed.response.body.policyNumber })
-// -> { request: { method: 'POST', path: '/quotes/Q-100039/bind' },       ACTUAL
-//      status: 200, quoteStatus: 'bound', policyNumber: 'POL-100039' }
+Rule.cover('rating')
+// -> { rules: 'rating', scenarios: 22, criteria: 20,
+//      byStatus: { req:   { COVERED: 8, FAILING: 0, NOTRUN: 0, NOTCOVERED: 8 },
+//                  rules: { COVERED: 22, FAILING: 0, NOTRUN: 0, NOTCOVERED: 0 } } }
+
+Requirement.matrix().requirements
+// FLEET-002 … FLEET-009                          COVERED, oracleOnly: true
+// FLEET-001  FLEET-010  FLEET-OQ-001 … -OQ-006   NOTCOVERED
+
+Requirement.readiness()
+// -> state: 'NOT_READY', ready: false
+//    verdict: 'NOT READY — 7 high-risk requirements must be addressed before release'
+//    counts: { HIGH: 7, MEDIUM: 5, LOW: 4, NONE: 0 }
+//    blockers[0]: { reqId: 'FLEET-001', coverage: 'NOTCOVERED', risk: 'HIGH' }
+//    blockers[1]: { reqId: 'FLEET-002', coverage: 'COVERED', oracleOnly: true, risk: 'HIGH',
+//                   trustGap: 'realized by the rules only — nothing outside the rulebook checked it…' }
+
+Rule.report('rating').url   // -> file://…/rating-rule-analysis.html
 ```
 
-Expected a refusal; the service issued policy `POL-100039`.
+`oracleOnly` means the rulebook vouches for the criterion and nothing outside it does. A tagged test that
+calls `check.verify(...)` clears it. Open the HTML report. Review its five tabs: **Coverage** (every arm,
+its criterion ids, its `claim`), **Value Ranges**, **Rule Check**, **What-If**, and **Twin**.
 
-```mermaid
-sequenceDiagram
-    participant T as Test sequence
-    participant S as Quote service
-
-    T->>S: Submit a fleet that needs referral
-    S-->>T: Referred
-    T->>S: Rate
-    S-->>T: Premium calculated
-    T->>S: Approve
-    S-->>T: Approved
-    T->>S: Move observation time past expiry
-    T->>S: Bind
-
-    Note over T,S: Expected: reject because the quote expired
-    S-->>T: Actual defect: policy issued
-```
-
-This defect appears only after this exact order of events: refer, approve, wait, then bind. The service correctly
-rejects other expired quotes — the same lapse *is* refused when the quote is merely rated, and *is* refused on
-`approve` — but it forgets the expiry check after approval. A test that checks bind in isolation is unlikely to
-expose an order-dependent defect. Restart the mock without the option — `File.call('/mock/start.js')` — and it clears.
-
-### Shrink it
-
-A defect report arrives padded — the steps that mattered mixed in with steps that did not. Pin the
-failing order again with four that change nothing: two more clock readings, and two approves that
-the model and the service both refuse.
+## 11. Freeze and detect drift
 
 ```js
-var base = Rule.load('rating').sequences.sequences.filter(
-    function (r) { return r._id === 'seq-bind-expired-approved' })[0]
-var pad = [{ command: 'observeAsOf', args: { day: 61 } }, { command: 'approve' },
-           { command: 'observeAsOf', args: { day: 200 } }, { command: 'approve' }]
-Rule.sequence.create('rating', { _id: 'seq-padded',
-    steps: base.steps.slice(0, 4).concat(pad).concat(base.steps.slice(4)) })
-// -> { ids: ['seq-padded'], … }
-```
-
-Replay it and ask for the minimum:
-
-```js
-var s = Twin.live('rating', { baseUrl: mock.url, against: 'live', shrink: true,
-                              sequences: ['seq-padded'] }).sequences[0].shrink
-;({ from: s.from, to: s.to, replays: s.replays, verified: s.verified, mismatch: s.mismatch })
-// -> { from: 9, to: 5, replays: 5, verified: 'CONFIRMED',
-//      mismatch: { kind: 'noCandidateExplainsObservation', outcome: 'applied' } }
-s.steps.map(function (x) { return x.command })
-// -> ['submit', 'rate', 'approve', 'observeAsOf', 'bind']
-```
-
-Nine steps to five in five replays: the original re-run once to prove the failure repeats, three
-candidates tried, the survivor confirmed. The guarantee is minimal *context for this failure site* —
-the same command failing the same way — never a globally minimal failing subsequence. The engine
-proposes the order; it becomes a saved sequence only when you pin it:
-
-```js
-Rule.sequence.create('rating', { _id: 'seq-bind-expired-approved-minimal', steps: s.steps }).ids
-// -> ['seq-bind-expired-approved-minimal']
-```
-
-### When the reason disagrees
-
-A service can refuse and still be wrong. A second seeded option makes the expired bind refuse under
-the wrong code:
-
-```js
-mock.stop()
-var mock2 = File.call('/mock/start.js', { mislabel: true })
-Twin.live('rating', { baseUrl: mock2.url, against: 'live',
-                      sequences: ['seq-bind-expired-approved'] }).sequences[0].disposition
-// -> { kind: 'FAIL',
-//      mismatch: { kind: 'refusalReasonMismatch',
-//                  observed: 'a referred quote may be bound only after approval',
-//                  model: ['the quote is expired and must be re-rated before any further action'] },
-//      at: 4, … }
-```
-
-Both sides rejected the bind, so a comparison that asked only *was it rejected?* would have called
-this a pass. The wrong code sends an underwriter after an approval the quote already has, when what
-it needs is a re-rate. The model computes the reason, so the comparison includes the reason.
-
-### A history from anywhere
-
-Every comparison so far needed the service running. `Twin.allows` grades a *recorded* exchange log
-against the model with nothing deployed. Restart the mock clean, keep one replay's log, stop the
-service, and grade the recording:
-
-```js
-mock2.stop()
-var clean = File.call('/mock/start.js')
-var row = Twin.live('rating', { baseUrl: clean.url, against: 'live', detail: 'log',
-                                sequences: ['seq-bind-expired-approved'] }).sequences[0]
-row.disposition        // -> { kind: 'PASS' }   this build does refuse the expired bind
-clean.stop()
-var a = Twin.allows('rating', { sequenceId: row.sequenceId, log: row.log })
-;({ source: a.source, entries: a.entries, disposition: a.disposition })
-// -> { source: 'trace', entries: 8, disposition: { kind: 'PASS' } }
-```
-
-The live row's verdict, with nothing left to call. Now edit the history — make the recorded bind
-succeed, the way the defective build answered it:
-
-```js
-var edited = JSON.parse(JSON.stringify(row.log))
-edited[6].observed.response = { status: 200,
-    body: { quoteId: 'Q-100001', status: 'bound', policyNumber: 'POL-100001' } }
-Twin.allows('rating', { sequenceId: row.sequenceId, log: edited }).disposition
-// -> { kind: 'FAIL', mismatch: { kind: 'noCandidateExplainsObservation', outcome: 'applied' },
-//      at: 4, … }
-```
-
-The order-dependent defect, reproduced from a log alone. Every rejection is one of two things — a model
-wrong about reality, or a system breaking its own rules — and the engine cannot tell which: it names the
-step, a person decides. *Anywhere* is any log in the replay's own format; turning a raw production
-trace into that shape is the caller's job. The history is graded whole, so a gap is named by position:
-
-```js
-Twin.allows('rating', { sequenceId: row.sequenceId, log: row.log.slice(0, 7) }).disposition
-// -> { kind: 'INVALID', code: 'TRACE_INVALID',
-//      reason: "log[7]: the replay's readBack entry is missing", at: 7 }
-```
-
-### Every pair, walked
-
-The exploration proved which two-step moves are possible; the saved sequences are what gets replayed.
-Ask how much of the first the second walks:
-
-```js
-Twin.check('rating').transitionPairs      // -> { covered: 13, of: 508 }
-
-var g = Twin.check('rating').findings.transitionPairGaps[0]
-;({ from: JSON.parse(g.fromKey).status, command1: g.command1, mid: JSON.parse(g.midKey).status,
-    command2: g.command2, steps: g.candidate.steps.map(function (x) { return x.command }) })
-// -> { from: 'NEW', command1: 'submit', mid: 'SUBMITTED', command2: 'observeAsOf',
-//      steps: ['submit', 'observeAsOf'] }
-```
-
-The first gap: no saved sequence ever moved the clock on a quote that was only submitted. Each gap
-carries the shortest sequence that closes it, ready to pin:
-
-```js
-Rule.sequence.create('rating', { steps: g.candidate.steps }).ids   // -> ['seq-d81300']
-Twin.check('rating').transitionPairs                               // -> { covered: 14, of: 508 }
-```
-
-One row, one pair. The 508 is a floor rather than a target — it counts only the moves the exploration
-actually landed — and the gaps are a worklist: they report what is unwalked, and fail nothing.
-
-## 8. Change one rate
-
-The last failure mode is the quiet one: a rule starts producing different business results while every test stays
-green. Save today's behaviour as the approved baseline, then change a number.
-
-```js
-Rule.bless('rating')       // -> { scenarios: 22, rejects: 0, invariants: 4, sequences: 43 }
-```
-
-Now edit `calc.js` — raise the heavy-truck base rate from `1250` to `1290` — and ask what moved:
-
-```js
+Rule.bless('rating')   // -> { scenarios: 22, rejects: 3, invariants: 4, sequences: 43 }
+// now edit calc.js: raise the heavy-truck base rate from 1250 to 1290
 var d = Rule.drift('rating')
-d.changed          // -> true
-d.outputDrift      // -> 5   same example, different calculated premium, with the precise
-                   //        before-and-after values: 3952 -> 3992, 3347 -> 3401, …
-d.outcomeDrift     // -> 1   same example, different business classification:
-                   //        'rated-just-under-referral'  rated -> referred
-d.sequenceDrift    // -> 11  saved lifecycle sequences that now end differently
+d.changed              // -> true
+d.outputDrift.length   // -> 5    same scenario, different premium: 3952 -> 3992, 3347 -> 3401, …
+d.outcomeDrift         // -> [ { scenarioId: 'rated-just-under-referral',
+                       //        prevOutcome: 'rated', outcome: 'referred' } ]
+d.sequenceDrift.length // -> 11   saved lifecycle sequences that now end differently
 ```
 
-Read the `outcomeDrift` line again. A $40 increase to the heavy-truck base rate silently pushed one quote across the
-referral threshold — it now needs an underwriter — and eleven saved lifecycle sequences end somewhere new. Nothing
-failed; nothing was edited except one rate. The drift report brings those otherwise green behavioural changes into
-one reviewable list, and `Rule.bless('rating')` accepts them when intended. This is change-impact analysis: not only
-which premiums moved, but which approvals and lifecycle outcomes may now require review.
+The 40 unit rate rise pushes one quote over the referral threshold. It also changes where 11 lifecycle
+sequences end. Nothing fails. `Rule.bless('rating')` accepts an intended change.
 
-## 9. What this demonstrated
+## 12. The evaluator's map
 
-One executable rulebook has now calculated and explained a quote, generated review views and test data, checked its
-own guarantees, powered a lifecycle model, exposed an order-dependent service defect, and measured the impact of a
-rate change. The value is not any single view; it is that all of them stay tied to the same business rules. Two ways on:
-
-- Open the same project in the console — every view here has a pane there: the flowchart with its coverage overlay,
-  the decision table, value ranges, the twin, and the what-if workspace.
-- Read `README.md` for the kit's surface, the simulated service, the movable clock, and the checks joining them.
+| Question | Section | Verbs |
+| --- | --- | --- |
+| What does the rule say, and why? | 2 | `Rule.execute` · `Rule.audit` |
+| Can a reviewer read the logic? | 3 | `Rule.diagram` · `Rule.table` |
+| Where are the test values? | 4 | `Rule.ranges` · `Rule.explore` |
+| Is any rule unused, unreachable or unclaimed? | 5 | `Rule.check` |
+| Does a guarantee hold over every input? | 5 | `Rule.check` properties |
+| Does the input shape refuse bad input? | 6 | `Rule.check` rejects · accepts |
+| Are the signed-off figures pinned? | 7 | `Rule.check` expectations |
+| Would a broken rule be noticed? | 8 | `Rule.mutate` |
+| Is every lifecycle state reachable? | 9 | `Twin.explore` |
+| Are the demanded business examples demonstrated? | 9 | `Twin.check` |
+| Does the running service obey the lifecycle? | 9 | `Twin.live` · `Twin.run` |
+| Which criteria are covered, and by whose evidence? | 10 | `Rule.cover` · `Requirement.matrix` |
+| May we ship? | 10 | `Requirement.readiness` |
+| Did a rule change what the business gets? | 11 | `Rule.bless` · `Rule.drift` |

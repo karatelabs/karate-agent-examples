@@ -30,4 +30,4 @@ Scenario Outline: <_id> - <_label>
   * check.verify(true, 'mock POST /quotes/{id}/rate matches the rating rulebook')
 
   Examples:
-    | read('/rulebooks/rating/scenarios.json') |
+    | Rule.load('rating').scenarios |

@@ -24,6 +24,7 @@ The system shall assess exclusions before any rating arithmetic (section 3).
 - WHEN rating a fleet whose youngest listed driver is aged 23 or younger THE SYSTEM SHALL decline the quote
 - WHEN rating a fleet with regular operations outside the state of registration THE SYSTEM SHALL decline the quote
 - IF a quote is declined THEN THE SYSTEM SHALL record no premium for it
+- WHEN rating a fleet whose youngest listed driver is older than 23 THE SYSTEM SHALL assess the out-of-state exclusion instead of declining for driver age
 
 ### FLEET-003: Fleet base premium
 @type=req @status=approved @criticality=high @priority=p1
@@ -81,6 +82,7 @@ The system shall refer high-premium quotes for underwriter approval (section 4.7
 
 **Acceptance:**
 - WHEN the final premium exceeds $29,000 THE SYSTEM SHALL mark the quote referred so that it is priced but requires underwriter approval before binding
+- WHEN the final premium is $29,000 or less THE SYSTEM SHALL mark the quote rated without referring it for underwriter approval
 
 ### FLEET-010: Quote lifecycle
 @type=req @status=approved @criticality=high @priority=p1
