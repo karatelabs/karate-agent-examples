@@ -225,7 +225,7 @@
                             </span>
                             <span class="k-dimpct" x-text="pctOf(crossOf(it.id).coveredProportion) + '%'"></span>
                             <span class="k-muted" x-text="crossOf(it.id).covered + ' of ' + crossOf(it.id).required + ' combinations tried'"></span>
-                            <!-- §2h slice 5: cells the bound rulebook's calc.js rejected, dropped from the required set -->
+                            <!-- §2h: cells the bound rulebook's calc.js rejected, dropped from the required set -->
                             <span class="k-pruned" x-show="crossOf(it.id).pruned > 0"
                                   :title="crossOf(it.id).pruned + ' combination(s) can\'t occur in practice (the business rules reject them), so they\'re excluded'"
                                   x-text="crossOf(it.id).pruned + ' can\'t occur, excluded'"></span>
@@ -406,10 +406,14 @@
                 <span class="k-armout" x-text="a.outcome ? 'when true' : 'when false'"></span>
                 <span class="k-muted" x-show="a.line" x-text="'line ' + a.line"></span>
                 <span class="k-armcount" x-show="a.status === 'used'" x-text="'checked in ' + a.scenarios + (a.scenarios === 1 ? ' scenario' : ' scenarios')"></span>
-                <template x-if="a.req">
+                <template x-if="a.reqs && a.reqs.length">
                   <span class="k-armreq">covers
-                    <a class="k-reqid" x-show="reqHref('req:' + a.req)" :href="reqHref('req:' + a.req)" target="_blank" rel="noopener" :title="'open ' + a.req + ' in tracker'" x-text="a.req"></a>
-                    <span class="k-reqid" x-show="!reqHref('req:' + a.req)" x-text="a.req"></span>
+                    <template x-for="(rq, ri) in a.reqs" :key="ri">
+                      <span>
+                        <a class="k-reqid" x-show="reqHref('req:' + rq)" :href="reqHref('req:' + rq)" target="_blank" rel="noopener" :title="'open ' + rq + ' in tracker'" x-text="rq"></a>
+                        <span class="k-reqid" x-show="!reqHref('req:' + rq)" x-text="rq"></span>
+                      </span>
+                    </template>
                   </span>
                 </template>
               </div>
