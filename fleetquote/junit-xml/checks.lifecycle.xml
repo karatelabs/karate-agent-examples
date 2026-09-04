@@ -1,4 +1,4 @@
-<testsuite name="Stonebridge Fleet Auto - quote lifecycle checks (SOT-prose section 5)." tests="15" failures="0" time="1.148" skipped="0"><testcase classname="checks.lifecycle" name="a valid submission is recorded and awaits rating" time="0.441"><properties><property name="req" value="FLEET-001/1"/><property name="req" value="FLEET-010/1"/></properties><system-out>* baseUrl
+<testsuite name="Stonebridge Fleet Auto - quote lifecycle checks (SOT-prose section 5)." tests="15" failures="0" time="1.085" skipped="0"><testcase classname="checks.lifecycle" name="a valid submission is recorded and awaits rating" time="0.417"><properties><property name="req" value="FLEET-001/1"/><property name="req" value="FLEET-010/1"/></properties><system-out>* baseUrl
 * setToday = function(d){ return karate.http(baseUrl).path(&apos;clock&apos;).post({ today: d }).body.today }
 * saved = Rule.load(&apos;rating&apos;).scenarios
 * rowById = function(id){ return karate.filter(saved, function(s){ return s._id == id })[0] }
@@ -27,7 +27,7 @@ request:
   &quot;outOfStateOperations&quot;: false
 }
 
-response time in milliseconds: 115
+response time in milliseconds: 113
 1 &lt; 201 POST http://localhost:8090/quotes
 1 &lt; content-length: 312
 1 &lt; Karate-Mock: true
@@ -54,7 +54,7 @@ response time in milliseconds: 115
 }
 
 POST http://localhost:8090/quotes
-201 (115 ms)
+201 (113 ms)
 Then 201
 And response == { id: &apos;#string&apos;, status: &apos;submitted&apos;, submission: &apos;#(check.input)&apos;, premium: null, reason: null, ratingDate: null, policyNumber: null }
 * id = response.id
@@ -66,7 +66,7 @@ request:
 2 &gt; Connection: keep-alive
 2 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
-response time in milliseconds: 3
+response time in milliseconds: 2
 2 &lt; 200 GET http://localhost:8090/quotes/Q-100001
 2 &lt; content-length: 312
 2 &lt; Karate-Mock: true
@@ -93,7 +93,7 @@ response time in milliseconds: 3
 }
 
 GET http://localhost:8090/quotes/Q-100001
-200 (3 ms)
+200 (2 ms)
 Then 200
 And response == { id: &apos;#(id)&apos;, status: &apos;submitted&apos;, submission: &apos;#(check.input)&apos;, premium: null, reason: null, ratingDate: null, policyNumber: null }
 </system-out></testcase>
@@ -126,7 +126,7 @@ request:
   &quot;outOfStateOperations&quot;: false
 }
 
-response time in milliseconds: 6
+response time in milliseconds: 3
 1 &lt; 400 POST http://localhost:8090/quotes
 1 &lt; content-length: 82
 1 &lt; Karate-Mock: true
@@ -137,11 +137,11 @@ response time in milliseconds: 6
 }
 
 POST http://localhost:8090/quotes
-400 (6 ms)
+400 (3 ms)
 Then 400
 And response == { error: &apos;no_vehicles&apos;, message: &apos;#string&apos; }
 </system-out></testcase>
-<testcase classname="checks.lifecycle" name="a submission with a field outside its documented domain is rejected" time="0.039"><properties><property name="req" value="FLEET-001/3"/></properties><system-out>* baseUrl
+<testcase classname="checks.lifecycle" name="a submission with a field outside its documented domain is rejected" time="0.051"><properties><property name="req" value="FLEET-001/3"/></properties><system-out>* baseUrl
 * setToday = function(d){ return karate.http(baseUrl).path(&apos;clock&apos;).post({ today: d }).body.today }
 * saved = Rule.load(&apos;rating&apos;).scenarios
 * rowById = function(id){ return karate.filter(saved, function(s){ return s._id == id })[0] }
@@ -170,7 +170,7 @@ request:
   &quot;outOfStateOperations&quot;: false
 }
 
-response time in milliseconds: 3
+response time in milliseconds: 5
 1 &lt; 400 POST http://localhost:8090/quotes
 1 &lt; content-length: 80
 1 &lt; Karate-Mock: true
@@ -181,7 +181,7 @@ response time in milliseconds: 3
 }
 
 POST http://localhost:8090/quotes
-400 (3 ms)
+400 (5 ms)
 Then 400
 And response == { error: &apos;invalid_input&apos;, message: &apos;#string&apos; }
 Given &apos;quotes&apos;
@@ -207,7 +207,7 @@ request:
   &quot;outOfStateOperations&quot;: false
 }
 
-response time in milliseconds: 2
+response time in milliseconds: 4
 2 &lt; 400 POST http://localhost:8090/quotes
 2 &lt; content-length: 82
 2 &lt; Karate-Mock: true
@@ -218,7 +218,7 @@ response time in milliseconds: 2
 }
 
 POST http://localhost:8090/quotes
-400 (2 ms)
+400 (4 ms)
 Then 400
 And response == { error: &apos;invalid_input&apos;, message: &apos;#string&apos; }
 Given &apos;quotes&apos;
@@ -244,7 +244,7 @@ request:
   &quot;outOfStateOperations&quot;: false
 }
 
-response time in milliseconds: 2
+response time in milliseconds: 5
 3 &lt; 400 POST http://localhost:8090/quotes
 3 &lt; content-length: 88
 3 &lt; Karate-Mock: true
@@ -255,11 +255,11 @@ response time in milliseconds: 2
 }
 
 POST http://localhost:8090/quotes
-400 (2 ms)
+400 (5 ms)
 Then 400
 And response == { error: &apos;invalid_input&apos;, message: &apos;#string&apos; }
 </system-out></testcase>
-<testcase classname="checks.lifecycle" name="rating prices the quote per the rating rules and stamps the rating date" time="0.093"><properties><property name="req" value="FLEET-010/2"/></properties><system-out>* baseUrl
+<testcase classname="checks.lifecycle" name="rating prices the quote per the rating rules and stamps the rating date" time="0.084"><properties><property name="req" value="FLEET-010/2"/></properties><system-out>* baseUrl
 * setToday = function(d){ return karate.http(baseUrl).path(&apos;clock&apos;).post({ today: d }).body.today }
 * saved = Rule.load(&apos;rating&apos;).scenarios
 * rowById = function(id){ return karate.filter(saved, function(s){ return s._id == id })[0] }
@@ -288,7 +288,7 @@ request:
   &quot;outOfStateOperations&quot;: false
 }
 
-response time in milliseconds: 10
+response time in milliseconds: 5
 1 &lt; 201 POST http://localhost:8090/quotes
 1 &lt; content-length: 312
 1 &lt; Karate-Mock: true
@@ -315,7 +315,7 @@ response time in milliseconds: 10
 }
 
 POST http://localhost:8090/quotes
-201 (10 ms)
+201 (5 ms)
 Then 201
 * id = response.id
 * setToday(&apos;2026-02-01&apos;) == &apos;2026-02-01&apos;
@@ -330,7 +330,7 @@ request:
   &quot;today&quot;: &quot;2026-02-01&quot;
 }
 
-response time in milliseconds: 13
+response time in milliseconds: 14
 2 &lt; 200 POST http://localhost:8090/clock
 2 &lt; content-length: 22
 2 &lt; Karate-Mock: true
@@ -348,7 +348,7 @@ request:
 3 &gt; Connection: keep-alive
 3 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
-response time in milliseconds: 19
+response time in milliseconds: 15
 3 &lt; 200 POST http://localhost:8090/quotes/Q-100002/rate
 3 &lt; content-length: 316
 3 &lt; Karate-Mock: true
@@ -375,14 +375,14 @@ response time in milliseconds: 19
 }
 
 POST http://localhost:8090/quotes/Q-100002/rate
-200 (19 ms)
+200 (15 ms)
 Then 200
 And response.status == check.outcome
 And response.premium == check.output.premium
 And response.ratingDate == &apos;2026-02-01&apos;
 * check.verify(true, &apos;rating a submitted quote priced it per the rulebook and stamped the rating date&apos;)
 </system-out></testcase>
-<testcase classname="checks.lifecycle" name="rating an excluded risk (young driver) records the decline with no premium" time="0.041"><properties><property name="req" value="FLEET-002/1"/><property name="req" value="FLEET-002/3"/><property name="req" value="FLEET-010/2"/></properties><system-out>* baseUrl
+<testcase classname="checks.lifecycle" name="rating an excluded risk (young driver) records the decline with no premium" time="0.037"><properties><property name="req" value="FLEET-002/1"/><property name="req" value="FLEET-002/3"/><property name="req" value="FLEET-010/2"/></properties><system-out>* baseUrl
 * setToday = function(d){ return karate.http(baseUrl).path(&apos;clock&apos;).post({ today: d }).body.today }
 * saved = Rule.load(&apos;rating&apos;).scenarios
 * rowById = function(id){ return karate.filter(saved, function(s){ return s._id == id })[0] }
@@ -412,7 +412,7 @@ request:
   &quot;outOfStateOperations&quot;: false
 }
 
-response time in milliseconds: 6
+response time in milliseconds: 4
 1 &lt; 201 POST http://localhost:8090/quotes
 1 &lt; content-length: 312
 1 &lt; Karate-Mock: true
@@ -439,7 +439,7 @@ response time in milliseconds: 6
 }
 
 POST http://localhost:8090/quotes
-201 (6 ms)
+201 (4 ms)
 Then 201
 * id = response.id
 Given &apos;quotes&apos;, id, &apos;rate&apos;
@@ -451,7 +451,7 @@ request:
 2 &gt; Connection: keep-alive
 2 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
-response time in milliseconds: 11
+response time in milliseconds: 10
 2 &lt; 200 POST http://localhost:8090/quotes/Q-100003/rate
 2 &lt; content-length: 350
 2 &lt; Karate-Mock: true
@@ -478,14 +478,14 @@ response time in milliseconds: 11
 }
 
 POST http://localhost:8090/quotes/Q-100003/rate
-200 (11 ms)
+200 (10 ms)
 Then 200
 And response == { id: &apos;#(id)&apos;, status: &apos;declined&apos;, submission: &apos;#(check.input)&apos;, premium: null, reason: &apos;#string&apos;, ratingDate: null, policyNumber: null }
 And response.status == check.outcome
 And response.reason == check.output.reason
 * check.verify(true, &apos;the mock declined the young-driver fleet exactly as the rulebook rules&apos;)
 </system-out></testcase>
-<testcase classname="checks.lifecycle" name="rating a fleet with out-of-state operations records the decline with no premium" time="0.045"><properties><property name="req" value="FLEET-002/2"/><property name="req" value="FLEET-002/3"/></properties><system-out>* baseUrl
+<testcase classname="checks.lifecycle" name="rating a fleet with out-of-state operations records the decline with no premium" time="0.042"><properties><property name="req" value="FLEET-002/2"/><property name="req" value="FLEET-002/3"/></properties><system-out>* baseUrl
 * setToday = function(d){ return karate.http(baseUrl).path(&apos;clock&apos;).post({ today: d }).body.today }
 * saved = Rule.load(&apos;rating&apos;).scenarios
 * rowById = function(id){ return karate.filter(saved, function(s){ return s._id == id })[0] }
@@ -515,7 +515,7 @@ request:
   &quot;outOfStateOperations&quot;: true
 }
 
-response time in milliseconds: 4
+response time in milliseconds: 3
 1 &lt; 201 POST http://localhost:8090/quotes
 1 &lt; content-length: 311
 1 &lt; Karate-Mock: true
@@ -542,7 +542,7 @@ response time in milliseconds: 4
 }
 
 POST http://localhost:8090/quotes
-201 (4 ms)
+201 (3 ms)
 Then 201
 * id = response.id
 Given &apos;quotes&apos;, id, &apos;rate&apos;
@@ -617,7 +617,7 @@ request:
   &quot;outOfStateOperations&quot;: false
 }
 
-response time in milliseconds: 2
+response time in milliseconds: 3
 1 &lt; 201 POST http://localhost:8090/quotes
 1 &lt; content-length: 312
 1 &lt; Karate-Mock: true
@@ -644,7 +644,7 @@ response time in milliseconds: 2
 }
 
 POST http://localhost:8090/quotes
-201 (2 ms)
+201 (3 ms)
 Then 201
 * id = response.id
 Given &apos;quotes&apos;, id, &apos;rate&apos;
@@ -656,7 +656,7 @@ request:
 2 &gt; Connection: keep-alive
 2 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
-response time in milliseconds: 7
+response time in milliseconds: 8
 2 &lt; 200 POST http://localhost:8090/quotes/Q-100005/rate
 2 &lt; content-length: 350
 2 &lt; Karate-Mock: true
@@ -683,7 +683,7 @@ response time in milliseconds: 7
 }
 
 POST http://localhost:8090/quotes/Q-100005/rate
-200 (7 ms)
+200 (8 ms)
 Then 200
 And response.status == &apos;declined&apos;
 Given &apos;quotes&apos;, id, &apos;rate&apos;
@@ -695,7 +695,7 @@ request:
 3 &gt; Connection: keep-alive
 3 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
-response time in milliseconds: 1
+response time in milliseconds: 4
 3 &lt; 409 POST http://localhost:8090/quotes/Q-100005/rate
 3 &lt; content-length: 94
 3 &lt; Karate-Mock: true
@@ -706,7 +706,7 @@ response time in milliseconds: 1
 }
 
 POST http://localhost:8090/quotes/Q-100005/rate
-409 (1 ms)
+409 (4 ms)
 Then 409
 And response == { error: &apos;declined_terminal&apos;, message: &apos;#string&apos; }
 Given &apos;quotes&apos;, id, &apos;bind&apos;
@@ -718,7 +718,7 @@ request:
 4 &gt; Connection: keep-alive
 4 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
-response time in milliseconds: 1
+response time in milliseconds: 2
 4 &lt; 409 POST http://localhost:8090/quotes/Q-100005/bind
 4 &lt; content-length: 74
 4 &lt; Karate-Mock: true
@@ -729,11 +729,11 @@ response time in milliseconds: 1
 }
 
 POST http://localhost:8090/quotes/Q-100005/bind
-409 (1 ms)
+409 (2 ms)
 Then 409
 And response == { error: &apos;declined_terminal&apos;, message: &apos;#string&apos; }
 </system-out></testcase>
-<testcase classname="checks.lifecycle" name="an expired quote refuses binding until re-rated; re-rating restores it" time="0.089"><properties><property name="req" value="FLEET-010/4"/></properties><system-out>* baseUrl
+<testcase classname="checks.lifecycle" name="an expired quote refuses binding until re-rated; re-rating restores it" time="0.073"><properties><property name="req" value="FLEET-010/4"/></properties><system-out>* baseUrl
 * setToday = function(d){ return karate.http(baseUrl).path(&apos;clock&apos;).post({ today: d }).body.today }
 * saved = Rule.load(&apos;rating&apos;).scenarios
 * rowById = function(id){ return karate.filter(saved, function(s){ return s._id == id })[0] }
@@ -762,7 +762,7 @@ request:
   &quot;outOfStateOperations&quot;: false
 }
 
-response time in milliseconds: 4
+response time in milliseconds: 2
 1 &lt; 201 POST http://localhost:8090/quotes
 1 &lt; content-length: 312
 1 &lt; Karate-Mock: true
@@ -789,7 +789,7 @@ response time in milliseconds: 4
 }
 
 POST http://localhost:8090/quotes
-201 (4 ms)
+201 (2 ms)
 Then 201
 * id = response.id
 * setToday(&apos;2026-01-01&apos;) == &apos;2026-01-01&apos;
@@ -822,7 +822,7 @@ request:
 3 &gt; Connection: keep-alive
 3 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
-response time in milliseconds: 13
+response time in milliseconds: 9
 3 &lt; 200 POST http://localhost:8090/quotes/Q-100006/rate
 3 &lt; content-length: 316
 3 &lt; Karate-Mock: true
@@ -849,7 +849,7 @@ response time in milliseconds: 13
 }
 
 POST http://localhost:8090/quotes/Q-100006/rate
-200 (13 ms)
+200 (9 ms)
 Then 200
 And response.ratingDate == &apos;2026-01-01&apos;
 * setToday(&apos;2026-03-03&apos;) == &apos;2026-03-03&apos;
@@ -882,7 +882,7 @@ request:
 5 &gt; Connection: keep-alive
 5 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
-response time in milliseconds: 2
+response time in milliseconds: 3
 5 &lt; 409 POST http://localhost:8090/quotes/Q-100006/bind
 5 &lt; content-length: 87
 5 &lt; Karate-Mock: true
@@ -893,7 +893,7 @@ response time in milliseconds: 2
 }
 
 POST http://localhost:8090/quotes/Q-100006/bind
-409 (2 ms)
+409 (3 ms)
 Then 409
 And response == { error: &apos;quote_expired&apos;, message: &apos;#string&apos; }
 * setToday(&apos;2026-03-03&apos;) == &apos;2026-03-03&apos;
@@ -908,7 +908,7 @@ request:
   &quot;today&quot;: &quot;2026-03-03&quot;
 }
 
-response time in milliseconds: 4
+response time in milliseconds: 3
 6 &lt; 200 POST http://localhost:8090/clock
 6 &lt; content-length: 22
 6 &lt; Karate-Mock: true
@@ -926,7 +926,7 @@ request:
 7 &gt; Connection: keep-alive
 7 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
-response time in milliseconds: 14
+response time in milliseconds: 10
 7 &lt; 200 POST http://localhost:8090/quotes/Q-100006/rate
 7 &lt; content-length: 316
 7 &lt; Karate-Mock: true
@@ -953,7 +953,7 @@ response time in milliseconds: 14
 }
 
 POST http://localhost:8090/quotes/Q-100006/rate
-200 (14 ms)
+200 (10 ms)
 Then 200
 And response.ratingDate == &apos;2026-03-03&apos;
 And response.premium == check.output.premium
@@ -969,7 +969,7 @@ request:
   &quot;today&quot;: &quot;2026-03-04&quot;
 }
 
-response time in milliseconds: 2
+response time in milliseconds: 1
 8 &lt; 200 POST http://localhost:8090/clock
 8 &lt; content-length: 22
 8 &lt; Karate-Mock: true
@@ -987,7 +987,7 @@ request:
 9 &gt; Connection: keep-alive
 9 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
-response time in milliseconds: 8
+response time in milliseconds: 7
 9 &lt; 200 POST http://localhost:8090/quotes/Q-100006/bind
 9 &lt; content-length: 324
 9 &lt; Karate-Mock: true
@@ -1014,11 +1014,11 @@ response time in milliseconds: 8
 }
 
 POST http://localhost:8090/quotes/Q-100006/bind
-200 (8 ms)
+200 (7 ms)
 Then 200
 And response.status == &apos;bound&apos;
 </system-out></testcase>
-<testcase classname="checks.lifecycle" name="a quote is still bindable on day 60 exactly (working assumption FLEET-OQ-004)" time="0.05"><properties><property name="req" value="FLEET-010/4"/></properties><system-out>* baseUrl
+<testcase classname="checks.lifecycle" name="a quote is still bindable on day 60 exactly (working assumption FLEET-OQ-004)" time="0.044"><properties><property name="req" value="FLEET-010/4"/></properties><system-out>* baseUrl
 * setToday = function(d){ return karate.http(baseUrl).path(&apos;clock&apos;).post({ today: d }).body.today }
 * saved = Rule.load(&apos;rating&apos;).scenarios
 * rowById = function(id){ return karate.filter(saved, function(s){ return s._id == id })[0] }
@@ -1047,7 +1047,7 @@ request:
   &quot;outOfStateOperations&quot;: false
 }
 
-response time in milliseconds: 4
+response time in milliseconds: 2
 1 &lt; 201 POST http://localhost:8090/quotes
 1 &lt; content-length: 312
 1 &lt; Karate-Mock: true
@@ -1074,7 +1074,7 @@ response time in milliseconds: 4
 }
 
 POST http://localhost:8090/quotes
-201 (4 ms)
+201 (2 ms)
 Then 201
 * id = response.id
 * setToday(&apos;2026-01-01&apos;) == &apos;2026-01-01&apos;
@@ -1107,7 +1107,7 @@ request:
 3 &gt; Connection: keep-alive
 3 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
-response time in milliseconds: 11
+response time in milliseconds: 9
 3 &lt; 200 POST http://localhost:8090/quotes/Q-100007/rate
 3 &lt; content-length: 316
 3 &lt; Karate-Mock: true
@@ -1134,7 +1134,7 @@ response time in milliseconds: 11
 }
 
 POST http://localhost:8090/quotes/Q-100007/rate
-200 (11 ms)
+200 (9 ms)
 Then 200
 * setToday(&apos;2026-03-02&apos;) == &apos;2026-03-02&apos;
 request:
@@ -1166,7 +1166,7 @@ request:
 5 &gt; Connection: keep-alive
 5 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
-response time in milliseconds: 3
+response time in milliseconds: 1
 5 &lt; 200 POST http://localhost:8090/quotes/Q-100007/bind
 5 &lt; content-length: 324
 5 &lt; Karate-Mock: true
@@ -1193,11 +1193,11 @@ response time in milliseconds: 3
 }
 
 POST http://localhost:8090/quotes/Q-100007/bind
-200 (3 ms)
+200 (1 ms)
 Then 200
 And response.status == &apos;bound&apos;
 </system-out></testcase>
-<testcase classname="checks.lifecycle" name="a high-premium quote is referred - priced, but not bindable before approval" time="0.048"><properties><property name="req" value="FLEET-009/1"/><property name="req" value="FLEET-010/6"/></properties><system-out>* baseUrl
+<testcase classname="checks.lifecycle" name="a high-premium quote is referred - priced, but not bindable before approval" time="0.045"><properties><property name="req" value="FLEET-009/1"/><property name="req" value="FLEET-010/6"/></properties><system-out>* baseUrl
 * setToday = function(d){ return karate.http(baseUrl).path(&apos;clock&apos;).post({ today: d }).body.today }
 * saved = Rule.load(&apos;rating&apos;).scenarios
 * rowById = function(id){ return karate.filter(saved, function(s){ return s._id == id })[0] }
@@ -1227,7 +1227,7 @@ request:
   &quot;outOfStateOperations&quot;: false
 }
 
-response time in milliseconds: 2
+response time in milliseconds: 3
 1 &lt; 201 POST http://localhost:8090/quotes
 1 &lt; content-length: 310
 1 &lt; Karate-Mock: true
@@ -1254,7 +1254,7 @@ response time in milliseconds: 2
 }
 
 POST http://localhost:8090/quotes
-201 (2 ms)
+201 (3 ms)
 Then 201
 * id = response.id
 * setToday(&apos;2026-01-01&apos;) == &apos;2026-01-01&apos;
@@ -1287,7 +1287,7 @@ request:
 3 &gt; Connection: keep-alive
 3 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
-response time in milliseconds: 12
+response time in milliseconds: 9
 3 &lt; 200 POST http://localhost:8090/quotes/Q-100008/rate
 3 &lt; content-length: 320
 3 &lt; Karate-Mock: true
@@ -1314,7 +1314,7 @@ response time in milliseconds: 12
 }
 
 POST http://localhost:8090/quotes/Q-100008/rate
-200 (12 ms)
+200 (9 ms)
 Then 200
 And response.status == &apos;referred&apos;
 And response.status == check.outcome
@@ -1332,7 +1332,7 @@ request:
   &quot;today&quot;: &quot;2026-01-02&quot;
 }
 
-response time in milliseconds: 3
+response time in milliseconds: 1
 4 &lt; 200 POST http://localhost:8090/clock
 4 &lt; content-length: 22
 4 &lt; Karate-Mock: true
@@ -1365,7 +1365,7 @@ POST http://localhost:8090/quotes/Q-100008/bind
 Then 409
 And response == { error: &apos;approval_required&apos;, message: &apos;#string&apos; }
 </system-out></testcase>
-<testcase classname="checks.lifecycle" name="approval clears a referred quote for binding without changing the premium" time="0.054"><properties><property name="req" value="FLEET-010/5"/><property name="req" value="FLEET-010/7"/></properties><system-out>* baseUrl
+<testcase classname="checks.lifecycle" name="approval clears a referred quote for binding without changing the premium" time="0.05"><properties><property name="req" value="FLEET-010/5"/><property name="req" value="FLEET-010/7"/></properties><system-out>* baseUrl
 * setToday = function(d){ return karate.http(baseUrl).path(&apos;clock&apos;).post({ today: d }).body.today }
 * saved = Rule.load(&apos;rating&apos;).scenarios
 * rowById = function(id){ return karate.filter(saved, function(s){ return s._id == id })[0] }
@@ -1455,7 +1455,7 @@ request:
 3 &gt; Connection: keep-alive
 3 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
-response time in milliseconds: 14
+response time in milliseconds: 9
 3 &lt; 200 POST http://localhost:8090/quotes/Q-100009/rate
 3 &lt; content-length: 320
 3 &lt; Karate-Mock: true
@@ -1482,7 +1482,7 @@ response time in milliseconds: 14
 }
 
 POST http://localhost:8090/quotes/Q-100009/rate
-200 (14 ms)
+200 (9 ms)
 Then 200
 And response.status == &apos;referred&apos;
 * referredPremium = response.premium
@@ -1560,7 +1560,7 @@ request:
   &quot;today&quot;: &quot;2026-01-03&quot;
 }
 
-response time in milliseconds: 2
+response time in milliseconds: 3
 6 &lt; 200 POST http://localhost:8090/clock
 6 &lt; content-length: 22
 6 &lt; Karate-Mock: true
@@ -1610,7 +1610,7 @@ Then 200
 And response.status == &apos;bound&apos;
 And response.policyNumber == &apos;#string&apos;
 </system-out></testcase>
-<testcase classname="checks.lifecycle" name="binding a rated unexpired quote issues the policy" time="0.04"><properties><property name="req" value="FLEET-010/7"/></properties><system-out>* baseUrl
+<testcase classname="checks.lifecycle" name="binding a rated unexpired quote issues the policy" time="0.038"><properties><property name="req" value="FLEET-010/7"/></properties><system-out>* baseUrl
 * setToday = function(d){ return karate.http(baseUrl).path(&apos;clock&apos;).post({ today: d }).body.today }
 * saved = Rule.load(&apos;rating&apos;).scenarios
 * rowById = function(id){ return karate.filter(saved, function(s){ return s._id == id })[0] }
@@ -1639,7 +1639,7 @@ request:
   &quot;outOfStateOperations&quot;: false
 }
 
-response time in milliseconds: 3
+response time in milliseconds: 2
 1 &lt; 201 POST http://localhost:8090/quotes
 1 &lt; content-length: 312
 1 &lt; Karate-Mock: true
@@ -1666,7 +1666,7 @@ response time in milliseconds: 3
 }
 
 POST http://localhost:8090/quotes
-201 (3 ms)
+201 (2 ms)
 Then 201
 * id = response.id
 * setToday(&apos;2026-01-01&apos;) == &apos;2026-01-01&apos;
@@ -1699,7 +1699,7 @@ request:
 3 &gt; Connection: keep-alive
 3 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
-response time in milliseconds: 8
+response time in milliseconds: 7
 3 &lt; 200 POST http://localhost:8090/quotes/Q-100010/rate
 3 &lt; content-length: 316
 3 &lt; Karate-Mock: true
@@ -1726,7 +1726,7 @@ response time in milliseconds: 8
 }
 
 POST http://localhost:8090/quotes/Q-100010/rate
-200 (8 ms)
+200 (7 ms)
 Then 200
 And response.status == &apos;rated&apos;
 * setToday(&apos;2026-01-15&apos;) == &apos;2026-01-15&apos;
@@ -1829,7 +1829,7 @@ Then 200
 And response.status == &apos;bound&apos;
 And response.policyNumber == &apos;#string&apos;
 </system-out></testcase>
-<testcase classname="checks.lifecycle" name="a bound quote can be neither bound again nor re-rated" time="0.051"><properties><property name="req" value="FLEET-010/8"/></properties><system-out>* baseUrl
+<testcase classname="checks.lifecycle" name="a bound quote can be neither bound again nor re-rated" time="0.052"><properties><property name="req" value="FLEET-010/8"/></properties><system-out>* baseUrl
 * setToday = function(d){ return karate.http(baseUrl).path(&apos;clock&apos;).post({ today: d }).body.today }
 * saved = Rule.load(&apos;rating&apos;).scenarios
 * rowById = function(id){ return karate.filter(saved, function(s){ return s._id == id })[0] }
@@ -1900,7 +1900,7 @@ request:
   &quot;today&quot;: &quot;2026-01-01&quot;
 }
 
-response time in milliseconds: 1
+response time in milliseconds: 2
 2 &lt; 200 POST http://localhost:8090/clock
 2 &lt; content-length: 22
 2 &lt; Karate-Mock: true
@@ -1918,7 +1918,7 @@ request:
 3 &gt; Connection: keep-alive
 3 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
-response time in milliseconds: 11
+response time in milliseconds: 14
 3 &lt; 200 POST http://localhost:8090/quotes/Q-100011/rate
 3 &lt; content-length: 316
 3 &lt; Karate-Mock: true
@@ -1945,7 +1945,7 @@ response time in milliseconds: 11
 }
 
 POST http://localhost:8090/quotes/Q-100011/rate
-200 (11 ms)
+200 (14 ms)
 Then 200
 * setToday(&apos;2026-01-02&apos;) == &apos;2026-01-02&apos;
 request:
@@ -1977,7 +1977,7 @@ request:
 5 &gt; Connection: keep-alive
 5 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
-response time in milliseconds: 4
+response time in milliseconds: 2
 5 &lt; 200 POST http://localhost:8090/quotes/Q-100011/bind
 5 &lt; content-length: 324
 5 &lt; Karate-Mock: true
@@ -2004,7 +2004,7 @@ response time in milliseconds: 4
 }
 
 POST http://localhost:8090/quotes/Q-100011/bind
-200 (4 ms)
+200 (2 ms)
 Then 200
 And response.status == &apos;bound&apos;
 * setToday(&apos;2026-01-03&apos;) == &apos;2026-01-03&apos;
@@ -2019,7 +2019,7 @@ request:
   &quot;today&quot;: &quot;2026-01-03&quot;
 }
 
-response time in milliseconds: 3
+response time in milliseconds: 1
 6 &lt; 200 POST http://localhost:8090/clock
 6 &lt; content-length: 22
 6 &lt; Karate-Mock: true
@@ -2075,7 +2075,7 @@ POST http://localhost:8090/quotes/Q-100011/rate
 Then 409
 And response == { error: &apos;already_bound&apos;, message: &apos;#string&apos; }
 </system-out></testcase>
-<testcase classname="checks.lifecycle" name="approving a non-referred quote is refused (working assumption FLEET-OQ-005)" time="0.032"><properties><property name="tags" value="@noreq"/></properties><system-out>* baseUrl
+<testcase classname="checks.lifecycle" name="approving a non-referred quote is refused (working assumption FLEET-OQ-005)" time="0.029"><properties><property name="tags" value="@noreq"/></properties><system-out>* baseUrl
 * setToday = function(d){ return karate.http(baseUrl).path(&apos;clock&apos;).post({ today: d }).body.today }
 * saved = Rule.load(&apos;rating&apos;).scenarios
 * rowById = function(id){ return karate.filter(saved, function(s){ return s._id == id })[0] }
@@ -2104,7 +2104,7 @@ request:
   &quot;outOfStateOperations&quot;: false
 }
 
-response time in milliseconds: 3
+response time in milliseconds: 2
 1 &lt; 201 POST http://localhost:8090/quotes
 1 &lt; content-length: 312
 1 &lt; Karate-Mock: true
@@ -2131,7 +2131,7 @@ response time in milliseconds: 3
 }
 
 POST http://localhost:8090/quotes
-201 (3 ms)
+201 (2 ms)
 Then 201
 * id = response.id
 Given &apos;quotes&apos;, id, &apos;approve&apos;
@@ -2166,7 +2166,7 @@ request:
 3 &gt; Connection: keep-alive
 3 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
-response time in milliseconds: 6
+response time in milliseconds: 7
 3 &lt; 200 POST http://localhost:8090/quotes/Q-100012/rate
 3 &lt; content-length: 316
 3 &lt; Karate-Mock: true
@@ -2193,7 +2193,7 @@ response time in milliseconds: 6
 }
 
 POST http://localhost:8090/quotes/Q-100012/rate
-200 (6 ms)
+200 (7 ms)
 Then 200
 And response.status == &apos;rated&apos;
 Given &apos;quotes&apos;, id, &apos;approve&apos;
@@ -2220,7 +2220,7 @@ POST http://localhost:8090/quotes/Q-100012/approve
 Then 409
 And response == { error: &apos;not_referred&apos;, message: &apos;#string&apos; }
 </system-out></testcase>
-<testcase classname="checks.lifecycle" name="an unknown quote id is a 404 on every lifecycle verb" time="0.018"><properties><property name="tags" value="@noreq"/></properties><system-out>* baseUrl
+<testcase classname="checks.lifecycle" name="an unknown quote id is a 404 on every lifecycle verb" time="0.015"><properties><property name="tags" value="@noreq"/></properties><system-out>* baseUrl
 * setToday = function(d){ return karate.http(baseUrl).path(&apos;clock&apos;).post({ today: d }).body.today }
 * saved = Rule.load(&apos;rating&apos;).scenarios
 * rowById = function(id){ return karate.filter(saved, function(s){ return s._id == id })[0] }
@@ -2233,7 +2233,7 @@ request:
 1 &gt; Connection: keep-alive
 1 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
-response time in milliseconds: 2
+response time in milliseconds: 1
 1 &lt; 404 GET http://localhost:8090/quotes/Q-000000
 1 &lt; content-length: 47
 1 &lt; Karate-Mock: true
@@ -2244,7 +2244,7 @@ response time in milliseconds: 2
 }
 
 GET http://localhost:8090/quotes/Q-000000
-404 (2 ms)
+404 (1 ms)
 Then 404
 And response == { error: &apos;not_found&apos;, message: &apos;#string&apos; }
 Given &apos;quotes&apos;, &apos;Q-000000&apos;, &apos;rate&apos;
@@ -2256,7 +2256,7 @@ request:
 2 &gt; Connection: keep-alive
 2 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
-response time in milliseconds: 1
+response time in milliseconds: 2
 2 &lt; 404 POST http://localhost:8090/quotes/Q-000000/rate
 2 &lt; content-length: 47
 2 &lt; Karate-Mock: true
@@ -2267,7 +2267,7 @@ response time in milliseconds: 1
 }
 
 POST http://localhost:8090/quotes/Q-000000/rate
-404 (1 ms)
+404 (2 ms)
 Then 404
 And response == { error: &apos;not_found&apos;, message: &apos;#string&apos; }
 Given &apos;quotes&apos;, &apos;Q-000000&apos;, &apos;bind&apos;
@@ -2279,7 +2279,7 @@ request:
 3 &gt; Connection: keep-alive
 3 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
-response time in milliseconds: 2
+response time in milliseconds: 3
 3 &lt; 404 POST http://localhost:8090/quotes/Q-000000/bind
 3 &lt; content-length: 47
 3 &lt; Karate-Mock: true
@@ -2290,7 +2290,7 @@ response time in milliseconds: 2
 }
 
 POST http://localhost:8090/quotes/Q-000000/bind
-404 (2 ms)
+404 (3 ms)
 Then 404
 And response == { error: &apos;not_found&apos;, message: &apos;#string&apos; }
 </system-out></testcase>
