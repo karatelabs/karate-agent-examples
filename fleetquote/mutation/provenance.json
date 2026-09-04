@@ -1,0 +1,4 @@
+{
+  "feature:mutation/suites/echo.feature": "copied-response",
+  "feature:checks/rating.feature": "shared-rule"
+}

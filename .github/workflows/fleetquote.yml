@@ -1,8 +1,9 @@
 # fleetquote on GitHub Actions — the rulebook as the only pricing authority.
 #
 # `launch suite.karate.js` is self-contained: it starts the kit's own stateful mock in-process, runs the
-# lifecycle + rating checks against it as ONE report, and renders the rating rulebook's Analysis report into
-# the same directory. No SUT process, no browser, no host networking — the whole kit in one container run.
+# lifecycle + rating checks against it as ONE report, grades the rating rulebook against its own oracles, and
+# renders its Analysis report (Mutation tab included) into the same directory. No SUT process, no browser, no
+# host networking — the whole kit in one container run.
 #
 # One-time setup: add a repository secret KARATE_LICENSE (the inline karate.lic text). Without it the
 # engine's license check fails the run.
@@ -46,7 +47,7 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Lifecycle + rating checks, and the rulebook analysis
+      - name: Lifecycle + rating checks, the self-grade, and the rulebook analysis
         run: |
           IMAGE=ghcr.io/karatelabs/karate-agent:2.1.3.RC3
           docker pull "$IMAGE"

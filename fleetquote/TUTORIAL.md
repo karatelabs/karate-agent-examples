@@ -180,6 +180,8 @@ var m = Rule.mutate('rating')
 m.counts                     // -> { KILLED: 28, SURVIVED: 15, SCREENED: 13, INVALID: 0 }
 m.denominator                // -> 43
 m.selfRunScore               // -> 0.6512
+m.rawKillRate                // -> 0.6512   every notice, a stored pin included
+m.independentScore           // -> 0.1395   only what a guarantee noticed
 m.oracleBook.always.length   // -> 4   the guarantees that graded
 m.oracleBook.expectations    // -> 4   the pinned figures that graded
 
@@ -281,8 +283,9 @@ Rule.report('rating').url   // -> file://…/rating-rule-analysis.html
 ```
 
 `oracleOnly` means the rulebook vouches for the criterion and nothing outside it does. A tagged test that
-calls `check.verify(...)` clears it. Open the HTML report. Review its five tabs: **Coverage** (every arm,
-its criterion ids, its `claim`), **Value Ranges**, **Rule Check**, **What-If**, and **Twin**.
+calls `check.verify(...)` clears it. Open the HTML report. Review its tabs: **Coverage** (every arm,
+its criterion ids, its `claim`), **Value Ranges**, **Rule Check**, **What-If**, and **Twin** — plus
+**Mutation**, once section 8's self-grade has graded the book.
 
 ## 11. Freeze and detect drift
 

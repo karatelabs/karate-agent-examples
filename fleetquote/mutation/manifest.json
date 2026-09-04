@@ -1,0 +1,170 @@
+{
+  "note": "The FROZEN mutation gate corpus for the STATEFUL subject (the mutation-testing design). fleetquote prices inside its own mock/handlers.js (POST /quotes then POST /quotes/{id}/rate), so the scoring run serves through that overlay and the rulebook binds inside it — the same mock the twin study grades, differing only in the calc it serves. Predictions below come from hand analysis of calc.js against requirements/fleet-auto.md, frozen BEFORE any scoring run; a wrong one is recorded beside the measured verdict as a miss, never edited away. The pins are enforced by the harness.",
+  "corpusVersion": 2,
+  "versionNote": "v2 re-freeze, PUBLICATION TEXT ONLY. This corpus ships in the public kit, which carries no internal citations, so exactly two pieces of prose were rewritten: the note above (it named an internal spec section and an internal test class) and one comment block in mutation/suites/independent.feature (it named the same spec section and spelled a section mark). Nothing else moved: every mutant id, every prediction, every measured verdict, every provenance label and every threshold is byte-identical in MEANING to v1, and the v1 miss record below is kept verbatim, wording untouched. Only the hashes that must follow the changed text move — mutation/suites/independent.feature and the manifest's own pin; calc.js, the other two suites, provenance.json and checks/rating.feature are byte-identical. The v2 gate run re-executes the battery against this freeze and returns the same verdict for every mutant, so the official measurement is unchanged.",
+  "subject": "fleetquote — the rating rulebook behind the stateful quote/rate lifecycle",
+  "rulebook": "rating",
+  "operation": "rateQuote",
+  "handlers": "mock/handlers.js",
+  "calcSha256": "4317633c5cfb77cd4e5d383e392ed9ad308932d7824123d7150371df16cc57d6",
+  "frozenArtifacts": {
+    "mutation/suites/independent.feature": "b9b349dc7f4e979a85fd8769a7109343c6e6961f05ebba46045732bab889203c",
+    "mutation/suites/echo.feature": "71d11afa73a22872c6b3b34264e02a60b829e7e6b8f6a987566eda5047ce8fa3",
+    "mutation/suites/smoke.feature": "8c27d94e7ca4407dd64bb26c0d531866d8c076b0a86e440ac1e752351fbed4cc",
+    "mutation/provenance.json": "bdfff4f8d47d731d672a6f2915eacc55f9f9fd53cd721f772b9df565be29bdde",
+    "checks/rating.feature": "80f6d13ee150ed7d81fde9b4956a5020c796484e1b37eed4d4bfc244404e6933"
+  },
+  "suites": {
+    "independent": {
+      "path": "mutation/suites/independent.feature",
+      "provenance": "authored at freeze from requirements/fleet-auto.md + SOT-prose.md section 4 + the rate book — every premium a hand-derived literal, on the boundaries the requirements state"
+    },
+    "echo": {
+      "path": "mutation/suites/echo.feature",
+      "provenance": "whole-quote literals copied from baseline responses, frozen; labeled copied-response wholesale in provenance.json"
+    },
+    "smoke": {
+      "path": "mutation/suites/smoke.feature",
+      "provenance": "authored (status-only floor)"
+    },
+    "rating": {
+      "path": "checks/rating.feature",
+      "provenance": "the KIT's own hand-authored check, unchanged — its expectations are recomputed through Rule.execute against the frozen rulebook, so under freeze-one-face every kill it earns is a raw kill and its independent score is zero BY CONSTRUCTION. That is the demonstration this corpus exists to make: a suite can score a near-perfect raw kill rate and still buy nothing independent, because it and the system share one oracle. provenance.json labels the feature shared-rule so the demotion also holds for its status assertions, which detection alone would read as authored."
+    }
+  },
+  "mutantIds": [
+    "NEGATE_CONDITIONALS@L24#0",
+    "NEGATE_CONDITIONALS@L36#0",
+    "NEGATE_CONDITIONALS@L73#0",
+    "NEGATE_CONDITIONALS@L77#0",
+    "NEGATE_CONDITIONALS@L91#0",
+    "NEGATE_CONDITIONALS@L103#0",
+    "NEGATE_CONDITIONALS@L113#0",
+    "NEGATE_CONDITIONALS@L119#0",
+    "NEGATE_CONDITIONALS@L134#0",
+    "NEGATE_CONDITIONALS@L145#0",
+    "CONDITIONALS_BOUNDARY@L36#0",
+    "CONDITIONALS_BOUNDARY@L73#0",
+    "CONDITIONALS_BOUNDARY@L77#0",
+    "CONDITIONALS_BOUNDARY@L91#0",
+    "CONDITIONALS_BOUNDARY@L103#0",
+    "CONDITIONALS_BOUNDARY@L113#0",
+    "CONDITIONALS_BOUNDARY@L119#0",
+    "CONDITIONALS_BOUNDARY@L134#0",
+    "CONDITIONALS_BOUNDARY@L145#0",
+    "REMOVE_CONDITIONALS@L24#0",
+    "REMOVE_CONDITIONALS@L36#0",
+    "REMOVE_CONDITIONALS@L46#0",
+    "REMOVE_CONDITIONALS@L56#0",
+    "REMOVE_CONDITIONALS@L73#0",
+    "REMOVE_CONDITIONALS@L77#0",
+    "REMOVE_CONDITIONALS@L91#0",
+    "REMOVE_CONDITIONALS@L97#0",
+    "REMOVE_CONDITIONALS@L103#0",
+    "REMOVE_CONDITIONALS@L113#0",
+    "REMOVE_CONDITIONALS@L119#0",
+    "REMOVE_CONDITIONALS@L134#0",
+    "REMOVE_CONDITIONALS@L145#0",
+    "INLINE_CONSTANT@lookup.basePremium.heavyTruck",
+    "INLINE_CONSTANT@lookup.basePremium.lightTruck",
+    "INLINE_CONSTANT@lookup.basePremium.van",
+    "INLINE_CONSTANT@lookup.claims.maxSurcharge",
+    "INLINE_CONSTANT@lookup.claims.perClaim",
+    "INLINE_CONSTANT@lookup.experience.newFactor",
+    "INLINE_CONSTANT@lookup.experience.newMaxYears",
+    "INLINE_CONSTANT@lookup.experience.seasonedFactor",
+    "INLINE_CONSTANT@lookup.experience.seasonedOverYears",
+    "INLINE_CONSTANT@lookup.fleetSize.discount",
+    "INLINE_CONSTANT@lookup.fleetSize.minVehicles",
+    "INLINE_CONSTANT@lookup.maxDeclinedDriverAge",
+    "INLINE_CONSTANT@lookup.minPremium",
+    "INLINE_CONSTANT@lookup.referralThreshold",
+    "INLINE_CONSTANT@lookup.safetyCredit",
+    "INLINE_CONSTANT@lookup.territoryRelativity.heavyTruck.rural",
+    "INLINE_CONSTANT@lookup.territoryRelativity.heavyTruck.suburban",
+    "INLINE_CONSTANT@lookup.territoryRelativity.heavyTruck.urban",
+    "INLINE_CONSTANT@lookup.territoryRelativity.lightTruck.rural",
+    "INLINE_CONSTANT@lookup.territoryRelativity.lightTruck.suburban",
+    "INLINE_CONSTANT@lookup.territoryRelativity.lightTruck.urban",
+    "INLINE_CONSTANT@lookup.territoryRelativity.van.rural",
+    "INLINE_CONSTANT@lookup.territoryRelativity.van.suburban",
+    "INLINE_CONSTANT@lookup.territoryRelativity.van.urban"
+  ],
+  "predictions": {
+    "anySuite": {
+      "SCREENED": [
+        "NEGATE_CONDITIONALS@L103#0",
+        "NEGATE_CONDITIONALS@L113#0",
+        "NEGATE_CONDITIONALS@L119#0",
+        "NEGATE_CONDITIONALS@L134#0",
+        "CONDITIONALS_BOUNDARY@L103#0",
+        "CONDITIONALS_BOUNDARY@L113#0",
+        "CONDITIONALS_BOUNDARY@L119#0",
+        "CONDITIONALS_BOUNDARY@L134#0",
+        "CONDITIONALS_BOUNDARY@L145#0",
+        "REMOVE_CONDITIONALS@L103#0",
+        "REMOVE_CONDITIONALS@L113#0",
+        "REMOVE_CONDITIONALS@L119#0",
+        "REMOVE_CONDITIONALS@L134#0"
+      ],
+      "screenedWhy": "twelve of these sit on conditions whose arms only LOG and emit calc.req — the additive-stacking note (L103), the claims-present note (L113), the cap-engaged note (L119) and the floor-engaged note (L134) all leave premium, reason and outcome untouched, so no output can distinguish them. The thirteenth is the referral boundary ('>' -> '>='), which diverges only at a final premium of EXACTLY 29,000 — a boundary on a DERIVED value the enumerated deck cannot construct (the notderivable grey area), reported with the deck's strength, never claimed equivalent",
+      "SURVIVED": [
+        "REMOVE_CONDITIONALS@L24#0"
+      ],
+      "survivedWhy": "the calc's no-vehicles precondition can never be exercised through the wire: the mock's own submission validation rejects a zero-vehicle fleet with a 400 before any quote exists to rate, so forcing the guard false changes nothing any suite can reach. Reached (the condition is evaluated on every rating) and therefore SURVIVED, never NOTCOVERED",
+      "denominator": 43,
+      "denominatorWhy": "56 mutants, 13 screened, none invalid and none uncovered — every remaining site is reached by every suite here, since all four submit and rate at least one priceable fleet"
+    },
+    "independent": {
+      "independentScore": "42/43",
+      "rawKillRate": "42/43",
+      "SURVIVED": [
+        "REMOVE_CONDITIONALS@L24#0"
+      ],
+      "KILLED_independent": "every other checked mutant — the seven rows pin a hand-derived premium literal on each rule branch the requirements name, and sit ON the stated boundaries (7 vehicles, 2 and 8 years of experience, age 23, four claims over the 60% cap, the $390 floor, the $29,000 referral line)"
+    },
+    "echo": {
+      "independentScore": "0/43",
+      "rawKillRate": "32/43",
+      "why": "every kill demotes to raw off the wholesale copied-response label — known-copied literals cannot buy the headline number",
+      "rawSurvivors": [
+        "CONDITIONALS_BOUNDARY@L73#0",
+        "CONDITIONALS_BOUNDARY@L91#0",
+        "REMOVE_CONDITIONALS@L24#0",
+        "REMOVE_CONDITIONALS@L46#0",
+        "REMOVE_CONDITIONALS@L73#0",
+        "REMOVE_CONDITIONALS@L97#0",
+        "INLINE_CONSTANT@lookup.claims.perClaim",
+        "INLINE_CONSTANT@lookup.experience.newFactor",
+        "INLINE_CONSTANT@lookup.minPremium",
+        "INLINE_CONSTANT@lookup.safetyCredit",
+        "INLINE_CONSTANT@lookup.territoryRelativity.lightTruck.suburban"
+      ],
+      "rawSurvivorsWhy": "the four echoed rows carry no fleet of exactly 7, no two-year experience, no out-of-state decline, no safety program, no premium under $780 and no suburban light truck — and their only claims row is already over the cap, so doubling the per-claim rate changes nothing"
+    },
+    "smoke": {
+      "independentScore": "1/43",
+      "rawKillRate": "1/43",
+      "KILLED_independent": [
+        "NEGATE_CONDITIONALS@L24#0"
+      ],
+      "why": "a status-only suite cannot notice any premium, outcome or decline reason changing. The one thing it does notice is a rulebook that stops answering: negating the no-vehicles guard makes every rating throw, the overlay's Rule.execute returns an error envelope, and the rate call answers 500 instead of 200"
+    },
+    "rating": {
+      "independentScore": "0/43",
+      "rawKillRate": "42/43",
+      "rawSurvivors": [
+        "REMOVE_CONDITIONALS@L24#0"
+      ],
+      "why": "the kit's own check recomputes every expectation through Rule.execute against the frozen rulebook, so its 22 saved rows notice almost everything a mutant does — and not one of those kills is independent. The two faces split at the serving home: the suite's oracle and the mock's pricing are the same rulebook, so the suite is measuring the system against itself"
+    }
+  },
+  "misses": {
+    "note": "Recorded AFTER the measurement, beside the prediction that missed. No prediction was edited and no suite, calc, provenance or threshold byte moved, so the corpus stays at version 1 and the run above is the official measurement; the pre-registration is the commit that preceded it.",
+    "smoke.KILLED_independent": {
+      "predicted": "NEGATE_CONDITIONALS@L24#0 killed — the negated no-vehicles guard makes every rating throw, so the rate call answers 500 and even a status-only suite notices",
+      "measured": "SURVIVED — the throw never reaches the wire as a non-200: Rule.execute catches it and answers its typed error envelope, the kit's handler reads a null premium off that envelope and still stores and returns a quote, so the rate call answers 200 with a degenerate body. A status-only suite therefore scores exactly zero here, which is the cleaner floor",
+      "consequence": "smoke's measured independent score is 0/43, not the predicted 1/43"
+    }
+  }
+}

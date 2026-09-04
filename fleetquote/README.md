@@ -10,13 +10,15 @@ commands and the output the engine produces.
 **📊 See it live — no license needed to READ it.** Every push runs the checks on GitHub Actions and
 publishes two pages. [**The rating rulebook
 analysis**](https://karatelabs.github.io/karate-agent-examples/fleetquote/rating-rule-analysis.html)
-carries five tabs:
+carries six tabs:
 
 - **Coverage** — every decision arm, with its status, scenario count, criteria and claim.
 - **Value Ranges** — each input's value classes and its boundaries.
 - **Rule Check** — the verdict: properties, reject rows, pinned figures and unclaimed arms.
 - **What-If** — run any input and read its audit trail.
 - **Twin** — the lifecycle walk and the required-row check.
+- **Mutation** — the self-grade: 56 seeded defects, the independent score and the raw kill rate side
+  by side, and every survivor with the criterion it leaves undefended.
 
 [**The run report**](https://karatelabs.github.io/karate-agent-examples/fleetquote/) holds every check,
 the coverage tab, and the requirements matrix built from this run's evidence.
@@ -84,6 +86,7 @@ fleetquote/
   openapi.yaml              # the quote API contract + the test-only /clock
   mock/                     # start.js (Http.mock on :8090) · handlers.js (the lifecycle, priced by the rulebook)
   checks/                   # lifecycle.feature (the state machine) · rating.feature (every saved row vs the rulebook)
-  suite.karate.js           # the one-command run: mock + both check suites + the rulebook analysis
+  mutation/                 # the frozen mutation corpus: manifest.json (pins + predictions) · suites/ (the graded decks)
+  suite.karate.js           # the one-command run: mock + both check suites + the self-grade + the rulebook analysis
   karate-boot.js  karate-config.js
 ```
