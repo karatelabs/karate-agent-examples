@@ -70,7 +70,7 @@ walks. Each seeded defect counts a hit under `mock.var('hits')`.
 
 ## The twin ships here
 
-`rulebooks/rating/` carries the lifecycle model `twin.js` and 43 pinned orders in `sequences.json`. The
+`rulebooks/rating/` carries the lifecycle model `twin.js` and 44 pinned orders in `sequences.json`. The
 twin models 8 states, and it follows the prose guide `SOT-prose.md`. The required-row deck
 `acceptance.json` lists 18 required transitions and 14 required rejections. Section 9 of the tutorial
 walks the model, grades it against that deck, and replays the orders against the mock.

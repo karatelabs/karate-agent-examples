@@ -37,6 +37,7 @@ function submissionOf(a) {
 // The clock is an integer day in the model and a yyyy-mm-dd date on the wire.
 // Day 0 is 2026-01-01; the reset request puts the service back on day 0.
 var DATE = { 0: '2026-01-01', 60: '2026-03-02', 61: '2026-03-03', 200: '2026-07-20' };
+var DAY = { '2026-01-01': 0, '2026-03-02': 60, '2026-03-03': 61, '2026-07-20': 200 };
 
 // wire status -> the model's stored status. The wire has no expired status:
 // expiry is derived there too, from ratingDate against the observation date.
@@ -59,13 +60,16 @@ var BIND_DECLINED = 'a declined quote is terminal - it cannot be bound';
 var BIND_APPROVAL = 'a referred quote may be bound only after approval';
 var BIND_ALREADY = 'a quote that is already bound cannot be bound again';
 var BIND_EXPIRED = 'the quote is expired and must be re-rated before any further action';
+// with nothing submitted there is no quote to address, and the service answers 404 not_found -
+// a declared error status, so the observer classifies it as the refusal it is
+var NOTHING_SUBMITTED = 'nothing has been submitted yet';
 
 var WIRE = {
     submit: { no_vehicles: NO_VEHICLES, invalid_input: OUT_OF_DOMAIN },
-    rate: { declined_terminal: RATE_DECLINED, already_bound: RATE_BOUND },
-    approve: { any: APPROVE_REFUSED },
+    rate: { not_found: NOTHING_SUBMITTED, declined_terminal: RATE_DECLINED, already_bound: RATE_BOUND },
+    approve: { not_found: NOTHING_SUBMITTED, any: APPROVE_REFUSED },
     bind: {
-        not_rated: BIND_NOT_RATED, declined_terminal: BIND_DECLINED,
+        not_found: NOTHING_SUBMITTED, not_rated: BIND_NOT_RATED, declined_terminal: BIND_DECLINED,
         approval_required: BIND_APPROVAL, already_bound: BIND_ALREADY,
         quote_expired: BIND_EXPIRED
     }
@@ -96,11 +100,21 @@ t.readBack({
         return { method: 'GET', path: '/quotes/' + (w.quoteId === null ? 'none' : w.quoteId) };
     },
     observe: function (r) {
-        return r.status === 200
-            ? { status: STATUS[r.body.status], premium: r.body.premium }
-            : { status: 'NEW', premium: null };
+        if (r.status !== 200) {
+            return { status: 'NEW', premium: null };
+        }
+        var o = { status: STATUS[r.body.status], premium: r.body.premium };
+        // ratingDate is the model's ratedOn on the wire - the validity anchor every expiry runs
+        // from. Only a live quote carries one: a declined quote nulls it where the model keeps
+        // the day it rated, so the field is compared where the wire states it, never required.
+        if (r.body.ratingDate != null) {
+            var day = DAY[r.body.ratingDate];
+            o.ratedOn = day === undefined ? r.body.ratingDate : day;
+        }
+        return o;
     },
-    required: ['status', 'premium']
+    required: ['status', 'premium'],
+    oracle: ['premium']
 });
 
 t.clock('day');
@@ -115,8 +129,11 @@ t.state('EXPIRED', function (w) { return isExpired(w); });
 t.state('BOUND', function (w) { return w.status === 'BOUND'; });
 
 // One indivisible row per submission shape - the rating outcome each one drives is in its label.
+// The guard is a scope guard: the model holds one quote, and POST /quotes creates unconditionally,
+// so the world it rejects is one no request can put the service in.
 t.command('submit', {
     when: function (w) { return w.status === 'NEW'; },
+    scopeGuard: true,
     args: [
         { label: 'rated', territory: 'suburban', vans: 1, lightTrucks: 0, heavyTrucks: 0, avgExperience: 5, safetyProgram: false, claimsCount: 0, hazmatCargo: false, youngestDriverAge: 30, outOfStateOperations: false },
         { label: 'referred', territory: 'urban', vans: 0, lightTrucks: 0, heavyTrucks: 20, avgExperience: 5, safetyProgram: false, claimsCount: 0, hazmatCargo: false, youngestDriverAge: 40, outOfStateOperations: false },
@@ -179,10 +196,10 @@ t.command('rate', {
     },
     observe: function (r) {
         if (r.status === 200) { return { kind: 'applied' }; }
-        if (r.status === 409) { return refusalOf('rate', r); }
+        if (r.status === 409 || r.status === 404) { return refusalOf('rate', r); }
         return { kind: 'unknown' };
     },
-    refusals: { guard: 'nothing has been submitted yet' }
+    refusals: { guard: NOTHING_SUBMITTED }
 });
 
 t.command('approve', {
@@ -203,10 +220,10 @@ t.command('approve', {
     },
     observe: function (r) {
         if (r.status === 200) { return { kind: 'applied' }; }
-        if (r.status === 409) { return refusalOf('approve', r); }
+        if (r.status === 409 || r.status === 404) { return refusalOf('approve', r); }
         return { kind: 'unknown' };
     },
-    refusals: { guard: 'nothing has been submitted yet' }
+    refusals: { guard: NOTHING_SUBMITTED }
 });
 
 t.command('bind', {
@@ -230,10 +247,10 @@ t.command('bind', {
     },
     observe: function (r) {
         if (r.status === 200) { return { kind: 'applied' }; }
-        if (r.status === 409) { return refusalOf('bind', r); }
+        if (r.status === 409 || r.status === 404) { return refusalOf('bind', r); }
         return { kind: 'unknown' };
     },
-    refusals: { guard: 'nothing has been submitted yet' }
+    refusals: { guard: NOTHING_SUBMITTED }
 });
 
 // Not a user action - the passage of time. Only this command carries the clock field.

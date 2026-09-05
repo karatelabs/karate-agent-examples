@@ -228,20 +228,20 @@ c.requiredWitness.length       // -> 39   reached, each with the shortest order 
 c.findings.requiredUnreached   // -> [ { id: 'T18', kind: 'transition', status: 'unreached' } ]
 c.ci                           // -> { verdict: 'FAIL', pass: false,
                                //      reasons: ['required T18 (transition) unreached'] }
-c.transitionPairs              // -> { covered: 12, of: 508 }
-c.evidence                     // -> model 8/8, oracle 46/270, mock 0/43, live 0/43
+c.transitionPairs              // -> { covered: 13, of: 508 }
+c.evidence                     // -> model 8/8, oracle 46/270, mock 0/44, live 0/44
 ```
 
 `T18` binds on the exact 60th day, and the walk never reached it. Add a saved sequence that binds on day
 60 to close it. `transitionPairs` counts two-step orders the saved sequences walk. Each remaining pair
 carries the shortest sequence that closes it.
 
-Now replay the 43 pinned sequences against the running service. The `rollout` option seeds one defect.
+Now replay the 44 pinned sequences against the running service. The `rollout` option seeds one defect.
 
 ```js
 var mock = File.call('/mock/start.js', { rollout: true })
 Twin.live('rating', { baseUrl: mock.url, against: 'live' }).summary
-// -> { PASS: 42, FAIL: 1, UNRESOLVED: 0, exchanges: 248, wireRefusals: [ … ] }
+// -> { PASS: 43, FAIL: 1, UNRESOLVED: 0, exchanges: 256, wireRefusals: [ … ] }
 // the one failure:
 // { sequenceId: 'seq-bind-expired-approved', disposition: { kind: 'FAIL', at: 4,
 //   mismatch: { kind: 'noCandidateExplainsObservation', outcome: 'applied' } } }
@@ -257,7 +257,7 @@ Twin.run('rating', 'seq-bind-expired-approved').steps
 
 The model refuses the final bind. The service accepted it and issued a policy. The defect needs this
 order: refer, approve, wait, then bind. A test of `bind` alone cannot reach it. Stop the mock. Start it
-without `rollout`. Run `Twin.live` again: all 43 sequences pass.
+without `rollout`. Run `Twin.live` again: all 44 sequences pass.
 
 ## 10. Trace it to requirements
 
@@ -290,7 +290,7 @@ its criterion ids, its `claim`), **Value Ranges**, **Rule Check**, **What-If**, 
 ## 11. Freeze and detect drift
 
 ```js
-Rule.bless('rating')   // -> { scenarios: 22, rejects: 3, invariants: 4, sequences: 43 }
+Rule.bless('rating')   // -> { scenarios: 22, rejects: 3, invariants: 4, sequences: 44 }
 // now edit calc.js: raise the heavy-truck base rate from 1250 to 1290
 var d = Rule.drift('rating')
 d.changed              // -> true

@@ -1,9 +1,9 @@
 {
   "version": 1,
   "provenance": {
-    "twin": "aebe0325757ce7043586c487f1e95b034a9fdcea126c71827a5d450237bd6894",
-    "calc": "307c624675907b517b850d4178ca5c9748a2f9a5582c44eb4718220bdf2e0693",
-    "schema": "11542e54bab7eda5c46dfbda410cdbeda6704c5536c0464c8c18e68dd294ce23",
+    "twin": "5fc8e81d3260ca23207c84f038279c31b0d5c86e4066455a3b87a8a02be7e9a9",
+    "calc": "4317633c5cfb77cd4e5d383e392ed9ad308932d7824123d7150371df16cc57d6",
+    "schema": "b9e2b622496265e03ad92470569236c711b704b872e88e5ec92f7e1d8e081209",
     "generator": "031582391201658b9fbb84edbea331338074d532968e8a7d32d0c8f712108792"
   },
   "sequences": [
@@ -2007,6 +2007,52 @@
           "status": "NEW"
         }
       }
+    },
+    {
+      "_id": "seq-rerate-after-expiry-then-bind",
+      "_label": "a re-rate after expiry re-anchors validity - the re-rated quote binds",
+      "_from": {
+        "kind": "authored"
+      },
+      "steps": [
+        {
+          "command": "submit",
+          "args": {
+            "label": "rated",
+            "territory": "suburban",
+            "vans": 1,
+            "lightTrucks": 0,
+            "heavyTrucks": 0,
+            "avgExperience": 5,
+            "safetyProgram": false,
+            "claimsCount": 0,
+            "hazmatCargo": false,
+            "youngestDriverAge": 30,
+            "outOfStateOperations": false
+          }
+        },
+        {
+          "command": "rate",
+          "args": {
+          }
+        },
+        {
+          "command": "observeAsOf",
+          "args": {
+            "day": 61
+          }
+        },
+        {
+          "command": "rate",
+          "args": {
+          }
+        },
+        {
+          "command": "bind",
+          "args": {
+          }
+        }
+      ]
     }
   ]
 }
