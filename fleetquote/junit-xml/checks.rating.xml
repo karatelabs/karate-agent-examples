@@ -1,4 +1,4 @@
-<testsuite name="Stonebridge Fleet Auto - rating checks." tests="22" failures="0" time="0.37" skipped="0"><testcase classname="checks.rating" name="baseline-suburban-mixed - mixed 5-vehicle suburban fleet - no adjustments" time="0.017"><system-out>* baseUrl
+<testsuite name="Stonebridge Fleet Auto - rating checks." tests="22" failures="0" time="0.469" skipped="0"><testcase classname="checks.rating" name="baseline-suburban-mixed - mixed 5-vehicle suburban fleet - no adjustments" time="0.024"><system-out>* baseUrl
 * check = Rule.execute(&apos;rating&apos;, __row)
 Given &apos;quotes&apos;
 And check.input
@@ -63,7 +63,7 @@ request:
 2 &gt; Connection: keep-alive
 2 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
-response time in milliseconds: 6
+response time in milliseconds: 8
 2 &lt; 200 POST http://localhost:8090/quotes/Q-100013/rate
 2 &lt; content-length: 316
 2 &lt; Karate-Mock: true
@@ -90,7 +90,7 @@ response time in milliseconds: 6
 }
 
 POST http://localhost:8090/quotes/Q-100013/rate
-200 (6 ms)
+200 (8 ms)
 Then 200
 And response.status == check.outcome
 And response.premium == check.output.premium
@@ -98,7 +98,7 @@ And response.reason == check.output.reason
 And response.ratingDate == (check.outcome == &apos;declined&apos; ? null : &apos;#string&apos;)
 * check.verify(true, &apos;mock POST /quotes/{id}/rate matches the rating rulebook&apos;)
 </system-out></testcase>
-<testcase classname="checks.rating" name="urban-all-classes - one of each class, urban relativities" time="0.016"><system-out>* baseUrl
+<testcase classname="checks.rating" name="urban-all-classes - one of each class, urban relativities" time="0.026"><system-out>* baseUrl
 * check = Rule.execute(&apos;rating&apos;, __row)
 Given &apos;quotes&apos;
 And check.input
@@ -123,7 +123,7 @@ request:
   &quot;outOfStateOperations&quot;: false
 }
 
-response time in milliseconds: 1
+response time in milliseconds: 3
 1 &lt; 201 POST http://localhost:8090/quotes
 1 &lt; content-length: 309
 1 &lt; Karate-Mock: true
@@ -150,7 +150,7 @@ response time in milliseconds: 1
 }
 
 POST http://localhost:8090/quotes
-201 (1 ms)
+201 (3 ms)
 Then 201
 And response == { id: &apos;#string&apos;, status: &apos;submitted&apos;, submission: &apos;#(check.input)&apos;, premium: null, reason: null, ratingDate: null, policyNumber: null }
 * id = response.id
@@ -163,7 +163,7 @@ request:
 2 &gt; Connection: keep-alive
 2 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
-response time in milliseconds: 6
+response time in milliseconds: 8
 2 &lt; 200 POST http://localhost:8090/quotes/Q-100014/rate
 2 &lt; content-length: 313
 2 &lt; Karate-Mock: true
@@ -190,7 +190,7 @@ response time in milliseconds: 6
 }
 
 POST http://localhost:8090/quotes/Q-100014/rate
-200 (6 ms)
+200 (8 ms)
 Then 200
 And response.status == check.outcome
 And response.premium == check.output.premium
@@ -198,7 +198,7 @@ And response.reason == check.output.reason
 And response.ratingDate == (check.outcome == &apos;declined&apos; ? null : &apos;#string&apos;)
 * check.verify(true, &apos;mock POST /quotes/{id}/rate matches the rating rulebook&apos;)
 </system-out></testcase>
-<testcase classname="checks.rating" name="rural-all-classes - one of each class, rural relativities" time="0.018"><system-out>* baseUrl
+<testcase classname="checks.rating" name="rural-all-classes - one of each class, rural relativities" time="0.025"><system-out>* baseUrl
 * check = Rule.execute(&apos;rating&apos;, __row)
 Given &apos;quotes&apos;
 And check.input
@@ -223,7 +223,7 @@ request:
   &quot;outOfStateOperations&quot;: false
 }
 
-response time in milliseconds: 3
+response time in milliseconds: 4
 1 &lt; 201 POST http://localhost:8090/quotes
 1 &lt; content-length: 309
 1 &lt; Karate-Mock: true
@@ -250,7 +250,7 @@ response time in milliseconds: 3
 }
 
 POST http://localhost:8090/quotes
-201 (3 ms)
+201 (4 ms)
 Then 201
 And response == { id: &apos;#string&apos;, status: &apos;submitted&apos;, submission: &apos;#(check.input)&apos;, premium: null, reason: null, ratingDate: null, policyNumber: null }
 * id = response.id
@@ -263,7 +263,7 @@ request:
 2 &gt; Connection: keep-alive
 2 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
-response time in milliseconds: 5
+response time in milliseconds: 8
 2 &lt; 200 POST http://localhost:8090/quotes/Q-100015/rate
 2 &lt; content-length: 315
 2 &lt; Karate-Mock: true
@@ -290,7 +290,7 @@ response time in milliseconds: 5
 }
 
 POST http://localhost:8090/quotes/Q-100015/rate
-200 (5 ms)
+200 (8 ms)
 Then 200
 And response.status == check.outcome
 And response.premium == check.output.premium
@@ -298,7 +298,7 @@ And response.reason == check.output.reason
 And response.ratingDate == (check.outcome == &apos;declined&apos; ? null : &apos;#string&apos;)
 * check.verify(true, &apos;mock POST /quotes/{id}/rate matches the rating rulebook&apos;)
 </system-out></testcase>
-<testcase classname="checks.rating" name="declined-young-driver - youngest driver exactly 23 - declined" time="0.021"><system-out>* baseUrl
+<testcase classname="checks.rating" name="declined-young-driver - youngest driver exactly 23 - declined" time="0.025"><system-out>* baseUrl
 * check = Rule.execute(&apos;rating&apos;, __row)
 Given &apos;quotes&apos;
 And check.input
@@ -323,7 +323,7 @@ request:
   &quot;outOfStateOperations&quot;: false
 }
 
-response time in milliseconds: 1
+response time in milliseconds: 2
 1 &lt; 201 POST http://localhost:8090/quotes
 1 &lt; content-length: 312
 1 &lt; Karate-Mock: true
@@ -350,7 +350,7 @@ response time in milliseconds: 1
 }
 
 POST http://localhost:8090/quotes
-201 (1 ms)
+201 (2 ms)
 Then 201
 And response == { id: &apos;#string&apos;, status: &apos;submitted&apos;, submission: &apos;#(check.input)&apos;, premium: null, reason: null, ratingDate: null, policyNumber: null }
 * id = response.id
@@ -363,7 +363,7 @@ request:
 2 &gt; Connection: keep-alive
 2 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
-response time in milliseconds: 6
+response time in milliseconds: 10
 2 &lt; 200 POST http://localhost:8090/quotes/Q-100016/rate
 2 &lt; content-length: 350
 2 &lt; Karate-Mock: true
@@ -390,7 +390,7 @@ response time in milliseconds: 6
 }
 
 POST http://localhost:8090/quotes/Q-100016/rate
-200 (6 ms)
+200 (10 ms)
 Then 200
 And response.status == check.outcome
 And response.premium == check.output.premium
@@ -398,7 +398,7 @@ And response.reason == check.output.reason
 And response.ratingDate == (check.outcome == &apos;declined&apos; ? null : &apos;#string&apos;)
 * check.verify(true, &apos;mock POST /quotes/{id}/rate matches the rating rulebook&apos;)
 </system-out></testcase>
-<testcase classname="checks.rating" name="rated-driver-24 - youngest driver 24 - just above the exclusion" time="0.024"><system-out>* baseUrl
+<testcase classname="checks.rating" name="rated-driver-24 - youngest driver 24 - just above the exclusion" time="0.022"><system-out>* baseUrl
 * check = Rule.execute(&apos;rating&apos;, __row)
 Given &apos;quotes&apos;
 And check.input
@@ -423,7 +423,7 @@ request:
   &quot;outOfStateOperations&quot;: false
 }
 
-response time in milliseconds: 3
+response time in milliseconds: 2
 1 &lt; 201 POST http://localhost:8090/quotes
 1 &lt; content-length: 312
 1 &lt; Karate-Mock: true
@@ -450,7 +450,7 @@ response time in milliseconds: 3
 }
 
 POST http://localhost:8090/quotes
-201 (3 ms)
+201 (2 ms)
 Then 201
 And response == { id: &apos;#string&apos;, status: &apos;submitted&apos;, submission: &apos;#(check.input)&apos;, premium: null, reason: null, ratingDate: null, policyNumber: null }
 * id = response.id
@@ -463,7 +463,7 @@ request:
 2 &gt; Connection: keep-alive
 2 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
-response time in milliseconds: 8
+response time in milliseconds: 7
 2 &lt; 200 POST http://localhost:8090/quotes/Q-100017/rate
 2 &lt; content-length: 315
 2 &lt; Karate-Mock: true
@@ -490,7 +490,7 @@ response time in milliseconds: 8
 }
 
 POST http://localhost:8090/quotes/Q-100017/rate
-200 (8 ms)
+200 (7 ms)
 Then 200
 And response.status == check.outcome
 And response.premium == check.output.premium
@@ -498,7 +498,7 @@ And response.reason == check.output.reason
 And response.ratingDate == (check.outcome == &apos;declined&apos; ? null : &apos;#string&apos;)
 * check.verify(true, &apos;mock POST /quotes/{id}/rate matches the rating rulebook&apos;)
 </system-out></testcase>
-<testcase classname="checks.rating" name="declined-out-of-state - regular out-of-state operations - declined" time="0.016"><system-out>* baseUrl
+<testcase classname="checks.rating" name="declined-out-of-state - regular out-of-state operations - declined" time="0.022"><system-out>* baseUrl
 * check = Rule.execute(&apos;rating&apos;, __row)
 Given &apos;quotes&apos;
 And check.input
@@ -523,7 +523,7 @@ request:
   &quot;outOfStateOperations&quot;: true
 }
 
-response time in milliseconds: 2
+response time in milliseconds: 3
 1 &lt; 201 POST http://localhost:8090/quotes
 1 &lt; content-length: 311
 1 &lt; Karate-Mock: true
@@ -550,7 +550,7 @@ response time in milliseconds: 2
 }
 
 POST http://localhost:8090/quotes
-201 (2 ms)
+201 (3 ms)
 Then 201
 And response == { id: &apos;#string&apos;, status: &apos;submitted&apos;, submission: &apos;#(check.input)&apos;, premium: null, reason: null, ratingDate: null, policyNumber: null }
 * id = response.id
@@ -563,7 +563,7 @@ request:
 2 &gt; Connection: keep-alive
 2 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
-response time in milliseconds: 6
+response time in milliseconds: 7
 2 &lt; 200 POST http://localhost:8090/quotes/Q-100018/rate
 2 &lt; content-length: 339
 2 &lt; Karate-Mock: true
@@ -590,7 +590,7 @@ response time in milliseconds: 6
 }
 
 POST http://localhost:8090/quotes/Q-100018/rate
-200 (6 ms)
+200 (7 ms)
 Then 200
 And response.status == check.outcome
 And response.premium == check.output.premium
@@ -598,7 +598,7 @@ And response.reason == check.output.reason
 And response.ratingDate == (check.outcome == &apos;declined&apos; ? null : &apos;#string&apos;)
 * check.verify(true, &apos;mock POST /quotes/{id}/rate matches the rating rulebook&apos;)
 </system-out></testcase>
-<testcase classname="checks.rating" name="new-drivers-at-2 - average experience exactly 2 - surcharge factor 1.15" time="0.016"><system-out>* baseUrl
+<testcase classname="checks.rating" name="new-drivers-at-2 - average experience exactly 2 - surcharge factor 1.15" time="0.021"><system-out>* baseUrl
 * check = Rule.execute(&apos;rating&apos;, __row)
 Given &apos;quotes&apos;
 And check.input
@@ -663,7 +663,7 @@ request:
 2 &gt; Connection: keep-alive
 2 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
-response time in milliseconds: 5
+response time in milliseconds: 7
 2 &lt; 200 POST http://localhost:8090/quotes/Q-100019/rate
 2 &lt; content-length: 317
 2 &lt; Karate-Mock: true
@@ -690,7 +690,7 @@ response time in milliseconds: 5
 }
 
 POST http://localhost:8090/quotes/Q-100019/rate
-200 (5 ms)
+200 (7 ms)
 Then 200
 And response.status == check.outcome
 And response.premium == check.output.premium
@@ -698,7 +698,7 @@ And response.reason == check.output.reason
 And response.ratingDate == (check.outcome == &apos;declined&apos; ? null : &apos;#string&apos;)
 * check.verify(true, &apos;mock POST /quotes/{id}/rate matches the rating rulebook&apos;)
 </system-out></testcase>
-<testcase classname="checks.rating" name="no-adjust-at-3 - average experience 3 - no adjustment" time="0.018"><system-out>* baseUrl
+<testcase classname="checks.rating" name="no-adjust-at-3 - average experience 3 - no adjustment" time="0.022"><system-out>* baseUrl
 * check = Rule.execute(&apos;rating&apos;, __row)
 Given &apos;quotes&apos;
 And check.input
@@ -723,7 +723,7 @@ request:
   &quot;outOfStateOperations&quot;: false
 }
 
-response time in milliseconds: 2
+response time in milliseconds: 3
 1 &lt; 201 POST http://localhost:8090/quotes
 1 &lt; content-length: 312
 1 &lt; Karate-Mock: true
@@ -750,7 +750,7 @@ response time in milliseconds: 2
 }
 
 POST http://localhost:8090/quotes
-201 (2 ms)
+201 (3 ms)
 Then 201
 And response == { id: &apos;#string&apos;, status: &apos;submitted&apos;, submission: &apos;#(check.input)&apos;, premium: null, reason: null, ratingDate: null, policyNumber: null }
 * id = response.id
@@ -763,7 +763,7 @@ request:
 2 &gt; Connection: keep-alive
 2 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
-response time in milliseconds: 5
+response time in milliseconds: 7
 2 &lt; 200 POST http://localhost:8090/quotes/Q-100020/rate
 2 &lt; content-length: 315
 2 &lt; Karate-Mock: true
@@ -790,7 +790,7 @@ response time in milliseconds: 5
 }
 
 POST http://localhost:8090/quotes/Q-100020/rate
-200 (5 ms)
+200 (7 ms)
 Then 200
 And response.status == check.outcome
 And response.premium == check.output.premium
@@ -798,7 +798,7 @@ And response.reason == check.output.reason
 And response.ratingDate == (check.outcome == &apos;declined&apos; ? null : &apos;#string&apos;)
 * check.verify(true, &apos;mock POST /quotes/{id}/rate matches the rating rulebook&apos;)
 </system-out></testcase>
-<testcase classname="checks.rating" name="no-adjust-at-8 - average experience exactly 8 - no adjustment" time="0.019"><system-out>* baseUrl
+<testcase classname="checks.rating" name="no-adjust-at-8 - average experience exactly 8 - no adjustment" time="0.02"><system-out>* baseUrl
 * check = Rule.execute(&apos;rating&apos;, __row)
 Given &apos;quotes&apos;
 And check.input
@@ -823,7 +823,7 @@ request:
   &quot;outOfStateOperations&quot;: false
 }
 
-response time in milliseconds: 1
+response time in milliseconds: 4
 1 &lt; 201 POST http://localhost:8090/quotes
 1 &lt; content-length: 312
 1 &lt; Karate-Mock: true
@@ -850,7 +850,7 @@ response time in milliseconds: 1
 }
 
 POST http://localhost:8090/quotes
-201 (1 ms)
+201 (4 ms)
 Then 201
 And response == { id: &apos;#string&apos;, status: &apos;submitted&apos;, submission: &apos;#(check.input)&apos;, premium: null, reason: null, ratingDate: null, policyNumber: null }
 * id = response.id
@@ -863,7 +863,7 @@ request:
 2 &gt; Connection: keep-alive
 2 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
-response time in milliseconds: 4
+response time in milliseconds: 5
 2 &lt; 200 POST http://localhost:8090/quotes/Q-100021/rate
 2 &lt; content-length: 315
 2 &lt; Karate-Mock: true
@@ -890,7 +890,7 @@ response time in milliseconds: 4
 }
 
 POST http://localhost:8090/quotes/Q-100021/rate
-200 (4 ms)
+200 (5 ms)
 Then 200
 And response.status == check.outcome
 And response.premium == check.output.premium
@@ -898,7 +898,7 @@ And response.reason == check.output.reason
 And response.ratingDate == (check.outcome == &apos;declined&apos; ? null : &apos;#string&apos;)
 * check.verify(true, &apos;mock POST /quotes/{id}/rate matches the rating rulebook&apos;)
 </system-out></testcase>
-<testcase classname="checks.rating" name="seasoned-at-9 - average experience 9 - credit factor 0.8" time="0.016"><system-out>* baseUrl
+<testcase classname="checks.rating" name="seasoned-at-9 - average experience 9 - credit factor 0.8" time="0.02"><system-out>* baseUrl
 * check = Rule.execute(&apos;rating&apos;, __row)
 Given &apos;quotes&apos;
 And check.input
@@ -923,7 +923,7 @@ request:
   &quot;outOfStateOperations&quot;: false
 }
 
-response time in milliseconds: 2
+response time in milliseconds: 1
 1 &lt; 201 POST http://localhost:8090/quotes
 1 &lt; content-length: 312
 1 &lt; Karate-Mock: true
@@ -950,7 +950,7 @@ response time in milliseconds: 2
 }
 
 POST http://localhost:8090/quotes
-201 (2 ms)
+201 (1 ms)
 Then 201
 And response == { id: &apos;#string&apos;, status: &apos;submitted&apos;, submission: &apos;#(check.input)&apos;, premium: null, reason: null, ratingDate: null, policyNumber: null }
 * id = response.id
@@ -963,7 +963,7 @@ request:
 2 &gt; Connection: keep-alive
 2 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
-response time in milliseconds: 5
+response time in milliseconds: 6
 2 &lt; 200 POST http://localhost:8090/quotes/Q-100022/rate
 2 &lt; content-length: 315
 2 &lt; Karate-Mock: true
@@ -990,7 +990,7 @@ response time in milliseconds: 5
 }
 
 POST http://localhost:8090/quotes/Q-100022/rate
-200 (5 ms)
+200 (6 ms)
 Then 200
 And response.status == check.outcome
 And response.premium == check.output.premium
@@ -998,7 +998,7 @@ And response.reason == check.output.reason
 And response.ratingDate == (check.outcome == &apos;declined&apos; ? null : &apos;#string&apos;)
 * check.verify(true, &apos;mock POST /quotes/{id}/rate matches the rating rulebook&apos;)
 </system-out></testcase>
-<testcase classname="checks.rating" name="fleet-of-6-no-discount - 6 vehicles - below the fleet-size threshold" time="0.014"><system-out>* baseUrl
+<testcase classname="checks.rating" name="fleet-of-6-no-discount - 6 vehicles - below the fleet-size threshold" time="0.021"><system-out>* baseUrl
 * check = Rule.execute(&apos;rating&apos;, __row)
 Given &apos;quotes&apos;
 And check.input
@@ -1023,7 +1023,7 @@ request:
   &quot;outOfStateOperations&quot;: false
 }
 
-response time in milliseconds: 2
+response time in milliseconds: 3
 1 &lt; 201 POST http://localhost:8090/quotes
 1 &lt; content-length: 312
 1 &lt; Karate-Mock: true
@@ -1050,7 +1050,7 @@ response time in milliseconds: 2
 }
 
 POST http://localhost:8090/quotes
-201 (2 ms)
+201 (3 ms)
 Then 201
 And response == { id: &apos;#string&apos;, status: &apos;submitted&apos;, submission: &apos;#(check.input)&apos;, premium: null, reason: null, ratingDate: null, policyNumber: null }
 * id = response.id
@@ -1063,7 +1063,7 @@ request:
 2 &gt; Connection: keep-alive
 2 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
-response time in milliseconds: 5
+response time in milliseconds: 8
 2 &lt; 200 POST http://localhost:8090/quotes/Q-100023/rate
 2 &lt; content-length: 316
 2 &lt; Karate-Mock: true
@@ -1090,7 +1090,7 @@ response time in milliseconds: 5
 }
 
 POST http://localhost:8090/quotes/Q-100023/rate
-200 (5 ms)
+200 (8 ms)
 Then 200
 And response.status == check.outcome
 And response.premium == check.output.premium
@@ -1098,7 +1098,7 @@ And response.reason == check.output.reason
 And response.ratingDate == (check.outcome == &apos;declined&apos; ? null : &apos;#string&apos;)
 * check.verify(true, &apos;mock POST /quotes/{id}/rate matches the rating rulebook&apos;)
 </system-out></testcase>
-<testcase classname="checks.rating" name="fleet-of-7-discount - 7 vehicles - 11% fleet-size discount" time="0.015"><system-out>* baseUrl
+<testcase classname="checks.rating" name="fleet-of-7-discount - 7 vehicles - 11% fleet-size discount" time="0.017"><system-out>* baseUrl
 * check = Rule.execute(&apos;rating&apos;, __row)
 Given &apos;quotes&apos;
 And check.input
@@ -1198,7 +1198,7 @@ And response.reason == check.output.reason
 And response.ratingDate == (check.outcome == &apos;declined&apos; ? null : &apos;#string&apos;)
 * check.verify(true, &apos;mock POST /quotes/{id}/rate matches the rating rulebook&apos;)
 </system-out></testcase>
-<testcase classname="checks.rating" name="safety-credit - recognized safety program - 15% credit" time="0.016"><system-out>* baseUrl
+<testcase classname="checks.rating" name="safety-credit - recognized safety program - 15% credit" time="0.018"><system-out>* baseUrl
 * check = Rule.execute(&apos;rating&apos;, __row)
 Given &apos;quotes&apos;
 And check.input
@@ -1223,7 +1223,7 @@ request:
   &quot;outOfStateOperations&quot;: false
 }
 
-response time in milliseconds: 1
+response time in milliseconds: 2
 1 &lt; 201 POST http://localhost:8090/quotes
 1 &lt; content-length: 311
 1 &lt; Karate-Mock: true
@@ -1250,7 +1250,7 @@ response time in milliseconds: 1
 }
 
 POST http://localhost:8090/quotes
-201 (1 ms)
+201 (2 ms)
 Then 201
 And response == { id: &apos;#string&apos;, status: &apos;submitted&apos;, submission: &apos;#(check.input)&apos;, premium: null, reason: null, ratingDate: null, policyNumber: null }
 * id = response.id
@@ -1263,7 +1263,7 @@ request:
 2 &gt; Connection: keep-alive
 2 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
-response time in milliseconds: 6
+response time in milliseconds: 8
 2 &lt; 200 POST http://localhost:8090/quotes/Q-100025/rate
 2 &lt; content-length: 316
 2 &lt; Karate-Mock: true
@@ -1290,7 +1290,7 @@ response time in milliseconds: 6
 }
 
 POST http://localhost:8090/quotes/Q-100025/rate
-200 (6 ms)
+200 (8 ms)
 Then 200
 And response.status == check.outcome
 And response.premium == check.output.premium
@@ -1298,7 +1298,7 @@ And response.reason == check.output.reason
 And response.ratingDate == (check.outcome == &apos;declined&apos; ? null : &apos;#string&apos;)
 * check.verify(true, &apos;mock POST /quotes/{id}/rate matches the rating rulebook&apos;)
 </system-out></testcase>
-<testcase classname="checks.rating" name="both-reductions-stack - 7 vehicles plus safety program - 26% additive" time="0.014"><system-out>* baseUrl
+<testcase classname="checks.rating" name="both-reductions-stack - 7 vehicles plus safety program - 26% additive" time="0.017"><system-out>* baseUrl
 * check = Rule.execute(&apos;rating&apos;, __row)
 Given &apos;quotes&apos;
 And check.input
@@ -1323,7 +1323,7 @@ request:
   &quot;outOfStateOperations&quot;: false
 }
 
-response time in milliseconds: 1
+response time in milliseconds: 2
 1 &lt; 201 POST http://localhost:8090/quotes
 1 &lt; content-length: 311
 1 &lt; Karate-Mock: true
@@ -1350,7 +1350,7 @@ response time in milliseconds: 1
 }
 
 POST http://localhost:8090/quotes
-201 (1 ms)
+201 (2 ms)
 Then 201
 And response == { id: &apos;#string&apos;, status: &apos;submitted&apos;, submission: &apos;#(check.input)&apos;, premium: null, reason: null, ratingDate: null, policyNumber: null }
 * id = response.id
@@ -1363,7 +1363,7 @@ request:
 2 &gt; Connection: keep-alive
 2 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
-response time in milliseconds: 5
+response time in milliseconds: 6
 2 &lt; 200 POST http://localhost:8090/quotes/Q-100026/rate
 2 &lt; content-length: 317
 2 &lt; Karate-Mock: true
@@ -1390,7 +1390,7 @@ response time in milliseconds: 5
 }
 
 POST http://localhost:8090/quotes/Q-100026/rate
-200 (5 ms)
+200 (6 ms)
 Then 200
 And response.status == check.outcome
 And response.premium == check.output.premium
@@ -1398,7 +1398,7 @@ And response.reason == check.output.reason
 And response.ratingDate == (check.outcome == &apos;declined&apos; ? null : &apos;#string&apos;)
 * check.verify(true, &apos;mock POST /quotes/{id}/rate matches the rating rulebook&apos;)
 </system-out></testcase>
-<testcase classname="checks.rating" name="one-claim - one chargeable claim - 17% surcharge" time="0.019"><system-out>* baseUrl
+<testcase classname="checks.rating" name="one-claim - one chargeable claim - 17% surcharge" time="0.016"><system-out>* baseUrl
 * check = Rule.execute(&apos;rating&apos;, __row)
 Given &apos;quotes&apos;
 And check.input
@@ -1463,7 +1463,7 @@ request:
 2 &gt; Connection: keep-alive
 2 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
-response time in milliseconds: 11
+response time in milliseconds: 5
 2 &lt; 200 POST http://localhost:8090/quotes/Q-100027/rate
 2 &lt; content-length: 317
 2 &lt; Karate-Mock: true
@@ -1490,7 +1490,7 @@ response time in milliseconds: 11
 }
 
 POST http://localhost:8090/quotes/Q-100027/rate
-200 (11 ms)
+200 (5 ms)
 Then 200
 And response.status == check.outcome
 And response.premium == check.output.premium
@@ -1498,7 +1498,7 @@ And response.reason == check.output.reason
 And response.ratingDate == (check.outcome == &apos;declined&apos; ? null : &apos;#string&apos;)
 * check.verify(true, &apos;mock POST /quotes/{id}/rate matches the rating rulebook&apos;)
 </system-out></testcase>
-<testcase classname="checks.rating" name="claims-3-under-cap - three claims - 51%, under the 60% cap" time="0.015"><system-out>* baseUrl
+<testcase classname="checks.rating" name="claims-3-under-cap - three claims - 51%, under the 60% cap" time="0.018"><system-out>* baseUrl
 * check = Rule.execute(&apos;rating&apos;, __row)
 Given &apos;quotes&apos;
 And check.input
@@ -1563,7 +1563,7 @@ request:
 2 &gt; Connection: keep-alive
 2 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
-response time in milliseconds: 4
+response time in milliseconds: 7
 2 &lt; 200 POST http://localhost:8090/quotes/Q-100028/rate
 2 &lt; content-length: 317
 2 &lt; Karate-Mock: true
@@ -1590,7 +1590,7 @@ response time in milliseconds: 4
 }
 
 POST http://localhost:8090/quotes/Q-100028/rate
-200 (4 ms)
+200 (7 ms)
 Then 200
 And response.status == check.outcome
 And response.premium == check.output.premium
@@ -1598,7 +1598,7 @@ And response.reason == check.output.reason
 And response.ratingDate == (check.outcome == &apos;declined&apos; ? null : &apos;#string&apos;)
 * check.verify(true, &apos;mock POST /quotes/{id}/rate matches the rating rulebook&apos;)
 </system-out></testcase>
-<testcase classname="checks.rating" name="claims-4-capped - four claims - raw 68% capped at 60%" time="0.014"><system-out>* baseUrl
+<testcase classname="checks.rating" name="claims-4-capped - four claims - raw 68% capped at 60%" time="0.022"><system-out>* baseUrl
 * check = Rule.execute(&apos;rating&apos;, __row)
 Given &apos;quotes&apos;
 And check.input
@@ -1663,7 +1663,7 @@ request:
 2 &gt; Connection: keep-alive
 2 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
-response time in milliseconds: 4
+response time in milliseconds: 10
 2 &lt; 200 POST http://localhost:8090/quotes/Q-100029/rate
 2 &lt; content-length: 315
 2 &lt; Karate-Mock: true
@@ -1690,7 +1690,7 @@ response time in milliseconds: 4
 }
 
 POST http://localhost:8090/quotes/Q-100029/rate
-200 (4 ms)
+200 (10 ms)
 Then 200
 And response.status == check.outcome
 And response.premium == check.output.premium
@@ -1698,7 +1698,7 @@ And response.reason == check.output.reason
 And response.ratingDate == (check.outcome == &apos;declined&apos; ? null : &apos;#string&apos;)
 * check.verify(true, &apos;mock POST /quotes/{id}/rate matches the rating rulebook&apos;)
 </system-out></testcase>
-<testcase classname="checks.rating" name="claims-surcharge-on-precredit-base - claims with safety credit - surcharge computed on pre-credit premium" time="0.012"><system-out>* baseUrl
+<testcase classname="checks.rating" name="claims-surcharge-on-precredit-base - claims with safety credit - surcharge computed on pre-credit premium" time="0.017"><system-out>* baseUrl
 * check = Rule.execute(&apos;rating&apos;, __row)
 Given &apos;quotes&apos;
 And check.input
@@ -1723,7 +1723,7 @@ request:
   &quot;outOfStateOperations&quot;: false
 }
 
-response time in milliseconds: 0
+response time in milliseconds: 2
 1 &lt; 201 POST http://localhost:8090/quotes
 1 &lt; content-length: 311
 1 &lt; Karate-Mock: true
@@ -1750,7 +1750,7 @@ response time in milliseconds: 0
 }
 
 POST http://localhost:8090/quotes
-201 (0 ms)
+201 (2 ms)
 Then 201
 And response == { id: &apos;#string&apos;, status: &apos;submitted&apos;, submission: &apos;#(check.input)&apos;, premium: null, reason: null, ratingDate: null, policyNumber: null }
 * id = response.id
@@ -1763,7 +1763,7 @@ request:
 2 &gt; Connection: keep-alive
 2 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
-response time in milliseconds: 3
+response time in milliseconds: 7
 2 &lt; 200 POST http://localhost:8090/quotes/Q-100030/rate
 2 &lt; content-length: 316
 2 &lt; Karate-Mock: true
@@ -1790,7 +1790,7 @@ response time in milliseconds: 3
 }
 
 POST http://localhost:8090/quotes/Q-100030/rate
-200 (3 ms)
+200 (7 ms)
 Then 200
 And response.status == check.outcome
 And response.premium == check.output.premium
@@ -1798,7 +1798,7 @@ And response.reason == check.output.reason
 And response.ratingDate == (check.outcome == &apos;declined&apos; ? null : &apos;#string&apos;)
 * check.verify(true, &apos;mock POST /quotes/{id}/rate matches the rating rulebook&apos;)
 </system-out></testcase>
-<testcase classname="checks.rating" name="min-premium-floor - small rural seasoned fleet with safety credit - floored at 390" time="0.011"><system-out>* baseUrl
+<testcase classname="checks.rating" name="min-premium-floor - small rural seasoned fleet with safety credit - floored at 390" time="0.018"><system-out>* baseUrl
 * check = Rule.execute(&apos;rating&apos;, __row)
 Given &apos;quotes&apos;
 And check.input
@@ -1823,7 +1823,7 @@ request:
   &quot;outOfStateOperations&quot;: false
 }
 
-response time in milliseconds: 1
+response time in milliseconds: 2
 1 &lt; 201 POST http://localhost:8090/quotes
 1 &lt; content-length: 308
 1 &lt; Karate-Mock: true
@@ -1850,7 +1850,7 @@ response time in milliseconds: 1
 }
 
 POST http://localhost:8090/quotes
-201 (1 ms)
+201 (2 ms)
 Then 201
 And response == { id: &apos;#string&apos;, status: &apos;submitted&apos;, submission: &apos;#(check.input)&apos;, premium: null, reason: null, ratingDate: null, policyNumber: null }
 * id = response.id
@@ -1863,7 +1863,7 @@ request:
 2 &gt; Connection: keep-alive
 2 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
-response time in milliseconds: 4
+response time in milliseconds: 6
 2 &lt; 200 POST http://localhost:8090/quotes/Q-100031/rate
 2 &lt; content-length: 311
 2 &lt; Karate-Mock: true
@@ -1890,7 +1890,7 @@ response time in milliseconds: 4
 }
 
 POST http://localhost:8090/quotes/Q-100031/rate
-200 (4 ms)
+200 (6 ms)
 Then 200
 And response.status == check.outcome
 And response.premium == check.output.premium
@@ -1898,7 +1898,7 @@ And response.reason == check.output.reason
 And response.ratingDate == (check.outcome == &apos;declined&apos; ? null : &apos;#string&apos;)
 * check.verify(true, &apos;mock POST /quotes/{id}/rate matches the rating rulebook&apos;)
 </system-out></testcase>
-<testcase classname="checks.rating" name="rated-just-under-referral - 19 heavy trucks urban - final premium under 29000" time="0.011"><system-out>* baseUrl
+<testcase classname="checks.rating" name="rated-just-under-referral - 19 heavy trucks urban - final premium under 29000" time="0.018"><system-out>* baseUrl
 * check = Rule.execute(&apos;rating&apos;, __row)
 Given &apos;quotes&apos;
 And check.input
@@ -1963,7 +1963,7 @@ request:
 2 &gt; Connection: keep-alive
 2 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
-response time in milliseconds: 3
+response time in milliseconds: 6
 2 &lt; 200 POST http://localhost:8090/quotes/Q-100032/rate
 2 &lt; content-length: 318
 2 &lt; Karate-Mock: true
@@ -1990,7 +1990,7 @@ response time in milliseconds: 3
 }
 
 POST http://localhost:8090/quotes/Q-100032/rate
-200 (3 ms)
+200 (6 ms)
 Then 200
 And response.status == check.outcome
 And response.premium == check.output.premium
@@ -1998,7 +1998,7 @@ And response.reason == check.output.reason
 And response.ratingDate == (check.outcome == &apos;declined&apos; ? null : &apos;#string&apos;)
 * check.verify(true, &apos;mock POST /quotes/{id}/rate matches the rating rulebook&apos;)
 </system-out></testcase>
-<testcase classname="checks.rating" name="referred-over-threshold - 20 heavy trucks urban - final premium over 29000, referred" time="0.012"><system-out>* baseUrl
+<testcase classname="checks.rating" name="referred-over-threshold - 20 heavy trucks urban - final premium over 29000, referred" time="0.019"><system-out>* baseUrl
 * check = Rule.execute(&apos;rating&apos;, __row)
 Given &apos;quotes&apos;
 And check.input
@@ -2023,7 +2023,7 @@ request:
   &quot;outOfStateOperations&quot;: false
 }
 
-response time in milliseconds: 2
+response time in milliseconds: 1
 1 &lt; 201 POST http://localhost:8090/quotes
 1 &lt; content-length: 310
 1 &lt; Karate-Mock: true
@@ -2050,7 +2050,7 @@ response time in milliseconds: 2
 }
 
 POST http://localhost:8090/quotes
-201 (2 ms)
+201 (1 ms)
 Then 201
 And response == { id: &apos;#string&apos;, status: &apos;submitted&apos;, submission: &apos;#(check.input)&apos;, premium: null, reason: null, ratingDate: null, policyNumber: null }
 * id = response.id
@@ -2063,7 +2063,7 @@ request:
 2 &gt; Connection: keep-alive
 2 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
-response time in milliseconds: 4
+response time in milliseconds: 6
 2 &lt; 200 POST http://localhost:8090/quotes/Q-100033/rate
 2 &lt; content-length: 320
 2 &lt; Karate-Mock: true
@@ -2090,7 +2090,7 @@ response time in milliseconds: 4
 }
 
 POST http://localhost:8090/quotes/Q-100033/rate
-200 (4 ms)
+200 (6 ms)
 Then 200
 And response.status == check.outcome
 And response.premium == check.output.premium
@@ -2098,7 +2098,7 @@ And response.reason == check.output.reason
 And response.ratingDate == (check.outcome == &apos;declined&apos; ? null : &apos;#string&apos;)
 * check.verify(true, &apos;mock POST /quotes/{id}/rate matches the rating rulebook&apos;)
 </system-out></testcase>
-<testcase classname="checks.rating" name="hazmat-carried - hazmat cargo carried - no effect per current guide (FLEET-OQ-001)" time="0.019"><system-out>* baseUrl
+<testcase classname="checks.rating" name="hazmat-carried - hazmat cargo carried - no effect per current guide (FLEET-OQ-001)" time="0.021"><system-out>* baseUrl
 * check = Rule.execute(&apos;rating&apos;, __row)
 Given &apos;quotes&apos;
 And check.input
@@ -2163,7 +2163,7 @@ request:
 2 &gt; Connection: keep-alive
 2 &gt; User-Agent: Apache-HttpClient/5.6.4 (Java/21.0.12.1)
 
-response time in milliseconds: 5
+response time in milliseconds: 6
 2 &lt; 200 POST http://localhost:8090/quotes/Q-100034/rate
 2 &lt; content-length: 314
 2 &lt; Karate-Mock: true
@@ -2190,7 +2190,7 @@ response time in milliseconds: 5
 }
 
 POST http://localhost:8090/quotes/Q-100034/rate
-200 (5 ms)
+200 (6 ms)
 Then 200
 And response.status == check.outcome
 And response.premium == check.output.premium
