@@ -62,6 +62,15 @@ jobs:
         env:
           KARATE_LICENSE_TEXT: ${{ secrets.KARATE_LICENSE }}
 
+      # The container wrote these files as its non-root user; take the tree back so the steps below can read it.
+      - name: Reclaim ownership of the container-written tree
+        if: always()
+        run: |
+          for d in target runs contract .karate; do
+            [ -e "$d" ] && sudo chown -R "$(id -u):$(id -g)" "$d"
+          done
+          true
+
       - name: Publish test results (Checks tab)
         if: always()
         uses: dorny/test-reporter@v1

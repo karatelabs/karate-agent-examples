@@ -64,8 +64,9 @@ it runs off the container image too. All four run on every push and publish thei
 
 ## Reference
 
-- [`openapi-diff/CROSSWALK.md`](openapi-diff/CROSSWALK.md) — every oasdiff check mapped to how `Openapi.diff`, the
-  engine's OpenAPI breaking-change detector, treats the same change: detected, not evaluated, or declined with a reason.
+- [`openapi-diff/CROSSWALK.md`](openapi-diff/CROSSWALK.md) — for teams running oasdiff: what `Openapi.diff`, the
+  engine's OpenAPI breaking-change detector, detects, does not evaluate, and grades differently, with every check's
+  mapping in [`crosswalk.json`](openapi-diff/crosswalk.json).
 
 ## Drive it from your own AI agent (MCP)
 
