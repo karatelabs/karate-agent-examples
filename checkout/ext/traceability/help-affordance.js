@@ -1,20 +1,8 @@
-/*
- * help-affordance.js (D124) — context-sensitive Help from an OFFLINE (file://) report.
- *
- * The shared behaviour behind every report's "?" affordance. A report can't reliably link to the
- * served console (different origin, or no server at all when opened off disk), so a "?" copies its
- * stable help-id slug to the clipboard; the user pastes it into the console Help tab's lookup box to
- * open /help#<id>. This is the ONE implementation reused across the static report surfaces
- * (coverage-report, traceability-report, rule-analysis-report, …) — add it once per page with
- * `<script src="res/help-affordance.js"></script>` (path relative to that page) and drop in a
- * `<button class="k-help-q" onclick="kaCopyHelp('rule.execute')">?</button>` wherever a concept needs help.
- *
- * Self-contained: it injects its own styles + toast, so it does NOT depend on which stylesheet a
- * given report loads. Theme-agnostic colours (work in the report's light/dark via data-theme).
- */
+
+
 (function () {
   if (window.kaCopyHelp) {
-    return; // idempotent — safe if two report bundles include it
+    return;  
   }
 
   var STYLE =

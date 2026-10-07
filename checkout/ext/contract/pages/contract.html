@@ -4,12 +4,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Contract — mock vs provider</title>
-  <!-- theme before paint (no flash); follows the main report's <html data-theme>, else OS preference. -->
+  
   <script>
     (function () {
       try {
-        // 'karate-theme' is the ONE theme key — the served console writes the same one, so this
-        // page follows the console's dark mode (same origin → same localStorage)
+         
+         
         var t = localStorage.getItem('karate-theme');
         if (!t) t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
         document.documentElement.setAttribute('data-theme', t);
@@ -23,20 +23,7 @@
       }
     })();
   </script>
-  <!-- THE one paired-run page shell (D191): always at ext/contract/pages/contract.html — written by
-       Contract.report(); assets sit one level up in ext/contract/, Alpine + the top-nav util at the
-       report root's res/. Every number on it is READ from window.KARATE_PAIR, which is what
-       Contract.read returned — nothing here re-derives a claim (D227f), INCLUDING the headline: the
-       verdict word, its sentence and its chips are minted by PairDigest and rendered identically by the
-       markdown reader.
-
-       THE ORDER IS THE DECISION ORDER, not the order the model reasons in. Answer, then the work the
-       answer implies, then the findings, then the method. Three reviews of the earlier layout said the
-       same thing: about a third of the page was defending itself against misquotation in PROSE, above
-       the answer. The defences are all still here — they are carried by LAYOUT now, which costs the
-       reader nothing: the verdict word is compound so no state renders a bare "matched", the scope
-       travels inside the headline sentence, and an operation nothing tested is a visible grey row rather
-       than a paragraph explaining that absence is not agreement. -->
+  
   <link rel="stylesheet" href="../coverage.css">
   <link rel="stylesheet" href="../contract-report.css">
 </head>
@@ -52,20 +39,16 @@
             onclick="kaCopyHelp('contract')">?</button></div>
       </div>
       <div class="k-head-actions">
-        <!-- the vocabulary this page cannot avoid — leg, rung, admissible, waiver — one click away, and
-             static, so it still answers when the page is opened off a published site or off disk. -->
+        
         <button class="k-gloss-btn" @click="glossaryOpen = true" title="What do these terms mean?">? Glossary</button>
         <span class="k-pill k-warn" x-show="pair.draft" :title="typeof pair.draft === 'string' ? pair.draft : 'exploratory, not project evidence'">DRAFT</span>
         <span class="k-pill k-warn" x-show="rehearsal" :title="rehearsalNote">REHEARSAL</span>
-        <!-- freshness as a PILL while it is fresh: a green box saying nothing is wrong earns a word, not
-             a panel. It expands into a full box (below) the moment it has something to report. -->
+        
         <span class="k-pill k-ok" x-show="freshness.status === 'fresh'" :title="freshness.note">FRESH</span>
       </div>
     </div>
 
-    <!-- THE EMPTY STATE — the ordinary answer for a project that declared contract testing and has not
-         run a comparison yet. A first-class answer rather than an error page: an absence of evidence says
-         nothing about the mock, and the reader is told what to run. -->
+    
     <template x-if="pair.absent">
       <div class="k-notmeasured">
         <span class="k-pill k-warn">NO COMPARISON YET</span>
@@ -79,10 +62,7 @@
       </div>
     </template>
 
-    <!-- ── 1. THE VERDICT ─────────────────────────────────────────────────────────────────────────────
-         The word, its sentence and its chips are all PairDigest's, minted in Java beside the standing
-         rung. A headline computed here would be a second implementation of what a pair means, free to
-         disagree with the verb — which is the one thing D227f forbids. -->
+    
     <template x-if="headline.word">
       <div class="k-shipbanner" :class="stateClass">
         <div class="k-shipverdict">
@@ -99,7 +79,7 @@
       </div>
     </template>
 
-    <!-- ── 2. NEXT — the work this evidence implies, in the order to do it ──────────────────────────── -->
+    
     <template x-if="(pair.actions || []).length">
       <div class="k-next">
         <h2>Next</h2>
@@ -111,10 +91,7 @@
       </div>
     </template>
 
-    <!-- ── 3. THE THREE JUDGEMENTS, named and kept apart ───────────────────────────────────────────────
-         Behaviour, scope and evidence quality are independent, and the earlier layout wove them together
-         until "3 of 4" read as an overall test score. Counts rather than one big percentage: a 100% next
-         to a partial scope is the number a reader over-reads however carefully the page qualifies it. -->
+    
     <div class="k-scorecards" x-show="!pair.absent">
       <div class="k-axiscard">
         <div class="k-axishd"><span class="k-axislabel">Behaviour</span><span class="k-info" @click="openGlossary('outcomes')" title="What counts as a difference?">&#9432;</span></div>
@@ -131,12 +108,10 @@
         <div class="k-axisnum" x-show="coverage.declared != null">
           <span x-text="coverage.exercised"></span><span class="k-axisden" x-text="' / ' + coverage.declared + ' operations'"></span>
         </div>
-        <!-- the claim block omits claimCoverage entirely when no coverage graph was readable, and an
-             unguarded binding rendered "undefined / undefined operations" -->
+        
         <div class="k-axisnum" x-show="coverage.declared == null">not measured</div>
         <div class="k-axisask">How much of the contract did this run compare?</div>
-        <!-- BY NAME. This is the only actionable output of a clean run, and the reader used to have to
-             diff the operation list against their own spec to find out which ones. -->
+        
         <div class="k-axisnote" x-show="(coverage.notexercised || []).length">
           Not tested: <template x-for="(op, oi) in (coverage.notexercised || [])" :key="op"><span><code x-text="op"></code><span x-show="oi < coverage.notexercised.length - 1">, </span></span></template>
         </div>
@@ -156,7 +131,7 @@
       </div>
     </div>
 
-    <!-- freshness gets a full box only when it has something to say — otherwise the pill above carries it -->
+    
     <div class="k-fresh" :class="freshClass" x-show="freshness.status && freshness.status !== 'fresh'">
       <div class="k-fresh-head">
         <span class="k-info" @click="openGlossary('freshness')" title="What does this status mean?">&#9432;</span>
@@ -187,7 +162,7 @@
       <div class="k-sub" x-show="refresh.caution" x-text="refresh.caution"></div>
     </div>
 
-    <!-- the two disclosures that must be read BEFORE the findings -->
+    
     <template x-if="warnings.note">
       <div class="k-warnbox">
         <h2>Warnings</h2>
@@ -212,12 +187,10 @@
       </div>
     </template>
 
-    <!-- ── 4. UNEXPECTED DIFFERENCES — the findings, and the work queue on a red run ─────────────────── -->
+    
     <h2 x-show="!pair.absent">Unexpected differences <span class="k-muted" x-text="'(' + divergences.length + ')'"></span><span
         class="k-info" @click="openGlossary('outcomes')" title="What do the outcome classes mean?">&#9432;</span></h2>
-    <!-- ALL SIX classes, always. The vocabulary is the engine's (Divergence.CLASSES) and the strip is the
-         one place a reader learns what a run can come back as — a zero is a real answer, and hiding it
-         saves a line while costing the reader the shape of the taxonomy. -->
+    
     <div class="k-outcomes" x-show="!pair.absent">
       <template x-for="c in classes" :key="c">
         <button class="k-outcome" :class="[outcomeTile(c), filter === c ? 'k-on' : '', filterable(c) ? '' : 'k-static']"
@@ -263,7 +236,7 @@
       </div>
     </template>
 
-    <!-- ── 5. NOT COMPARED — scenarios that produced no verdict at all ──────────────────────────────── -->
+    
     <template x-if="notMeasured.length">
       <div>
         <h2>Not compared <span class="k-muted" x-text="'(' + notMeasured.length + ')'"></span><span
@@ -276,8 +249,7 @@
           <template x-for="(n, ni) in notMeasured" :key="(n.slug || n.scenario) + '#' + ni">
             <li>
               <b x-text="n.scenario"></b> (<code x-text="n.cause"></code>) &mdash; <span x-text="n.detail"></span>
-              <!-- a preconditionMismatch row's own detail says READ THE DIFFERENCES ON THIS ROW, so the
-                   page may not be the surface that withholds them -->
+              
               <table x-show="(n.differences || []).length">
                 <thead><tr><th>At</th><th>Provider</th><th>Mock</th></tr></thead>
                 <tbody>
@@ -296,7 +268,7 @@
       </div>
     </template>
 
-    <!-- ── 6. EXPECTED DIFFERENCES — the waiver register, under the name a reader recognises ─────────── -->
+    
     <template x-if="(ignored.rules || []).length">
       <div>
         <h2>Expected differences <span class="k-muted" x-text="'(' + (ignored.count || 0) + ')'"></span><span
@@ -327,13 +299,12 @@
       </div>
     </template>
 
-    <!-- ── 7. METHOD AND EVIDENCE — collapsed. Nothing left the page; the rigour is one click away at the
-             moment a reader needs it, instead of ahead of the answer they came for. ──────────────────── -->
+    
     <div class="k-evidencebox" x-show="!pair.absent">
       <button class="k-methodtoggle" @click="method = !method"
               x-text="(method ? '▾ ' : '▸ ') + 'Method and evidence'"></button>
       <div x-show="method">
-        <!-- the quotable claim, in the artifact's own words -->
+        
         <h3 x-show="pair.claimSentence">The claim</h3>
         <blockquote class="k-claim" x-show="pair.claimSentence" x-text="pair.claimSentence"></blockquote>
         <div class="k-sub" x-show="pair.observedClaimSentence">
@@ -342,17 +313,15 @@
         <div class="k-sub" x-show="claim.note" x-text="claim.note"></div>
         <div class="k-qual" x-show="claim.standing" x-text="claim.standing"></div>
 
-        <!-- what the mock-header check established, and what it cannot -->
+        
         <h3 x-show="pair.rehearsalCheck">Provider identity</h3>
         <div class="k-sub" x-show="pair.rehearsalCheck" x-text="pair.rehearsalCheck"></div>
 
-        <!-- freshness mechanics, when the pill above is all the reader saw -->
+        
         <h3 x-show="freshness.status === 'fresh'">Freshness</h3>
         <div class="k-sub" x-show="freshness.status === 'fresh'" x-text="freshness.note"></div>
 
-        <!-- THE LADDER. It renders the STANDING rung (`pair.rung`), never the mint-time one: a decayed
-             pair holds no rung at all, and a renderer reaching past that to `claim.rungs.aggregate` would
-             put a withdrawn claim back in the one slot a reader quotes. -->
+        
         <template x-if="standing.name">
           <div>
             <h3 x-show="!withdrawn">Rung &mdash; <span x-text="standing.name"></span><span x-show="standing.rung != null"> (<span x-text="standing.rung"></span> of 4)</span></h3>
@@ -373,8 +342,7 @@
               <div class="k-qual" x-show="!withdrawn && standing[k]" x-text="standing[k]"></div>
             </template>
             <div class="k-qual" x-show="!withdrawn && (standing.waivedBars || []).length">
-              <!-- waivedBars entries are MAPS ({bar, item, reason, owner}); joining them raw printed
-                   "[object Object]" on the one disclosure that most has to read cleanly -->
+              
               This rung rests on a waived bar: <span x-text="(standing.waivedBars || []).map(function (w) { return w && w.bar ? w.bar : w; }).join(', ')"></span>
             </div>
 
@@ -396,15 +364,14 @@
                         <td>
                           <span class="k-pill" :class="b.held ? (b.waived ? 'k-warn' : 'k-ok') : 'k-no'"
                                 x-text="b.held ? (b.waived ? 'waived' : 'yes') : 'no'"></span>
-                          <!-- a bar stood down is a WAIVER: the reason and the owner travel with it, or the
-                               rung reads as resting on evidence it does not rest on -->
+                          
                           <div class="k-sub" x-show="b.waived">
                             <span x-text="b.waived && b.waived.reason"></span> &mdash;
                             <span x-text="b.waived && b.waived.owner"></span>
                           </div>
                           <div class="k-sub" x-show="!b.held && b.note" x-text="b.note"></div>
                         </td>
-                        <!-- `0 of 0` reads NOT CHECKED here as everywhere else: the count IS the bar -->
+                        
                         <td class="k-muted" x-text="b.counted"></td>
                       </tr>
                     </template>
@@ -415,7 +382,7 @@
           </div>
         </template>
 
-        <!-- provenance: what this pair is about, and where the bytes are -->
+        
         <h3>Run details</h3>
         <div class="k-idstrip">
           <span><b x-text="pair.pairId"></b></span>
@@ -433,7 +400,7 @@
       </div>
     </div>
 
-    <!-- the glossary overlay — static, page-owned, and the reason the page can afford to be terse -->
+    
     <div class="k-overlay" x-show="glossaryOpen" @click.self="glossaryOpen = false" x-transition.opacity>
       <div class="k-modal" role="dialog" aria-label="Glossary">
         <div class="k-modal-head">
@@ -475,8 +442,7 @@
   <script src="../contract-data.js"></script>
   <script src="../contract-report.js"></script>
   <script src="../../../res/alpine.min.js" defer></script>
-  <!-- shared report top-nav via the core KarateReport util — the Coverage/Traceability siblings appear
-       only when they were really published beside this page (the writer stamps the hrefs). -->
+  
   <script src="../../../res/karate-report.js"></script>
   <script>
     (function () {
