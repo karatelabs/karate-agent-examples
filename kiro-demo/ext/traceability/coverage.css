@@ -84,6 +84,14 @@
 .k-coverage-ext .k-warn { background: var(--k-warn-bg); color: var(--k-warn-fg); }
 .k-coverage-ext .k-sim { background: var(--k-sim-bg); color: var(--k-sim-fg); }   /* oracle-only (D194) — indigo */
 .k-coverage-ext .k-tag { display: inline-block; font-size: 11px; color: var(--k-tag-fg); background: var(--k-tag-bg); border-radius: 4px; padding: 1px 6px; margin: 0 4px 4px 0; }
+/* the execution history under a test line (D314) */
+.k-coverage-ext .k-hist-caret { cursor: pointer; font-size: 9px; }
+.k-coverage-ext .k-history { margin: 2px 0 8px 20px; padding-left: 10px; border-left: 2px solid var(--k-border); }
+.k-coverage-ext .k-hist-row { font-size: 12px; }
+.k-coverage-ext .k-hist-row.k-hist-current { font-weight: 600; }
+.k-coverage-ext .k-hist-t { color: var(--k-muted); font-variant-numeric: tabular-nums; white-space: nowrap; }
+.k-coverage-ext .k-hist-why { margin-left: auto; }
+.k-coverage-ext .k-provisional { color: var(--k-muted); font-style: italic; }
 /* error-path (outcome) chips, D228b — seen is NEUTRAL (a fact of the wire, not a grade); "never" is the
    finding (a declared response code no run produced); happy-only is the amber worklist marker. */
 .k-coverage-ext .k-status-seen { display: inline-block; font-size: 10.5px; font-weight: 600; color: var(--k-tag-fg); background: var(--k-tag-bg); border-radius: 4px; padding: 1px 5px; margin: 0 3px 2px 0; }

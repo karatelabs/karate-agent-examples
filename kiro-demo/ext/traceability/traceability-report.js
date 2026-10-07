@@ -1,5 +1,5 @@
 /*
- * karate-max enterprise traceability report (Track-2, K-RTM / D75) — the Alpine.js component for the
+ * karate-max enterprise traceability report (D75) — the Alpine.js component for the
  * confidence-to-ship scorecard + the Requirements Traceability Matrix + the glossary overlay. Reads
  * window.KARATE_TRACE = { graph, readiness, requirements } (inlined as a <script> data tag, so it works
  * off file://). The risk verdict + provenance come pre-computed from the Java engine (one source of
@@ -72,7 +72,7 @@ document.addEventListener('alpine:init', function () {
             if (hay.indexOf(q) < 0) return false;
           }
           return true;
-        }).map(function (r) { r.risk = risk[r.reqId] || self.riskFor(r.criticality || 'medium', r.status, r.oracleOnly); return r; });
+        }).map(function (r) { r.risk = risk[r.reqId] || self.riskOf(r); return r; });
         if (this.sortKey) {
           var k = this.sortKey, d = this.sortDir;
           out = out.slice().sort(function (a, b) {
@@ -97,7 +97,7 @@ document.addEventListener('alpine:init', function () {
           case 'risk': return this.riskOrder.indexOf(r.risk);
           case 'provenance': return this.provOrder.indexOf(this.prov(r));
           case 'posture': return String(r.posture || '');
-          case 'tests': return (r.tests || []).length;
+          case 'tests': return this.testsOf(r).length;
           case 'accept': var n = this.acceptOf(r).length; return n ? this.acceptCovered(r) / n : -1;
           default: return 0;
         }
@@ -106,8 +106,8 @@ document.addEventListener('alpine:init', function () {
 
       // ---- the unified 3-source strip ----
       // covered/total/percentage come straight from the baked per-source summary, which counts LEAF
-      // items (the engine excludes acceptance-criterion sub-items + non-leaf epics/features — D75 /
-      // C-foundation 2c), so the requirements tile already agrees with the matrix + scorecard. We only
+      // items (the engine excludes acceptance-criterion sub-items + non-leaf epics/features — D75),
+      // so the requirements tile already agrees with the matrix + scorecard. We only
       // add the unit word for clarity ("1/4 requirements", "12/20 endpoints").
       srcUnit: function (s) { return { req: 'requirements', openapi: 'endpoints', grpc: 'methods', rules: 'rules' }[s.type] || 'items'; },
       // hollow green (D194): reqs the per-source summary counts covered but the engine still grades at
@@ -125,14 +125,15 @@ document.addEventListener('alpine:init', function () {
       // (the per-source combination sub-stat is retired from the RTM tile — that depth lives on the
       // Coverage report's scorecard + Input Coverage, one click away via "See tested-depth & gaps", D181.)
       // the risk-matrix cell (mirrors RequirementReadiness.risk — the cells the engine uses)
-      riskFor: function (c, s, oracleOnly) {
-        if (s === 'COVERED' && !oracleOnly) return 'NONE';
+      riskFor: function (c, s, hollow) {
+        if (s === 'COVERED' && !hollow) return 'NONE';
         var failing = s === 'FAILING';
         if (c === 'high') return 'HIGH';
         if (c === 'low') return failing ? 'MEDIUM' : 'LOW';
         return failing ? 'HIGH' : 'MEDIUM';
       },
-      riskOf: function (r) { return this.riskFor(r.criticality || 'medium', r.status, r.oracleOnly); },
+      // D311: notasserted joins the hollow-green condition of the cell, like every other flavour
+      riskOf: function (r) { return this.riskFor(r.criticality || 'medium', r.status, r.oracleOnly || r.refusalOnly || r.modelOnly || r.notasserted); },
       // the engine's per-requirement risk (authoritative), falling back to the static matrix cell
       memberRisk: function (r) { return this.riskById[r.reqId] || this.riskOf(r); },
       // hollow green (D194): a COVERED requirement the engine still grades at risk
@@ -157,7 +158,7 @@ document.addEventListener('alpine:init', function () {
       heatTitle: function (cr, st) {
         var t = cr + ' × ' + st + ' → ' + this.riskFor(cr, st) + ' risk';
         var h = this.heatHollow(cr, st);
-        return h ? t + ' — includes ' + h + ' COVERED-but-rules-only, graded as not covered (see Blockers)' : t;
+        return h ? t + ' — includes ' + h + ' covered but unchecked (oracle-only, refusal-only or notasserted), graded as not covered (see Blockers)' : t;
       },
       setFilter: function (cr, st) {
         this.critFilter = (this.critFilter === cr && this.statusFilter === st) ? '' : cr;
@@ -168,12 +169,23 @@ document.addEventListener('alpine:init', function () {
         return this.reqs.filter(function (r) { return self.prov(r) === p; }).length;
       },
       // "looks green, but isn't really": COVERED yet credited only incidentally (no @req= intent anchor),
-      // or vouched for by nothing but the rulebook itself (oracleOnly)
+      // or vouched for by nothing but the rulebook itself (oracleOnly / refusalOnly) or a model checker
+      // (modelOnly), or checked by nothing at all (notasserted)
       get trustGaps() {
         var self = this;
         return this.reqs.filter(function (r) {
-          return r.status === 'COVERED' && (self.prov(r) === 'incidental' || r.oracleOnly);
+          return r.status === 'COVERED' && (self.prov(r) === 'incidental' || r.oracleOnly || r.refusalOnly || r.modelOnly || r.notasserted);
         });
+      },
+      // the assertion-strength census riding the result (D311); absent ⇒ the line is not rendered
+      get assertionStrength() {
+        return this.data.assertionStrength
+          || (this.readiness && this.readiness.assertionStrength)
+          || (this.data.runEvidence && this.data.runEvidence.assertionStrength) || null;
+      },
+      strengthLine: function () {
+        var a = this.assertionStrength;
+        return a ? (a.graded || 0) + ' graded · ' + (a.ungraded || 0) + ' ungraded · ' + (a.notasserted || 0) + ' notasserted' : '';
       },
 
       readySub: function () {
@@ -234,6 +246,12 @@ document.addEventListener('alpine:init', function () {
         return (this.graph.tests || []).find(function (t) { return t.id === slug; }) || {};
       },
       testStatus: function (slug) { return this.testNode(slug).status || ''; },
+      // D311: the grade is a fact about the test. Absent = ungraded (the run proved no capture), never 0;
+      // negative = not green, so not applicable — both render nothing.
+      assertedOf: function (slug) {
+        var p = this.testNode(slug).assertedProportion;
+        return (p === undefined || p === null || p < 0) ? '' : 'asserted ' + p;
+      },
       testName: function (slug) {
         var n = this.testNode(slug).name;
         if (n) return n;
@@ -257,6 +275,53 @@ document.addEventListener('alpine:init', function () {
         }
         return t.featureHtml || '';
       },
+
+      // ---- execution history: every execution of a test's key in scope, latest first; the selected one is
+      // the row's verdict and every other one says why it is not (the selection's own reasons) ----
+      histOpen: {},
+      histToggle: function (id) { this.histOpen[id] = !this.histOpen[id]; },
+      histIsOpen: function (id) { return !!this.histOpen[id]; },
+      historyOf: function (slug) {
+        return (this.graph.executions || []).filter(function (e) { return e.test === slug; })
+          .sort(function (a, b) { return (b.startedAt || 0) - (a.startedAt || 0) || String(b.id).localeCompare(String(a.id)); });
+      },
+      // the viewer's local time, zone named — a run at 05:20 UTC reads as the hour the viewer lived it
+      execTime: function (e) {
+        if (!e.startedAt) return '';
+        var d = new Date(e.startedAt), p = function (n) { return (n < 10 ? '0' : '') + n; }, zone = '';
+        try {
+          zone = new Intl.DateTimeFormat(undefined, { timeZoneName: 'short' }).formatToParts(d)
+            .filter(function (x) { return x.type === 'timeZoneName'; }).map(function (x) { return x.value; })[0] || '';
+        } catch (err) { zone = ''; }
+        return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':'
+          + p(d.getMinutes()) + ':' + p(d.getSeconds()) + (zone ? ' ' + zone : '');
+      },
+      // a requirement's covering tests by graph id — `tests` is display labels, never a key
+      testsOf: function (r) { return r.testIds || r.tests || []; },
+      execStatus: function (e) { return { passed: 'PASSED', failed: 'FAILED' }[e.outcome] || 'SKIPPED'; },
+      execGrade: function (e) {
+        var p = e.assertedProportion;
+        return (p === undefined || p === null || p < 0) ? '' : 'asserted ' + p;
+      },
+      execProv: function (e) {
+        var p = e.provenance || {};
+        return ['build', 'env', 'origin'].filter(function (k) { return p[k]; }).map(function (k) { return k + ' ' + p[k]; });
+      },
+      // the run's own report, served beside the screenshots; stamped only where the file exists
+      execReportHref: function (e) {
+        var r = e.artifacts && e.artifacts.report;
+        return r && this.runsBase ? this.runsBase + r : '';
+      },
+      hasFinding: function (e, kind) { return (e.findings || []).some(function (f) { return f.kind === kind; }); },
+      execWhy: function (e) {
+        if (e.selected) return 'current';
+        if (e.retired) return 'retired';
+        if (e.lifecycle === 'running') return this.hasFinding(e, 'unfinalizedRun') ? 'unfinalized' : 'pending';
+        if (e.supersededBy) return 'superseded';
+        return 'not selected';
+      },
+      execWhyClass: function (e) { return { current: 'k-ok', pending: 'k-warn', unfinalized: 'k-warn' }[this.execWhy(e)] || 'k-tag'; },
+      get provisional() { return !!this.data.provisional; },
 
       // A1 (D168): a requirement id may carry an external-tracker namespace (`ado:3`, `jira:AUTH-1`).
       // `links` is a resolved { authority: urlTemplate } map (the `{id}` placeholder is substituted) —
@@ -311,7 +376,7 @@ document.addEventListener('alpine:init', function () {
           lines.push([
             r.reqId, r.title || r.name || '', r.type || '', r.status || '',
             r.criticality || 'medium', r.risk || '', self.prov(r), r.posture || '',
-            (r.tests || []).length, self.acceptOf(r).length ? (self.acceptCovered(r) + '/' + self.acceptOf(r).length) : ''
+            self.testsOf(r).length, self.acceptOf(r).length ? (self.acceptCovered(r) + '/' + self.acceptOf(r).length) : ''
           ].map(self.csvCell).join(','));
         });
         var blob = new Blob([lines.join('\r\n')], { type: 'text/csv;charset=utf-8' });
@@ -367,13 +432,13 @@ document.addEventListener('alpine:init', function () {
       // too); a cell = that test's own status where it verifies the requirement. Column → source via
       // the same testHref deep link as the drill-down.
       get gridTests() {
-        var seen = {}, out = [];
+        var self = this, seen = {}, out = [];
         this.rows.forEach(function (r) {
-          (r.tests || []).forEach(function (t) { if (!seen[t]) { seen[t] = true; out.push(t); } });
+          self.testsOf(r).forEach(function (t) { if (!seen[t]) { seen[t] = true; out.push(t); } });
         });
         return out;
       },
-      covers: function (r, slug) { return (r.tests || []).indexOf(slug) >= 0; },
+      covers: function (r, slug) { return this.testsOf(r).indexOf(slug) >= 0; },
 
       // ---- T2: gaps & drift — the "find what's missing" worklist (all off the inlined graph) ----
       // uncovered leaf requirements, regardless of criticality (blockers shows only the high-risk cut)
@@ -395,7 +460,7 @@ document.addEventListener('alpine:init', function () {
       // drift: linked to tests yet never exercised — declared/claimed coverage that no run backs (§2f)
       get gapDrift() {
         var self = this;
-        return this.reqs.filter(function (r) { return (r.tests || []).length > 0 && self.prov(r) === 'notexercised'; });
+        return this.reqs.filter(function (r) { return self.testsOf(r).length > 0 && self.prov(r) === 'notexercised'; });
       },
       // orphan tests: test nodes with no hit on ANY item (cross-source — a test lighting only openapi
       // endpoints is not an orphan)
@@ -471,7 +536,9 @@ document.addEventListener('alpine:init', function () {
             { t: 'partexercised', cls: 'k-warn', d: 'Some criteria ran (or a direct test ran) while other criteria remain untested.' },
             { t: 'incidental', cls: 'k-warn', d: 'Credited because a realizing artifact (@real=) was observed, but with NO @req= intent anchor — counted and flagged. "Looks covered, but nothing claims to verify it on purpose."' },
             { t: 'notexercised', cls: 'k-tag', d: 'No real eval evidence — claimed but never run, or not covered at all.' },
-            { t: 'rules only', cls: 'k-sim', d: 'Covered, but every piece of evidence is the rulebook\'s own — a calc.req hit or a Rule.cover projection. The rules realize it; nothing outside them checked it. Add a @req=-tagged test, or stamp the comparison with Rule.execute(…).verify(ok).' }
+            { t: 'rules only', cls: 'k-sim', d: 'Covered, but every piece of evidence is the rulebook\'s own — a calc.req hit or a Rule.cover projection. The rules realize it; nothing outside them checked it. Add a @req=-tagged test, or stamp the comparison with Rule.execute(…).verify(ok).' },
+            { t: 'refusal only', cls: 'k-sim', d: 'Narrower still: every hit is a reject row the rulebook\'s shape refused. That proves those rows are refused, not that the behaviour the criterion describes works. Add a scenario whose calc.req reaches it, or a test.' },
+            { t: 'notasserted', cls: 'k-sim', d: 'Covered, but every graded passing test asserts nothing — the green certifies traffic, not checking. A match that locks a value or a shape clears it. Graded down on readiness like the other hollow greens.' }
           ]
         },
         {

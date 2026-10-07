@@ -39,6 +39,7 @@
         type="button" class="k-help-q"
         title="What do these grades mean? Copy the help-id — paste it into the Help tab or your AI chat"
         onclick="kaCopyHelp('model.coverage.status')">?</button></div>
+    <div class="k-sub k-provisional" x-show="provisional" title="the run that wrote this is still settling its evidence; the settle replaces it">provisional &mdash; evidence not yet finalized</div>
 
     <!-- Confidence-to-ship banner (Part 1) — the CANONICAL release-readiness verdict (the same one the
          Traceability report shows; computed once, in Java). Omitted when the project has no requirements. -->
@@ -53,14 +54,19 @@
           <!-- the green chip counts only GENUINELY covered reqs — a rules-only (hollow-green, D194) req
                sits in its indigo chip instead, never in the green, so the chips can't out-green the verdict -->
           <span class="k-shipcount k-ok" title="tested &amp; passed, verified outside the rulebook"
-                x-text="(readyStatusCounts().COVERED - oracleOnlyCount) + ' covered'"></span>
+                x-text="(readyStatusCounts().COVERED - oracleOnlyCount - notassertedCount) + ' covered'"></span>
           <span class="k-shipcount k-no" x-show="readyStatusCounts().FAILING > 0" x-text="readyStatusCounts().FAILING + ' failing'"></span>
           <span class="k-shipcount k-sim" x-show="oracleOnlyCount > 0"
                 title="the rules realize it, but nothing outside the rulebook checked it"
                 x-text="oracleOnlyCount + ' rules only'"></span>
+          <span class="k-shipcount k-sim" x-show="notassertedCount > 0"
+                title="covered by tests that assert nothing — a lock on a value or shape clears it"
+                x-text="notassertedCount + ' notasserted'"></span>
           <span class="k-shipcount k-warn" x-text="(readyStatusCounts().NOTRUN + readyStatusCounts().NOTCOVERED) + ' not tested'"></span>
           <a class="k-shiplink" :href="traceabilityHref" x-show="hasTraceability">See full risk view &rarr;</a>
           <span class="k-shiphint" x-show="!hasTraceability" title="requirement-level risk detail lives in the Traceability report">requirement-level detail in the Traceability report</span>
+          <span class="k-shiphint" x-show="assertionStrength" x-text="'assertions · ' + strengthLine()"
+                title="how strongly the passing tests check — not measured: the field fraction, where the expected value came from, which hit an assertion was about"></span>
         </div>
       </div>
     </template>
@@ -139,7 +145,12 @@
                    untouched and the ship banner is not split by it — a mock is a legitimate stand-in.
                    Absence means nothing, so this chip only ever appears, never certifies the opposite. -->
               <template x-if="it.mockOnly"><span class="k-mock" title="exercised only against a karate mock — the traffic was real, the responder was a stand-in we started">mock</span></template>
-              <template x-if="it.oracleOnly && it.status === 'COVERED'"><span class="k-rulesonly" title="the rules realize it, but nothing outside the rulebook checked it — add a test that exercises it">rules only</span></template>
+              <!-- D307d: refusal-only is the narrower claim, so it gets its own label — folded under
+                   "rules only" it reads as "the rules checked the behaviour", which no reject row did -->
+              <template x-if="it.refusalOnly && it.status === 'COVERED'"><span class="k-rulesonly" title="covered only by reject rows the rulebook's shape refused — that proves those rows are refused, not that the behaviour works">refusal only</span></template>
+              <template x-if="it.oracleOnly && !it.refusalOnly && it.status === 'COVERED'"><span class="k-rulesonly" title="the rules realize it, but nothing outside the rulebook checked it — add a test that exercises it">rules only</span></template>
+              <!-- D311: a disclosure beside the others, never a status — each of them may hold at once -->
+              <template x-if="it.notasserted && it.status === 'COVERED'"><span class="k-rulesonly" title="covered by tests that assert nothing — a lock on a value or shape clears it">notasserted</span></template>
             </td>
             <td>
               <template x-for="t in (it.tags || [])" :key="t"><span class="k-tag" x-text="t"></span></template>
@@ -189,6 +200,43 @@
                       <template x-if="h.confidence"><span class="k-tag" x-text="h.confidence"></span></template>
                       <span x-text="hitLabel(h)"></span>
                       <span class="k-muted">&rarr; <span x-text="testName(h.test)"></span></span>
+                      <span class="k-tag" x-show="assertedOf(h.test)" x-text="assertedOf(h.test)"
+                            title="how strongly this test checks — 0 asserts nothing · 0.5 weak or unmeasured · 1 a locked value or shape"></span>
+                    </div>
+                  </template>
+                </div>
+              </template>
+              <!-- the tests behind the hits, each expanding into its execution history: time · outcome ·
+                   grade · lane · provenance · report · why not selected -->
+              <template x-if="testsOf(it).length">
+                <div>
+                  <h4>Executions</h4>
+                  <template x-for="t in testsOf(it)" :key="t">
+                    <div>
+                      <div class="k-line">
+                        <span class="k-caret k-hist-caret" :class="histIsOpen(t) && 'k-open'" x-show="historyOf(t).length"
+                              @click.stop="histToggle(t)" :title="historyOf(t).length + ' execution(s) — every run of this test, and which one the item believes'">&#9654;</span>
+                        <span class="k-pill" :class="statusClass(outcomeStatus(testStatus(t)))" :title="testStatus(t)" x-text="statusIcon(outcomeStatus(testStatus(t)))"></span>
+                        <span x-text="testName(t)"></span>
+                        <span class="k-tag" x-show="assertedOf(t)" x-text="assertedOf(t)"
+                              title="how strongly this test checks — 0 asserts nothing · 0.5 weak or unmeasured · 1 a locked value or shape"></span>
+                        <span class="k-muted" x-show="historyOf(t).length > 1" x-text="historyOf(t).length + ' runs'"></span>
+                      </div>
+                      <div class="k-history" x-show="histIsOpen(t)">
+                        <template x-for="e in historyOf(t)" :key="e.id">
+                          <div class="k-line k-hist-row" :class="e.selected && 'k-hist-current'">
+                            <span class="k-pill" :class="statusClass(outcomeStatus(execStatus(e)))" :title="'outcome: ' + e.outcome" x-text="statusIcon(outcomeStatus(execStatus(e)))"></span>
+                            <span class="k-hist-t" x-text="execTime(e) || '—'"></span>
+                            <span x-text="e.outcome"></span>
+                            <span class="k-tag" x-show="execGrade(e)" x-text="execGrade(e)"></span>
+                            <span class="k-tag" x-text="e.lane"></span>
+                            <template x-for="p in execProv(e)" :key="p"><span class="k-tag" x-text="p"></span></template>
+                            <a x-show="execReportHref(e)" :href="execReportHref(e)" target="_blank" rel="noopener" @click.stop x-text="e.runId" title="the run's report"></a>
+                            <span class="k-muted" x-show="!execReportHref(e)" x-text="e.runId"></span>
+                            <span class="k-pill k-hist-why" :class="execWhyClass(e)" x-text="execWhy(e)"></span>
+                          </div>
+                        </template>
+                      </div>
                     </div>
                   </template>
                 </div>
