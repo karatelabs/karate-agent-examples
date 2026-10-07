@@ -20,14 +20,14 @@ document.addEventListener('alpine:init', function () {
       glossaryOpen: false,
       // the six outcome classes, in the order Divergence.CLASSES declares them (the vocabulary is the
       // engine's — this page never invents a seventh, and never quietly drops one that came back zero)
-      classes: ['agreed', 'staleMock', 'mockBug', 'unassertedDivergence', 'agreedFailure', 'notMeasured'],
+      classes: ['agreed', 'staleMock', 'mockBug', 'notassertedDivergence', 'agreedFailure', 'notmeasured'],
 
       // THE HEADLINE IS THE VERB'S. state, word, sentence and chips are minted by PairDigest and read
       // here — a verdict computed in the browser would be a second implementation of what a pair means
       // (D227f), and the markdown reader renders the identical block.
       get headline() { return this.pair.headline || {}; },
       get stateClass() {
-        return { matched: 'k-sc-ready', diverged: 'k-sc-block', notMeasured: 'k-sc-conditional',
+        return { matched: 'k-sc-ready', diverged: 'k-sc-block', notmeasured: 'k-sc-conditional',
           withdrawn: 'k-sc-conditional' }[this.headline.state] || 'k-sc-conditional';
       },
       get subtitle() {
@@ -104,28 +104,28 @@ document.addEventListener('alpine:init', function () {
 
       // a divergence row's PILL — every class gets a colour, including the neutral one
       outcomeClass: function (c) {
-        return { agreed: 'k-ok', agreedFailure: 'k-warn', notMeasured: 'k-tagpill',
-          staleMock: 'k-no', mockBug: 'k-no', unassertedDivergence: 'k-warn' }[c] || 'k-tagpill';
+        return { agreed: 'k-ok', agreedFailure: 'k-warn', notmeasured: 'k-tagpill',
+          staleMock: 'k-no', mockBug: 'k-no', notassertedDivergence: 'k-warn' }[c] || 'k-tagpill';
       },
-      // a COUNT tile's tint — deliberately not the pill map: `notMeasured` takes no tint at all, because a
+      // a COUNT tile's tint — deliberately not the pill map: `notmeasured` takes no tint at all, because a
       // filled tile reads as a selected one, and this strip is also the filter
       outcomeTile: function (c) {
         return { agreed: 'k-ok', agreedFailure: 'k-warn',
-          staleMock: 'k-no', mockBug: 'k-no', unassertedDivergence: 'k-warn' }[c] || '';
+          staleMock: 'k-no', mockBug: 'k-no', notassertedDivergence: 'k-warn' }[c] || '';
       },
       // THE LABELS TRANSLATE THE MODEL, they do not rename it: the payload keys stay `staleMock`,
-      // `unassertedDivergence`, `notexercised`, and a reader who wants them has them in the artifact and
+      // `notassertedDivergence`, `notexercised`, and a reader who wants them has them in the artifact and
       // in the tile's own tooltip. An identifier shown as a label makes a reader learn a taxonomy before
       // they learn anything.
       label: function (c) {
         return { agreed: 'matched', staleMock: 'mock is out of date', mockBug: 'mock is wrong',
-          unassertedDivergence: 'difference the suite does not check',
-          agreedFailure: 'both legs failed', notMeasured: 'not compared' }[c] || c;
+          notassertedDivergence: 'difference the suite does not check',
+          agreedFailure: 'both legs failed', notmeasured: 'not compared' }[c] || c;
       },
       // which classes are actually IN `divergences` — the only ones a filter over it can select. The other
       // three are counted from the same source but live elsewhere, so their tiles do not pretend to filter.
       filterable: function (c) {
-        return c === 'staleMock' || c === 'mockBug' || c === 'unassertedDivergence';
+        return c === 'staleMock' || c === 'mockBug' || c === 'notassertedDivergence';
       },
       // the tooltip keeps the MODEL's identifier beside the reader's label, so translating the surface
       // never costs a reader the vocabulary the artifact and the skill use
@@ -134,10 +134,10 @@ document.addEventListener('alpine:init', function () {
           agreed: 'identical on both legs, at the verdict layer AND the response layer',
           staleMock: 'the mock passed and the provider failed. The mock is behind the provider',
           mockBug: 'the provider passed and the mock failed',
-          unassertedDivergence: 'both legs passed and the responses differ. The suite does not assert '
+          notassertedDivergence: 'both legs passed and the responses differ. The suite does not assert '
             + 'the field that differs',
           agreedFailure: 'both legs failed. That is agreement about behaviour, not a finding about the mock',
-          notMeasured: 'no verdict about behaviour was produced. Causes: an environment failure, a '
+          notmeasured: 'no verdict about behaviour was produced. Causes: an environment failure, a '
             + 'skipped leg, a failed precondition probe, a read over ambient state, or a divergence that '
             + 'did not reproduce'
         }[c] || '';
@@ -201,7 +201,7 @@ document.addEventListener('alpine:init', function () {
             { t: 'matched', cls: 'k-ok', d: 'Identical on both legs, at the verdict layer and at the response layer. (agreed)' },
             { t: 'mock is out of date', cls: 'k-no', d: 'The mock passed and the provider failed. The mock is behind the provider. (staleMock)' },
             { t: 'mock is wrong', cls: 'k-no', d: 'The provider passed and the mock failed. (mockBug)' },
-            { t: 'difference the suite does not check', cls: 'k-warn', d: 'Both legs passed and the responses still differ. A finding about your suite: it does not assert the field that differs. (unassertedDivergence)' },
+            { t: 'difference the suite does not check', cls: 'k-warn', d: 'Both legs passed and the responses still differ. A finding about your suite: it does not assert the field that differs. (notassertedDivergence)' },
             { t: 'both legs failed', cls: 'k-warn', d: 'Both legs failed. Agreement about behaviour, not a finding about the mock. (agreedFailure)' },
             { t: 'not compared', cls: 'k-tagpill', d: 'No verdict was produced: an environment failure, a skipped leg, an unequal starting state, a read over ambient data, or a difference that did not reproduce. It is not zero and it is not agreement. (notMeasured)' }
           ]
