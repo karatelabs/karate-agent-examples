@@ -1,5 +1,5 @@
 /*
- * karate-max standalone coverage report (Track-2) — the Alpine.js component doing the reactive
+ * karate-max standalone coverage report — the Alpine.js component doing the reactive
  * heavy lifting (filter by source/status/text, expandable drill-down). Reads the karate-trace/v1
  * graph from window.KARATE_COVERAGE_DATA (inlined as a <script> data tag, so it works off file://,
  * loaded from disk and never over the network). Vanilla helpers where they read clearer.
@@ -22,7 +22,7 @@ document.addEventListener('alpine:init', function () {
       get karateSummary() { return this.data.karateSummary || ''; },
 
       // Rule Coverage (MODEL §Glossary/§6) — the decision ARM is the coverable item (the analog of an API
-      // operation): per rulebook, every arm with its status (used · notused · unreached) + scenario count.
+      // operation): per rulebook, every arm with its status (used · notused · notreached) + scenario count.
       // The % is over the FULL arm universe (total), so a dead/unreached arm honestly caps coverage below
       // 100% (fix = remove the dead branch). Its own section, never conflated with the requirement RTM rows.
       get ruleCoverage() { return this.data.ruleCoverage || []; },
@@ -32,7 +32,7 @@ document.addEventListener('alpine:init', function () {
       // arms ordered for display: the gaps first (NOT USED, then NOT REACHED), then USED — the eye lands on
       // what's missing; within a status, by source line, true-arm before false-arm.
       ruleArms: function (r) {
-        var rank = { notused: 0, unreached: 1, used: 2 };
+        var rank = { notused: 0, notreached: 1, used: 2 };
         return (r.arms || []).slice().sort(function (a, b) {
           var d = (rank[a.status] === undefined ? 9 : rank[a.status]) - (rank[b.status] === undefined ? 9 : rank[b.status]);
           if (d !== 0) return d;
@@ -41,7 +41,7 @@ document.addEventListener('alpine:init', function () {
         });
       },
       armBadge: function (s) { return s === 'used' ? 'CHECKED' : s === 'notused' ? 'NOT CHECKED' : 'UNREACHABLE'; },
-      armClass: function (s) { return s === 'used' ? 'k-arm-used' : s === 'notused' ? 'k-arm-notused' : 'k-arm-unreached'; },
+      armClass: function (s) { return s === 'used' ? 'k-arm-used' : s === 'notused' ? 'k-arm-notused' : 'k-arm-notreached'; },
       // how many arms carry no calc.label — the report doubles as a "where a calc.label would read clearer" guide.
       ruleUnlabeled: function (r) { return (r.arms || []).filter(function (a) { return !a.label; }).length; },
 
@@ -70,7 +70,29 @@ document.addEventListener('alpine:init', function () {
       // covered, but only the rulebook vouches (§2c) — surfaced beside the split, never folded into green
       get oracleOnlyCount() {
         return ((this.readiness && this.readiness.requirements) || [])
-          .filter(function (r) { return r.oracleOnly && r.coverage === 'COVERED'; }).length;
+          .filter(function (r) { return (r.oracleOnly || r.refusalOnly || r.modelOnly) && r.coverage === 'COVERED'; }).length;
+      },
+      // the narrowest of those (D307): the only evidence is the shape refusing what the criterion named.
+      // A subset of the count above — never its own segment, or the green would be counted twice.
+      get refusalOnlyCount() {
+        return ((this.readiness && this.readiness.requirements) || [])
+          .filter(function (r) { return r.refusalOnly && r.coverage === 'COVERED'; }).length;
+      },
+      // covered, but every graded passing test asserts nothing (D311) — its own hollow-green flavour,
+      // split out of the green beside the rules-only one so the chips can never sum past the total
+      get notassertedCount() {
+        return ((this.readiness && this.readiness.requirements) || [])
+          .filter(function (r) { return r.notasserted && !r.oracleOnly && !r.refusalOnly && !r.modelOnly && r.coverage === 'COVERED'; }).length;
+      },
+      // the assertion-strength census riding the result (D311); absent ⇒ the line is not rendered
+      get assertionStrength() {
+        return this.data.assertionStrength
+          || (this.readiness && this.readiness.assertionStrength)
+          || (this.data.runEvidence && this.data.runEvidence.assertionStrength) || null;
+      },
+      strengthLine: function () {
+        var a = this.assertionStrength;
+        return a ? (a.graded || 0) + ' graded · ' + (a.ungraded || 0) + ' ungraded · ' + (a.notasserted || 0) + ' notasserted' : '';
       },
       // the honest status split behind the verdict — covered / failing / not-tested, never blended
       readyStatusCounts: function () {
@@ -135,14 +157,22 @@ document.addEventListener('alpine:init', function () {
         // greener than the evidence (the readiness row carries the flag)
         // only ever split out of the GREEN segment, so the segments can never sum past the total
         var reqOracleOnly = reqRows
-          ? reqRows.filter(function (r) { return r.oracleOnly && r.coverage === 'COVERED'; }).length
-          : this.listItems.filter(function (i) { return i.kind === 'req' && i.oracleOnly && i.status === 'COVERED'; }).length;
+          ? this.oracleOnlyCount
+          : this.listItems.filter(function (i) { return i.kind === 'req' && (i.oracleOnly || i.refusalOnly || i.modelOnly) && i.status === 'COVERED'; }).length;
+        var reqRefusalOnly = reqRows
+          ? this.refusalOnlyCount
+          : this.listItems.filter(function (i) { return i.kind === 'req' && i.refusalOnly && i.status === 'COVERED'; }).length;
+        var reqNotasserted = reqRows
+          ? this.notassertedCount
+          : this.listItems.filter(function (i) { return i.kind === 'req' && i.notasserted && !i.oracleOnly && !i.refusalOnly && !i.modelOnly && i.status === 'COVERED'; }).length;
         var reqTotal = reqRows ? reqRows.length : this.listItems.filter(function (i) { return i.kind === 'req'; }).length;
         if (reqTotal) {
           cards.push(mk('req', 'Requirements', "requirements we've actually tested", 'model.coverage.axis.req',
             reqTotal, [
-              { cls: 'k-seg-ok', n: Math.max(0, rc.COVERED - reqOracleOnly), title: 'covered (tested & passed)' },
-              { cls: 'k-seg-sim', n: reqOracleOnly, title: 'the rules realize it, but nothing outside the rulebook checked it' },
+              { cls: 'k-seg-ok', n: Math.max(0, rc.COVERED - reqOracleOnly - reqNotasserted), title: 'covered (tested & passed)' },
+              { cls: 'k-seg-sim', n: reqOracleOnly, title: 'the rules realize it, but nothing outside the rulebook checked it'
+                  + (reqRefusalOnly ? ' — ' + reqRefusalOnly + ' of them only because the shape refuses what it must' : '') },
+              { cls: 'k-seg-sim', n: reqNotasserted, title: 'covered by tests that assert nothing — a lock on a value or shape clears it' },
               { cls: 'k-seg-bad', n: rc.FAILING, title: 'a test is failing' },
               { cls: 'k-seg-none', n: rc.NOTRUN + rc.NOTCOVERED, title: 'not tested yet' }
             ]));
@@ -503,10 +533,85 @@ document.addEventListener('alpine:init', function () {
         if (h.key) return h.key;
         return h.kind;
       },
+      // the same display label the traceability page shows: the node's name; the id stays the key
       testName: function (slug) {
         if (!slug) return '';
-        var i = String(slug).lastIndexOf('::');
-        return i >= 0 ? slug.slice(i + 2) : slug;
+        var n = (this.testsById[slug] || {}).name;
+        if (n) return n;
+        var i = String(slug).lastIndexOf(':');
+        return i >= 0 ? String(slug).slice(i + 1) : String(slug);
+      },
+      get testsById() {
+        var m = {};
+        (this.data.tests || []).forEach(function (t) { m[t.id] = t; });
+        return m;
+      },
+      // the distinct tests behind an item's hits, its acceptance criteria's rolled in (the table shows the
+      // requirement, the hits land on the criteria) — each expands into its execution history
+      testsOf: function (item) {
+        var self = this, seen = {}, out = [];
+        var ids = [item.id].concat(this.criteria(item).map(function (c) { return c.id; }));
+        ids.forEach(function (id) {
+          self.hitsFor(id).forEach(function (h) { if (!seen[h.test]) { seen[h.test] = true; out.push(h.test); } });
+        });
+        return out;
+      },
+      testStatus: function (slug) { return (this.testsById[slug] || {}).status || ''; },
+      // a test's own outcome on the item-status maps the pills share
+      outcomeStatus: function (s) { return { PASSED: 'COVERED', FAILED: 'FAILING', SKIPPED: 'NOTRUN' }[s] || ''; },
+      // ---- execution history: every execution of a test's key in scope, latest first; the selected one is
+      // the row's verdict and every other one says why it is not (the selection's own reasons) ----
+      histOpen: {},
+      histToggle: function (id) { this.histOpen[id] = !this.histOpen[id]; },
+      histIsOpen: function (id) { return !!this.histOpen[id]; },
+      historyOf: function (slug) {
+        return (this.data.executions || []).filter(function (e) { return e.test === slug; })
+          .sort(function (a, b) { return (b.startedAt || 0) - (a.startedAt || 0) || String(b.id).localeCompare(String(a.id)); });
+      },
+      // the viewer's local time, zone named — a run at 05:20 UTC reads as the hour the viewer lived it
+      execTime: function (e) {
+        if (!e.startedAt) return '';
+        var d = new Date(e.startedAt), p = function (n) { return (n < 10 ? '0' : '') + n; }, zone = '';
+        try {
+          zone = new Intl.DateTimeFormat(undefined, { timeZoneName: 'short' }).formatToParts(d)
+            .filter(function (x) { return x.type === 'timeZoneName'; }).map(function (x) { return x.value; })[0] || '';
+        } catch (err) { zone = ''; }
+        return d.getFullYear() + '-' + p(d.getMonth() + 1) + '-' + p(d.getDate()) + ' ' + p(d.getHours()) + ':'
+          + p(d.getMinutes()) + ':' + p(d.getSeconds()) + (zone ? ' ' + zone : '');
+      },
+      execStatus: function (e) { return { passed: 'PASSED', failed: 'FAILED' }[e.outcome] || 'SKIPPED'; },
+      execGrade: function (e) {
+        var p = e.assertedProportion;
+        return (p === undefined || p === null || p < 0) ? '' : 'asserted ' + p;
+      },
+      execProv: function (e) {
+        var p = e.provenance || {};
+        return ['build', 'env', 'origin'].filter(function (k) { return p[k]; }).map(function (k) { return k + ' ' + p[k]; });
+      },
+      // the run's report, served by the console's artifact route; off file:// the run id renders as text
+      get runsBase() {
+        if (this.data.runsBase) return this.data.runsBase;
+        return location.protocol.indexOf('http') === 0 ? '/api/artifacts/runs/' : '';
+      },
+      execReportHref: function (e) {
+        var r = e.artifacts && e.artifacts.report;
+        return r && this.runsBase ? this.runsBase + r : '';
+      },
+      hasFinding: function (e, kind) { return (e.findings || []).some(function (f) { return f.kind === kind; }); },
+      execWhy: function (e) {
+        if (e.selected) return 'current';
+        if (e.retired) return 'retired';
+        if (e.lifecycle === 'running') return this.hasFinding(e, 'unfinalizedRun') ? 'unfinalized' : 'pending';
+        if (e.supersededBy) return 'superseded';
+        return 'not selected';
+      },
+      execWhyClass: function (e) { return { current: 'k-ok', pending: 'k-warn', unfinalized: 'k-warn' }[this.execWhy(e)] || 'k-tag'; },
+      get provisional() { return !!this.data.provisional; },
+      // D311: the grade is a fact about the test. Absent = ungraded (the run proved no capture), never 0;
+      // negative = not green, so not applicable — both render nothing.
+      assertedOf: function (slug) {
+        var p = (this.testsById[slug] || {}).assertedProportion;
+        return (p === undefined || p === null || p < 0) ? '' : 'asserted ' + p;
       },
       statusClass: function (s) {
         return { COVERED: 'k-ok', FAILING: 'k-no', NOTRUN: 'k-warn', NOTCOVERED: 'k-no' }[s] || '';

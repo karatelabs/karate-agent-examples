@@ -58,6 +58,9 @@
         <div class="k-verdict-lbl">Confidence to ship</div>
         <div class="k-verdict-val" x-text="verdictWord()"></div>
         <div class="k-verdict-sub" x-text="readySub()"></div>
+        <div class="k-verdict-sub k-provisional" x-show="provisional" title="the run that wrote this is still settling its evidence; the settle replaces it">provisional &mdash; evidence not yet finalized</div>
+        <div class="k-verdict-sub" x-show="assertionStrength" x-text="'assertions · ' + strengthLine()"
+             title="how strongly the passing tests check — not measured: the field fraction, where the expected value came from, which hit an assertion was about"></div>
         <a class="k-verdict-link" :href="coverageHref">See tested-depth &amp; gaps &rarr;</a>
       </div>
       <div class="k-riskcards">
@@ -116,7 +119,8 @@
                        headline risk cards, and the COVERED column is only ever genuinely-verified green -->
                   <td class="k-cell" :class="heatClass(cr, st)" @click="setFilter(cr, st)"
                       :title="heatTitle(cr, st)">
-                    <span class="k-badge" x-text="heatCount(cr, st) || ''"></span>
+                    <span class="k-badge"><span x-text="heatCount(cr, st) || ''"></span><span
+                        class="k-hollow" x-show="heatHollow(cr, st)" x-text="heatHollow(cr, st) + ' covered, unchecked'"></span></span>
                   </td>
                 </template>
               </tr>
@@ -143,9 +147,15 @@
               <span class="k-pill k-ok" title="derived coverage status">COVERED</span>
               <strong x-text="t.reqId"></strong>
               <span x-text="t.title || t.name"></span>
-              <span class="k-prov k-sim" x-show="t.oracleOnly"
+              <span class="k-prov k-sim" x-show="t.refusalOnly"
+                    title="covered only by reject rows the rulebook's shape refused — that proves those rows are refused, not that the behaviour works">refusal only</span>
+              <span class="k-prov k-sim" x-show="t.modelOnly"
+                    title="covered only by a model checker's verdict — the design was checked, nothing exercised the implementation">model only</span>
+              <span class="k-prov k-sim" x-show="t.oracleOnly && !t.refusalOnly"
                     title="the rules realize it, but nothing outside the rulebook checked it — add a test, or stamp the comparison with Rule.execute(…).verify(…)">rules only</span>
-              <span class="k-prov k-warn" x-show="!t.oracleOnly" :title="def('provenance', 'incidental')">incidental</span>
+              <span class="k-prov k-sim" x-show="t.notasserted"
+                    title="covered by tests that assert nothing — a lock on a value or shape clears it">notasserted</span>
+              <span class="k-prov k-warn" x-show="prov(t) === 'incidental'" :title="def('provenance', 'incidental')">incidental</span>
             </div>
           </template>
         </div>
@@ -164,8 +174,11 @@
             <span class="k-crit k-crit-high" x-text="b.criticality" :title="def('criticality', b.criticality)"></span>
             <strong x-text="b.reqId"></strong>
             <span x-text="b.title"></span>
-            <span class="k-prov k-sim" x-show="b.oracleOnly" :title="b.trustGap">rules only</span>
-            <span class="k-prov k-warn" x-show="b.trustGap && !b.oracleOnly" :title="b.trustGap">not verified</span>
+            <span class="k-prov k-sim" x-show="b.refusalOnly" :title="b.trustGap">refusal only</span>
+            <span class="k-prov k-sim" x-show="b.oracleOnly && !b.refusalOnly" :title="b.trustGap">rules only</span>
+            <span class="k-prov k-sim" x-show="b.modelOnly" :title="b.trustGap">model only</span>
+            <span class="k-prov k-sim" x-show="b.notasserted" :title="b.trustGap">notasserted</span>
+            <span class="k-prov k-warn" x-show="b.trustGap && !b.oracleOnly && !b.refusalOnly && !b.modelOnly && !b.notasserted" :title="b.trustGap">not verified</span>
           </div>
           <div class="k-blocker-why" x-show="b.trustGap" x-text="b.trustGap"></div>
         </div>
@@ -299,7 +312,7 @@
             <td><span class="k-pill" :class="riskClass(it.risk)" :title="def('risk', it.risk)" x-text="it.risk || '—'"></span></td>
             <td><span class="k-prov" :class="provClass(prov(it))" :title="def('provenance', prov(it))" x-text="prov(it)"></span></td>
             <td><span class="k-posture" :title="def('posture', it.posture)" x-text="it.posture || '—'"></span></td>
-            <td x-text="(it.tests || []).length || ''"></td>
+            <td x-text="testsOf(it).length || ''"></td>
             <td>
               <span x-show="acceptOf(it).length" x-text="acceptCovered(it) + '/' + acceptOf(it).length"></span>
             </td>
@@ -318,8 +331,14 @@
                         <span x-text="c.name"></span>
                         <!-- the weak link behind a requirement-level "rules only" rollup (D194): name the
                              criterion nothing outside the rulebook checked, so the auditor sees WHICH -->
-                        <span class="k-prov k-sim" x-show="c.oracleOnly && c.status === 'COVERED'"
+                        <span class="k-prov k-sim" x-show="c.refusalOnly && c.status === 'COVERED'"
+                              title="covered only by reject rows the rulebook's shape refused — that proves those rows are refused, not that the behaviour this criterion describes works">refusal only</span>
+                        <span class="k-prov k-sim" x-show="c.modelOnly && c.status === 'COVERED'"
+                              title="covered only by a model checker's verdict — the design was checked, nothing exercised the implementation">model only</span>
+                        <span class="k-prov k-sim" x-show="c.oracleOnly && !c.refusalOnly && c.status === 'COVERED'"
                               title="covered by the rules only — nothing outside the rulebook checked this criterion (a @req= test or a Rule.execute(…).verify(…) stamp clears it)">rules only</span>
+                        <span class="k-prov k-sim" x-show="c.notasserted && c.status === 'COVERED'"
+                              title="covered by tests that assert nothing — a lock on a value or shape clears it">notasserted</span>
                         <!-- §2f honest grading (D96): lit only by machine claims → flagged @ai (attested, review pending) -->
                         <span class="k-ai" x-show="attestedOnly(c.id)"
                               title="attested — a machine claim from a harness run (@ai, review pending); observed/verified evidence upgrades it">@ai attested</span>
@@ -368,20 +387,45 @@
                   </div>
                 </div>
               </template>
-              <template x-if="(it.tests || []).length">
+              <template x-if="testsOf(it).length">
                 <div>
                   <h4>Verified by</h4>
-                  <template x-for="(t, idx) in it.tests" :key="idx">
-                    <div class="k-line">
-                      <span class="k-pill" :class="statusClass(testStatus(t))" :title="def('status', testStatus(t))" x-text="statusIcon(testStatus(t))"></span>
-                      <span x-text="testName(t)"></span>
-                      <a class="k-testlink" x-show="testLoc(t) && testHref(t)" :href="testHref(t)" target="_blank" rel="noopener" x-text="testLoc(t)" @click.stop></a>
-                      <span class="k-muted" x-show="testLoc(t) && !testHref(t)" x-text="testLoc(t)"></span>
+                  <template x-for="(t, idx) in testsOf(it)" :key="idx">
+                    <div>
+                      <div class="k-line">
+                        <span class="k-caret k-hist-caret" :class="histIsOpen(t) && 'k-open'" x-show="historyOf(t).length"
+                              @click.stop="histToggle(t)" :title="historyOf(t).length + ' execution(s) — every run of this test, and which one the row believes'">&#9654;</span>
+                        <span class="k-pill" :class="statusClass(testStatus(t))" :title="def('status', testStatus(t))" x-text="statusIcon(testStatus(t))"></span>
+                        <span x-text="testName(t)"></span>
+                        <span class="k-prov k-tag" x-show="assertedOf(t)" x-text="assertedOf(t)"
+                              title="how strongly this test checks — 0 asserts nothing · 0.5 weak or unmeasured · 1 a locked value or shape"></span>
+                        <a class="k-testlink" x-show="testLoc(t) && testHref(t)" :href="testHref(t)" target="_blank" rel="noopener" x-text="testLoc(t)" @click.stop></a>
+                        <span class="k-muted" x-show="testLoc(t) && !testHref(t)" x-text="testLoc(t)"></span>
+                        <span class="k-prov k-warn" x-show="testNode(t).previouslyFailed" title="an earlier execution failed; the latest one passed">previously failed</span>
+                        <span class="k-prov k-warn" x-show="testNode(t).pending" title="a newer execution is still running — the verdict is the last terminal one">pending</span>
+                        <span class="k-muted" x-show="historyOf(t).length > 1" x-text="historyOf(t).length + ' runs'"></span>
+                      </div>
+                      <!-- the execution history: time · outcome · grade · lane · provenance · report · why not selected -->
+                      <div class="k-history" x-show="histIsOpen(t)">
+                        <template x-for="e in historyOf(t)" :key="e.id">
+                          <div class="k-line k-hist-row" :class="e.selected && 'k-hist-current'">
+                            <span class="k-pill" :class="statusClass(execStatus(e))" :title="'outcome: ' + e.outcome" x-text="statusIcon(execStatus(e))"></span>
+                            <span class="k-hist-t" x-text="execTime(e) || '—'"></span>
+                            <span x-text="e.outcome"></span>
+                            <span class="k-prov k-tag" x-show="execGrade(e)" x-text="execGrade(e)"></span>
+                            <span class="k-tag" x-text="e.lane"></span>
+                            <template x-for="p in execProv(e)" :key="p"><span class="k-tag" x-text="p"></span></template>
+                            <a class="k-testlink" x-show="execReportHref(e)" :href="execReportHref(e)" target="_blank" rel="noopener" @click.stop x-text="e.runId" title="the run's report"></a>
+                            <span class="k-muted" x-show="!execReportHref(e)" x-text="e.runId"></span>
+                            <span class="k-pill k-hist-why" :class="execWhyClass(e)" x-text="execWhy(e)"></span>
+                          </div>
+                        </template>
+                      </div>
                     </div>
                   </template>
                 </div>
               </template>
-              <template x-if="!acceptOf(it).length && !(it.tests || []).length">
+              <template x-if="!acceptOf(it).length && !testsOf(it).length">
                 <div class="k-muted k-line">No covering tests or acceptance criteria &mdash; this requirement is unverified.</div>
               </template>
             </td>
