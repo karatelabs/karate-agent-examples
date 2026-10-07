@@ -18,6 +18,10 @@ inputs:
     description: a token with checks:write
     required: false
     default: ${{ github.token }}
+  fail-job:
+    description: fail the job when the verdict is failure — by default only on a pull request, where it blocks the merge; elsewhere the posted check carries the verdict
+    required: false
+    default: ${{ github.event_name == 'pull_request' }}
 
 runs:
   using: composite
@@ -110,10 +114,11 @@ runs:
           if (pageError) {
             await core.summary.addRaw('annotations failed to post: ' + pageError.message).addEOL().write();
             core.setFailed('confidence gate: annotations failed to post');
-          } else if (payload.conclusion === 'failure') {
+          } else if (payload.conclusion === 'failure' && process.env.GATE_FAIL_JOB === 'true') {
             core.setFailed('confidence gate: ' + payload.title);
           }
       env:
         GATE_PAYLOAD: ${{ inputs.payload }}
         GATE_HEAD_SHA: ${{ inputs.head-sha }}
         GATE_NAME: ${{ inputs.name }}
+        GATE_FAIL_JOB: ${{ inputs.fail-job }}
