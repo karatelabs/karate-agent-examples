@@ -8,7 +8,7 @@ Feature: Loan Decision API mock — the REST backend for the cov.openapi half
 
   Background:
     # the exact decision function the page loads via <script> — read() evaluates the file and returns it.
-    # project-root-anchored ('/sut/...'): resolves identically from a feature run AND config-eval (D79/paths.md).
+    # project-root-anchored ('/sut/...'): resolves identically from a feature run AND config-eval.
     * def loanDecision = read('/sut/loan-calc.js')
 
   Scenario: pathMatches('/decisions') && methodIs('post')

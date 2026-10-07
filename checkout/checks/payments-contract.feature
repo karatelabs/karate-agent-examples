@@ -12,7 +12,7 @@ Feature: the payments dependency, as the checkout service actually uses it — t
   #
   # DELIBERATELY LOOSE, in one place: nothing here asserts on `network`. The mock says 'VISA', the real
   # provider says 'visa', and this suite cannot see it — so the paired run reports it as an
-  # `unassertedDivergence`, a finding about THIS FILE. That is the demo's point: the pair grades the
+  # `notassertedDivergence`, a finding about THIS FILE. That is the demo's point: the pair grades the
   # suite's own comprehensiveness, which no green build can do.
 
   Background:

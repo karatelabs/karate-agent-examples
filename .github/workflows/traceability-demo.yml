@@ -35,8 +35,15 @@ jobs:
     defaults:
       run:
         working-directory: traceability-demo
+    # On a pull request the reviewed commit is the HEAD of the branch, not the merge commit Actions
+    # synthesizes. The confidence-gate check can only be posted against a commit the PR shows, and the
+    # requirement deep-links must point at the same one — so the whole job runs on that sha.
+    env:
+      HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
 
       # The engine image is pulled from GHCR, AUTHENTICATED with the run's own GITHUB_TOKEN: the package is
       # private and this repo is granted read on it, and an authenticated pull is not subject to the
@@ -53,7 +60,7 @@ jobs:
       - name: Karate full suite (rules + REST + UI, pure-git RTM)
         # `karate:jsonl` is required: coverage + the RTM are computed from that event stream.
         run: |
-          IMAGE=ghcr.io/karatelabs/karate-agent:2.1.3.RC3
+          IMAGE=ghcr.io/karatelabs/karate-agent:2.1.4.RC1
           # Authenticated (see the login step) — no anonymous rate limit, so no retry loop. Each engine
           # release mirrors this tag to GHCR via the "Publish image -> GHCR (manual)" workflow.
           docker pull "$IMAGE"
@@ -61,7 +68,7 @@ jobs:
           # can write the report / JUnit / coverage into the runner-owned checkout.
           mkdir -p target && chmod -R 777 target
           # Pass the git coordinates for the pure-git RTM link: the requirement ids click through to
-          # their heading in the markdown at THIS repo + commit. github.repository auto-follows a fork; github.sha
+          # their heading in the markdown at THIS repo + commit. github.repository auto-follows a fork; HEAD_SHA
           # pins each link to the reviewed commit; the kit lives in the traceability-demo/ subdir of the monorepo.
           #
           # `launch suite.karate.js` serves the SUT + runs the WHOLE suite (rules oracle + REST API + browser UI)
@@ -72,12 +79,38 @@ jobs:
             -v "$PWD":/work -w /work \
             -e KARATE_LICENSE_TEXT="$KARATE_LICENSE_TEXT" \
             -e KARATE_GIT_REPO_URL="https://github.com/${{ github.repository }}" \
-            -e KARATE_GIT_REF="${{ github.sha }}" \
+            -e KARATE_GIT_REF="$HEAD_SHA" \
             -e KARATE_GIT_BASE="traceability-demo" \
             "$IMAGE" \
             launch suite.karate.js
         env:
           KARATE_LICENSE_TEXT: ${{ secrets.KARATE_LICENSE }}
+
+      # The gate renders verdicts the suite already computed (readiness + the OpenAPI lint) into ONE check
+      # payload — so it runs even when the suite went red, which is exactly when the verdict is worth having.
+      # KARATE_GIT_BASE doubles as the annotation path prefix: the container works in the kit dir, GitHub
+      # annotates repository paths.
+      - name: Confidence gate payload
+        if: always()
+        run: |
+          IMAGE=ghcr.io/karatelabs/karate-agent:2.1.4.RC1
+          docker run --rm \
+            -v "$PWD":/work -w /work \
+            -e KARATE_LICENSE_TEXT="$KARATE_LICENSE_TEXT" \
+            -e KARATE_GIT_REPO_URL="https://github.com/${{ github.repository }}" \
+            -e KARATE_GIT_REF="$HEAD_SHA" \
+            -e KARATE_GIT_BASE="traceability-demo" \
+            "$IMAGE" \
+            launch gate.karate.js
+        env:
+          KARATE_LICENSE_TEXT: ${{ secrets.KARATE_LICENSE }}
+
+      - name: Post the confidence gate check
+        if: always()
+        uses: ./.github/actions/confidence-gate
+        with:
+          payload: traceability-demo/target/karate-gate.json
+          head-sha: ${{ env.HEAD_SHA }}
 
       - name: Publish test results (Checks tab)
         if: always()

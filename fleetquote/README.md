@@ -14,7 +14,7 @@ carries six tabs:
 
 - **Coverage** — every decision arm, with its status, scenario count, criteria and claim.
 - **Value Ranges** — each input's value classes and its boundaries.
-- **Rule Check** — the verdict: properties, reject rows, pinned figures and unclaimed arms.
+- **Rule Check** — the verdict: properties, reject rows, pinned figures and notclaimed arms.
 - **What-If** — run any input and read its audit trail.
 - **Twin** — the lifecycle walk and the required-row check.
 - **Mutation** — the self-grade: 56 seeded defects, the independent score and the raw kill rate side
@@ -39,7 +39,7 @@ reason codes.
 
 ## Run it
 
-`java -jar karate-agent-2.1.3.RC3.jar serve` starts the console on port 4444. It also serves
+`java -jar karate-agent-2.1.4.RC1.jar serve` starts the console on port 4444. It also serves
 `/api/eval` and `/api/mcp` for this project. It needs no maven and no docker. It starts the console only,
 never the SUT. From that console:
 
@@ -54,14 +54,14 @@ The container image carries the same console, and the kit mounts as the project:
 ```bash
 docker run --rm -p 4444:4444 -v "$PWD":/work/fleetquote \
   -e KARATE_LICENSE_TEXT="$(cat karate.lic)" \
-  public.ecr.aws/karatelabs/karate-agent:2.1.3.RC3 serve
+  public.ecr.aws/karatelabs/karate-agent:2.1.4.RC1 serve
 ```
 
 One command runs the whole kit, with no console and no server process — the mock, both check suites, and
 the reports in `target/karate-reports`. This is what CI runs:
 
 ```bash
-java -jar karate-agent-2.1.3.RC3.jar launch suite.karate.js
+java -jar karate-agent-2.1.4.RC1.jar launch suite.karate.js
 ```
 
 `start.js` also accepts options: `File.call('/mock/start.js', { … })`. Use one option to seed one defect,
@@ -74,6 +74,11 @@ walks. Each seeded defect counts a hit under `mock.var('hits')`.
 twin models 8 states, and it follows the prose guide `SOT-prose.md`. The required-row deck
 `acceptance.json` lists 18 required transitions and 14 required rejections. Section 9 of the tutorial
 walks the model, grades it against that deck, and replays the orders against the mock.
+
+For a twin that runs against a real service, see
+[`quick-meetings-karate`](https://github.com/karatelabs/quick-meetings-karate): a Spring Boot meeting
+scheduler with five seeded bugs. Its CI finds each bug again, beside the jqwik property test that
+found it first.
 
 ## Files
 

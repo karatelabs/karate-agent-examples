@@ -29,7 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  *
  * <p>This implementation reports the card network in <b>lower case</b> ({@code "visa"}) where the mock
  * reports {@code "VISA"}. The suite never asserts on {@code network}, so both legs stay green — and the
- * paired run's response-layer comparison still reports the difference, as an {@code unassertedDivergence}:
+ * paired run's response-layer comparison still reports the difference, as an {@code notassertedDivergence}:
  * a finding about the <i>suite</i> (too loose to see it), which is the one thing a green build cannot
  * tell you on its own. Do not "fix" this file to match the mock; it is the demo's teaching moment.</p>
  *

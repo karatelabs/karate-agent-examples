@@ -1,0 +1,184 @@
+{
+  "tool": {
+    "name": "TLC",
+    "version": "TLC2 Version 2.19 of 08 August 2024 (rev: 5a47802)",
+    "release": "v1.7.4",
+    "jar": "tla2tools-v1.7.4.jar",
+    "jarSha256": "936a262061c914694dfd669a543be24573c45d5aa0ff20a8b96b23d01e050e88"
+  },
+  "invocation": "java -XX:+UseParallelGC -cp tla2tools.jar tlc2.TLC -tool -workers 1 -config Rating.cfg Rating.tla",
+  "exitCode": 12,
+  "constants": {
+    "Horizon": "200",
+    "Validity": "60"
+  },
+  "inputs": {
+    "spec": [
+      {
+        "path": "proofs/rating-weakened/Rating.tla",
+        "sha256": "04ab2797f9c6bb7c265c93716c5550a928b0a3d168eefa5c808a392e5dffd063"
+      }
+    ],
+    "cfg": {
+      "path": "proofs/rating-weakened/Rating.cfg",
+      "sha256": "70d9b16c74ebffdb9e456d5dc3691c0921a0537887631ff00cbfbd832c8580a4"
+    },
+    "mapping": {
+      "path": "proofs/rating-weakened/mapping.json",
+      "sha256": "57495774bae2fba9cb911afea863cbe8caf5eae00af59e4feb42c1a5ddab008d"
+    },
+    "raw": {
+      "path": "proofs/rating-weakened/tlc.out",
+      "sha256": "5e59719f8887ea5684f57378f80e5dd94d8b8da6050f88530519a0470ae20211"
+    }
+  },
+  "completion": "stopped-at-counterexample",
+  "tlcSays": [
+    "Invariant ApprovedNeverBindsAfterExpiry is violated."
+  ],
+  "obligations": [
+    {
+      "name": "TypeOK",
+      "kind": "invariant",
+      "outcome": "incomplete",
+      "binding": null
+    },
+    {
+      "name": "ApprovedNeverBindsAfterExpiry",
+      "kind": "invariant",
+      "outcome": "counterexample",
+      "binding": {
+        "criterion": "FLEET-010/4",
+        "requirements": "requirements/fleet-auto.md",
+        "criterionText": "IF more than 60 days have passed since a quote's rating date THEN THE SYSTEM SHALL treat the quote as expired and refuse any further action until it is re-rated",
+        "criterionSha256": "a62861f3b7e0a9a9e765c2028b81177b98360284b9038e39849eaf213113ffb2",
+        "rulebook": "rating",
+        "content": [
+          {
+            "path": "rulebooks/rating/twin.js",
+            "sha256": "5fc8e81d3260ca23207c84f038279c31b0d5c86e4066455a3b87a8a02be7e9a9"
+          },
+          {
+            "path": "rulebooks/rating/calc.js",
+            "sha256": "4317633c5cfb77cd4e5d383e392ed9ad308932d7824123d7150371df16cc57d6"
+          },
+          {
+            "path": "rulebooks/rating/schema.js",
+            "sha256": "b9e2b622496265e03ad92470569236c711b704b872e88e5ec92f7e1d8e081209"
+          }
+        ],
+        "assertedBy": "fleetquote kit authors",
+        "correspondence": "asserted"
+      }
+    },
+    {
+      "name": "SubmittedReachesDecision",
+      "kind": "property",
+      "outcome": "incomplete",
+      "binding": null
+    }
+  ],
+  "states": {
+    "label": "not a grade",
+    "generated": 8609456,
+    "distinct": 163011,
+    "leftOnQueue": 120539,
+    "depth": 6
+  },
+  "counterexamples": [
+    {
+      "obligations": [
+        "ApprovedNeverBindsAfterExpiry"
+      ],
+      "unattributed": false,
+      "tlc": "Invariant ApprovedNeverBindsAfterExpiry is violated.",
+      "trace": [
+        {
+          "step": 1,
+          "action": "Initial predicate",
+          "location": null,
+          "state": {
+            "boundFrom": "none",
+            "boundLate": false,
+            "day": 0,
+            "outcome": "none",
+            "ratedOn": -1,
+            "status": "NEW"
+          },
+          "command": null
+        },
+        {
+          "step": 2,
+          "action": "Submit",
+          "location": "line 40, col 5 to line 43, col 55 of module Rating",
+          "state": {
+            "boundFrom": "none",
+            "boundLate": false,
+            "day": 0,
+            "outcome": "referred",
+            "ratedOn": -1,
+            "status": "SUBMITTED"
+          },
+          "command": "submit"
+        },
+        {
+          "step": 3,
+          "action": "Rate",
+          "location": "line 47, col 5 to line 52, col 55 of module Rating",
+          "state": {
+            "boundFrom": "none",
+            "boundLate": false,
+            "day": 0,
+            "outcome": "referred",
+            "ratedOn": 0,
+            "status": "REFERRED"
+          },
+          "command": "rate"
+        },
+        {
+          "step": 4,
+          "action": "Approve",
+          "location": "line 55, col 5 to line 58, col 64 of module Rating",
+          "state": {
+            "boundFrom": "none",
+            "boundLate": false,
+            "day": 0,
+            "outcome": "referred",
+            "ratedOn": 0,
+            "status": "APPROVED"
+          },
+          "command": "approve"
+        },
+        {
+          "step": 5,
+          "action": "ObserveAsOf",
+          "location": "line 70, col 5 to line 71, col 67 of module Rating",
+          "state": {
+            "boundFrom": "none",
+            "boundLate": false,
+            "day": 61,
+            "outcome": "referred",
+            "ratedOn": 0,
+            "status": "APPROVED"
+          },
+          "command": "observeAsOf"
+        },
+        {
+          "step": 6,
+          "action": "Bind",
+          "location": "line 62, col 5 to line 67, col 42 of module Rating",
+          "state": {
+            "boundFrom": "APPROVED",
+            "boundLate": true,
+            "day": 61,
+            "outcome": "referred",
+            "ratedOn": 0,
+            "status": "BOUND"
+          },
+          "command": "bind"
+        }
+      ],
+      "loopsBackTo": null
+    }
+  ]
+}

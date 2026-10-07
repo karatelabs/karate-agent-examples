@@ -48,7 +48,7 @@ Feature: insurance Policy API — quote → bind → claim lifecycle (REST / Ope
 
   # CHAINED, not a single-shot smoke: `match response == '#array'` passes against a backend that stores
   # nothing, so it cannot tell a working list endpoint from a hardcoded []. A paired run reported exactly
-  # that as an unassertedDivergence — both legs green, different bodies — and the owner of that finding is
+  # that as an notassertedDivergence — both legs green, different bodies — and the owner of that finding is
   # this file, not either target.
   Scenario: bind a policy, then read it back off the list
     Given path 'quotes'

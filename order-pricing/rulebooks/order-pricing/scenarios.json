@@ -1,0 +1,59 @@
+[
+  {
+    "_id": "small-standard-us",
+    "_label": "small standard order, US",
+    "customerTier": "standard",
+    "region": "US",
+    "rush": false,
+    "items": [
+      {
+        "sku": "HW-1",
+        "category": "hardware",
+        "qty": 5,
+        "unitPrice": 200
+      }
+    ]
+  },
+  {
+    "_id": "gold-volume-eu",
+    "_label": "gold tier, volume order, EU",
+    "customerTier": "gold",
+    "region": "EU",
+    "rush": false,
+    "items": [
+      {
+        "sku": "SW-1",
+        "category": "software",
+        "qty": 30,
+        "unitPrice": 100
+      },
+      {
+        "sku": "SVC-1",
+        "category": "service",
+        "qty": 40,
+        "unitPrice": 50
+      }
+    ]
+  },
+  {
+    "_id": "platinum-rush-large",
+    "_label": "platinum, rush, large order (routes to approval)",
+    "customerTier": "platinum",
+    "region": "US",
+    "rush": true,
+    "items": [
+      {
+        "sku": "HW-2",
+        "category": "hardware",
+        "qty": 80,
+        "unitPrice": 800
+      },
+      {
+        "sku": "SVC-2",
+        "category": "service",
+        "qty": 20,
+        "unitPrice": 200
+      }
+    ]
+  }
+]

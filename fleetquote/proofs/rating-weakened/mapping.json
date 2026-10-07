@@ -1,0 +1,26 @@
+{
+  "spec": "proofs/rating-weakened/Rating.tla",
+  "cfg": "proofs/rating-weakened/Rating.cfg",
+  "twin": "rating",
+  "actions": {
+    "Submit": "submit",
+    "Rate": "rate",
+    "Approve": "approve",
+    "ObserveAsOf": "observeAsOf",
+    "Bind": "bind"
+  },
+  "obligations": [
+    {
+      "obligation": "ApprovedNeverBindsAfterExpiry",
+      "criterion": "FLEET-010/4",
+      "requirements": "requirements/fleet-auto.md",
+      "rulebook": "rating",
+      "content": [
+        "rulebooks/rating/twin.js",
+        "rulebooks/rating/calc.js",
+        "rulebooks/rating/schema.js"
+      ],
+      "assertedBy": "fleetquote kit authors"
+    }
+  ]
+}

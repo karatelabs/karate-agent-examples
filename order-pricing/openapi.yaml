@@ -1,0 +1,62 @@
+openapi: 3.0.0
+info:
+  title: Order Pricing API
+  version: 1.0.0
+paths:
+  /orders:
+    post:
+      operationId: createOrder
+      summary: Quote and place a B2B order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [customerTier, region, items]
+              properties:
+                customerTier:
+                  type: string
+                  enum: [standard, silver, gold, platinum]
+                region:
+                  type: string
+                  enum: [US, EU, APAC]
+                rush:
+                  type: boolean
+                items:
+                  type: array
+                  items:
+                    type: object
+                    required: [qty, unitPrice]
+                    properties:
+                      sku:
+                        type: string
+                      category:
+                        type: string
+                        enum: [hardware, software, service]
+                      qty:
+                        type: integer
+                      unitPrice:
+                        type: number
+      responses:
+        '201':
+          description: order quoted and created — the priced quote computed by the pricing rules
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [subtotal, discount, tax, total, approval]
+                properties:
+                  subtotal:
+                    type: number
+                  discount:
+                    type: number
+                  tax:
+                    type: number
+                  total:
+                    type: number
+                  approval:
+                    type: string
+                    enum: [auto-approved, needs-approval]
+        '400':
+          description: missing pricing inputs

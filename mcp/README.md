@@ -14,7 +14,7 @@ server/                    the demo MCP server under test (stands in for your se
 
 ## What you need
 
-1. **The engine** — `karate-async-2.1.3.RC3.jar` from the
+1. **The engine** — `karate-async-2.1.4.RC1.jar` from the
    [releases](https://github.com/karatelabs/karate-addons/releases). Put it beside this folder, or
    anywhere you like and adjust the paths below. The container image works too — see below.
 2. **A license** — a `karate.lic` file at `.karate/karate.lic` in this folder, or the same text in the
@@ -32,7 +32,7 @@ cd server && npm ci && npm start
 It listens on `http://localhost:3001/mcp`. Run the checks (another terminal):
 
 ```bash
-java -jar ../karate-async-2.1.3.RC3.jar run -f html,junit:xml checks
+java -jar ../karate-async-2.1.4.RC1.jar run -f html,junit:xml checks
 ```
 
 You should see six scenarios pass. The HTML report is written to `target/karate-reports/`.
@@ -45,7 +45,7 @@ docker run --rm -v "$PWD":/work -w /work \
   --add-host=host.docker.internal:host-gateway \
   -e KARATE_LICENSE_TEXT="$(cat karate.lic)" \
   -e MCP_URL="http://host.docker.internal:3001/mcp" \
-  public.ecr.aws/karatelabs/karate-agent:2.1.3.RC3 \
+  public.ecr.aws/karatelabs/karate-agent:2.1.4.RC1 \
   run -f html,junit:xml checks
 ```
 

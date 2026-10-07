@@ -1,0 +1,119 @@
+# Post a Report.gate payload as a pull-request check. Every kit renders the same payload, so the posting
+# is shared here rather than copied per workflow — the action is pure transport and computes no verdict.
+name: confidence gate
+description: Post the karate confidence-gate payload as a GitHub check with line-level annotations.
+
+inputs:
+  payload:
+    description: path to the JSON file gate.karate.js wrote, relative to the workspace root
+    required: true
+  head-sha:
+    description: the commit to post against — a pull request's HEAD, never the merge commit
+    required: true
+  name:
+    description: the check name, when the payload does not carry one
+    required: false
+    default: confidence-gate
+  github-token:
+    description: a token with checks:write
+    required: false
+    default: ${{ github.token }}
+
+runs:
+  using: composite
+  steps:
+    - uses: actions/github-script@v7
+      with:
+        github-token: ${{ inputs.github-token }}
+        # inputs ride the environment, never the script text
+        script: |
+          const fs = require('fs');
+          const file = process.env.GATE_PAYLOAD;
+          const headSha = process.env.GATE_HEAD_SHA;
+
+          let payload = null;
+          try { payload = JSON.parse(fs.readFileSync(file, 'utf8')); } catch (e) { payload = null; }
+          if (!payload || !payload.conclusion) {
+            await core.summary.addRaw('confidence gate: evaluation unavailable — no payload with a conclusion at `' + file + '`').addEOL().write();
+            core.setFailed('confidence gate: evaluation unavailable');
+            return;
+          }
+
+          // the summary goes out BEFORE any network call, so the verdict survives a check that cannot be written
+          const output = { title: payload.title, summary: payload.summary };
+          await core.summary.addRaw(payload.summary).addEOL().write();
+
+          const annotations = (payload.annotations || []).map(a => {
+            const out = {
+              path: a.path,
+              start_line: a.line,
+              end_line: a.endLine ?? a.line,
+              annotation_level: a.level,
+              message: a.message
+            };
+            if (a.title !== undefined) out.title = a.title;
+            return out;
+          });
+          const pages = [];
+          for (let i = 0; i < annotations.length; i += 50) {
+            pages.push(annotations.slice(i, i + 50));
+          }
+
+          // a fork's pull request runs with a read-only token: the create is a 403, and the fallback is
+          // the step summary above — an absent check, never a satisfied one. Only the create is forgiven:
+          // once a check exists, every later refusal is a failed page.
+          let denied = false;
+          let id = null;
+          let pageError = null;
+          try {
+            const created = await github.rest.checks.create({
+              ...context.repo,
+              name: payload.name || process.env.GATE_NAME,
+              head_sha: headSha,
+              status: 'in_progress',
+              output: { ...output, annotations: pages[0] || [] }
+            });
+            id = created.data.id;
+          } catch (e) {
+            if (e.status !== 403) throw e;
+            denied = true;
+          }
+          if (id) {
+            for (const page of pages.slice(1)) {
+              try {
+                await github.rest.checks.update({
+                  ...context.repo, check_run_id: id, output: { ...output, annotations: page }
+                });
+              } catch (e) {
+                pageError = e;
+                break;
+              }
+            }
+          }
+
+          // the conclusion is supplied ONLY here: a check completes the moment it has one, and a page
+          // failing after that would leave a green check standing over lines that never posted
+          if (id) {
+            const note = pageError ? '\n\nannotations failed to post: ' + pageError.message : '';
+            await github.rest.checks.update({
+              ...context.repo,
+              check_run_id: id,
+              status: 'completed',
+              conclusion: pageError ? 'failure' : payload.conclusion,
+              output: { title: output.title, summary: output.summary + note }
+            });
+          }
+
+          if (denied) {
+            await core.summary.addRaw('check not written: token cannot write checks').addEOL().write();
+          }
+          if (pageError) {
+            await core.summary.addRaw('annotations failed to post: ' + pageError.message).addEOL().write();
+            core.setFailed('confidence gate: annotations failed to post');
+          } else if (payload.conclusion === 'failure') {
+            core.setFailed('confidence gate: ' + payload.title);
+          }
+      env:
+        GATE_PAYLOAD: ${{ inputs.payload }}
+        GATE_HEAD_SHA: ${{ inputs.head-sha }}
+        GATE_NAME: ${{ inputs.name }}

@@ -10,7 +10,7 @@ Feature: Payments API mock — the test-double for a dependency this team does N
   #
   # KNOWN, DELIBERATE framing difference kept for the demo: this mock reports the card network in UPPER
   # case ('VISA'), the real provider reports it lower-case ('visa'). checks/payments-contract.feature never
-  # asserts on `network`, so both legs pass — and the pair still reports it, as an `unassertedDivergence`:
+  # asserts on `network`, so both legs pass — and the pair still reports it, as an `notassertedDivergence`:
   # a finding about the SUITE (its assertions are too loose to see the difference), which no green build
   # can produce on its own. See the README's "the finding your assertions cannot see".
 

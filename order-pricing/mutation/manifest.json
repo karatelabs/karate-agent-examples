@@ -1,0 +1,121 @@
+{
+  "note": "The FROZEN mutation gate corpus. Frozen BEFORE any scoring run over these suites: predictions below come from witness + divergence ANALYSIS, never from a score. Changing any pinned artifact after a scoring run voids the gates (a re-freeze + fresh run). MutationCorpusTest enforces the pins.",
+  "corpusVersion": 3,
+  "versionNote": "v3 re-freeze, forced by a scorer change rather than a missed prediction: the relational dependence class re-reads the representative suite's rush relation (post rush:false, keep normalTotal, post rush:true, assert response.total > normalTotal) as a law between two same-operation responses whose requests differ on the axis rush, so its kill of REMOVE_CONDITIONALS@L70#0 now scores KILLED/independent where capture-reuse used to kill nothing. Only that representative prediction (moved from survivedHighlights to KILLED_independent, its reason under relationalKills) and this note changed; every suite, calc.js, provenance label and threshold is byte-identical to v2. The v2 record is superseded by a fresh official run against this v3 freeze, which also reports the capture-reuse reading (relations.captureReuseReading) \u2014 the v2 figure. History: v2 re-froze v1 after the v1 discrimination run missed on INLINE_CONSTANT@lookup.volumeTiers.1.discount, wrongly predicted smoke-NOTCOVERED (the smoke gold-EU row's qty 30 reads the lower volume band's rate).",
+  "rulebook": "order-pricing",
+  "calcSha256": "f5c1c265f26f398b2d6d1973dee99f7d5511d2d45be0f7f9f33b8d69aa9892c7",
+  "frozenArtifacts": {
+    "mutation/suites/smoke.feature": "8d8e5a2d5d4690c5f1397e38f580502dfed00bdbc03636c83b0253f9962365a2",
+    "mutation/suites/representative.feature": "303337a995de63520e042485f63b5a68606d688189f56efd0360282887ec98a3",
+    "mutation/suites/gold.feature": "ef3e8f6f5f4ede2f5cbc2847d08ca9a6fb117614686ae5a9c9050c7f381836b9",
+    "mutation/suites/all-echo.feature": "7cb6f18544d3b6ab7ebb1f01688ac571fa8f50ab9dcbf7812bfee2436fe8c155",
+    "mutation/provenance.json": "08dc3bd4fbc287aab185fb5e545d8ffb2988afad66c4239221b18d3b4e683fd9",
+    "mutation/oracle-check.feature": "5aaaf5ee63f8cbe0a7cba0ed1ec4d04a9c16d8ba5209fbef12f41b33bb0b9be0"
+  },
+  "suites": {
+    "smoke": {
+      "path": "mutation/suites/smoke.feature",
+      "provenance": "authored (status-only floor)"
+    },
+    "representative": {
+      "path": "mutation/suites/representative.feature",
+      "provenance": "ONE cold LLM session, given only openapi.yaml + requirements prose, frozen verbatim"
+    },
+    "gold": {
+      "path": "mutation/suites/gold.feature",
+      "provenance": "authored at freeze from requirements + rate book \u2014 shape locks plus substantive value literals"
+    },
+    "all-echo": {
+      "path": "mutation/suites/all-echo.feature",
+      "provenance": "whole-response literals copied from baseline responses, frozen; labeled copied-response wholesale in provenance.json"
+    }
+  },
+  "mutantIds": [
+    "NEGATE_CONDITIONALS@L42#0",
+    "NEGATE_CONDITIONALS@L42#1",
+    "NEGATE_CONDITIONALS@L54#0",
+    "NEGATE_CONDITIONALS@L84#0",
+    "CONDITIONALS_BOUNDARY@L42#0",
+    "CONDITIONALS_BOUNDARY@L54#0",
+    "CONDITIONALS_BOUNDARY@L84#0",
+    "REMOVE_CONDITIONALS@L42#0",
+    "REMOVE_CONDITIONALS@L54#0",
+    "REMOVE_CONDITIONALS@L70#0",
+    "REMOVE_CONDITIONALS@L84#0",
+    "INLINE_CONSTANT@lookup.maxDiscount",
+    "INLINE_CONSTANT@lookup.regionTax.APAC",
+    "INLINE_CONSTANT@lookup.regionTax.EU",
+    "INLINE_CONSTANT@lookup.regionTax.US",
+    "INLINE_CONSTANT@lookup.rushSurcharge",
+    "INLINE_CONSTANT@lookup.tierDiscount.gold",
+    "INLINE_CONSTANT@lookup.tierDiscount.platinum",
+    "INLINE_CONSTANT@lookup.tierDiscount.silver",
+    "INLINE_CONSTANT@lookup.tierDiscount.standard",
+    "INLINE_CONSTANT@lookup.volumeTiers.0.discount",
+    "INLINE_CONSTANT@lookup.volumeTiers.0.minQty",
+    "INLINE_CONSTANT@lookup.volumeTiers.1.discount",
+    "INLINE_CONSTANT@lookup.volumeTiers.1.minQty"
+  ],
+  "predictions": {
+    "anySuite": {
+      "SCREENED": [
+        "CONDITIONALS_BOUNDARY@L54#0",
+        "CONDITIONALS_BOUNDARY@L84#0",
+        "REMOVE_CONDITIONALS@L54#0",
+        "INLINE_CONSTANT@lookup.maxDiscount"
+      ],
+      "screenedWhy": "the Discount cap arm is deliberately unreachable (max stack exactly 0.25): its arm-drop cannot fire, its boundary variant clamps to the same value, and a bigger cap is equally never exceeded. The approval-threshold boundary (>' -> '>=') screens out too: it diverges only at a total of EXACTLY 50000 \u2014 a boundary on a DERIVED value the enumerated deck cannot construct (the notderivable grey area) \u2014 reported with the deck's strength, never claimed equivalent"
+    },
+    "smoke": {
+      "independentScore": 0.0,
+      "NOTCOVERED": [
+        "INLINE_CONSTANT@lookup.rushSurcharge",
+        "INLINE_CONSTANT@lookup.volumeTiers.0.discount"
+      ],
+      "notCoveredWhy": "no smoke scenario sends rush:true (the arm-entered witness L70#0:true never fires), and no smoke total quantity reaches the UPPER volume tier (>=50) \u2014 two rates no smoke request ever reads. The LOWER tier's rate IS read (the gold-EU row's qty 30 lands in [10,50)) \u2014 reached but unnoticed by a status-only suite: SURVIVED, not NOTCOVERED (the v1 prediction got this wrong; see versionNote)",
+      "SURVIVED": "every other checked mutant (a status line cannot notice any pricing change)"
+    },
+    "representative": {
+      "KILLED_independent": [
+        "NEGATE_CONDITIONALS@L42#0",
+        "NEGATE_CONDITIONALS@L42#1",
+        "NEGATE_CONDITIONALS@L84#0",
+        "REMOVE_CONDITIONALS@L42#0",
+        "REMOVE_CONDITIONALS@L70#0",
+        "REMOVE_CONDITIONALS@L84#0"
+      ],
+      "relationalKills": {
+        "REMOVE_CONDITIONALS@L70#0": "the rush relation (response.total > normalTotal over two createOrder requests differing only on rush) is relational: dropping the surcharge arm makes both totals equal and the relation fails. Under the capture-reuse reading it survives"
+      },
+      "survivedHighlights": {
+        "NEGATE_CONDITIONALS@L54#0": "no representative row pins a discount value tightly enough to notice everyone getting the capped rate"
+      },
+      "NOTCOVERED": [
+        "INLINE_CONSTANT@lookup.volumeTiers.1.discount"
+      ],
+      "notCoveredWhy": "no representative row's total quantity lands in the lower volume band, so the row-keyed arm-operand witness (minQty=10) never pairs \u2014 the lower tier's rate is never read by the suite"
+    },
+    "gold": {
+      "SURVIVED": [
+        "INLINE_CONSTANT@lookup.regionTax.APAC",
+        "INLINE_CONSTANT@lookup.tierDiscount.platinum"
+      ],
+      "survivedWhy": {
+        "INLINE_CONSTANT@lookup.regionTax.APAC": "no test would notice the APAC tax rate changing \u2014 no gold row orders in APAC",
+        "INLINE_CONSTANT@lookup.tierDiscount.platinum": "no test would notice the platinum discount rate changing \u2014 the only platinum gold row also earns the volume tier, so the discount cap masks the rate"
+      },
+      "KILLED_independent": "the remaining 18 checked mutants",
+      "expectedScoreBand": "18/20"
+    },
+    "all-echo": {
+      "independentScore": 0.0,
+      "why": "every kill demotes to raw off the wholesale copied-response label \u2014 known-copied literals cannot buy the headline number",
+      "rawSurvivors": [
+        "CONDITIONALS_BOUNDARY@L42#0",
+        "INLINE_CONSTANT@lookup.regionTax.APAC",
+        "INLINE_CONSTANT@lookup.tierDiscount.platinum"
+      ],
+      "expectedRawBand": "17/20"
+    }
+  }
+}

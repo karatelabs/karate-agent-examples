@@ -36,6 +36,7 @@ the actual report in a browser, with nothing to install and no license needed:
 | [`kiro-demo`](kiro-demo/) | **"done" is a claim, not evidence.** The requirements come straight from an AI coding tool's own spec folder, with its task list ticked complete. Every scenario passes, yet the verdict is **NOT READY**: one criterion a completed task claims is implemented, but no test exercises it. Rules + REST only, no browser, about half a second per run. |
 | [`store-api`](store-api/) | **start-from-scratch benchmark.** A bare OpenAPI spec and nothing else. The engine stands up a stateful mock from the spec, your AI agent authors the suite, and the gap lists define "done" deterministically. Includes a cheat-sheet for timing your own agent environment against a clean reference. |
 | [`fleetquote`](fleetquote/) | **the rulebook and its twin, end to end.** A fleet-auto rating engine as one executable rulebook — readable spec, oracle with a plain-English audit trail, the mock's brain, and the model every view derives from — plus a lifecycle twin walked to "the defect only order finds". Start with [`TUTORIAL.md`](fleetquote/TUTORIAL.md); [`rulebooks/rating/`](fleetquote/rulebooks/rating/) holds the twin and its pinned sequences, and the [live report](https://karatelabs.github.io/karate-agent-examples/fleetquote/rating-rule-analysis.html) shows the result. |
+| [`order-pricing`](order-pricing/) | **link the estate you already have.** Eight untagged feature files, a requirements file, a pricing rulebook, and no thread between them. [`README.md`](order-pricing/README.md) walks the join end to end — the run-free matrix where every criterion is green because the *rules* vouch for themselves, then tags that say which existing scenario checks which criterion, and the graph grading whether the join improved. No new tests are written. |
 | [`checkout`](checkout/) | **consumer-side contract testing.** A checkout service depends on a payments API another team owns. The kit holds the mock the team builds against, an independently implemented real provider, and the **paired run** that proves the mock can stand in — including one deliberate divergence the suite's assertions cannot see, which the pair reports anyway. Consumer-driven contracts with a readable functional suite instead of pact files, and git instead of a broker. |
 
 ### Protocol examples
@@ -60,6 +61,11 @@ it runs off the container image too. All four run on every push and publish thei
 | | |
 |---|---|
 | [`quick-meetings-karate`](https://github.com/karatelabs/quick-meetings-karate) | **property-based testing, measured against.** The InfoQ "Beyond Accidental Quality" sample — a Spring Boot meeting scheduler with five seeded bugs and the jqwik property tests that find them — with a rulebook and twin as a thin overlay that re-finds all five deterministically: a deck, a bounded walk, live replay with shrink, and negative probes. The original source is untouched, so the two approaches sit side by side. |
+
+## Reference
+
+- [`openapi-diff/CROSSWALK.md`](openapi-diff/CROSSWALK.md) — every oasdiff check mapped to how `Openapi.diff`, the
+  engine's OpenAPI breaking-change detector, treats the same change: detected, not evaluated, or declined with a reason.
 
 ## Drive it from your own AI agent (MCP)
 

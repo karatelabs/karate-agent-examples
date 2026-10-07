@@ -27,7 +27,7 @@ var providerEnv = Settings.sysenv('PAYMENTS_ENV', 'local');
 // the artifact), and it owes a reason and an owner. These two say the same thing twice — each
 // implementation mints its own surrogate keys, and the CONTRACT fixes the type, never the value.
 // Nothing else is excused: in particular `network` is NOT excused, so the mock's 'VISA' against the
-// provider's 'visa' surfaces as the unassertedDivergence the README walks through.
+// provider's 'visa' surfaces as the notassertedDivergence the README walks through.
 var surrogateKeys = [
   {
     id: 'surrogate-payment-id', key: 'id', marker: '#string',
@@ -84,7 +84,7 @@ if (!pair.claim || !pair.claim.rungs) {
 }
 
 // The rung is what this pair entitles the CHECKOUT TEAM to say about ITS OWN MOCK — deliberately not a
-// percentage. Expect the unassertedDivergence rows (the `network` casing) to hold the affected
+// percentage. Expect the notassertedDivergence rows (the `network` casing) to hold the affected
 // operations below the top rung until the suite tightens or a waiver signs the difference off — that
 // pressure on the suite is the point. `Openapi.grade('payments-api.yaml')` reads this file and scores
 // the `contract` dimension as the rung normalised.

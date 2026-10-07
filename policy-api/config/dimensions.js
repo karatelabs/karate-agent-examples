@@ -2,7 +2,7 @@
 // The extractor reads the three rating input axes that matter off each quote request, plus the response
 // code. `cross` declares the required COMBINATION (coverage × state × priorClaims) the rule-as-oracle
 // grades, and `Coverage.coveringArray()` decks against. The `rating` rulebook supplies the feasibility
-// oracle. Add `criticality: 'high'` to deepen the deck from pairwise to 3-way (D67).
+// oracle. Add `criticality: 'high'` to deepen the deck from pairwise to 3-way.
 ({
     '/quotes': {
         rulebook: 'rating',

@@ -23,7 +23,9 @@ Skill.search('coverage gaps')       // when you do not know the name
 | Migrate existing tests into idiomatic Karate | `Skill.help('migration')` |
 | Measure coverage and find the gaps | `Skill.help('coverage')` |
 | Forward-engineer a rulebook from a business requirement | `Skill.help('rule-authoring')` |
+| Set up a rating book from rate books, a circular, a deviation filing and a rules-manual page — then export the sheet the carrier rates | `Skill.help('rating-setup')` |
 | Author & govern requirements — traceability, readiness, review | `Skill.help('requirements')` |
+| Link an existing suite to its requirements — the RTM with no new tests | `Skill.help('link')` |
 | Review a feature file against the quality checklist | `Skill.help('review')` |
 | Turn a recorded UI flow into a maintainable check | `Skill.help('record-to-check')` |
 | Govern an API spec — lint it against a style guide, grade it, enforce your own rules, and prove the mock can stand in for the provider (contract testing — the paired run) | `Skill.help('api-governance')` |
@@ -41,6 +43,7 @@ Not a task — look these up while doing one.
 | `Skill.help('kafka')` | karate.channel('kafka') + the live Kafka.* namespace; produce/consume; JSON/Avro/Protobuf serialization. (karate-kafka addon.) |
 | `Skill.help('websocket')` | karate.channel('websocket') over core's WsClient — send/collect frames, the WireCodec serde seam (raw/JSON/custom, e.g. STOMP) + the WebsocketLifecycle handshake mix-in, subprotocol + TLS. |
 | `Skill.help('twin-authoring')` | Author twin.js — the state machine behind a rulebook — and drive explore→check→promote→bless. The engine walks it under frozen ceilings; a walk is evidence about the declaration, never proof of the system. Concepts are Twin.help(). |
+| `Skill.help('app-authoring')` | Make Http.app read right for a business user: app/ui.js labels, help, order, formats and refusal wording keyed by the model's names, or a shadow page — checked by Twin.check's findings.ui, reviewed on the running app. What it sends stays the binding's. |
 | `Skill.help('markup')` | The design-language-of-record for Karate HTML apps: the karate-core template engine + Tailwind/Alpine/HTMX. Server returns HTML, no build step. |
 
 ## Deep dives
@@ -51,7 +54,9 @@ Some workflows carry topic files — pass the topic as the second argument.
 - `assertions` → `match`, `fuzzy`, `schema-tools`
 - `coverage` → `suite-structure`, `dimensions`
 - `rule-authoring` → `requirements-linking`, `properties`, `negative-scenarios`, `check-findings`
-- `twin-authoring` → `plan`, `required-rows`, `sequences`, `findings`, `live`
+- `rating-setup` → `setup`, `revision`, `algorithm`
+- `twin-authoring` → `plan`, `required-rows`, `sequences`, `findings`, `live`, `binding`, `play`
+- `app-authoring` → `overlay`, `formats`, `shadow-pages`, `reviewing`
 - `requirements` → `authoring`, `semantic-review`
 - `review` → `feature-file-review`, `assertion-strength`
 - `markup` → `app-setup`, `tailwind`, `catalog`, `alpine`, `components`, `forms`, `sse`

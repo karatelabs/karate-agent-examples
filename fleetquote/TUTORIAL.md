@@ -104,7 +104,7 @@ Each row carries its expected result, its outcome, and the criterion ids it demo
 ```js
 var c = Rule.check('rating')
 c.verdict         // -> { status: 'CLEAN', findings: 0, review: 0, reasons: [] }
-c.unclaimed       // -> []   decision arms no acceptance criterion claims
+c.notclaimed      // -> []   decision arms no acceptance criterion claims
 c.notused         // -> []   arms a valid input reaches, but no saved scenario covers
 c.notreachable    // -> []   arms no valid input can reach
 c.deadBranches    // -> []   decisions that can only ever produce one answer
@@ -125,8 +125,8 @@ again. Restore the line afterwards.
 ```js
 Rule.check('rating').verdict
 // -> { status: 'REVIEW', findings: 0, review: 1,
-//      reasons: ['1 decision arm(s) no requirement claims — see unclaimed'] }
-Rule.check('rating').unclaimed
+//      reasons: ['1 decision arm(s) no requirement claims — see notclaimed'] }
+Rule.check('rating').notclaimed
 // -> [ { label: 'Referral to underwriting', line: 145, outcome: false, source: 'if(premium>…' } ]
 ```
 
@@ -225,9 +225,9 @@ generated negative-test candidates.
 var c = Twin.check('rating', { required: JSON.parse(File.read('/acceptance.json')) })
 c.required.rows                // -> 40   business examples the guide demands
 c.requiredWitness.length       // -> 39   reached, each with the shortest order that shows it
-c.findings.requiredUnreached   // -> [ { id: 'T18', kind: 'transition', status: 'unreached' } ]
+c.findings.requiredNotreached   // -> [ { id: 'T18', kind: 'transition', status: 'notreached' } ]
 c.ci                           // -> { verdict: 'FAIL', pass: false,
-                               //      reasons: ['required T18 (transition) unreached'] }
+                               //      reasons: ['required T18 (transition) notreached'] }
 c.transitionPairs              // -> { covered: 13, of: 508 }
 c.evidence                     // -> model 8/8, oracle 46/270, mock 0/44, live 0/44
 ```
@@ -263,9 +263,9 @@ without `rollout`. Run `Twin.live` again: all 44 sequences pass.
 
 ```js
 Rule.cover('rating')
-// -> { rules: 'rating', scenarios: 22, criteria: 20,
+// -> { rules: 'rating', scenarios: 22, criteria: 20, rejects: { linked: 0, unlinked: 3 },
 //      byStatus: { req:   { COVERED: 8, FAILING: 0, NOTRUN: 0, NOTCOVERED: 8 },
-//                  rules: { COVERED: 22, FAILING: 0, NOTRUN: 0, NOTCOVERED: 0 } } }
+//                  rules: { COVERED: 22, FAILING: 0, NOTRUN: 0, NOTCOVERED: 3 } } }
 
 Requirement.matrix().requirements
 // FLEET-002 … FLEET-009                          COVERED, oracleOnly: true
@@ -283,7 +283,8 @@ Rule.report('rating').url   // -> file://…/rating-rule-analysis.html
 ```
 
 `oracleOnly` means the rulebook vouches for the criterion and nothing outside it does. A tagged test that
-calls `check.verify(...)` clears it. Open the HTML report. Review its tabs: **Coverage** (every arm,
+calls `check.verify(...)` clears it. The three `rules` items reading NOTCOVERED are the book's reject
+rows: add `_req` to one and its refusal covers that criterion, disclosed `refusalOnly`. Open the HTML report. Review its tabs: **Coverage** (every arm,
 its criterion ids, its `claim`), **Value Ranges**, **Rule Check**, **What-If**, and **Twin** — plus
 **Mutation**, once section 8's self-grade has graded the book.
 

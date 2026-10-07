@@ -33,15 +33,15 @@ mkdir -p .karate && cp /path/to/karate.lic .karate/karate.lic
 
 ```bash
 docker run -d --name karate-agent -p 4444:4444 -v "$PWD":/work \
-  public.ecr.aws/karatelabs/karate-agent:2.1.3.RC3
+  public.ecr.aws/karatelabs/karate-agent:2.1.4.RC1
 ```
 
-**Or the plain JAR** (Java 21+) — download `karate-agent-2.1.3.RC3.jar` from
-<https://github.com/karatelabs/karate-addons/releases> (release tag `agent-2.1.3.RC3`), then
+**Or the plain JAR** (Java 21+) — download `karate-agent-2.1.4.RC1.jar` from
+<https://github.com/karatelabs/karate-addons/releases> (release tag `agent-2.1.4.RC1`), then
 from this folder:
 
 ```bash
-java -jar karate-agent-2.1.3.RC3.jar serve
+java -jar karate-agent-2.1.4.RC1.jar serve
 ```
 
 Either way you get the console at **http://localhost:4444** and the MCP endpoint at
@@ -208,11 +208,12 @@ prompt-shot — it is what the gap loop is for:
   scenario.
 - The suite is green and the generated report shows the traceability matrix.
 
-One expected nuance: `Requirement.readiness()` may still report **NOT_READY** even at full coverage.
-The spec-derived mock is stateful but does not *validate* request bodies, so criteria about rejecting
-bad input can't be honestly proven against it — and the engine refuses to call them proven. That is
-the governance gate working, not a failure. Point `baseUrl` at a real implementation of the spec and
-the same suite proves them.
+One expected nuance: `Requirement.readiness()` can read **READY** while every item carries
+`mockOnly: true`. The evidence came from the mock this project starts, and the engine discloses that
+rather than grading it. The mock rejects a body that breaks the spec's schema and fills the fields the
+server owns, but a rule the spec doesn't state (the customer must exist, the order total) is yours to
+add, and a test of it proves the mock, not a service. Point `baseUrl` at a real implementation of the
+spec and the same suite proves it.
 
 **Want it real?** Ask your agent to *build* a working backend from `openapi.yaml` in your own stack —
 and use the suite you just authored as its acceptance gate. Point `baseUrl` at the implementation and

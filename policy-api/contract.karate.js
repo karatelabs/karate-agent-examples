@@ -82,7 +82,7 @@ if (!Report.generate().error) {
 }
 
 // A pair that measured NOTHING is the honest answer to an unreachable provider — every scenario comes back
-// `notMeasured` on environment grounds, and the claim carries no rung at all rather than a percentage over
+// `notmeasured` on environment grounds, and the claim carries no rung at all rather than a percentage over
 // nothing. That is exactly right as evidence, and it must still fail the job: in CI it means the provider
 // never came up, which is a broken run, not a clean bill of health.
 if (!pair.claim || !pair.claim.rungs) {

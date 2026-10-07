@@ -49,36 +49,36 @@ Further reading — this kit is the productized form of both:
 
 ## Run it
 
-Drop the engine jar (`karate-agent-2.1.3.RC3.jar`) and your `karate.lic` into the kit folder
+Drop the engine jar (`karate-agent-2.1.4.RC1.jar`) and your `karate.lic` into the kit folder
 — or use the container image the same way the CI workflow does.
 
 ```sh
 # the everyday lane — no server processes at all, the payments mock auto-starts in-process:
-java -jar karate-agent-2.1.3.RC3.jar launch suite.karate.js
+java -jar karate-agent-2.1.4.RC1.jar launch suite.karate.js
 
 # compile the kit's two servers, once (pure JDK — no maven):
 javac -d servers/classes servers/src/io/karatelabs/examples/checkout/*.java
 
 # the paired run — prove the mock against the real provider:
 java -cp servers/classes io.karatelabs.examples.checkout.PaymentsServer 8090 &
-java -jar karate-agent-2.1.3.RC3.jar launch contract.karate.js
+java -jar karate-agent-2.1.4.RC1.jar launch contract.karate.js
 
 # the full e2e lane — the real consumer through its real dependency:
 java -cp servers/classes io.karatelabs.examples.checkout.CheckoutServer 8080 http://localhost:8090 &
-java -Dcheckout.url=http://localhost:8080 -jar karate-agent-2.1.3.RC3.jar launch suite.karate.js
+java -Dcheckout.url=http://localhost:8080 -jar karate-agent-2.1.4.RC1.jar launch suite.karate.js
 
 # the resilience lane — the mock told to MISBEHAVE, grading checkout itself (expect red — see below).
 # NOTE: stop the e2e lane's CheckoutServer first — it holds :8080 (kill %1);
 # a leftover e2e checkout still points at the REAL provider, so no fault would ever reach it:
 java -cp servers/classes io.karatelabs.examples.checkout.CheckoutServer 8080 http://localhost:8091 &
-java -jar karate-agent-2.1.3.RC3.jar launch resilience.karate.js
+java -jar karate-agent-2.1.4.RC1.jar launch resilience.karate.js
 ```
 
 ## What the pair will find — three teaching moments, all deliberate
 
 1. **The finding your assertions cannot see.** The mock reports the card network as `'VISA'`; the
    real provider reports `'visa'`. The suite never asserts on `network`, so **both legs pass** — and
-   the pair still reports the difference, as an `unassertedDivergence`. That is a finding about *the
+   the pair still reports the difference, as an `notassertedDivergence`. That is a finding about *the
    suite*: its assertions are too loose to see what changed underneath it. No green build can produce
    that signal. Tighten the assertion, or sign the difference off with a named ignore rule, and
    re-run the pair — either way the decision is on the record. Do not "fix" `PaymentsServer.java` to
@@ -146,7 +146,7 @@ The question teams arrive with is usually shaped by Pact, so here is the transla
 | provider states (`given('a payment exists')` handlers the provider team must implement) | the suite sets its own state through the API. The same setup runs identically against mock and provider, and the pair's precondition probe *verifies* both legs started equivalent |
 | provider verification (replay recorded interactions) | the provider leg — the same functional suite, actually executed against the real service |
 | `can-i-deploy` | no direct equivalent. That is Pact's broker-mediated deployment coordination — which consumer *versions* are compatible with which provider versions — and it is out of scope here. What we do answer is "is this evidence still valid?": a pair decays (`stale` / `expired`) when the spec, suite, mock or age moves, and its rung is withdrawn, never quietly kept |
-| "contract tests are not functional tests" | rejected — one comprehensive functional suite does both jobs, and the pair *measures* whether it is comprehensive (`unassertedDivergence`) |
+| "contract tests are not functional tests" | rejected — one comprehensive functional suite does both jobs, and the pair *measures* whether it is comprehensive (`notassertedDivergence`) |
 
 What Pact optimizes for that this kit does not: cross-team **deployment coordination** — which
 consumer versions are compatible with which provider versions, decided in a broker. That is a real
@@ -160,7 +160,7 @@ publishes the HTML report (Coverage · Traceability · **Contract** · run summa
 browse the latest at **<https://karatelabs.github.io/karate-agent-examples/checkout/>**. What to look
 for:
 
-- **Contract tab** — the `unassertedDivergence` rows are the network-casing difference (`VISA` vs
+- **Contract tab** — the `notassertedDivergence` rows are the network-casing difference (`VISA` vs
   `visa`), reported on scenarios where *both legs passed*: the deliberate demo divergence, attributed
   to the suite, with both values shown. Beside them sits the `ignored` register, where the
   surrogate-id differences are excused by named rules with a reason and an owner — and the claim

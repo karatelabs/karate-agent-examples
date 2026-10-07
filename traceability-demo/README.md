@@ -47,7 +47,7 @@ license as `KARATE_LICENSE_TEXT` (sent with your evaluation).
 # headless rules oracle — the CI-safe stage (no browser)
 docker run --rm -v "$PWD":/work -w /work \
   -e KARATE_LICENSE_TEXT="$(cat karate.lic)" \
-  public.ecr.aws/karatelabs/karate-agent:2.1.3.RC3 \
+  public.ecr.aws/karatelabs/karate-agent:2.1.4.RC1 \
   run oracle.feature -f junit:xml,html,karate:jsonl
 ```
 
@@ -61,7 +61,7 @@ in the RTM becomes a link to its User Story:
 docker run --rm -v "$PWD":/work -w /work \
   -e KARATE_LICENSE_TEXT="$(cat karate.lic)" \
   -e KARATE_ADO_ORG="your-org" -e KARATE_ADO_PROJECT="your-project" \
-  public.ecr.aws/karatelabs/karate-agent:2.1.3.RC3 \
+  public.ecr.aws/karatelabs/karate-agent:2.1.4.RC1 \
   run oracle.feature -f junit:xml,html,karate:jsonl
 ```
 
@@ -70,7 +70,9 @@ docker run --rm -v "$PWD":/work -w /work \
 The `.github/workflows/` and `azure-pipelines.yml` at the repo root run the same one-shot container:
 JUnit feeds the native test report / Tests tab, and the report + RTM publish as a build artifact. The
 Azure pipeline sets the ADO coordinates (linked RTM); the GitHub Actions workflow leaves them unset
-(pure-git RTM) — the two postures, side by side.
+(pure-git RTM) — the two postures, side by side. The GitHub run then posts a **confidence gate** check
+(`gate.karate.js`): the readiness verdict and the OpenAPI lint as one pass/neutral/fail conclusion, with
+each blocker annotated on the requirement heading, the covering scenario or the spec line that caused it.
 
 **License in CI.** Both pipelines pass your license via a `KARATE_LICENSE` secret. But it is an
 org-scoped **site license**, so the simplest option is to **commit `.karate/karate.lic` into this
@@ -98,7 +100,7 @@ Serve the project and point any MCP client at it. **`serve` is the image's defau
 ```bash
 docker run --rm -p 4444:4444 -v "$PWD":/work -w /work \
   -e KARATE_LICENSE_TEXT="$(cat karate.lic)" \
-  public.ecr.aws/karatelabs/karate-agent:2.1.3.RC3
+  public.ecr.aws/karatelabs/karate-agent:2.1.4.RC1
 ```
 
 Then `claude mcp add --transport http karate http://localhost:4444/api/mcp` (or point Cursor / VS Code
