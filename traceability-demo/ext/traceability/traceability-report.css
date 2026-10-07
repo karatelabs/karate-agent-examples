@@ -99,9 +99,11 @@
    out of the table (missing cells + stray spacing). */
 .k-coverage-ext .k-heat td.k-cell { display: table-cell; margin: 0; padding: 0; border: 0; background: none; cursor: pointer; vertical-align: middle; }
 .k-coverage-ext .k-heat td.k-cell .k-badge {
-  display: flex; align-items: center; justify-content: center;
-  height: 30px; border-radius: 8px; text-align: center; font-weight: 700; font-size: 14px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  min-height: 30px; padding: 3px 4px; border-radius: 8px; text-align: center; font-weight: 700; font-size: 14px;
 }
+/* the hollow-green share of a graded-down cell: covered, but by nothing the engine trusts (D194/D311) */
+.k-coverage-ext .k-heat td.k-cell .k-badge .k-hollow { font-size: 10px; font-weight: 500; line-height: 1.2; opacity: .85; }
 .k-coverage-ext .k-heat td.k-cell.k-ok .k-badge { background: var(--k-ok-bg); color: var(--k-ok-fg); }
 .k-coverage-ext .k-heat td.k-cell.k-warn .k-badge { background: var(--k-warn-bg); color: var(--k-warn-fg); }
 .k-coverage-ext .k-heat td.k-cell.k-no .k-badge { background: var(--k-no-bg); color: var(--k-no-fg); }

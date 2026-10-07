@@ -91,7 +91,7 @@
 .k-coverage-ext .k-rulearm .k-pill { font-weight: 700; font-size: 10px; letter-spacing: .04em; min-width: 92px; text-align: center; }
 .k-coverage-ext .k-pill.k-arm-used { background: var(--k-ok-bg, #e7f6ec); color: var(--k-ok-fg, #1a7f37); }
 .k-coverage-ext .k-pill.k-arm-notused { background: var(--k-warn-bg, #fdf6e3); color: var(--k-warn-fg, #8a6d00); }
-.k-coverage-ext .k-pill.k-arm-unreached { background: var(--k-tag-bg); color: var(--k-muted); }
+.k-coverage-ext .k-pill.k-arm-notreached { background: var(--k-tag-bg); color: var(--k-muted); }
 .k-coverage-ext .k-armname { color: var(--k-fg-strong); }
 .k-coverage-ext .k-armname.k-armsrc { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11.5px; color: var(--k-fg); font-weight: 400; }
 .k-coverage-ext .k-armout { color: var(--k-faint); font-size: 11px; }
