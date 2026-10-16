@@ -1,0 +1,11 @@
+{
+  "schemaVersion": 1,
+  "index": "39%",
+  "verdict": "NOT_READY",
+  "design": "96%",
+  "provenness": "34%",
+  "contractMatched": 12,
+  "contractScenarios": 12,
+  "notTested": 2,
+  "lastContractRun": "2026-10-16"
+}
