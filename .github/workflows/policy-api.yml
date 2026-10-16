@@ -28,7 +28,7 @@ name: policy-api (pure-git RTM, REST + rules + the paired run + cross-protocol)
 
 on:
   push:
-    paths: [ 'policy-api/**', '.github/workflows/policy-api.yml' ]
+    paths: [ 'policy-api/**', '.github/workflows/policy-api.yml', '.github/scripts/proof-badges.js' ]
   pull_request:
     paths: [ 'policy-api/**' ]
   workflow_dispatch:
@@ -241,6 +241,17 @@ jobs:
       - name: Stop the Kafka broker
         if: always() && steps.async.outputs.ok == 'true'
         run: ( cd kafka && docker compose down ) || true
+
+      # The org README's live numbers. The engine writes ONE badge (governance-badge.svg, the ladder rung);
+      # this writes the rest beside it — index, design, proven-ness, contract matched, operations not tested,
+      # last contract run — plus proof-badges.json for a shields.io dynamic badge. It reads the data files
+      # the last render left in target/karate-reports, so it runs after every render and publishes with them.
+      - name: Proof badges (README-embeddable numbers beside governance-badge.svg)
+        if: always()
+        # when the async leg skipped, target/ still belongs to the container user — take it back first
+        run: |
+          [ -d target ] && sudo chown -R "$(id -u):$(id -g)" target
+          node ../.github/scripts/proof-badges.js target/karate-reports
 
       - name: Publish test results (Checks tab)
         if: always()
