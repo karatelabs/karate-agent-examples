@@ -59,7 +59,7 @@ jobs:
           npm --prefix server ci
           npm --prefix server start &
           for _ in $(seq 1 30); do (echo > /dev/tcp/localhost/3001) 2>/dev/null && break; sleep 1; done
-          IMAGE=ghcr.io/karatelabs/karate-agent:2.1.4.RC1
+          IMAGE=ghcr.io/karatelabs/karate-agent:2.1.5.RC1
           docker pull "$IMAGE"
           # the image runs as a NON-root user; pre-make target/ world-writable so it can write the report
           mkdir -p target && chmod -R 777 target
@@ -74,15 +74,6 @@ jobs:
             run -f html,junit:xml checks
         env:
           KARATE_LICENSE_TEXT: ${{ secrets.KARATE_LICENSE }}
-
-      # The container wrote these files as its non-root user; take the tree back so the steps below can read it.
-      - name: Reclaim ownership of the container-written tree
-        if: always()
-        run: |
-          for d in target runs contract .karate; do
-            [ -e "$d" ] && sudo chown -R "$(id -u):$(id -g)" "$d"
-          done
-          true
 
       # The official conformance suite is the COMPANION, not a gate: most of its scenarios drive fixture
       # tools/resources/prompts a six-tool inventory server does not implement, so it legitimately exits

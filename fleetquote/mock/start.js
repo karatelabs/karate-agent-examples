@@ -4,7 +4,8 @@
 // Rule - so the mock prices via the 'rating' rulebook, never its own numbers.
 var start = function (opts) {
     var handlers = File.call('/mock/handlers.js');
-    var config = { openapi: '/openapi.yaml', port: 8090, handlers: handlers };
+    var port = opts && opts.port !== undefined ? opts.port : 8090;
+    var config = { openapi: '/openapi.yaml', port: port, handlers: handlers };
     if (opts) {
         config.arg = opts;
     }

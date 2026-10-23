@@ -39,7 +39,7 @@ reason codes.
 
 ## Run it
 
-`java -jar karate-agent-2.1.4.RC1.jar serve` starts the console on port 4444. It also serves
+`java -jar karate-agent-2.1.5.RC1.jar serve` starts the console on port 4444. It also serves
 `/api/eval` and `/api/mcp` for this project. It needs no maven and no docker. It starts the console only,
 never the SUT. From that console:
 
@@ -54,14 +54,14 @@ The container image carries the same console, and the kit mounts as the project:
 ```bash
 docker run --rm -p 4444:4444 -v "$PWD":/work/fleetquote \
   -e KARATE_LICENSE_TEXT="$(cat karate.lic)" \
-  public.ecr.aws/karatelabs/karate-agent:2.1.4.RC1 serve
+  public.ecr.aws/karatelabs/karate-agent:2.1.5.RC1 serve
 ```
 
 One command runs the whole kit, with no console and no server process — the mock, both check suites, and
 the reports in `target/karate-reports`. This is what CI runs:
 
 ```bash
-java -jar karate-agent-2.1.4.RC1.jar launch suite.karate.js
+java -jar karate-agent-2.1.5.RC1.jar launch suite.karate.js
 ```
 
 `start.js` also accepts options: `File.call('/mock/start.js', { … })`. Use one option to seed one defect,

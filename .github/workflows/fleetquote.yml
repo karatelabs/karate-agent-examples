@@ -49,7 +49,7 @@ jobs:
 
       - name: Lifecycle + rating checks, the self-grade, and the rulebook analysis
         run: |
-          IMAGE=ghcr.io/karatelabs/karate-agent:2.1.4.RC1
+          IMAGE=ghcr.io/karatelabs/karate-agent:2.1.5.RC1
           docker pull "$IMAGE"
           # the karate-agent image runs as a NON-root user; pre-make target/ world-writable so the container
           # can write the report / JUnit / coverage into the runner-owned checkout.
@@ -61,15 +61,6 @@ jobs:
             launch suite.karate.js
         env:
           KARATE_LICENSE_TEXT: ${{ secrets.KARATE_LICENSE }}
-
-      # The container wrote these files as its non-root user; take the tree back so the steps below can read it.
-      - name: Reclaim ownership of the container-written tree
-        if: always()
-        run: |
-          for d in target runs contract .karate; do
-            [ -e "$d" ] && sudo chown -R "$(id -u):$(id -g)" "$d"
-          done
-          true
 
       - name: Publish test results (Checks tab)
         if: always()

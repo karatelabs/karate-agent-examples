@@ -28,6 +28,7 @@ Skill.search('coverage gaps')       // when you do not know the name
 | Link an existing suite to its requirements — the RTM with no new tests | `Skill.help('link')` |
 | Review a feature file against the quality checklist | `Skill.help('review')` |
 | Turn a recorded UI flow into a maintainable check | `Skill.help('record-to-check')` |
+| Turn the API calls a recording made into a verified API test | `Skill.help('record-to-api')` |
 | Govern an API spec — lint it against a style guide, grade it, enforce your own rules, and prove the mock can stand in for the provider (contract testing — the paired run) | `Skill.help('api-governance')` |
 | Scaffold a whole tested project from an OpenAPI spec | `Skill.help('scaffold-from-openapi')` |
 | Scaffold a runnable Kafka project from an AsyncAPI doc | `Skill.help('scaffold-from-asyncapi')` |

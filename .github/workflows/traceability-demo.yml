@@ -60,7 +60,7 @@ jobs:
       - name: Karate full suite (rules + REST + UI, pure-git RTM)
         # `karate:jsonl` is required: coverage + the RTM are computed from that event stream.
         run: |
-          IMAGE=ghcr.io/karatelabs/karate-agent:2.1.4.RC1
+          IMAGE=ghcr.io/karatelabs/karate-agent:2.1.5.RC1
           # Authenticated (see the login step) — no anonymous rate limit, so no retry loop. Each engine
           # release mirrors this tag to GHCR via the "Publish image -> GHCR (manual)" workflow.
           docker pull "$IMAGE"
@@ -93,7 +93,7 @@ jobs:
       - name: Confidence gate payload
         if: always()
         run: |
-          IMAGE=ghcr.io/karatelabs/karate-agent:2.1.4.RC1
+          IMAGE=ghcr.io/karatelabs/karate-agent:2.1.5.RC1
           docker run --rm \
             -v "$PWD":/work -w /work \
             -e KARATE_LICENSE_TEXT="$KARATE_LICENSE_TEXT" \
@@ -104,15 +104,6 @@ jobs:
             launch gate.karate.js
         env:
           KARATE_LICENSE_TEXT: ${{ secrets.KARATE_LICENSE }}
-
-      # The container wrote these files as its non-root user; take the tree back so the steps below can read it.
-      - name: Reclaim ownership of the container-written tree
-        if: always()
-        run: |
-          for d in target runs contract .karate; do
-            [ -e "$d" ] && sudo chown -R "$(id -u):$(id -g)" "$d"
-          done
-          true
 
       - name: Post the confidence gate check
         if: always()

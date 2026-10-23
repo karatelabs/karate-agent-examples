@@ -10,11 +10,10 @@
 // KARATE_CDP_URL env).
 var row = __row || __arg.row || __arg;
 
-// option (a): the suite/discrete lane is NOT seeded a `bot` — the check creates its own, attaching to the
-// container Chrome (cdpUrl wins over the KARATE_CDP_URL env). It does NOT destroy it: across the Scenario
-// Outline's rows that Chrome is SHARED (the container's / the harness's one browser), so tearing it down
-// would kill it for the next row — the harness owns its lifecycle. Each row navigates fresh (a fresh go()
-// resets the wizard to step 1), so re-attaching is enough.
+// The check opens its own bot in place of the run's seeded one, so it can attach to the Chrome
+// karate-config.js names (cdpUrl wins over the KARATE_CDP_URL env). It does not destroy it: the suite's
+// Robot stops every bot it opened when the suite ends. Each row navigates fresh (a fresh go() resets the
+// wizard to step 1), so re-attaching is enough.
 var bot = (typeof cdpUrl !== 'undefined' && cdpUrl) ? Robot.create({ cdpUrl: cdpUrl }) : Robot.create();
 bot.go(loanUrl);
 

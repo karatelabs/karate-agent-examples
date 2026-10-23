@@ -59,7 +59,7 @@ jobs:
         # auto-started payments mock — no server process at all — and writes ONE consolidated report:
         # HTML + JUnit (Checks tab) + JSONL (coverage/RTM) in target/karate-reports.
         run: |
-          IMAGE=ghcr.io/karatelabs/karate-agent:2.1.4.RC1
+          IMAGE=ghcr.io/karatelabs/karate-agent:2.1.5.RC1
           docker pull "$IMAGE"
           # the karate-agent image runs as a NON-root user; pre-make target/ world-writable so the container
           # can write the report / JUnit / coverage into the runner-owned checkout.
@@ -103,7 +103,7 @@ jobs:
         # which the container's NON-root user has to be able to write. A provider that never came up mints
         # a pair that measured NOTHING, and the script fails the job on it.
         run: |
-          IMAGE=ghcr.io/karatelabs/karate-agent:2.1.4.RC1
+          IMAGE=ghcr.io/karatelabs/karate-agent:2.1.5.RC1
           mkdir -p contract/pairs && chmod 777 contract contract/pairs
           docker run --rm --add-host=host.docker.internal:host-gateway \
             -v "$PWD":/work -w /work \
@@ -114,15 +114,6 @@ jobs:
             launch contract.karate.js
         env:
           KARATE_LICENSE_TEXT: ${{ secrets.KARATE_LICENSE }}
-
-      # The container wrote these files as its non-root user; take the tree back so the steps below can read it.
-      - name: Reclaim ownership of the container-written tree
-        if: always()
-        run: |
-          for d in target runs contract .karate; do
-            [ -e "$d" ] && sudo chown -R "$(id -u):$(id -g)" "$d"
-          done
-          true
 
       - name: Upload the pair evidence
         if: always()
