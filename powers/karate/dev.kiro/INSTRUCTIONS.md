@@ -1,13 +1,3 @@
----
-name: "karate"
-displayName: "Karate — deterministic test evidence"
-description: "Run API, browser and business-rule checks against what you build, and get back deterministic evidence: coverage, requirement traceability, and one shareable report."
-keywords: ["karate", "test automation", "api testing", "ui testing", "browser testing", "gherkin", "openapi", "traceability", "acceptance criteria", "coverage gaps", "mock server"]
-author: "Karate Labs"
-repository: "https://github.com/karatelabs/karate-agent-examples"
-license: "MIT"
----
-
 # Karate
 
 Karate runs the checks — API, browser, and executable business rules — and turns the result into evidence you can hand to someone: what was actually exercised, which requirement each check ties back to, and one HTML report that stands on its own.
@@ -31,6 +21,8 @@ Every call returns `{command, payload}`. An error is **data** (`{error, …}`), 
 
 Run these once, in order, before using anything else in this power.
 
+If the IDE shows Restricted Mode, ask the user to trust this folder (the banner's **Manage**, then **Trust**): an untrusted workspace loads none of its own hooks or configuration.
+
 **1. Is the server up?**
 
 ```bash
@@ -47,6 +39,8 @@ docker run -d --name karate-agent -p 4444:4444 -v "$PWD":/work \
 ```
 
 The mounted folder is where everything is read and written — requirements, checks, runs, reports. Mounting the workspace root is what lets Karate see the code you are building.
+
+If command sandboxing is on and it blocks `docker` or `localhost`, ask the user to allow them or to run this command themselves.
 
 **3. If the port never answers, check for a licensing failure — do not retry the boot.**
 
@@ -79,29 +73,27 @@ Work.current()
 
 This returns `{name, root, …}` — the project the server is pointed at. Compare its folder name to this workspace; on a mismatch call `Work.list()` then `Work.use('<name>')` before you do anything else.
 
-**If `karate_eval` is not among your tools, say so before you do anything else.** The connection to this server is opened once, when your session starts — so a server that was not yet listening at that moment leaves the tool absent for the rest of the session, and nothing you do inside the conversation reopens it. Tell the user both halves: the server is up (step 1 proves it), the connection to it is not, and reconnecting the `karate` server from their MCP-servers panel brings the tool back.
+**If `karate_eval` is not connected, say so before you do anything else** — activate lists no tools under the `karate` server, or a call answers that the server is not connected. Tell the user both halves: the server is up (step 1 proves it), the connection to it is not, and **Retry** on `power-karate-karate` under **MCP Servers** in the IDE's side panel brings the tool back.
 
 Meanwhile you can keep working over HTTP — `curl -s http://localhost:4444/api/eval -d '<code>'` runs the same JavaScript and returns the same JSON. **Name the fallback each time you use it.** Falling back silently keeps the answers flowing and hides the broken connection behind them, and the same workspace is driven from surfaces where no shell is available — so a connection nobody noticed was down is a failure deferred, not avoided.
 
 **5. Get oriented.** The server sends its own cold-start guide when the MCP connection opens. If you do not have it, pull it: `curl -s http://localhost:4444/api/prompts`. Then `Skill.flows()` for the workflow menu.
 
-**6. Optional — a verification hook.** If the user wants the checks run automatically rather than on request, write `.kiro/hooks/karate-verify.kiro.hook`:
+**6. Optional — a verification hook.** If the user wants the checks run each time a spec task is completed, create the hook with the `createHook` tool, never a file write: `id` `karate-verify`, `trigger` `PostTaskExec`, `actionType` `agent`, and the prompt below. The user is asked to approve the write, and the hook runs from the next session. It lands in `.kiro/hooks/karate-verify.json`:
 
 ```json
 {
-  "enabled": true,
-  "name": "Verify with Karate",
-  "description": "Run the Karate checks and report what the evidence shows.",
-  "version": "1",
-  "when": { "type": "userTriggered" },
-  "then": {
-    "type": "askAgent",
-    "prompt": "Use the karate power. Run this project's checks, then report coverage gaps and requirement traceability. Report a criterion with no passing check as unverified — do not describe it as done."
-  }
+  "version": "v1",
+  "hooks": [{
+    "name": "Verify with Karate",
+    "trigger": "PostTaskExec",
+    "action": {
+      "type": "agent",
+      "prompt": "Use the karate power. Run this project's checks, then report each criterion the completed task claims that has no passing check as unverified, never as done."
+    }
+  }]
 }
 ```
-
-Trigger it from the hooks panel. (Task-lifecycle triggers are available in the CLI form; `userTriggered` works everywhere.)
 
 ## Workflows
 
@@ -122,7 +114,7 @@ The second one is the point of this power. Anything can run a test; the reason t
 - **Licensing is checked offline.** The runtime license is a signed file validated locally; it makes no network call, so the agent runs in a fully air-gapped network.
 - **AI features are bring-your-own-model.** You choose the provider and supply the key; requests go from your own instance straight to that provider. Karate Labs is not in the path, and the agent needs no AI key at all when your own client is driving it.
 
-**Licensing.** This power's own content — `POWER.md` and its steering files — is MIT. The Karate Agent it drives is commercial software governed by the Karate Labs [EULA](https://karatelabs.io/eula); a runtime license is issued by Karate Labs.
+**Licensing.** This power's own files are MIT. The Karate Agent it drives is commercial software governed by the Karate Labs [EULA](https://karatelabs.io/eula); a runtime license is issued by Karate Labs.
 
 **Privacy.** [Privacy Policy](https://karatelabs.io/privacy-policy).
 

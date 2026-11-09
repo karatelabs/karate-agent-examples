@@ -1,0 +1,15 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "karate",
+  "version": "1.0.0",
+  "description": "Run API, browser and business-rule checks against what you build, and get back deterministic evidence: coverage, requirement traceability, and one shareable report.",
+  "author": {
+    "name": "Karate Labs",
+    "url": "https://karatelabs.io/agent",
+    "email": "info@karatelabs.io"
+  },
+  "keywords": ["karate", "test automation", "api testing", "ui testing", "browser testing", "gherkin", "openapi", "traceability", "acceptance criteria", "coverage gaps", "mock server"],
+  "license": "MIT",
+  "repository": "https://github.com/karatelabs/karate-agent-examples",
+  "homepage": "https://karatelabs.io/agent"
+}

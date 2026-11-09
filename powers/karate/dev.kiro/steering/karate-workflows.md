@@ -53,6 +53,7 @@ Some workflows carry topic files — pass the topic as the second argument.
 
 - `api` → `auth`, `hooks-config`, `data-driven`, `error-paths`, `reuse-call`
 - `assertions` → `match`, `fuzzy`, `schema-tools`
+- `migration` → `ui`
 - `coverage` → `suite-structure`, `dimensions`
 - `rule-authoring` → `requirements-linking`, `properties`, `negative-scenarios`, `check-findings`
 - `rating-setup` → `setup`, `revision`, `algorithm`

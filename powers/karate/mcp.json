@@ -1,8 +1,9 @@
 {
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/mcp.schema.json",
   "mcpServers": {
     "karate": {
-      "url": "http://localhost:4444/api/mcp",
-      "disabled": false
+      "type": "streamable-http",
+      "url": "http://localhost:4444/api/mcp"
     }
   }
 }
