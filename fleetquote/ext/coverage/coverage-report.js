@@ -13,6 +13,24 @@ document.addEventListener('alpine:init', function () {
       statusFilter: '',
       expanded: {},
 
+      // the shared report top-nav (core's KarateReport util)
+      init: function () {
+        var d = window.KARATE_COVERAGE_DATA || {};
+        var tabs = [{ key: 'coverage', title: 'Coverage', href: 'coverage.html' }];
+        // the Traceability sibling exists whenever requirements are in play — the writer stamps the
+        // href seam (hasTraceability/traceabilityHref); the sources check is the pre-stamp fallback
+        if (d.hasTraceability || (d.sources || []).some(function (s) { return s.namespace === 'req'; })) {
+          tabs.push({ key: 'traceability', title: 'Traceability',
+                      href: d.traceabilityHref || '../../traceability/pages/traceability.html' });
+        }
+        // the paired-run page, iff one was published beside this report (the writer stamps the href only
+        // when the page is really there — no dead tabs)
+        if (d.contractHref) {
+          tabs.push({ key: 'contract', title: 'Contract', href: d.contractHref });
+        }
+        if (window.KarateReport) KarateReport.renderTopNav({ current: 'coverage', summary: d.karateSummary, tabs: tabs });
+      },
+
       // Per-scenario `rules` rows are removed from the report (the arm — not the scenario — is the
       // coverable unit; see the Rule Coverage section below). Hide the whole `rules` SOURCE from the
       // top strip too, so no stray per-scenario tile lingers. Its graph data stays intact for Rule.cover.
@@ -199,6 +217,7 @@ document.addEventListener('alpine:init', function () {
               { cls: 'k-seg-bad', n: oc.FAILING, title: 'a test is failing' },
               { cls: 'k-seg-none', n: oc.NOTRUN + oc.NOTCOVERED, title: 'not exercised' }
             ]));
+          cards[cards.length - 1].share = this.actionsBySource(ops);
         }
         // 4) Field values — meaningfully-different inputs we tried (marginal input adequacy, §2h)
         var inp = this.sumSource('inputs', 'covered', 'total');
@@ -278,6 +297,24 @@ document.addEventListener('alpine:init', function () {
       neverProduced: function (it) { return (it.outcome && it.outcome.declaredUntested) || []; },
       // exercised, but never on an error path
       happyOnly: function (it) { return !!(it.outcome && it.outcome.tested === false); },
+      // one total across protocols reads as one surface's; name each source's share when there are several
+      actionsBySource: function (ops) {
+        var by = {}, order = [];
+        ops.forEach(function (i) {
+          var b = by[i.source] || (by[i.source] = { n: 0, covered: 0 });
+          if (!b.n) order.push(i.source);
+          b.n++;
+          if (i.status === 'COVERED') b.covered++;
+        });
+        return order.length > 1
+          ? order.map(function (s) { return s + ' ' + by[s].covered + '/' + by[s].n; }).join(' · ') : '';
+      },
+      // MODEL §2f trust ladder, read off the item's strongest effective hit
+      evidenceTip: function (g) {
+        return { observed: 'observed: the run captured it being exercised',
+                 attested: 'attested: a machine claim from a run, nothing captured',
+                 declared: 'declared: a tag says a test covers it, nothing captured' }[g] || '';
+      },
       segWidth: function (seg, total) { return total ? (seg.n * 100 / total) + '%' : '0%'; },
 
       // ── Input Coverage drill-down (Part 3) ────────────────────────────────────────────────────────
@@ -358,6 +395,8 @@ document.addEventListener('alpine:init', function () {
         });
         return m;
       },
+      // a coverage item id without its requirement namespace (`req:ORD-001` → `ORD-001`)
+      bareReqId: function (id) { return String(id).replace(/^req:/, ''); },
       reqHref: function (id) {
         if (!id) return '';
         var s = String(id);
