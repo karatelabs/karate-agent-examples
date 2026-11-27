@@ -1,16 +1,16 @@
-<testsuite name="MCP — discover tools, call them, and assert both kinds of failure" tests="6" failures="0" time="0.414" skipped="0"><testcase classname="checks.inventory" name="the catalog — what the server says it can do" time="0.248"><system-out>* mcp = karate.channel(&apos;mcp&apos;)
+<testsuite name="MCP — discover tools, call them, and assert both kinds of failure" tests="6" failures="0" time="0.387" skipped="0"><testcase classname="checks.inventory" name="the catalog — what the server says it can do" time="0.229"><system-out>* mcp = karate.channel(&apos;mcp&apos;)
 * id = karate.uuid().substring(0, 8)
 * response = mcp.tools()
-request: 2026-11-27T11:19:14.089Z
-1 &gt; POST http://host.docker.internal:3001/mcp
+request: 2026-11-27T11:19:55.989Z
+1 &gt; POST http://localhost:3001/mcp
 1 &gt; Accept: application/json, text/event-stream
 1 &gt; MCP-Protocol-Version: 2026-07-28
 1 &gt; Mcp-Method: server/discover
 1 &gt; Content-Type: application/json
-1 &gt; Host: host.docker.internal:3001
+1 &gt; Host: localhost:3001
 1 &gt; Content-Length: 253
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;jsonrpc&quot;: &quot;2.0&quot;,
   &quot;id&quot;: 1,
@@ -28,12 +28,12 @@ request: 2026-11-27T11:19:14.089Z
   }
 }
 
-response: 40ms
-1 &lt; 400 POST http://host.docker.internal:3001/mcp
+response: 35ms
+1 &lt; 400 POST http://localhost:3001/mcp
 1 &lt; X-Powered-By: Express
 1 &lt; content-type: application/json
 1 &lt; content-length: 198
-1 &lt; Date: Fri, 27 Nov 2026 11:19:14 GMT
+1 &lt; Date: Fri, 27 Nov 2026 11:19:56 GMT
 1 &lt; Connection: keep-alive
 1 &lt; Keep-Alive: timeout=5
 {
@@ -45,14 +45,14 @@ response: 40ms
   &quot;id&quot;: null
 }
 
-request: 2026-11-27T11:19:14.141Z
-1 &gt; POST http://host.docker.internal:3001/mcp
+request: 2026-11-27T11:19:56.033Z
+1 &gt; POST http://localhost:3001/mcp
 1 &gt; Accept: application/json, text/event-stream
 1 &gt; Content-Type: application/json
-1 &gt; Host: host.docker.internal:3001
+1 &gt; Host: localhost:3001
 1 &gt; Content-Length: 156
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;jsonrpc&quot;: &quot;2.0&quot;,
   &quot;id&quot;: 2,
@@ -68,81 +68,81 @@ request: 2026-11-27T11:19:14.141Z
   }
 }
 
-response: 9ms
-1 &lt; 200 POST http://host.docker.internal:3001/mcp
+response: 8ms
+1 &lt; 200 POST http://localhost:3001/mcp
 1 &lt; X-Powered-By: Express
 1 &lt; cache-control: no-cache, no-transform
 1 &lt; connection: keep-alive
 1 &lt; content-type: text/event-stream
 1 &lt; x-accel-buffering: no
 1 &lt; content-length: 251
-1 &lt; Date: Fri, 27 Nov 2026 11:19:14 GMT
+1 &lt; Date: Fri, 27 Nov 2026 11:19:56 GMT
 
-request: 2026-11-27T11:19:14.155Z
-1 &gt; POST http://host.docker.internal:3001/mcp
+request: 2026-11-27T11:19:56.043Z
+1 &gt; POST http://localhost:3001/mcp
 1 &gt; Accept: application/json, text/event-stream
 1 &gt; MCP-Protocol-Version: 2025-11-25
 1 &gt; Content-Type: application/json
-1 &gt; Host: host.docker.internal:3001
+1 &gt; Host: localhost:3001
 1 &gt; Content-Length: 55
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;jsonrpc&quot;: &quot;2.0&quot;,
   &quot;method&quot;: &quot;notifications/initialized&quot;
 }
 
-response: 4ms
-1 &lt; 202 POST http://host.docker.internal:3001/mcp
+response: 5ms
+1 &lt; 202 POST http://localhost:3001/mcp
 1 &lt; X-Powered-By: Express
-1 &lt; Date: Fri, 27 Nov 2026 11:19:14 GMT
+1 &lt; Date: Fri, 27 Nov 2026 11:19:56 GMT
 1 &lt; Connection: keep-alive
 1 &lt; Keep-Alive: timeout=5
 1 &lt; Transfer-Encoding: chunked
 
-request: 2026-11-27T11:19:14.161Z
-1 &gt; POST http://host.docker.internal:3001/mcp
+request: 2026-11-27T11:19:56.049Z
+1 &gt; POST http://localhost:3001/mcp
 1 &gt; Accept: application/json, text/event-stream
 1 &gt; MCP-Protocol-Version: 2025-11-25
 1 &gt; Content-Type: application/json
-1 &gt; Host: host.docker.internal:3001
+1 &gt; Host: localhost:3001
 1 &gt; Content-Length: 47
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;jsonrpc&quot;: &quot;2.0&quot;,
   &quot;id&quot;: 3,
   &quot;method&quot;: &quot;tools/list&quot;
 }
 
-response: 7ms
-1 &lt; 200 POST http://host.docker.internal:3001/mcp
+response: 6ms
+1 &lt; 200 POST http://localhost:3001/mcp
 1 &lt; X-Powered-By: Express
 1 &lt; cache-control: no-cache, no-transform
 1 &lt; connection: keep-alive
 1 &lt; content-type: text/event-stream
 1 &lt; x-accel-buffering: no
 1 &lt; content-length: 3775
-1 &lt; Date: Fri, 27 Nov 2026 11:19:14 GMT
+1 &lt; Date: Fri, 27 Nov 2026 11:19:56 GMT
 
 * response.tools[*].name contains [&apos;add_item&apos;, &apos;get_item&apos;, &apos;adjust_stock&apos;, &apos;list_items&apos;, &apos;search_items&apos;, &apos;remove_item&apos;]
 * mcp.server.revision == &apos;#string&apos;
 * [&apos;modern&apos;, &apos;legacy&apos;] contains mcp.server.lane
 </system-out></testcase>
-<testcase classname="checks.inventory" name="a call, and the side effect it leaves behind" time="0.036"><system-out>* mcp = karate.channel(&apos;mcp&apos;)
+<testcase classname="checks.inventory" name="a call, and the side effect it leaves behind" time="0.035"><system-out>* mcp = karate.channel(&apos;mcp&apos;)
 * id = karate.uuid().substring(0, 8)
 * sku = &apos;WIDGET-&apos; + id
 * added = mcp.invoke(&apos;add_item&apos;, { sku: sku, name: &apos;Widget&apos;, qty: 4 })
-request: 2026-11-27T11:19:14.182Z
-1 &gt; POST http://host.docker.internal:3001/mcp
+request: 2026-11-27T11:19:56.071Z
+1 &gt; POST http://localhost:3001/mcp
 1 &gt; Accept: application/json, text/event-stream
 1 &gt; MCP-Protocol-Version: 2026-07-28
 1 &gt; Mcp-Method: server/discover
 1 &gt; Content-Type: application/json
-1 &gt; Host: host.docker.internal:3001
+1 &gt; Host: localhost:3001
 1 &gt; Content-Length: 253
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;jsonrpc&quot;: &quot;2.0&quot;,
   &quot;id&quot;: 1,
@@ -161,11 +161,11 @@ request: 2026-11-27T11:19:14.182Z
 }
 
 response: 3ms
-1 &lt; 400 POST http://host.docker.internal:3001/mcp
+1 &lt; 400 POST http://localhost:3001/mcp
 1 &lt; X-Powered-By: Express
 1 &lt; content-type: application/json
 1 &lt; content-length: 198
-1 &lt; Date: Fri, 27 Nov 2026 11:19:14 GMT
+1 &lt; Date: Fri, 27 Nov 2026 11:19:56 GMT
 1 &lt; Connection: keep-alive
 1 &lt; Keep-Alive: timeout=5
 {
@@ -177,14 +177,14 @@ response: 3ms
   &quot;id&quot;: null
 }
 
-request: 2026-11-27T11:19:14.186Z
-1 &gt; POST http://host.docker.internal:3001/mcp
+request: 2026-11-27T11:19:56.075Z
+1 &gt; POST http://localhost:3001/mcp
 1 &gt; Accept: application/json, text/event-stream
 1 &gt; Content-Type: application/json
-1 &gt; Host: host.docker.internal:3001
+1 &gt; Host: localhost:3001
 1 &gt; Content-Length: 156
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;jsonrpc&quot;: &quot;2.0&quot;,
   &quot;id&quot;: 2,
@@ -200,47 +200,47 @@ request: 2026-11-27T11:19:14.186Z
   }
 }
 
-response: 4ms
-1 &lt; 200 POST http://host.docker.internal:3001/mcp
+response: 3ms
+1 &lt; 200 POST http://localhost:3001/mcp
 1 &lt; X-Powered-By: Express
 1 &lt; cache-control: no-cache, no-transform
 1 &lt; connection: keep-alive
 1 &lt; content-type: text/event-stream
 1 &lt; x-accel-buffering: no
 1 &lt; content-length: 251
-1 &lt; Date: Fri, 27 Nov 2026 11:19:14 GMT
+1 &lt; Date: Fri, 27 Nov 2026 11:19:56 GMT
 
-request: 2026-11-27T11:19:14.191Z
-1 &gt; POST http://host.docker.internal:3001/mcp
+request: 2026-11-27T11:19:56.080Z
+1 &gt; POST http://localhost:3001/mcp
 1 &gt; Accept: application/json, text/event-stream
 1 &gt; MCP-Protocol-Version: 2025-11-25
 1 &gt; Content-Type: application/json
-1 &gt; Host: host.docker.internal:3001
+1 &gt; Host: localhost:3001
 1 &gt; Content-Length: 55
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;jsonrpc&quot;: &quot;2.0&quot;,
   &quot;method&quot;: &quot;notifications/initialized&quot;
 }
 
 response: 2ms
-1 &lt; 202 POST http://host.docker.internal:3001/mcp
+1 &lt; 202 POST http://localhost:3001/mcp
 1 &lt; X-Powered-By: Express
-1 &lt; Date: Fri, 27 Nov 2026 11:19:14 GMT
+1 &lt; Date: Fri, 27 Nov 2026 11:19:56 GMT
 1 &lt; Connection: keep-alive
 1 &lt; Keep-Alive: timeout=5
 1 &lt; Transfer-Encoding: chunked
 
-request: 2026-11-27T11:19:14.195Z
-1 &gt; POST http://host.docker.internal:3001/mcp
+request: 2026-11-27T11:19:56.084Z
+1 &gt; POST http://localhost:3001/mcp
 1 &gt; Accept: application/json, text/event-stream
 1 &gt; MCP-Protocol-Version: 2025-11-25
 1 &gt; Content-Type: application/json
-1 &gt; Host: host.docker.internal:3001
+1 &gt; Host: localhost:3001
 1 &gt; Content-Length: 138
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;jsonrpc&quot;: &quot;2.0&quot;,
   &quot;id&quot;: 3,
@@ -248,34 +248,34 @@ request: 2026-11-27T11:19:14.195Z
   &quot;params&quot;: {
     &quot;name&quot;: &quot;add_item&quot;,
     &quot;arguments&quot;: {
-      &quot;sku&quot;: &quot;WIDGET-7c622685&quot;,
+      &quot;sku&quot;: &quot;WIDGET-8b3e0618&quot;,
       &quot;name&quot;: &quot;Widget&quot;,
       &quot;qty&quot;: 4
     }
   }
 }
 
-response: 5ms
-1 &lt; 200 POST http://host.docker.internal:3001/mcp
+response: 4ms
+1 &lt; 200 POST http://localhost:3001/mcp
 1 &lt; X-Powered-By: Express
 1 &lt; cache-control: no-cache, no-transform
 1 &lt; connection: keep-alive
 1 &lt; content-type: text/event-stream
 1 &lt; x-accel-buffering: no
-1 &lt; Date: Fri, 27 Nov 2026 11:19:14 GMT
+1 &lt; Date: Fri, 27 Nov 2026 11:19:56 GMT
 1 &lt; Transfer-Encoding: chunked
 
 * added.structuredContent == { sku: &apos;#(sku)&apos;, name: &apos;Widget&apos;, qty: 4 }
 * mcp.invoke(&apos;adjust_stock&apos;, { sku: sku, delta: -3 }).structuredContent.qty == 1
-request: 2026-11-27T11:19:14.204Z
-1 &gt; POST http://host.docker.internal:3001/mcp
+request: 2026-11-27T11:19:56.092Z
+1 &gt; POST http://localhost:3001/mcp
 1 &gt; Accept: application/json, text/event-stream
 1 &gt; MCP-Protocol-Version: 2025-11-25
 1 &gt; Content-Type: application/json
-1 &gt; Host: host.docker.internal:3001
+1 &gt; Host: localhost:3001
 1 &gt; Content-Length: 129
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;jsonrpc&quot;: &quot;2.0&quot;,
   &quot;id&quot;: 4,
@@ -283,32 +283,32 @@ request: 2026-11-27T11:19:14.204Z
   &quot;params&quot;: {
     &quot;name&quot;: &quot;adjust_stock&quot;,
     &quot;arguments&quot;: {
-      &quot;sku&quot;: &quot;WIDGET-7c622685&quot;,
+      &quot;sku&quot;: &quot;WIDGET-8b3e0618&quot;,
       &quot;delta&quot;: -3
     }
   }
 }
 
-response: 3ms
-1 &lt; 200 POST http://host.docker.internal:3001/mcp
+response: 4ms
+1 &lt; 200 POST http://localhost:3001/mcp
 1 &lt; X-Powered-By: Express
 1 &lt; cache-control: no-cache, no-transform
 1 &lt; connection: keep-alive
 1 &lt; content-type: text/event-stream
 1 &lt; x-accel-buffering: no
-1 &lt; Date: Fri, 27 Nov 2026 11:19:14 GMT
+1 &lt; Date: Fri, 27 Nov 2026 11:19:56 GMT
 1 &lt; Transfer-Encoding: chunked
 
 * response = mcp.invoke(&apos;get_item&apos;, { sku: sku })
-request: 2026-11-27T11:19:14.209Z
-1 &gt; POST http://host.docker.internal:3001/mcp
+request: 2026-11-27T11:19:56.098Z
+1 &gt; POST http://localhost:3001/mcp
 1 &gt; Accept: application/json, text/event-stream
 1 &gt; MCP-Protocol-Version: 2025-11-25
 1 &gt; Content-Type: application/json
-1 &gt; Host: host.docker.internal:3001
+1 &gt; Host: localhost:3001
 1 &gt; Content-Length: 114
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;jsonrpc&quot;: &quot;2.0&quot;,
   &quot;id&quot;: 5,
@@ -316,37 +316,37 @@ request: 2026-11-27T11:19:14.209Z
   &quot;params&quot;: {
     &quot;name&quot;: &quot;get_item&quot;,
     &quot;arguments&quot;: {
-      &quot;sku&quot;: &quot;WIDGET-7c622685&quot;
+      &quot;sku&quot;: &quot;WIDGET-8b3e0618&quot;
     }
   }
 }
 
 response: 3ms
-1 &lt; 200 POST http://host.docker.internal:3001/mcp
+1 &lt; 200 POST http://localhost:3001/mcp
 1 &lt; X-Powered-By: Express
 1 &lt; cache-control: no-cache, no-transform
 1 &lt; connection: keep-alive
 1 &lt; content-type: text/event-stream
 1 &lt; x-accel-buffering: no
-1 &lt; Date: Fri, 27 Nov 2026 11:19:14 GMT
+1 &lt; Date: Fri, 27 Nov 2026 11:19:56 GMT
 1 &lt; Transfer-Encoding: chunked
 
 * response.structuredContent == { sku: &apos;#(sku)&apos;, name: &apos;Widget&apos;, qty: 1 }
 * karate.fromString(response.content[0].text) == { sku: &apos;#(sku)&apos;, name: &apos;Widget&apos;, qty: 1 }
 </system-out></testcase>
-<testcase classname="checks.inventory" name="a tool&apos;s own error is a result, not a failed step" time="0.019"><system-out>* mcp = karate.channel(&apos;mcp&apos;)
+<testcase classname="checks.inventory" name="a tool&apos;s own error is a result, not a failed step" time="0.017"><system-out>* mcp = karate.channel(&apos;mcp&apos;)
 * id = karate.uuid().substring(0, 8)
 * response = mcp.invoke(&apos;get_item&apos;, { sku: &apos;GHOST-&apos; + id })
-request: 2026-11-27T11:19:14.219Z
-1 &gt; POST http://host.docker.internal:3001/mcp
+request: 2026-11-27T11:19:56.106Z
+1 &gt; POST http://localhost:3001/mcp
 1 &gt; Accept: application/json, text/event-stream
 1 &gt; MCP-Protocol-Version: 2026-07-28
 1 &gt; Mcp-Method: server/discover
 1 &gt; Content-Type: application/json
-1 &gt; Host: host.docker.internal:3001
+1 &gt; Host: localhost:3001
 1 &gt; Content-Length: 253
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;jsonrpc&quot;: &quot;2.0&quot;,
   &quot;id&quot;: 1,
@@ -364,12 +364,12 @@ request: 2026-11-27T11:19:14.219Z
   }
 }
 
-response: 2ms
-1 &lt; 400 POST http://host.docker.internal:3001/mcp
+response: 3ms
+1 &lt; 400 POST http://localhost:3001/mcp
 1 &lt; X-Powered-By: Express
 1 &lt; content-type: application/json
 1 &lt; content-length: 198
-1 &lt; Date: Fri, 27 Nov 2026 11:19:14 GMT
+1 &lt; Date: Fri, 27 Nov 2026 11:19:56 GMT
 1 &lt; Connection: keep-alive
 1 &lt; Keep-Alive: timeout=5
 {
@@ -381,14 +381,14 @@ response: 2ms
   &quot;id&quot;: null
 }
 
-request: 2026-11-27T11:19:14.223Z
-1 &gt; POST http://host.docker.internal:3001/mcp
+request: 2026-11-27T11:19:56.111Z
+1 &gt; POST http://localhost:3001/mcp
 1 &gt; Accept: application/json, text/event-stream
 1 &gt; Content-Type: application/json
-1 &gt; Host: host.docker.internal:3001
+1 &gt; Host: localhost:3001
 1 &gt; Content-Length: 156
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;jsonrpc&quot;: &quot;2.0&quot;,
   &quot;id&quot;: 2,
@@ -404,47 +404,47 @@ request: 2026-11-27T11:19:14.223Z
   }
 }
 
-response: 3ms
-1 &lt; 200 POST http://host.docker.internal:3001/mcp
+response: 2ms
+1 &lt; 200 POST http://localhost:3001/mcp
 1 &lt; X-Powered-By: Express
 1 &lt; cache-control: no-cache, no-transform
 1 &lt; connection: keep-alive
 1 &lt; content-type: text/event-stream
 1 &lt; x-accel-buffering: no
 1 &lt; content-length: 251
-1 &lt; Date: Fri, 27 Nov 2026 11:19:14 GMT
+1 &lt; Date: Fri, 27 Nov 2026 11:19:56 GMT
 
-request: 2026-11-27T11:19:14.228Z
-1 &gt; POST http://host.docker.internal:3001/mcp
+request: 2026-11-27T11:19:56.114Z
+1 &gt; POST http://localhost:3001/mcp
 1 &gt; Accept: application/json, text/event-stream
 1 &gt; MCP-Protocol-Version: 2025-11-25
 1 &gt; Content-Type: application/json
-1 &gt; Host: host.docker.internal:3001
+1 &gt; Host: localhost:3001
 1 &gt; Content-Length: 55
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;jsonrpc&quot;: &quot;2.0&quot;,
   &quot;method&quot;: &quot;notifications/initialized&quot;
 }
 
-response: 2ms
-1 &lt; 202 POST http://host.docker.internal:3001/mcp
+response: 1ms
+1 &lt; 202 POST http://localhost:3001/mcp
 1 &lt; X-Powered-By: Express
-1 &lt; Date: Fri, 27 Nov 2026 11:19:14 GMT
+1 &lt; Date: Fri, 27 Nov 2026 11:19:56 GMT
 1 &lt; Connection: keep-alive
 1 &lt; Keep-Alive: timeout=5
 1 &lt; Transfer-Encoding: chunked
 
-request: 2026-11-27T11:19:14.232Z
-1 &gt; POST http://host.docker.internal:3001/mcp
+request: 2026-11-27T11:19:56.118Z
+1 &gt; POST http://localhost:3001/mcp
 1 &gt; Accept: application/json, text/event-stream
 1 &gt; MCP-Protocol-Version: 2025-11-25
 1 &gt; Content-Type: application/json
-1 &gt; Host: host.docker.internal:3001
+1 &gt; Host: localhost:3001
 1 &gt; Content-Length: 113
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;jsonrpc&quot;: &quot;2.0&quot;,
   &quot;id&quot;: 3,
@@ -452,37 +452,37 @@ request: 2026-11-27T11:19:14.232Z
   &quot;params&quot;: {
     &quot;name&quot;: &quot;get_item&quot;,
     &quot;arguments&quot;: {
-      &quot;sku&quot;: &quot;GHOST-94f83766&quot;
+      &quot;sku&quot;: &quot;GHOST-cbe96f73&quot;
     }
   }
 }
 
-response: 3ms
-1 &lt; 200 POST http://host.docker.internal:3001/mcp
+response: 2ms
+1 &lt; 200 POST http://localhost:3001/mcp
 1 &lt; X-Powered-By: Express
 1 &lt; cache-control: no-cache, no-transform
 1 &lt; connection: keep-alive
 1 &lt; content-type: text/event-stream
 1 &lt; x-accel-buffering: no
-1 &lt; Date: Fri, 27 Nov 2026 11:19:14 GMT
+1 &lt; Date: Fri, 27 Nov 2026 11:19:56 GMT
 1 &lt; Transfer-Encoding: chunked
 
 * response.isError == true
 * response.content[0].text == &apos;no item with sku GHOST-&apos; + id
 </system-out></testcase>
-<testcase classname="checks.inventory" name="a protocol error is data, through the raw primitive" time="0.033"><system-out>* mcp = karate.channel(&apos;mcp&apos;)
+<testcase classname="checks.inventory" name="a protocol error is data, through the raw primitive" time="0.026"><system-out>* mcp = karate.channel(&apos;mcp&apos;)
 * id = karate.uuid().substring(0, 8)
 * mcp.connect()
-request: 2026-11-27T11:19:14.238Z
-1 &gt; POST http://host.docker.internal:3001/mcp
+request: 2026-11-27T11:19:56.123Z
+1 &gt; POST http://localhost:3001/mcp
 1 &gt; Accept: application/json, text/event-stream
 1 &gt; MCP-Protocol-Version: 2026-07-28
 1 &gt; Mcp-Method: server/discover
 1 &gt; Content-Type: application/json
-1 &gt; Host: host.docker.internal:3001
+1 &gt; Host: localhost:3001
 1 &gt; Content-Length: 253
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;jsonrpc&quot;: &quot;2.0&quot;,
   &quot;id&quot;: 1,
@@ -501,11 +501,11 @@ request: 2026-11-27T11:19:14.238Z
 }
 
 response: 2ms
-1 &lt; 400 POST http://host.docker.internal:3001/mcp
+1 &lt; 400 POST http://localhost:3001/mcp
 1 &lt; X-Powered-By: Express
 1 &lt; content-type: application/json
 1 &lt; content-length: 198
-1 &lt; Date: Fri, 27 Nov 2026 11:19:14 GMT
+1 &lt; Date: Fri, 27 Nov 2026 11:19:56 GMT
 1 &lt; Connection: keep-alive
 1 &lt; Keep-Alive: timeout=5
 {
@@ -517,14 +517,14 @@ response: 2ms
   &quot;id&quot;: null
 }
 
-request: 2026-11-27T11:19:14.242Z
-1 &gt; POST http://host.docker.internal:3001/mcp
+request: 2026-11-27T11:19:56.128Z
+1 &gt; POST http://localhost:3001/mcp
 1 &gt; Accept: application/json, text/event-stream
 1 &gt; Content-Type: application/json
-1 &gt; Host: host.docker.internal:3001
+1 &gt; Host: localhost:3001
 1 &gt; Content-Length: 156
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;jsonrpc&quot;: &quot;2.0&quot;,
   &quot;id&quot;: 2,
@@ -540,48 +540,48 @@ request: 2026-11-27T11:19:14.242Z
   }
 }
 
-response: 5ms
-1 &lt; 200 POST http://host.docker.internal:3001/mcp
+response: 3ms
+1 &lt; 200 POST http://localhost:3001/mcp
 1 &lt; X-Powered-By: Express
 1 &lt; cache-control: no-cache, no-transform
 1 &lt; connection: keep-alive
 1 &lt; content-type: text/event-stream
 1 &lt; x-accel-buffering: no
 1 &lt; content-length: 251
-1 &lt; Date: Fri, 27 Nov 2026 11:19:14 GMT
+1 &lt; Date: Fri, 27 Nov 2026 11:19:56 GMT
 
-request: 2026-11-27T11:19:14.249Z
-1 &gt; POST http://host.docker.internal:3001/mcp
+request: 2026-11-27T11:19:56.132Z
+1 &gt; POST http://localhost:3001/mcp
 1 &gt; Accept: application/json, text/event-stream
 1 &gt; MCP-Protocol-Version: 2025-11-25
 1 &gt; Content-Type: application/json
-1 &gt; Host: host.docker.internal:3001
+1 &gt; Host: localhost:3001
 1 &gt; Content-Length: 55
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;jsonrpc&quot;: &quot;2.0&quot;,
   &quot;method&quot;: &quot;notifications/initialized&quot;
 }
 
-response: 1ms
-1 &lt; 202 POST http://host.docker.internal:3001/mcp
+response: 2ms
+1 &lt; 202 POST http://localhost:3001/mcp
 1 &lt; X-Powered-By: Express
-1 &lt; Date: Fri, 27 Nov 2026 11:19:14 GMT
+1 &lt; Date: Fri, 27 Nov 2026 11:19:56 GMT
 1 &lt; Connection: keep-alive
 1 &lt; Keep-Alive: timeout=5
 1 &lt; Transfer-Encoding: chunked
 
 * response = mcp.call(&apos;resources/read&apos;, { uri: &apos;inventory://nope&apos; })
-request: 2026-11-27T11:19:14.253Z
-1 &gt; POST http://host.docker.internal:3001/mcp
+request: 2026-11-27T11:19:56.135Z
+1 &gt; POST http://localhost:3001/mcp
 1 &gt; Accept: application/json, text/event-stream
 1 &gt; MCP-Protocol-Version: 2025-11-25
 1 &gt; Content-Type: application/json
-1 &gt; Host: host.docker.internal:3001
+1 &gt; Host: localhost:3001
 1 &gt; Content-Length: 89
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;jsonrpc&quot;: &quot;2.0&quot;,
   &quot;id&quot;: 3,
@@ -591,27 +591,27 @@ request: 2026-11-27T11:19:14.253Z
   }
 }
 
-response: 3ms
-1 &lt; 200 POST http://host.docker.internal:3001/mcp
+response: 2ms
+1 &lt; 200 POST http://localhost:3001/mcp
 1 &lt; X-Powered-By: Express
 1 &lt; cache-control: no-cache, no-transform
 1 &lt; connection: keep-alive
 1 &lt; content-type: text/event-stream
 1 &lt; x-accel-buffering: no
 1 &lt; content-length: 137
-1 &lt; Date: Fri, 27 Nov 2026 11:19:14 GMT
+1 &lt; Date: Fri, 27 Nov 2026 11:19:56 GMT
 
 * response.body.error.code == -32602
 * mcp.call(&apos;tools/call&apos;, { name: &apos;add_item&apos;, arguments: {} }).body.result.isError == true
-request: 2026-11-27T11:19:14.259Z
-1 &gt; POST http://host.docker.internal:3001/mcp
+request: 2026-11-27T11:19:56.140Z
+1 &gt; POST http://localhost:3001/mcp
 1 &gt; Accept: application/json, text/event-stream
 1 &gt; MCP-Protocol-Version: 2025-11-25
 1 &gt; Content-Type: application/json
-1 &gt; Host: host.docker.internal:3001
+1 &gt; Host: localhost:3001
 1 &gt; Content-Length: 91
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;jsonrpc&quot;: &quot;2.0&quot;,
   &quot;id&quot;: 4,
@@ -624,25 +624,25 @@ request: 2026-11-27T11:19:14.259Z
 }
 
 response: 2ms
-1 &lt; 200 POST http://host.docker.internal:3001/mcp
+1 &lt; 200 POST http://localhost:3001/mcp
 1 &lt; X-Powered-By: Express
 1 &lt; cache-control: no-cache, no-transform
 1 &lt; connection: keep-alive
 1 &lt; content-type: text/event-stream
 1 &lt; x-accel-buffering: no
-1 &lt; Date: Fri, 27 Nov 2026 11:19:14 GMT
+1 &lt; Date: Fri, 27 Nov 2026 11:19:56 GMT
 1 &lt; Transfer-Encoding: chunked
 
 * unknown = mcp.call(&apos;tools/call&apos;, { name: &apos;no_such_tool&apos;, arguments: {} })
-request: 2026-11-27T11:19:14.265Z
-1 &gt; POST http://host.docker.internal:3001/mcp
+request: 2026-11-27T11:19:56.145Z
+1 &gt; POST http://localhost:3001/mcp
 1 &gt; Accept: application/json, text/event-stream
 1 &gt; MCP-Protocol-Version: 2025-11-25
 1 &gt; Content-Type: application/json
-1 &gt; Host: host.docker.internal:3001
+1 &gt; Host: localhost:3001
 1 &gt; Content-Length: 95
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;jsonrpc&quot;: &quot;2.0&quot;,
   &quot;id&quot;: 5,
@@ -655,30 +655,30 @@ request: 2026-11-27T11:19:14.265Z
 }
 
 response: 3ms
-1 &lt; 200 POST http://host.docker.internal:3001/mcp
+1 &lt; 200 POST http://localhost:3001/mcp
 1 &lt; X-Powered-By: Express
 1 &lt; cache-control: no-cache, no-transform
 1 &lt; connection: keep-alive
 1 &lt; content-type: text/event-stream
 1 &lt; x-accel-buffering: no
 1 &lt; content-length: 156
-1 &lt; Date: Fri, 27 Nov 2026 11:19:14 GMT
+1 &lt; Date: Fri, 27 Nov 2026 11:19:56 GMT
 
 * unknown.body.result.content[0].text == &apos;MCP error -32602: Tool no_such_tool not found&apos;
 </system-out></testcase>
-<testcase classname="checks.inventory" name="resources and prompts" time="0.031"><system-out>* mcp = karate.channel(&apos;mcp&apos;)
+<testcase classname="checks.inventory" name="resources and prompts" time="0.029"><system-out>* mcp = karate.channel(&apos;mcp&apos;)
 * id = karate.uuid().substring(0, 8)
 * mcp.resources().resources[*].uri contains &apos;inventory://summary&apos;
-request: 2026-11-27T11:19:14.272Z
-1 &gt; POST http://host.docker.internal:3001/mcp
+request: 2026-11-27T11:19:56.151Z
+1 &gt; POST http://localhost:3001/mcp
 1 &gt; Accept: application/json, text/event-stream
 1 &gt; MCP-Protocol-Version: 2026-07-28
 1 &gt; Mcp-Method: server/discover
 1 &gt; Content-Type: application/json
-1 &gt; Host: host.docker.internal:3001
+1 &gt; Host: localhost:3001
 1 &gt; Content-Length: 253
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;jsonrpc&quot;: &quot;2.0&quot;,
   &quot;id&quot;: 1,
@@ -697,11 +697,11 @@ request: 2026-11-27T11:19:14.272Z
 }
 
 response: 2ms
-1 &lt; 400 POST http://host.docker.internal:3001/mcp
+1 &lt; 400 POST http://localhost:3001/mcp
 1 &lt; X-Powered-By: Express
 1 &lt; content-type: application/json
 1 &lt; content-length: 198
-1 &lt; Date: Fri, 27 Nov 2026 11:19:14 GMT
+1 &lt; Date: Fri, 27 Nov 2026 11:19:56 GMT
 1 &lt; Connection: keep-alive
 1 &lt; Keep-Alive: timeout=5
 {
@@ -713,14 +713,14 @@ response: 2ms
   &quot;id&quot;: null
 }
 
-request: 2026-11-27T11:19:14.276Z
-1 &gt; POST http://host.docker.internal:3001/mcp
+request: 2026-11-27T11:19:56.155Z
+1 &gt; POST http://localhost:3001/mcp
 1 &gt; Accept: application/json, text/event-stream
 1 &gt; Content-Type: application/json
-1 &gt; Host: host.docker.internal:3001
+1 &gt; Host: localhost:3001
 1 &gt; Content-Length: 156
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;jsonrpc&quot;: &quot;2.0&quot;,
   &quot;id&quot;: 2,
@@ -737,72 +737,72 @@ request: 2026-11-27T11:19:14.276Z
 }
 
 response: 2ms
-1 &lt; 200 POST http://host.docker.internal:3001/mcp
+1 &lt; 200 POST http://localhost:3001/mcp
 1 &lt; X-Powered-By: Express
 1 &lt; cache-control: no-cache, no-transform
 1 &lt; connection: keep-alive
 1 &lt; content-type: text/event-stream
 1 &lt; x-accel-buffering: no
 1 &lt; content-length: 251
-1 &lt; Date: Fri, 27 Nov 2026 11:19:14 GMT
+1 &lt; Date: Fri, 27 Nov 2026 11:19:56 GMT
 
-request: 2026-11-27T11:19:14.279Z
-1 &gt; POST http://host.docker.internal:3001/mcp
+request: 2026-11-27T11:19:56.158Z
+1 &gt; POST http://localhost:3001/mcp
 1 &gt; Accept: application/json, text/event-stream
 1 &gt; MCP-Protocol-Version: 2025-11-25
 1 &gt; Content-Type: application/json
-1 &gt; Host: host.docker.internal:3001
+1 &gt; Host: localhost:3001
 1 &gt; Content-Length: 55
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;jsonrpc&quot;: &quot;2.0&quot;,
   &quot;method&quot;: &quot;notifications/initialized&quot;
 }
 
 response: 2ms
-1 &lt; 202 POST http://host.docker.internal:3001/mcp
+1 &lt; 202 POST http://localhost:3001/mcp
 1 &lt; X-Powered-By: Express
-1 &lt; Date: Fri, 27 Nov 2026 11:19:14 GMT
+1 &lt; Date: Fri, 27 Nov 2026 11:19:56 GMT
 1 &lt; Connection: keep-alive
 1 &lt; Keep-Alive: timeout=5
 1 &lt; Transfer-Encoding: chunked
 
-request: 2026-11-27T11:19:14.283Z
-1 &gt; POST http://host.docker.internal:3001/mcp
+request: 2026-11-27T11:19:56.161Z
+1 &gt; POST http://localhost:3001/mcp
 1 &gt; Accept: application/json, text/event-stream
 1 &gt; MCP-Protocol-Version: 2025-11-25
 1 &gt; Content-Type: application/json
-1 &gt; Host: host.docker.internal:3001
+1 &gt; Host: localhost:3001
 1 &gt; Content-Length: 51
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;jsonrpc&quot;: &quot;2.0&quot;,
   &quot;id&quot;: 3,
   &quot;method&quot;: &quot;resources/list&quot;
 }
 
-response: 2ms
-1 &lt; 200 POST http://host.docker.internal:3001/mcp
+response: 3ms
+1 &lt; 200 POST http://localhost:3001/mcp
 1 &lt; X-Powered-By: Express
 1 &lt; cache-control: no-cache, no-transform
 1 &lt; connection: keep-alive
 1 &lt; content-type: text/event-stream
 1 &lt; x-accel-buffering: no
 1 &lt; content-length: 210
-1 &lt; Date: Fri, 27 Nov 2026 11:19:14 GMT
+1 &lt; Date: Fri, 27 Nov 2026 11:19:56 GMT
 
 * mcp.prompts().prompts[*].name contains &apos;restock-plan&apos;
-request: 2026-11-27T11:19:14.287Z
-1 &gt; POST http://host.docker.internal:3001/mcp
+request: 2026-11-27T11:19:56.166Z
+1 &gt; POST http://localhost:3001/mcp
 1 &gt; Accept: application/json, text/event-stream
 1 &gt; MCP-Protocol-Version: 2025-11-25
 1 &gt; Content-Type: application/json
-1 &gt; Host: host.docker.internal:3001
+1 &gt; Host: localhost:3001
 1 &gt; Content-Length: 49
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;jsonrpc&quot;: &quot;2.0&quot;,
   &quot;id&quot;: 4,
@@ -810,25 +810,25 @@ request: 2026-11-27T11:19:14.287Z
 }
 
 response: 2ms
-1 &lt; 200 POST http://host.docker.internal:3001/mcp
+1 &lt; 200 POST http://localhost:3001/mcp
 1 &lt; X-Powered-By: Express
 1 &lt; cache-control: no-cache, no-transform
 1 &lt; connection: keep-alive
 1 &lt; content-type: text/event-stream
 1 &lt; x-accel-buffering: no
 1 &lt; content-length: 279
-1 &lt; Date: Fri, 27 Nov 2026 11:19:14 GMT
+1 &lt; Date: Fri, 27 Nov 2026 11:19:56 GMT
 
 * mcp.invoke(&apos;add_item&apos;, { sku: &apos;BOLT-&apos; + id, name: &apos;Bolt&apos;, qty: 7 })
-request: 2026-11-27T11:19:14.292Z
-1 &gt; POST http://host.docker.internal:3001/mcp
+request: 2026-11-27T11:19:56.170Z
+1 &gt; POST http://localhost:3001/mcp
 1 &gt; Accept: application/json, text/event-stream
 1 &gt; MCP-Protocol-Version: 2025-11-25
 1 &gt; Content-Type: application/json
-1 &gt; Host: host.docker.internal:3001
+1 &gt; Host: localhost:3001
 1 &gt; Content-Length: 134
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;jsonrpc&quot;: &quot;2.0&quot;,
   &quot;id&quot;: 5,
@@ -836,33 +836,33 @@ request: 2026-11-27T11:19:14.292Z
   &quot;params&quot;: {
     &quot;name&quot;: &quot;add_item&quot;,
     &quot;arguments&quot;: {
-      &quot;sku&quot;: &quot;BOLT-15ecae0a&quot;,
+      &quot;sku&quot;: &quot;BOLT-d1e0895b&quot;,
       &quot;name&quot;: &quot;Bolt&quot;,
       &quot;qty&quot;: 7
     }
   }
 }
 
-response: 3ms
-1 &lt; 200 POST http://host.docker.internal:3001/mcp
+response: 2ms
+1 &lt; 200 POST http://localhost:3001/mcp
 1 &lt; X-Powered-By: Express
 1 &lt; cache-control: no-cache, no-transform
 1 &lt; connection: keep-alive
 1 &lt; content-type: text/event-stream
 1 &lt; x-accel-buffering: no
-1 &lt; Date: Fri, 27 Nov 2026 11:19:14 GMT
+1 &lt; Date: Fri, 27 Nov 2026 11:19:56 GMT
 1 &lt; Transfer-Encoding: chunked
 
 * summary = mcp.call(&apos;resources/read&apos;, { uri: &apos;inventory://summary&apos; })
-request: 2026-11-27T11:19:14.298Z
-1 &gt; POST http://host.docker.internal:3001/mcp
+request: 2026-11-27T11:19:56.174Z
+1 &gt; POST http://localhost:3001/mcp
 1 &gt; Accept: application/json, text/event-stream
 1 &gt; MCP-Protocol-Version: 2025-11-25
 1 &gt; Content-Type: application/json
-1 &gt; Host: host.docker.internal:3001
+1 &gt; Host: localhost:3001
 1 &gt; Content-Length: 92
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;jsonrpc&quot;: &quot;2.0&quot;,
   &quot;id&quot;: 6,
@@ -873,33 +873,33 @@ request: 2026-11-27T11:19:14.298Z
 }
 
 response: 2ms
-1 &lt; 200 POST http://host.docker.internal:3001/mcp
+1 &lt; 200 POST http://localhost:3001/mcp
 1 &lt; X-Powered-By: Express
 1 &lt; cache-control: no-cache, no-transform
 1 &lt; connection: keep-alive
 1 &lt; content-type: text/event-stream
 1 &lt; x-accel-buffering: no
 1 &lt; content-length: 136
-1 &lt; Date: Fri, 27 Nov 2026 11:19:14 GMT
+1 &lt; Date: Fri, 27 Nov 2026 11:19:56 GMT
 
 * counts = karate.fromString(summary.body.result.contents[0].text)
 * counts.items == &apos;#number&apos;
 * counts.units &gt;= 7
 </system-out></testcase>
-<testcase classname="checks.inventory" name="search, and a bounded list" time="0.024"><system-out>* mcp = karate.channel(&apos;mcp&apos;)
+<testcase classname="checks.inventory" name="search, and a bounded list" time="0.025"><system-out>* mcp = karate.channel(&apos;mcp&apos;)
 * id = karate.uuid().substring(0, 8)
 * sku = &apos;CABLE-&apos; + id
 * mcp.invoke(&apos;add_item&apos;, { sku: sku, name: &apos;Coax cable &apos; + id, qty: 2 })
-request: 2026-11-27T11:19:14.303Z
-1 &gt; POST http://host.docker.internal:3001/mcp
+request: 2026-11-27T11:19:56.179Z
+1 &gt; POST http://localhost:3001/mcp
 1 &gt; Accept: application/json, text/event-stream
 1 &gt; MCP-Protocol-Version: 2026-07-28
 1 &gt; Mcp-Method: server/discover
 1 &gt; Content-Type: application/json
-1 &gt; Host: host.docker.internal:3001
+1 &gt; Host: localhost:3001
 1 &gt; Content-Length: 253
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;jsonrpc&quot;: &quot;2.0&quot;,
   &quot;id&quot;: 1,
@@ -917,12 +917,12 @@ request: 2026-11-27T11:19:14.303Z
   }
 }
 
-response: 2ms
-1 &lt; 400 POST http://host.docker.internal:3001/mcp
+response: 1ms
+1 &lt; 400 POST http://localhost:3001/mcp
 1 &lt; X-Powered-By: Express
 1 &lt; content-type: application/json
 1 &lt; content-length: 198
-1 &lt; Date: Fri, 27 Nov 2026 11:19:14 GMT
+1 &lt; Date: Fri, 27 Nov 2026 11:19:56 GMT
 1 &lt; Connection: keep-alive
 1 &lt; Keep-Alive: timeout=5
 {
@@ -934,14 +934,14 @@ response: 2ms
   &quot;id&quot;: null
 }
 
-request: 2026-11-27T11:19:14.306Z
-1 &gt; POST http://host.docker.internal:3001/mcp
+request: 2026-11-27T11:19:56.183Z
+1 &gt; POST http://localhost:3001/mcp
 1 &gt; Accept: application/json, text/event-stream
 1 &gt; Content-Type: application/json
-1 &gt; Host: host.docker.internal:3001
+1 &gt; Host: localhost:3001
 1 &gt; Content-Length: 156
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;jsonrpc&quot;: &quot;2.0&quot;,
   &quot;id&quot;: 2,
@@ -958,46 +958,46 @@ request: 2026-11-27T11:19:14.306Z
 }
 
 response: 2ms
-1 &lt; 200 POST http://host.docker.internal:3001/mcp
+1 &lt; 200 POST http://localhost:3001/mcp
 1 &lt; X-Powered-By: Express
 1 &lt; cache-control: no-cache, no-transform
 1 &lt; connection: keep-alive
 1 &lt; content-type: text/event-stream
 1 &lt; x-accel-buffering: no
 1 &lt; content-length: 251
-1 &lt; Date: Fri, 27 Nov 2026 11:19:14 GMT
+1 &lt; Date: Fri, 27 Nov 2026 11:19:56 GMT
 
-request: 2026-11-27T11:19:14.310Z
-1 &gt; POST http://host.docker.internal:3001/mcp
+request: 2026-11-27T11:19:56.187Z
+1 &gt; POST http://localhost:3001/mcp
 1 &gt; Accept: application/json, text/event-stream
 1 &gt; MCP-Protocol-Version: 2025-11-25
 1 &gt; Content-Type: application/json
-1 &gt; Host: host.docker.internal:3001
+1 &gt; Host: localhost:3001
 1 &gt; Content-Length: 55
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;jsonrpc&quot;: &quot;2.0&quot;,
   &quot;method&quot;: &quot;notifications/initialized&quot;
 }
 
 response: 1ms
-1 &lt; 202 POST http://host.docker.internal:3001/mcp
+1 &lt; 202 POST http://localhost:3001/mcp
 1 &lt; X-Powered-By: Express
-1 &lt; Date: Fri, 27 Nov 2026 11:19:14 GMT
+1 &lt; Date: Fri, 27 Nov 2026 11:19:56 GMT
 1 &lt; Connection: keep-alive
 1 &lt; Keep-Alive: timeout=5
 1 &lt; Transfer-Encoding: chunked
 
-request: 2026-11-27T11:19:14.313Z
-1 &gt; POST http://host.docker.internal:3001/mcp
+request: 2026-11-27T11:19:56.190Z
+1 &gt; POST http://localhost:3001/mcp
 1 &gt; Accept: application/json, text/event-stream
 1 &gt; MCP-Protocol-Version: 2025-11-25
 1 &gt; Content-Type: application/json
-1 &gt; Host: host.docker.internal:3001
+1 &gt; Host: localhost:3001
 1 &gt; Content-Length: 150
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;jsonrpc&quot;: &quot;2.0&quot;,
   &quot;id&quot;: 3,
@@ -1005,33 +1005,33 @@ request: 2026-11-27T11:19:14.313Z
   &quot;params&quot;: {
     &quot;name&quot;: &quot;add_item&quot;,
     &quot;arguments&quot;: {
-      &quot;sku&quot;: &quot;CABLE-5e6cc7a3&quot;,
-      &quot;name&quot;: &quot;Coax cable 5e6cc7a3&quot;,
+      &quot;sku&quot;: &quot;CABLE-cf57e493&quot;,
+      &quot;name&quot;: &quot;Coax cable cf57e493&quot;,
       &quot;qty&quot;: 2
     }
   }
 }
 
-response: 3ms
-1 &lt; 200 POST http://host.docker.internal:3001/mcp
+response: 2ms
+1 &lt; 200 POST http://localhost:3001/mcp
 1 &lt; X-Powered-By: Express
 1 &lt; cache-control: no-cache, no-transform
 1 &lt; connection: keep-alive
 1 &lt; content-type: text/event-stream
 1 &lt; x-accel-buffering: no
-1 &lt; Date: Fri, 27 Nov 2026 11:19:14 GMT
+1 &lt; Date: Fri, 27 Nov 2026 11:19:56 GMT
 1 &lt; Transfer-Encoding: chunked
 
 * mcp.invoke(&apos;search_items&apos;, { q: &apos;coax cable &apos; + id }).structuredContent.items[*].sku contains sku
-request: 2026-11-27T11:19:14.317Z
-1 &gt; POST http://host.docker.internal:3001/mcp
+request: 2026-11-27T11:19:56.193Z
+1 &gt; POST http://localhost:3001/mcp
 1 &gt; Accept: application/json, text/event-stream
 1 &gt; MCP-Protocol-Version: 2025-11-25
 1 &gt; Content-Type: application/json
-1 &gt; Host: host.docker.internal:3001
+1 &gt; Host: localhost:3001
 1 &gt; Content-Length: 120
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;jsonrpc&quot;: &quot;2.0&quot;,
   &quot;id&quot;: 4,
@@ -1039,31 +1039,31 @@ request: 2026-11-27T11:19:14.317Z
   &quot;params&quot;: {
     &quot;name&quot;: &quot;search_items&quot;,
     &quot;arguments&quot;: {
-      &quot;q&quot;: &quot;coax cable 5e6cc7a3&quot;
+      &quot;q&quot;: &quot;coax cable cf57e493&quot;
     }
   }
 }
 
-response: 3ms
-1 &lt; 200 POST http://host.docker.internal:3001/mcp
+response: 4ms
+1 &lt; 200 POST http://localhost:3001/mcp
 1 &lt; X-Powered-By: Express
 1 &lt; cache-control: no-cache, no-transform
 1 &lt; connection: keep-alive
 1 &lt; content-type: text/event-stream
 1 &lt; x-accel-buffering: no
-1 &lt; Date: Fri, 27 Nov 2026 11:19:14 GMT
+1 &lt; Date: Fri, 27 Nov 2026 11:19:56 GMT
 1 &lt; Transfer-Encoding: chunked
 
 * mcp.invoke(&apos;list_items&apos;, { limit: &apos;1&apos; }).structuredContent.items == &apos;#[1]&apos;
-request: 2026-11-27T11:19:14.321Z
-1 &gt; POST http://host.docker.internal:3001/mcp
+request: 2026-11-27T11:19:56.199Z
+1 &gt; POST http://localhost:3001/mcp
 1 &gt; Accept: application/json, text/event-stream
 1 &gt; MCP-Protocol-Version: 2025-11-25
 1 &gt; Content-Type: application/json
-1 &gt; Host: host.docker.internal:3001
+1 &gt; Host: localhost:3001
 1 &gt; Content-Length: 104
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;jsonrpc&quot;: &quot;2.0&quot;,
   &quot;id&quot;: 5,
@@ -1077,13 +1077,13 @@ request: 2026-11-27T11:19:14.321Z
 }
 
 response: 3ms
-1 &lt; 200 POST http://host.docker.internal:3001/mcp
+1 &lt; 200 POST http://localhost:3001/mcp
 1 &lt; X-Powered-By: Express
 1 &lt; cache-control: no-cache, no-transform
 1 &lt; connection: keep-alive
 1 &lt; content-type: text/event-stream
 1 &lt; x-accel-buffering: no
-1 &lt; Date: Fri, 27 Nov 2026 11:19:14 GMT
+1 &lt; Date: Fri, 27 Nov 2026 11:19:56 GMT
 1 &lt; Transfer-Encoding: chunked
 
 </system-out></testcase>

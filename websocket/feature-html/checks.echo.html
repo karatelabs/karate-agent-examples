@@ -10,14 +10,16 @@
          blocks lazily on-view (KarateReport._observeCode) rather than Prism's auto-run,
          so collapsed/off-screen HTTP bodies aren't tokenized until actually shown. -->
     <script src="../res/prism.min.js" data-manual></script>
-    <script src="../res/alpine.min.js" defer></script>
-    <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('karate-theme') || 'light');</script>
+    <!-- See karate-summary.html: theme before paint, components registered on alpine:init,
+         CSP build of Alpine. -->
+    <script src="../res/karate-report.js"></script>
+    <script src="../res/alpine-csp.min.js" defer></script>
     
     <title>Karate Feature</title>
 </head>
-<body class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-sans antialiased" x-data="KarateReport.featureData()">
+<body class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-sans antialiased" x-data="karateFeature">
     <!-- Karate report inline SVG sprite (Heroicons v2, MIT). Spliced into the KARATE_ICONS placeholder by HtmlReportWriter. -->
-<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+<svg xmlns="http://www.w3.org/2000/svg" class="hidden" width="0" height="0" aria-hidden="true">
 
     <!-- Status: passed -->
     <symbol id="icon-check-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -126,7 +128,9 @@
         </div>
         <template x-for="scenario in filteredSidebar" :key="scenario.refId">
             <a class="block px-3 py-1.5 text-xs border-l-2 border-transparent hover:bg-slate-100 dark:hover:bg-slate-800 hover:border-accent"
-               :class="scenario.skipped
+               :class="scenario.cancelled
+                   ? 'text-slate-500 dark:text-slate-400'
+                   : scenario.skipped
                    ? 'text-amber-600 dark:text-amber-400'
                    : (scenario.passed ? 'text-green-700 dark:text-green-400' : 'text-red-700 dark:text-red-400')"
                :href="'#' + scenario.refId"
@@ -158,6 +162,7 @@
                 <span class="inline-flex items-center gap-1.5"><svg class="w-4 h-4"><use href="#icon-check-circle"/></svg> <span x-text="heroCounts.passed"></span> passed</span>
                 <span x-show="heroCounts.failed > 0" class="inline-flex items-center gap-1.5 text-red-600 dark:text-red-400"><svg class="w-4 h-4"><use href="#icon-x-circle"/></svg> <span x-text="heroCounts.failed"></span> failed</span>
                 <span x-show="heroCounts.skipped > 0" class="inline-flex items-center gap-1.5 text-amber-600 dark:text-amber-400"><svg class="w-4 h-4"><use href="#icon-minus-circle"/></svg> <span x-text="heroCounts.skipped"></span> skipped</span>
+                <span x-show="heroCounts.cancelled > 0" class="inline-flex items-center gap-1.5 text-slate-500 dark:text-slate-400"><svg class="w-4 h-4"><use href="#icon-minus-circle"/></svg> <span x-text="heroCounts.cancelled"></span> cancelled</span>
                 <span x-show="data.durationMillis" class="inline-flex items-center gap-1.5"><svg class="w-4 h-4"><use href="#icon-clock"/></svg> <span x-text="data.durationMillis"></span> ms</span>
             </div>
         </section>
@@ -166,7 +171,9 @@
         <template x-for="scenario in data.scenarios" :key="scenario.refId">
             <div class="rounded-lg border border-slate-200 dark:border-slate-700 mb-4 overflow-hidden" :id="scenario.refId">
                 <div class="flex justify-between items-center px-3 py-2"
-                     :class="scenario.skipped
+                     :class="scenario.cancelled
+                         ? 'bg-slate-100 dark:bg-slate-800/60 border-b border-slate-300 dark:border-slate-700'
+                         : scenario.skipped
                          ? 'bg-amber-50 dark:bg-amber-950/30 border-b border-amber-200 dark:border-amber-900'
                          : (scenario.passed
                              ? 'bg-green-50 dark:bg-green-950/30 border-b border-green-200 dark:border-green-900'
@@ -189,8 +196,8 @@
                               x-text="statusOf(scenario).label"></span>
                     </span>
                 </div>
-                <div x-html="renderSteps(scenario.steps)"></div>
-                <template x-if="scenario.error && !scenario.steps?.some(s => s.error)">
+                <div x-k-steps="scenario.steps"></div>
+                <template x-if="showScenarioError(scenario)">
                     <div class="bg-red-50 dark:bg-red-950/40 border-t border-red-200 dark:border-red-900 px-3 py-2">
                         <pre class="m-0 text-xs text-red-700 dark:text-red-300 whitespace-pre-wrap" x-text="scenario.error"></pre>
                     </div>
@@ -200,15 +207,15 @@
     </main>
 
     <!-- Shared screenshot lightbox. Click any image embed to open. Backdrop click
-         closes (the onclick guard checks event.target === dialog so clicks inside
-         the dialog content don't dismiss). KarateReport.openLightbox(src, name)
-         populates and shows it. -->
+         closes (only a click landing on the <dialog> itself, so clicks inside the
+         dialog content don't dismiss); handled by KarateReport._onAction, not inline
+         handlers. KarateReport.openLightbox(src, name) populates and shows it. -->
     <dialog id="img-lightbox"
             class="rounded-lg p-0 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 backdrop:bg-black/70 max-w-[90vw] max-h-[90vh]"
-            onclick="if(event.target===this) this.close()">
+            data-k-action="lightbox-backdrop">
         <div class="relative">
             <button class="absolute top-2 right-2 inline-flex items-center justify-center w-8 h-8 rounded-full bg-white/80 dark:bg-slate-800/80 hover:bg-white dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 shadow"
-                    onclick="this.closest('dialog').close()"
+                    data-k-action="lightbox-close"
                     aria-label="Close">
                 <span class="text-lg leading-none">&times;</span>
             </button>
@@ -225,7 +232,6 @@
         <a href="https://docs.karatelabs.io/" target="_blank" rel="noopener" class="hover:text-accent">Documentation</a>
     </footer>
 
-    <script src="../res/karate-report.js"></script>
-    <script id="karate-data" type="application/json">{"path":"checks/echo.feature","name":"WebSocket — raw text and JSON against the echo server","relativePath":"checks/echo.feature","passed":true,"durationMillis":382,"reportDate":"2026-10-23 10:47:45","karateVersion":"2.1.5.RC1","scenarios":[{"name":"send text, read it back","line":6,"passed":true,"durationMillis":329,"startTime":1792752465254,"endTime":1792752465583,"refId":"[1:6]","sectionIndex":1,"exampleIndex":-1,"isOutlineExample":false,"thread":"thread-1","skipped":false,"steps":[{"prefix":"*","keyword":"def","text":"wsUrl = 'ws://localhost:8090/echo'","line":4,"status":"passed","durationMillis":1,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"def","text":"session = karate.channel('websocket')","line":7,"status":"passed","durationMillis":11,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"session.url","text":"= wsUrl","line":8,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":null,"text":"session.start()","line":9,"status":"passed","durationMillis":305,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":null,"text":"session.send('hello')","line":10,"status":"passed","durationMillis":1,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"match","text":"session.pop() == 'hello'","line":11,"status":"passed","durationMillis":6,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false}]},{"name":"JSON in, JSON out","line":13,"passed":true,"durationMillis":23,"startTime":1792752465585,"endTime":1792752465608,"refId":"[2:13]","sectionIndex":2,"exampleIndex":-1,"isOutlineExample":false,"thread":"thread-1","skipped":false,"steps":[{"prefix":"*","keyword":"def","text":"wsUrl = 'ws://localhost:8090/echo'","line":4,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"def","text":"JsonTextCodec = Java.type('io.karatelabs.ext.websocket.JsonTextCodec')","line":16,"comments":["# a codec converts between the wire text and a value your check can match on. JsonTextCodec is","# built in; StompCodec (in server/) shows how to write your own for a custom protocol."],"status":"passed","durationMillis":1,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"def","text":"session = karate.channel('websocket')","line":17,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"session.url","text":"= wsUrl","line":18,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"session.codec","text":"= new JsonTextCodec()","line":19,"status":"passed","durationMillis":1,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":null,"text":"session.start()","line":20,"status":"passed","durationMillis":5,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":null,"text":"session.send({ type: 'ping', seq: 1 })","line":21,"status":"passed","durationMillis":6,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"match","text":"session.pop() == { type: 'ping', seq: 1 }","line":22,"status":"passed","durationMillis":7,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false}]},{"name":"collect a stream of messages","line":24,"passed":true,"durationMillis":11,"startTime":1792752465608,"endTime":1792752465619,"refId":"[3:24]","sectionIndex":3,"exampleIndex":-1,"isOutlineExample":false,"thread":"thread-1","skipped":false,"steps":[{"prefix":"*","keyword":"def","text":"wsUrl = 'ws://localhost:8090/echo'","line":4,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"def","text":"session = karate.channel('websocket')","line":26,"comments":["# count says how many to wait for; collect() blocks until they arrive or the timeout passes"],"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"session.url","text":"= wsUrl","line":27,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"session.count","text":"= 3","line":28,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":null,"text":"session.start()","line":29,"status":"passed","durationMillis":5,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":null,"text":"session.send('a')","line":30,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":null,"text":"session.send('b')","line":31,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":null,"text":"session.send('c')","line":32,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"match","text":"session.collect() == ['a', 'b', 'c']","line":33,"status":"passed","durationMillis":3,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false}]}]}</script>
+    <script id="karate-data" type="application/json">{"path":"checks/echo.feature","name":"WebSocket — raw text and JSON against the echo server","relativePath":"checks/echo.feature","passed":true,"durationMillis":189,"reportDate":"2026-11-27 11:19:43","karateVersion":"2.1.5.RC1","scenarios":[{"name":"send text, read it back","line":6,"passed":true,"durationMillis":146,"startTime":1795778383037,"endTime":1795778383183,"refId":"[1:6]","sectionIndex":1,"exampleIndex":-1,"isOutlineExample":false,"thread":"thread-1","skipped":false,"cancelled":false,"steps":[{"prefix":"*","keyword":"def","text":"wsUrl = 'ws://localhost:8090/echo'","line":4,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"def","text":"session = karate.channel('websocket')","line":7,"status":"passed","durationMillis":6,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"session.url","text":"= wsUrl","line":8,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":null,"text":"session.start()","line":9,"status":"passed","durationMillis":127,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":null,"text":"session.send('hello')","line":10,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"match","text":"session.pop() == 'hello'","line":11,"status":"passed","durationMillis":5,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false}]},{"name":"JSON in, JSON out","line":13,"passed":true,"durationMillis":17,"startTime":1795778383185,"endTime":1795778383202,"refId":"[2:13]","sectionIndex":2,"exampleIndex":-1,"isOutlineExample":false,"thread":"thread-1","skipped":false,"cancelled":false,"steps":[{"prefix":"*","keyword":"def","text":"wsUrl = 'ws://localhost:8090/echo'","line":4,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"def","text":"JsonTextCodec = Java.type('io.karatelabs.ext.websocket.JsonTextCodec')","line":16,"comments":["# a codec converts between the wire text and a value your check can match on. JsonTextCodec is","# built in; StompCodec (in server/) shows how to write your own for a custom protocol."],"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"def","text":"session = karate.channel('websocket')","line":17,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"session.url","text":"= wsUrl","line":18,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"session.codec","text":"= new JsonTextCodec()","line":19,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":null,"text":"session.start()","line":20,"status":"passed","durationMillis":3,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":null,"text":"session.send({ type: 'ping', seq: 1 })","line":21,"status":"passed","durationMillis":6,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"match","text":"session.pop() == { type: 'ping', seq: 1 }","line":22,"status":"passed","durationMillis":5,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false}]},{"name":"collect a stream of messages","line":24,"passed":true,"durationMillis":8,"startTime":1795778383203,"endTime":1795778383211,"refId":"[3:24]","sectionIndex":3,"exampleIndex":-1,"isOutlineExample":false,"thread":"thread-1","skipped":false,"cancelled":false,"steps":[{"prefix":"*","keyword":"def","text":"wsUrl = 'ws://localhost:8090/echo'","line":4,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"def","text":"session = karate.channel('websocket')","line":26,"comments":["# count says how many to wait for; collect() blocks until they arrive or the timeout passes"],"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"session.url","text":"= wsUrl","line":27,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"session.count","text":"= 3","line":28,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":null,"text":"session.start()","line":29,"status":"passed","durationMillis":3,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":null,"text":"session.send('a')","line":30,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":null,"text":"session.send('b')","line":31,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":null,"text":"session.send('c')","line":32,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"match","text":"session.collect() == ['a', 'b', 'c']","line":33,"status":"passed","durationMillis":3,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false}]}]}</script>
 </body>
 </html>

@@ -10,14 +10,16 @@
          blocks lazily on-view (KarateReport._observeCode) rather than Prism's auto-run,
          so collapsed/off-screen HTTP bodies aren't tokenized until actually shown. -->
     <script src="../res/prism.min.js" data-manual></script>
-    <script src="../res/alpine.min.js" defer></script>
-    <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('karate-theme') || 'light');</script>
+    <!-- See karate-summary.html: theme before paint, components registered on alpine:init,
+         CSP build of Alpine. -->
+    <script src="../res/karate-report.js"></script>
+    <script src="../res/alpine-csp.min.js" defer></script>
     
     <title>Karate Feature</title>
 </head>
-<body class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-sans antialiased" x-data="KarateReport.featureData()">
+<body class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-sans antialiased" x-data="karateFeature">
     <!-- Karate report inline SVG sprite (Heroicons v2, MIT). Spliced into the KARATE_ICONS placeholder by HtmlReportWriter. -->
-<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+<svg xmlns="http://www.w3.org/2000/svg" class="hidden" width="0" height="0" aria-hidden="true">
 
     <!-- Status: passed -->
     <symbol id="icon-check-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -126,7 +128,9 @@
         </div>
         <template x-for="scenario in filteredSidebar" :key="scenario.refId">
             <a class="block px-3 py-1.5 text-xs border-l-2 border-transparent hover:bg-slate-100 dark:hover:bg-slate-800 hover:border-accent"
-               :class="scenario.skipped
+               :class="scenario.cancelled
+                   ? 'text-slate-500 dark:text-slate-400'
+                   : scenario.skipped
                    ? 'text-amber-600 dark:text-amber-400'
                    : (scenario.passed ? 'text-green-700 dark:text-green-400' : 'text-red-700 dark:text-red-400')"
                :href="'#' + scenario.refId"
@@ -158,6 +162,7 @@
                 <span class="inline-flex items-center gap-1.5"><svg class="w-4 h-4"><use href="#icon-check-circle"/></svg> <span x-text="heroCounts.passed"></span> passed</span>
                 <span x-show="heroCounts.failed > 0" class="inline-flex items-center gap-1.5 text-red-600 dark:text-red-400"><svg class="w-4 h-4"><use href="#icon-x-circle"/></svg> <span x-text="heroCounts.failed"></span> failed</span>
                 <span x-show="heroCounts.skipped > 0" class="inline-flex items-center gap-1.5 text-amber-600 dark:text-amber-400"><svg class="w-4 h-4"><use href="#icon-minus-circle"/></svg> <span x-text="heroCounts.skipped"></span> skipped</span>
+                <span x-show="heroCounts.cancelled > 0" class="inline-flex items-center gap-1.5 text-slate-500 dark:text-slate-400"><svg class="w-4 h-4"><use href="#icon-minus-circle"/></svg> <span x-text="heroCounts.cancelled"></span> cancelled</span>
                 <span x-show="data.durationMillis" class="inline-flex items-center gap-1.5"><svg class="w-4 h-4"><use href="#icon-clock"/></svg> <span x-text="data.durationMillis"></span> ms</span>
             </div>
         </section>
@@ -166,7 +171,9 @@
         <template x-for="scenario in data.scenarios" :key="scenario.refId">
             <div class="rounded-lg border border-slate-200 dark:border-slate-700 mb-4 overflow-hidden" :id="scenario.refId">
                 <div class="flex justify-between items-center px-3 py-2"
-                     :class="scenario.skipped
+                     :class="scenario.cancelled
+                         ? 'bg-slate-100 dark:bg-slate-800/60 border-b border-slate-300 dark:border-slate-700'
+                         : scenario.skipped
                          ? 'bg-amber-50 dark:bg-amber-950/30 border-b border-amber-200 dark:border-amber-900'
                          : (scenario.passed
                              ? 'bg-green-50 dark:bg-green-950/30 border-b border-green-200 dark:border-green-900'
@@ -189,8 +196,8 @@
                               x-text="statusOf(scenario).label"></span>
                     </span>
                 </div>
-                <div x-html="renderSteps(scenario.steps)"></div>
-                <template x-if="scenario.error && !scenario.steps?.some(s => s.error)">
+                <div x-k-steps="scenario.steps"></div>
+                <template x-if="showScenarioError(scenario)">
                     <div class="bg-red-50 dark:bg-red-950/40 border-t border-red-200 dark:border-red-900 px-3 py-2">
                         <pre class="m-0 text-xs text-red-700 dark:text-red-300 whitespace-pre-wrap" x-text="scenario.error"></pre>
                     </div>
@@ -200,15 +207,15 @@
     </main>
 
     <!-- Shared screenshot lightbox. Click any image embed to open. Backdrop click
-         closes (the onclick guard checks event.target === dialog so clicks inside
-         the dialog content don't dismiss). KarateReport.openLightbox(src, name)
-         populates and shows it. -->
+         closes (only a click landing on the <dialog> itself, so clicks inside the
+         dialog content don't dismiss); handled by KarateReport._onAction, not inline
+         handlers. KarateReport.openLightbox(src, name) populates and shows it. -->
     <dialog id="img-lightbox"
             class="rounded-lg p-0 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 backdrop:bg-black/70 max-w-[90vw] max-h-[90vh]"
-            onclick="if(event.target===this) this.close()">
+            data-k-action="lightbox-backdrop">
         <div class="relative">
             <button class="absolute top-2 right-2 inline-flex items-center justify-center w-8 h-8 rounded-full bg-white/80 dark:bg-slate-800/80 hover:bg-white dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 shadow"
-                    onclick="this.closest('dialog').close()"
+                    data-k-action="lightbox-close"
                     aria-label="Close">
                 <span class="text-lg leading-none">&times;</span>
             </button>
@@ -225,7 +232,6 @@
         <a href="https://docs.karatelabs.io/" target="_blank" rel="noopener" class="hover:text-accent">Documentation</a>
     </footer>
 
-    <script src="../res/karate-report.js"></script>
-    <script id="karate-data" type="application/json">{"path":"checks/stomp.feature","name":"STOMP over WebSocket — a custom wire protocol via a codec","relativePath":"checks/stomp.feature","passed":true,"durationMillis":248,"reportDate":"2026-10-23 10:47:45","karateVersion":"2.1.5.RC1","scenarios":[{"name":"connect, subscribe, send, and receive the broadcast","line":7,"passed":true,"durationMillis":236,"startTime":1792752465663,"endTime":1792752465899,"refId":"[1:7]","sectionIndex":1,"exampleIndex":-1,"isOutlineExample":false,"thread":"thread-1","skipped":false,"steps":[{"prefix":"*","keyword":"def","text":"StompCodec = Java.type('StompCodec')","line":8,"status":"passed","durationMillis":1,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"def","text":"session = karate.channel('websocket')","line":9,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"session.url","text":"= 'ws://localhost:8091/stomp'","line":10,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"session.codec","text":"= new StompCodec()","line":11,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":null,"text":"session.start()","line":12,"status":"passed","durationMillis":190,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":null,"text":"session.send({ command: 'CONNECT', headers: { 'accept-version': '1.2', 'heart-beat': '0,0' } })","line":14,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"match","text":"session.pop().command == 'CONNECTED'","line":15,"status":"passed","durationMillis":7,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":null,"text":"session.send({ command: 'SUBSCRIBE', headers: { id: 'sub-0', destination: '/topic/greetings' } })","line":17,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":null,"text":"session.send({ command: 'SEND', headers: { destination: '/app/hello' }, body: { name: 'foo' } })","line":18,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"def","text":"message = session.pop()","line":20,"status":"passed","durationMillis":33,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"match","text":"message.command == 'MESSAGE'","line":21,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"match","text":"message.body.content == 'Hello, foo!'","line":22,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false}]},{"name":"a receipt confirms the disconnect","line":24,"passed":true,"durationMillis":12,"startTime":1792752465899,"endTime":1792752465911,"refId":"[2:24]","sectionIndex":2,"exampleIndex":-1,"isOutlineExample":false,"thread":"thread-1","skipped":false,"steps":[{"prefix":"*","keyword":"def","text":"StompCodec = Java.type('StompCodec')","line":25,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"def","text":"session = karate.channel('websocket')","line":26,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"session.url","text":"= 'ws://localhost:8091/stomp'","line":27,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"session.codec","text":"= new StompCodec()","line":28,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":null,"text":"session.start()","line":29,"status":"passed","durationMillis":7,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":null,"text":"session.send({ command: 'CONNECT', headers: { 'accept-version': '1.2', 'heart-beat': '0,0' } })","line":31,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"match","text":"session.pop().command == 'CONNECTED'","line":32,"status":"passed","durationMillis":1,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":null,"text":"session.send({ command: 'DISCONNECT', headers: { receipt: 'disc-0' } })","line":34,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"def","text":"receipt = session.pop()","line":35,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"match","text":"receipt.command == 'RECEIPT'","line":36,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"match","text":"receipt.headers['receipt-id'] == 'disc-0'","line":37,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false}]}]}</script>
+    <script id="karate-data" type="application/json">{"path":"checks/stomp.feature","name":"STOMP over WebSocket — a custom wire protocol via a codec","relativePath":"checks/stomp.feature","passed":true,"durationMillis":88,"reportDate":"2026-11-27 11:19:43","karateVersion":"2.1.5.RC1","scenarios":[{"name":"connect, subscribe, send, and receive the broadcast","line":7,"passed":true,"durationMillis":80,"startTime":1795778383239,"endTime":1795778383319,"refId":"[1:7]","sectionIndex":1,"exampleIndex":-1,"isOutlineExample":false,"thread":"thread-1","skipped":false,"cancelled":false,"steps":[{"prefix":"*","keyword":"def","text":"StompCodec = Java.type('StompCodec')","line":8,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"def","text":"session = karate.channel('websocket')","line":9,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"session.url","text":"= 'ws://localhost:8091/stomp'","line":10,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"session.codec","text":"= new StompCodec()","line":11,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":null,"text":"session.start()","line":12,"status":"passed","durationMillis":55,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":null,"text":"session.send({ command: 'CONNECT', headers: { 'accept-version': '1.2', 'heart-beat': '0,0' } })","line":14,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"match","text":"session.pop().command == 'CONNECTED'","line":15,"status":"passed","durationMillis":3,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":null,"text":"session.send({ command: 'SUBSCRIBE', headers: { id: 'sub-0', destination: '/topic/greetings' } })","line":17,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":null,"text":"session.send({ command: 'SEND', headers: { destination: '/app/hello' }, body: { name: 'foo' } })","line":18,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"def","text":"message = session.pop()","line":20,"status":"passed","durationMillis":17,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"match","text":"message.command == 'MESSAGE'","line":21,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"match","text":"message.body.content == 'Hello, foo!'","line":22,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false}]},{"name":"a receipt confirms the disconnect","line":24,"passed":true,"durationMillis":8,"startTime":1795778383319,"endTime":1795778383327,"refId":"[2:24]","sectionIndex":2,"exampleIndex":-1,"isOutlineExample":false,"thread":"thread-1","skipped":false,"cancelled":false,"steps":[{"prefix":"*","keyword":"def","text":"StompCodec = Java.type('StompCodec')","line":25,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"def","text":"session = karate.channel('websocket')","line":26,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"session.url","text":"= 'ws://localhost:8091/stomp'","line":27,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"session.codec","text":"= new StompCodec()","line":28,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":null,"text":"session.start()","line":29,"status":"passed","durationMillis":4,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":null,"text":"session.send({ command: 'CONNECT', headers: { 'accept-version': '1.2', 'heart-beat': '0,0' } })","line":31,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"match","text":"session.pop().command == 'CONNECTED'","line":32,"status":"passed","durationMillis":1,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":null,"text":"session.send({ command: 'DISCONNECT', headers: { receipt: 'disc-0' } })","line":34,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"def","text":"receipt = session.pop()","line":35,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"match","text":"receipt.command == 'RECEIPT'","line":36,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false},{"prefix":"*","keyword":"match","text":"receipt.headers['receipt-id'] == 'disc-0'","line":37,"status":"passed","durationMillis":0,"hasLogs":false,"hasEmbeds":false,"hasCallResults":false}]}]}</script>
 </body>
 </html>

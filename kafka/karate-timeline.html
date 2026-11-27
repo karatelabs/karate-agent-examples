@@ -3,48 +3,22 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <link rel="stylesheet" href="res/karate-report.css"/>
     <link rel="icon" href="res/favicon.ico"/>
     <link rel="stylesheet" href="https://unpkg.com/vis-timeline@7/styles/vis-timeline-graph2d.min.css"/>
+    <!-- after vis's stylesheet: the vis overrides in karate-report.css win at equal specificity -->
+    <link rel="stylesheet" href="res/karate-report.css"/>
     <script src="https://unpkg.com/vis-timeline@7/standalone/umd/vis-timeline-graph2d.min.js"></script>
-    <script src="res/alpine.min.js" defer></script>
-    <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('karate-theme') || 'light');</script>
+    <!-- See karate-summary.html: theme before paint, components registered on alpine:init,
+         CSP build of Alpine. The vis-timeline overrides live in karate-report.css
+         (etc/tailwind/input.css), not an inline style block, for a strict style-src. -->
+    <script src="res/karate-report.js"></script>
+    <script src="res/alpine-csp.min.js" defer></script>
     
     <title>Karate Timeline</title>
-    <style>
-        #timeline {
-            width: 100%;
-            /* Cap so the Slowest scenarios panel below stays visible without
-               scrolling past a full-viewport gantt. vis-timeline auto-scrolls
-               internally when content exceeds the height. */
-            max-height: 60vh;
-            min-height: 320px;
-        }
-        .vis-item.failed { background-color: #dc2626 !important; border-color: #b91c1c !important; color: white !important; }
-        .vis-item.passed { background-color: #16a34a !important; border-color: #15803d !important; color: white !important; }
-        .vis-label { font-size: 0.9rem; }
-        .vis-item-content { font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        /* Light mode — soften vis-timeline's default greys to match the D20 surface palette. */
-        .vis-timeline { border-color: #e2e8f0; }
-        .vis-labelset .vis-label { background-color: #f8fafc; color: #0f172a; border-color: #e2e8f0; }
-        .vis-time-axis .vis-text { color: #475569; }
-        .vis-time-axis .vis-grid.vis-minor { border-color: #e2e8f0; }
-        .vis-time-axis .vis-grid.vis-major { border-color: #cbd5e1; }
-        /* Dark mode for vis-timeline (we set data-theme on <html>) */
-        [data-theme="dark"] .vis-timeline { border-color: #475569; }
-        [data-theme="dark"] .vis-panel.vis-background,
-        [data-theme="dark"] .vis-panel.vis-center { background-color: #1e293b; }
-        [data-theme="dark"] .vis-labelset .vis-label {
-            background-color: #334155; color: #f1f5f9; border-color: #475569;
-        }
-        [data-theme="dark"] .vis-time-axis .vis-text { color: #cbd5e1; }
-        [data-theme="dark"] .vis-time-axis .vis-grid.vis-minor { border-color: #475569; }
-        [data-theme="dark"] .vis-time-axis .vis-grid.vis-major { border-color: #64748b; }
-    </style>
 </head>
-<body class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-sans antialiased" x-data="KarateReport.timelineData()">
+<body class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-sans antialiased" x-data="karateTimeline">
     <!-- Karate report inline SVG sprite (Heroicons v2, MIT). Spliced into the KARATE_ICONS placeholder by HtmlReportWriter. -->
-<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+<svg xmlns="http://www.w3.org/2000/svg" class="hidden" width="0" height="0" aria-hidden="true">
 
     <!-- Status: passed -->
     <symbol id="icon-check-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -148,10 +122,10 @@
              Speedup is threshold-gated — see speedup getter in karate-report.js. -->
         <div class="grid grid-cols-1 gap-4 mb-5"
              :class="speedup ? 'sm:grid-cols-3' : 'sm:grid-cols-2'"
-             x-show="data.summary?.scenario_count || data.summary?.duration_millis">
+             x-show="summary.scenario_count || summary.duration_millis">
             <div class="rounded-lg p-4 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
                 <div class="text-sm text-slate-500 dark:text-slate-400">Scenarios</div>
-                <div class="text-3xl font-bold mt-1 tabular-nums" x-text="data.summary?.scenario_count || 0">0</div>
+                <div class="text-3xl font-bold mt-1 tabular-nums" x-text="summary.scenario_count || 0">0</div>
                 <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">total executed</div>
             </div>
             <div class="rounded-lg p-4 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50" x-show="speedup">
@@ -204,7 +178,6 @@
         <a href="https://docs.karatelabs.io/" target="_blank" rel="noopener" class="hover:text-accent">Documentation</a>
     </footer>
 
-    <script src="res/karate-report.js"></script>
-    <script id="karate-data" type="application/json">{"env":null,"reportDate":"2026-10-23 10:47:31","threads":1,"karateVersion":"2.1.5.RC1","summary":{"feature_count":1,"feature_passed":1,"feature_failed":0,"scenario_count":4,"scenario_passed":4,"scenario_failed":0,"scenario_skipped":0,"duration_millis":9165,"status":"passed"},"groups":[{"id":1,"content":"thread-1"}],"items":[{"id":1,"group":1,"content":"kafka[1:9]","start":1792752451423,"end":1792752454758,"title":"kafka[1:9] 10:47:31.423 (3336 ms) JSON round-trip — no schema registry needed","className":"passed"},{"id":2,"group":1,"content":"kafka[2:25]","start":1792752455261,"end":1792752456332,"title":"kafka[2:25] 10:47:35.261 (1072 ms) message headers, and reading them back","className":"passed"},{"id":3,"group":1,"content":"kafka[3:41]","start":1792752456840,"end":1792752458407,"title":"kafka[3:41] 10:47:36.840 (1568 ms) Avro round-trip through the Schema Registry","className":"passed"},{"id":4,"group":1,"content":"kafka[4:59]","start":1792752458910,"end":1792752460030,"title":"kafka[4:59] 10:47:38.910 (1121 ms) consume several messages, and filter which ones count","className":"passed"}],"scenarios":[{"featureFileName":"kafka","featureHtmlName":"checks.kafka","refId":"[1:9]","name":"JSON round-trip — no schema registry needed","durationMillis":3336,"passed":true},{"featureFileName":"kafka","featureHtmlName":"checks.kafka","refId":"[2:25]","name":"message headers, and reading them back","durationMillis":1072,"passed":true},{"featureFileName":"kafka","featureHtmlName":"checks.kafka","refId":"[3:41]","name":"Avro round-trip through the Schema Registry","durationMillis":1568,"passed":true},{"featureFileName":"kafka","featureHtmlName":"checks.kafka","refId":"[4:59]","name":"consume several messages, and filter which ones count","durationMillis":1121,"passed":true}],"serialDurationMillis":7097}</script>
+    <script id="karate-data" type="application/json">{"env":null,"reportDate":"2026-11-27 11:19:32","threads":1,"karateVersion":"2.1.5.RC1","summary":{"feature_count":1,"feature_passed":1,"feature_failed":0,"scenario_count":4,"scenario_passed":4,"scenario_failed":0,"scenario_skipped":0,"scenario_cancelled":0,"duration_millis":7347,"status":"passed"},"groups":[{"id":1,"content":"thread-1"}],"items":[{"id":1,"group":1,"content":"kafka[1:9]","start":1795778372090,"end":1795778373859,"title":"kafka[1:9] 11:19:32.090 (1770 ms) JSON round-trip — no schema registry needed","className":"passed"},{"id":2,"group":1,"content":"kafka[2:25]","start":1795778374361,"end":1795778375420,"title":"kafka[2:25] 11:19:34.361 (1060 ms) message headers, and reading them back","className":"passed"},{"id":3,"group":1,"content":"kafka[3:41]","start":1795778375926,"end":1795778377284,"title":"kafka[3:41] 11:19:35.926 (1359 ms) Avro round-trip through the Schema Registry","className":"passed"},{"id":4,"group":1,"content":"kafka[4:59]","start":1795778377788,"end":1795778378888,"title":"kafka[4:59] 11:19:37.788 (1101 ms) consume several messages, and filter which ones count","className":"passed"}],"scenarios":[{"featureFileName":"kafka","featureHtmlName":"checks.kafka","refId":"[1:9]","name":"JSON round-trip — no schema registry needed","durationMillis":1770,"passed":true},{"featureFileName":"kafka","featureHtmlName":"checks.kafka","refId":"[2:25]","name":"message headers, and reading them back","durationMillis":1060,"passed":true},{"featureFileName":"kafka","featureHtmlName":"checks.kafka","refId":"[3:41]","name":"Avro round-trip through the Schema Registry","durationMillis":1359,"passed":true},{"featureFileName":"kafka","featureHtmlName":"checks.kafka","refId":"[4:59]","name":"consume several messages, and filter which ones count","durationMillis":1101,"passed":true}],"serialDurationMillis":5290}</script>
 </body>
 </html>
