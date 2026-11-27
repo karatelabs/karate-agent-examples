@@ -10,6 +10,24 @@ document.addEventListener('alpine:init', function () {
       expanded: {},
 
        
+      init: function () {
+        var d = window.KARATE_COVERAGE_DATA || {};
+        var tabs = [{ key: 'coverage', title: 'Coverage', href: 'coverage.html' }];
+         
+         
+        if (d.hasTraceability || (d.sources || []).some(function (s) { return s.namespace === 'req'; })) {
+          tabs.push({ key: 'traceability', title: 'Traceability',
+                      href: d.traceabilityHref || '../../traceability/pages/traceability.html' });
+        }
+         
+         
+        if (d.contractHref) {
+          tabs.push({ key: 'contract', title: 'Contract', href: d.contractHref });
+        }
+        if (window.KarateReport) KarateReport.renderTopNav({ current: 'coverage', summary: d.karateSummary, tabs: tabs });
+      },
+
+       
        
        
       get sources() { return (this.data.sources || []).filter(function (s) { return (s.namespace || s.type) !== 'rules'; }); },
@@ -195,6 +213,7 @@ document.addEventListener('alpine:init', function () {
               { cls: 'k-seg-bad', n: oc.FAILING, title: 'a test is failing' },
               { cls: 'k-seg-none', n: oc.NOTRUN + oc.NOTCOVERED, title: 'not exercised' }
             ]));
+          cards[cards.length - 1].share = this.actionsBySource(ops);
         }
          
         var inp = this.sumSource('inputs', 'covered', 'total');
@@ -274,6 +293,24 @@ document.addEventListener('alpine:init', function () {
       neverProduced: function (it) { return (it.outcome && it.outcome.declaredUntested) || []; },
        
       happyOnly: function (it) { return !!(it.outcome && it.outcome.tested === false); },
+       
+      actionsBySource: function (ops) {
+        var by = {}, order = [];
+        ops.forEach(function (i) {
+          var b = by[i.source] || (by[i.source] = { n: 0, covered: 0 });
+          if (!b.n) order.push(i.source);
+          b.n++;
+          if (i.status === 'COVERED') b.covered++;
+        });
+        return order.length > 1
+          ? order.map(function (s) { return s + ' ' + by[s].covered + '/' + by[s].n; }).join(' · ') : '';
+      },
+       
+      evidenceTip: function (g) {
+        return { observed: 'observed: the run captured it being exercised',
+                 attested: 'attested: a machine claim from a run, nothing captured',
+                 declared: 'declared: a tag says a test covers it, nothing captured' }[g] || '';
+      },
       segWidth: function (seg, total) { return total ? (seg.n * 100 / total) + '%' : '0%'; },
 
        
@@ -354,6 +391,8 @@ document.addEventListener('alpine:init', function () {
         });
         return m;
       },
+       
+      bareReqId: function (id) { return String(id).replace(/^req:/, ''); },
       reqHref: function (id) {
         if (!id) return '';
         var s = String(id);

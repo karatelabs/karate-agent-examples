@@ -4,22 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Governance — the graded spec</title>
-  <script>
-    (function () {
-      try {
-        var t = localStorage.getItem('karate-theme');
-        if (!t) t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-theme', t);
-        window.addEventListener('storage', function (e) {
-          if (e.key === 'karate-theme' && e.newValue) {
-            document.documentElement.setAttribute('data-theme', e.newValue);
-          }
-        });
-      } catch (e) {
-        document.documentElement.setAttribute('data-theme', 'light');
-      }
-    })();
-  </script>
+  <!-- the ONE theme rule (stored choice, else OS preference; follows a toggle in another tab) is
+       core's karate-report.js, loaded before paint; it also carries the shared top-nav util. -->
+  <script src="../../../res/karate-report.js"></script>
   <!-- THE one governance page shell (D191): always at ext/governance/pages/governance.html — written by
        Openapi.report(). Every number is READ from window.KARATE_GOVERNANCE, which is what Openapi.grade
        returned, INCLUDING the headline: the verdict word, its sentence and its chips are minted by
@@ -39,7 +26,7 @@
         <div class="k-sub"><span x-text="subtitle"></span><button
             type="button" class="k-help-q"
             title="What is this grade? Copy the help-id — paste it into the Help tab or your AI chat"
-            onclick="kaCopyHelp('governance')">?</button></div>
+            data-k-help="governance">?</button></div>
       </div>
       <div class="k-head-actions">
         <button class="k-gloss-btn" @click="glossaryOpen = true" title="What do these terms mean?">? Glossary</button>
@@ -156,7 +143,9 @@
             <span class="k-dim-name" x-text="d.label"></span>
             <span class="k-pill" :class="d.measured ? scoreClass(d.score) : 'k-tagpill'"
                   x-text="d.measured ? pct(d.score) : 'not measured'"></span>
-            <span class="k-muted" x-show="d.effectiveWeight != null" x-text="'weight ' + pct(d.effectiveWeight)"></span>
+            <template x-if="d.effectiveWeight != null">
+              <span class="k-muted" x-text="'weight ' + pct(d.effectiveWeight)"></span>
+            </template>
           </div>
           <div class="k-segbar" x-show="d.measured">
             <span class="k-seg k-seg-ok" :style="'width:' + pctOf(d.score) + '%'"></span>
@@ -165,17 +154,19 @@
           <!-- the `contract` dimension is scored from a recorded pair rather than from rules, so it has no
                rule count to print — and "undefined of 0 rules" is exactly the kind of nonsense a renderer
                invents when it assumes every row has the same shape. -->
-          <div class="k-sub" x-show="d.measured && d.gradedRules != null && (d.rules || []).length"
-               x-text="d.gradedRules + ' of ' + (d.rules || []).length + ' rules graded it'"></div>
+          <template x-if="d.measured && d.gradedRules != null && (d.rules || []).length">
+            <div class="k-sub" x-text="d.gradedRules + ' of ' + (d.rules || []).length + ' rules graded it'"></div>
+          </template>
           <div class="k-sub" x-show="d.measured && !((d.rules || []).length) && d.note" x-text="d.note"></div>
           <div class="k-sub" x-show="d.carries" x-text="d.carries"></div>
           <!-- a cap is not a low score: it is a rule saying "however good the rest is, not above this" -->
-          <div class="k-axisnote" x-show="d.cappedAt != null">
-            Capped at <span x-text="pct(d.cappedAt)"></span> by <span x-text="(d.cappedBy || []).join(', ')"></span>
-            (uncapped <span x-text="pct(d.uncappedScore)"></span>).
-          </div>
+          <template x-if="d.cappedAt != null">
+            <div class="k-axisnote" x-text="capNote(d)"></div>
+          </template>
           <div class="k-axisnote" x-show="!d.measured && d.note" x-text="d.note"></div>
-          <div class="k-sub" x-show="d.ungradedRules" x-text="d.ungradedRules + ' rule(s) could not be graded'"></div>
+          <template x-if="d.ungradedRules">
+            <div class="k-sub" x-text="d.ungradedRules + (d.ungradedRules == 1 ? ' rule' : ' rules') + ' could not be graded'"></div>
+          </template>
         </div>
       </template>
     </div>
@@ -334,18 +325,6 @@
   <script src="../help-affordance.js"></script>
   <script src="../governance-data.js"></script>
   <script src="../governance-report.js"></script>
-  <script src="../../../res/alpine.min.js" defer></script>
-  <script src="../../../res/karate-report.js"></script>
-  <script>
-    (function () {
-      var d = window.KARATE_GOVERNANCE || {};
-      var tabs = [];
-      if (d.coverageHref) tabs.push({ key: 'coverage', title: 'Coverage', href: d.coverageHref });
-      if (d.traceabilityHref) tabs.push({ key: 'traceability', title: 'Traceability', href: d.traceabilityHref });
-      if (d.contractHref) tabs.push({ key: 'contract', title: 'Contract', href: d.contractHref });
-      tabs.push({ key: 'governance', title: 'Governance', href: 'governance.html' });
-      KarateReport.renderTopNav({ current: 'governance', summary: d.karateSummary, tabs: tabs });
-    })();
-  </script>
+  <script src="../../../res/alpine-csp.min.js" defer></script>
 </body>
 </html>

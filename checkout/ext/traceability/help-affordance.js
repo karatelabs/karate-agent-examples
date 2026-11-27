@@ -69,6 +69,13 @@
     }
   };
 
+  document.addEventListener('click', function (e) {
+    var el = e.target && e.target.closest ? e.target.closest('[data-k-help]') : null;
+    if (el) {
+      window.kaCopyHelp(el.getAttribute('data-k-help'));
+    }
+  });
+
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', ensureStyle);
   } else {

@@ -12,6 +12,18 @@ document.addEventListener('alpine:init', function () {
   Alpine.data('governanceReport', function () {
     return {
       grade: window.KARATE_GOVERNANCE || {},
+
+      // the shared report top-nav (core's KarateReport util): a sibling tab appears only when the writer
+      // stamped its href, i.e. when that page was really published beside this one
+      init: function () {
+        var d = window.KARATE_GOVERNANCE || {};
+        var tabs = [];
+        if (d.coverageHref) tabs.push({ key: 'coverage', title: 'Coverage', href: d.coverageHref });
+        if (d.traceabilityHref) tabs.push({ key: 'traceability', title: 'Traceability', href: d.traceabilityHref });
+        if (d.contractHref) tabs.push({ key: 'contract', title: 'Contract', href: d.contractHref });
+        tabs.push({ key: 'governance', title: 'Governance', href: 'governance.html' });
+        if (window.KarateReport) KarateReport.renderTopNav({ current: 'governance', summary: d.karateSummary, tabs: tabs });
+      },
       method: false,
       glossaryOpen: false,
       filter: '',
@@ -107,6 +119,10 @@ document.addEventListener('alpine:init', function () {
       pct: function (value) {
         if (typeof value !== 'number') return 'not measured';
         return (value >= 1 ? 100 : Math.min(99, Math.floor(value * 100))) + '%';
+      },
+      capNote: function (d) {
+        return 'Capped at ' + this.pct(d.cappedAt) + ' by ' + (d.cappedBy || []).join(', ')
+          + '. Without the cap it scores ' + this.pct(d.uncappedScore) + '.';
       },
       pctOf: function (value) { return typeof value === 'number' ? Math.round(value * 100) : 0; },
 
