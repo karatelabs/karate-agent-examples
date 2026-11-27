@@ -6,9 +6,43 @@
  * truth, P18) — this file only filters, joins, and renders.
  */
 document.addEventListener('alpine:init', function () {
+  // a tiny, offline markdown renderer for requirement prose (EARS shall-statements: **bold**,
+  // *italic*, `code`) — escapes HTML first (never inject), no CDN (airgap-safe, reports.md note 1).
+  function md(s) {
+    if (!s) return '';
+    var esc = String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return esc
+      .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+      .replace(/`([^`]+)`/g, '<code>$1</code>')
+      .replace(/(^|[^*])\*([^*]+)\*/g, '$1<em>$2</em>');
+  }
+  // x-k-md="expr" renders md(expr) into the element: the CSP build of Alpine refuses x-html, and md
+  // escapes its input before adding its own three tags, so the markup it sets is never the data's
+  Alpine.directive('k-md', function (el, directive, utils) {
+    var value = utils.evaluateLater(directive.expression);
+    utils.effect(function () {
+      value(function (s) { el.innerHTML = md(s); });
+    });
+  });
+
   Alpine.data('traceabilityReport', function () {
     return {
       data: window.KARATE_TRACE || {},
+
+      // the shared report top-nav (core's KarateReport util)
+      init: function () {
+        var d = window.KARATE_TRACE || {};
+        var tabs = [
+          // the Coverage sibling is always part of the deliverable — the writer stamps the href seam
+          { key: 'coverage', title: 'Coverage', href: d.coverageHref || '../../coverage/pages/coverage.html' },
+          { key: 'traceability', title: 'Traceability', href: 'traceability.html' }
+        ];
+        // the paired-run page, iff one was published beside this report (stamped only when it is there)
+        if (d.contractHref) {
+          tabs.push({ key: 'contract', title: 'Contract', href: d.contractHref });
+        }
+        if (window.KarateReport) KarateReport.renderTopNav({ current: 'traceability', summary: d.karateSummary, tabs: tabs });
+      },
       q: '',
       critFilter: '',
       statusFilter: '',
@@ -41,17 +75,6 @@ document.addEventListener('alpine:init', function () {
       // the relative href to the sibling Coverage page — context-dependent (in-run vs standalone layout),
       // stamped by the Java bake so the report BODY stays identical across both shells (parity-locked).
       get coverageHref() { return this.data.coverageHref || '../../coverage/pages/coverage.html'; },
-
-      // a tiny, offline markdown renderer for requirement prose (EARS shall-statements: **bold**,
-      // *italic*, `code`) — escapes HTML first (never inject), no CDN (airgap-safe, reports.md note 1).
-      md: function (s) {
-        if (!s) return '';
-        var esc = String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        return esc
-          .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-          .replace(/`([^`]+)`/g, '<code>$1</code>')
-          .replace(/(^|[^*])\*([^*]+)\*/g, '$1<em>$2</em>');
-      },
 
       // risk per requirement, joined from the canonical readiness assessment (keyed by reqId)
       get riskById() {
@@ -258,8 +281,9 @@ document.addEventListener('alpine:init', function () {
         var i = String(slug).lastIndexOf(':');
         return i >= 0 ? String(slug).slice(i + 1) : String(slug);
       },
-      testLoc: function (slug) {
-        var t = this.testNode(slug);
+      testLoc: function (slug) { return this.featureAt(this.testNode(slug)); },
+      // a test's feature file name and line (`orders.feature:12`), '' when it has no feature
+      featureAt: function (t) {
         if (!t.feature) return '';
         var f = String(t.feature).split('/').pop();
         return f + (t.line ? ':' + t.line : '');

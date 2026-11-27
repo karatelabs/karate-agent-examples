@@ -3,12 +3,16 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <link rel="stylesheet" href="res/karate-report.css"/>
     <link rel="icon" href="res/favicon.ico"/>
     <link rel="stylesheet" href="https://unpkg.com/vis-timeline@7/styles/vis-timeline-graph2d.min.css"/>
+    <!-- after vis's stylesheet: the vis overrides in karate-report.css win at equal specificity -->
+    <link rel="stylesheet" href="res/karate-report.css"/>
     <script src="https://unpkg.com/vis-timeline@7/standalone/umd/vis-timeline-graph2d.min.js"></script>
-    <script src="res/alpine.min.js" defer></script>
-    <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('karate-theme') || 'light');</script>
+    <!-- See karate-summary.html: theme before paint, components registered on alpine:init,
+         CSP build of Alpine. The vis-timeline overrides live in karate-report.css
+         (etc/tailwind/input.css), not an inline style block, for a strict style-src. -->
+    <script src="res/karate-report.js"></script>
+    <script src="res/alpine-csp.min.js" defer></script>
     <script src="ext/evidence/evidence-report.js" defer></script>
 <link rel="stylesheet" href="ext/coverage/coverage-report.css">
 <script src="ext/coverage/coverage-report.js" defer></script>
@@ -16,40 +20,10 @@
 <script src="ext/traceability/traceability-report.js" defer></script>
 
     <title>Karate Timeline</title>
-    <style>
-        #timeline {
-            width: 100%;
-            /* Cap so the Slowest scenarios panel below stays visible without
-               scrolling past a full-viewport gantt. vis-timeline auto-scrolls
-               internally when content exceeds the height. */
-            max-height: 60vh;
-            min-height: 320px;
-        }
-        .vis-item.failed { background-color: #dc2626 !important; border-color: #b91c1c !important; color: white !important; }
-        .vis-item.passed { background-color: #16a34a !important; border-color: #15803d !important; color: white !important; }
-        .vis-label { font-size: 0.9rem; }
-        .vis-item-content { font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        /* Light mode — soften vis-timeline's default greys to match the D20 surface palette. */
-        .vis-timeline { border-color: #e2e8f0; }
-        .vis-labelset .vis-label { background-color: #f8fafc; color: #0f172a; border-color: #e2e8f0; }
-        .vis-time-axis .vis-text { color: #475569; }
-        .vis-time-axis .vis-grid.vis-minor { border-color: #e2e8f0; }
-        .vis-time-axis .vis-grid.vis-major { border-color: #cbd5e1; }
-        /* Dark mode for vis-timeline (we set data-theme on <html>) */
-        [data-theme="dark"] .vis-timeline { border-color: #475569; }
-        [data-theme="dark"] .vis-panel.vis-background,
-        [data-theme="dark"] .vis-panel.vis-center { background-color: #1e293b; }
-        [data-theme="dark"] .vis-labelset .vis-label {
-            background-color: #334155; color: #f1f5f9; border-color: #475569;
-        }
-        [data-theme="dark"] .vis-time-axis .vis-text { color: #cbd5e1; }
-        [data-theme="dark"] .vis-time-axis .vis-grid.vis-minor { border-color: #475569; }
-        [data-theme="dark"] .vis-time-axis .vis-grid.vis-major { border-color: #64748b; }
-    </style>
 </head>
-<body class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-sans antialiased" x-data="KarateReport.timelineData()">
+<body class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-sans antialiased" x-data="karateTimeline">
     <!-- Karate report inline SVG sprite (Heroicons v2, MIT). Spliced into the KARATE_ICONS placeholder by HtmlReportWriter. -->
-<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+<svg xmlns="http://www.w3.org/2000/svg" class="hidden" width="0" height="0" aria-hidden="true">
 
     <!-- Status: passed -->
     <symbol id="icon-check-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -155,10 +129,10 @@
              Speedup is threshold-gated — see speedup getter in karate-report.js. -->
         <div class="grid grid-cols-1 gap-4 mb-5"
              :class="speedup ? 'sm:grid-cols-3' : 'sm:grid-cols-2'"
-             x-show="data.summary?.scenario_count || data.summary?.duration_millis">
+             x-show="summary.scenario_count || summary.duration_millis">
             <div class="rounded-lg p-4 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
                 <div class="text-sm text-slate-500 dark:text-slate-400">Scenarios</div>
-                <div class="text-3xl font-bold mt-1 tabular-nums" x-text="data.summary?.scenario_count || 0">0</div>
+                <div class="text-3xl font-bold mt-1 tabular-nums" x-text="summary.scenario_count || 0">0</div>
                 <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">total executed</div>
             </div>
             <div class="rounded-lg p-4 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50" x-show="speedup">
@@ -211,7 +185,6 @@
         <a href="https://docs.karatelabs.io/" target="_blank" rel="noopener" class="hover:text-accent">Documentation</a>
     </footer>
 
-    <script src="res/karate-report.js"></script>
-    <script id="karate-data" type="application/json">{"env":null,"reportDate":"2026-10-23 09:54:12","threads":1,"karateVersion":"2.1.5.RC1","summary":{"feature_count":2,"feature_passed":2,"feature_failed":0,"scenario_count":12,"scenario_passed":12,"scenario_failed":0,"scenario_skipped":0,"duration_millis":1128,"status":"passed"},"groups":[{"id":1,"content":"thread-1"}],"items":[{"id":1,"group":1,"content":"oracle[1.1:27]","start":1792749252725,"end":1792749252785,"title":"oracle[1.1:27] 09:54:12.725 (61 ms) decline-low-score — a credit score below 580 is declined","className":"passed"},{"id":2,"group":1,"content":"oracle[1.2:27]","start":1792749252792,"end":1792749252807,"title":"oracle[1.2:27] 09:54:12.792 (16 ms) decline-high-dti — debt-to-income over 50% is declined","className":"passed"},{"id":3,"group":1,"content":"oracle[1.3:27]","start":1792749252812,"end":1792749252828,"title":"oracle[1.3:27] 09:54:12.812 (17 ms) review-borderline-score — a score of 580-669 goes to manual review","className":"passed"},{"id":4,"group":1,"content":"oracle[1.4:27]","start":1792749252833,"end":1792749252847,"title":"oracle[1.4:27] 09:54:12.833 (15 ms) approve-prime — a prime applicant is approved at the top band","className":"passed"},{"id":5,"group":1,"content":"oracle[1.5:27]","start":1792749252851,"end":1792749252862,"title":"oracle[1.5:27] 09:54:12.851 (12 ms) approve-midband — a mid-band applicant is approved at 9.9%","className":"passed"},{"id":6,"group":1,"content":"decision-api[1:13]","start":1792749252996,"end":1792749253312,"title":"decision-api[1:13] 09:54:12.996 (317 ms) a missing required field is rejected, naming the field","className":"passed"},{"id":7,"group":1,"content":"decision-api[2:21]","start":1792749253321,"end":1792749253333,"title":"decision-api[2:21] 09:54:13.321 (13 ms) a credit score outside 300-850 is rejected, naming the field","className":"passed"},{"id":8,"group":1,"content":"decision-api[3.1:39]","start":1792749253338,"end":1792749253358,"title":"decision-api[3.1:39] 09:54:13.338 (21 ms) decline-low-score — a credit score below 580 is declined","className":"passed"},{"id":9,"group":1,"content":"decision-api[3.2:39]","start":1792749253361,"end":1792749253384,"title":"decision-api[3.2:39] 09:54:13.361 (24 ms) decline-high-dti — debt-to-income over 50% is declined","className":"passed"},{"id":10,"group":1,"content":"decision-api[3.3:39]","start":1792749253387,"end":1792749253411,"title":"decision-api[3.3:39] 09:54:13.387 (25 ms) review-borderline-score — a score of 580-669 goes to manual review","className":"passed"},{"id":11,"group":1,"content":"decision-api[3.4:39]","start":1792749253414,"end":1792749253431,"title":"decision-api[3.4:39] 09:54:13.414 (18 ms) approve-prime — a prime applicant is approved at the top band","className":"passed"},{"id":12,"group":1,"content":"decision-api[3.5:39]","start":1792749253434,"end":1792749253455,"title":"decision-api[3.5:39] 09:54:13.434 (22 ms) approve-midband — a mid-band applicant is approved at 9.9%","className":"passed"}],"scenarios":[{"featureFileName":"oracle","featureHtmlName":"oracle","refId":"[1.1:27]","name":"decline-low-score — a credit score below 580 is declined","durationMillis":61,"passed":true},{"featureFileName":"oracle","featureHtmlName":"oracle","refId":"[1.2:27]","name":"decline-high-dti — debt-to-income over 50% is declined","durationMillis":16,"passed":true},{"featureFileName":"oracle","featureHtmlName":"oracle","refId":"[1.3:27]","name":"review-borderline-score — a score of 580-669 goes to manual review","durationMillis":17,"passed":true},{"featureFileName":"oracle","featureHtmlName":"oracle","refId":"[1.4:27]","name":"approve-prime — a prime applicant is approved at the top band","durationMillis":15,"passed":true},{"featureFileName":"oracle","featureHtmlName":"oracle","refId":"[1.5:27]","name":"approve-midband — a mid-band applicant is approved at 9.9%","durationMillis":12,"passed":true},{"featureFileName":"decision-api","featureHtmlName":"decision-api","refId":"[1:13]","name":"a missing required field is rejected, naming the field","durationMillis":317,"passed":true},{"featureFileName":"decision-api","featureHtmlName":"decision-api","refId":"[2:21]","name":"a credit score outside 300-850 is rejected, naming the field","durationMillis":13,"passed":true},{"featureFileName":"decision-api","featureHtmlName":"decision-api","refId":"[3.1:39]","name":"decline-low-score — a credit score below 580 is declined","durationMillis":21,"passed":true},{"featureFileName":"decision-api","featureHtmlName":"decision-api","refId":"[3.2:39]","name":"decline-high-dti — debt-to-income over 50% is declined","durationMillis":24,"passed":true},{"featureFileName":"decision-api","featureHtmlName":"decision-api","refId":"[3.3:39]","name":"review-borderline-score — a score of 580-669 goes to manual review","durationMillis":25,"passed":true},{"featureFileName":"decision-api","featureHtmlName":"decision-api","refId":"[3.4:39]","name":"approve-prime — a prime applicant is approved at the top band","durationMillis":18,"passed":true},{"featureFileName":"decision-api","featureHtmlName":"decision-api","refId":"[3.5:39]","name":"approve-midband — a mid-band applicant is approved at 9.9%","durationMillis":22,"passed":true}],"serialDurationMillis":561}</script>
+    <script id="karate-data" type="application/json">{"env":null,"reportDate":"2026-11-27 11:19:03","threads":1,"karateVersion":"2.1.5.RC1","summary":{"feature_count":2,"feature_passed":2,"feature_failed":0,"scenario_count":12,"scenario_passed":12,"scenario_failed":0,"scenario_skipped":0,"scenario_cancelled":0,"duration_millis":830,"status":"passed"},"groups":[{"id":1,"content":"thread-1"}],"items":[{"id":1,"group":1,"content":"oracle[1.1:27]","start":1795778344005,"end":1795778344064,"title":"oracle[1.1:27] 11:19:04.005 (60 ms) decline-low-score — a credit score below 580 is declined","className":"passed"},{"id":2,"group":1,"content":"oracle[1.2:27]","start":1795778344072,"end":1795778344088,"title":"oracle[1.2:27] 11:19:04.072 (17 ms) decline-high-dti — debt-to-income over 50% is declined","className":"passed"},{"id":3,"group":1,"content":"oracle[1.3:27]","start":1795778344094,"end":1795778344105,"title":"oracle[1.3:27] 11:19:04.094 (12 ms) review-borderline-score — a score of 580-669 goes to manual review","className":"passed"},{"id":4,"group":1,"content":"oracle[1.4:27]","start":1795778344110,"end":1795778344119,"title":"oracle[1.4:27] 11:19:04.110 (10 ms) approve-prime — a prime applicant is approved at the top band","className":"passed"},{"id":5,"group":1,"content":"oracle[1.5:27]","start":1795778344125,"end":1795778344134,"title":"oracle[1.5:27] 11:19:04.125 (10 ms) approve-midband — a mid-band applicant is approved at 9.9%","className":"passed"},{"id":6,"group":1,"content":"decision-api[1:13]","start":1795778344258,"end":1795778344432,"title":"decision-api[1:13] 11:19:04.258 (175 ms) a missing required field is rejected, naming the field","className":"passed"},{"id":7,"group":1,"content":"decision-api[2:21]","start":1795778344440,"end":1795778344450,"title":"decision-api[2:21] 11:19:04.440 (11 ms) a credit score outside 300-850 is rejected, naming the field","className":"passed"},{"id":8,"group":1,"content":"decision-api[3.1:39]","start":1795778344455,"end":1795778344473,"title":"decision-api[3.1:39] 11:19:04.455 (19 ms) decline-low-score — a credit score below 580 is declined","className":"passed"},{"id":9,"group":1,"content":"decision-api[3.2:39]","start":1795778344478,"end":1795778344492,"title":"decision-api[3.2:39] 11:19:04.478 (15 ms) decline-high-dti — debt-to-income over 50% is declined","className":"passed"},{"id":10,"group":1,"content":"decision-api[3.3:39]","start":1795778344496,"end":1795778344510,"title":"decision-api[3.3:39] 11:19:04.496 (15 ms) review-borderline-score — a score of 580-669 goes to manual review","className":"passed"},{"id":11,"group":1,"content":"decision-api[3.4:39]","start":1795778344513,"end":1795778344528,"title":"decision-api[3.4:39] 11:19:04.513 (16 ms) approve-prime — a prime applicant is approved at the top band","className":"passed"},{"id":12,"group":1,"content":"decision-api[3.5:39]","start":1795778344531,"end":1795778344543,"title":"decision-api[3.5:39] 11:19:04.531 (13 ms) approve-midband — a mid-band applicant is approved at 9.9%","className":"passed"}],"scenarios":[{"featureFileName":"oracle","featureHtmlName":"oracle","refId":"[1.1:27]","name":"decline-low-score — a credit score below 580 is declined","durationMillis":60,"passed":true},{"featureFileName":"oracle","featureHtmlName":"oracle","refId":"[1.2:27]","name":"decline-high-dti — debt-to-income over 50% is declined","durationMillis":17,"passed":true},{"featureFileName":"oracle","featureHtmlName":"oracle","refId":"[1.3:27]","name":"review-borderline-score — a score of 580-669 goes to manual review","durationMillis":12,"passed":true},{"featureFileName":"oracle","featureHtmlName":"oracle","refId":"[1.4:27]","name":"approve-prime — a prime applicant is approved at the top band","durationMillis":10,"passed":true},{"featureFileName":"oracle","featureHtmlName":"oracle","refId":"[1.5:27]","name":"approve-midband — a mid-band applicant is approved at 9.9%","durationMillis":10,"passed":true},{"featureFileName":"decision-api","featureHtmlName":"decision-api","refId":"[1:13]","name":"a missing required field is rejected, naming the field","durationMillis":175,"passed":true},{"featureFileName":"decision-api","featureHtmlName":"decision-api","refId":"[2:21]","name":"a credit score outside 300-850 is rejected, naming the field","durationMillis":11,"passed":true},{"featureFileName":"decision-api","featureHtmlName":"decision-api","refId":"[3.1:39]","name":"decline-low-score — a credit score below 580 is declined","durationMillis":19,"passed":true},{"featureFileName":"decision-api","featureHtmlName":"decision-api","refId":"[3.2:39]","name":"decline-high-dti — debt-to-income over 50% is declined","durationMillis":15,"passed":true},{"featureFileName":"decision-api","featureHtmlName":"decision-api","refId":"[3.3:39]","name":"review-borderline-score — a score of 580-669 goes to manual review","durationMillis":15,"passed":true},{"featureFileName":"decision-api","featureHtmlName":"decision-api","refId":"[3.4:39]","name":"approve-prime — a prime applicant is approved at the top band","durationMillis":16,"passed":true},{"featureFileName":"decision-api","featureHtmlName":"decision-api","refId":"[3.5:39]","name":"approve-midband — a mid-band applicant is approved at 9.9%","durationMillis":13,"passed":true}],"serialDurationMillis":373}</script>
 </body>
 </html>

@@ -145,6 +145,7 @@
 .k-coverage-ext .k-seg-sim { background: var(--k-sim-fg); }
 .k-coverage-ext .k-axisask { font-size: 11.5px; color: var(--k-muted); margin-top: 7px; line-height: 1.35; }
 .k-coverage-ext .k-axisnote { font-size: 11px; color: var(--k-warn-fg); margin-top: 3px; }
+.k-coverage-ext .k-axisshare { font-size: 11px; color: var(--k-fg); margin-top: 3px; font-variant-numeric: tabular-nums; }
 
 /* ── Input Coverage (Part 3) — each input VALUE a chip: tried ✓ / missed ✗ (with closing value) ───── */
 .k-coverage-ext .k-inputcov { margin-top: 24px; }

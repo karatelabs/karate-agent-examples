@@ -4,26 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Requirements Traceability</title>
-  <!-- theme before paint (no flash); follows the main report's <html data-theme>, else OS preference. -->
-  <script>
-    (function () {
-      try {
-        // 'karate-theme' is the ONE theme key — the served console writes the same one, so this
-        // page follows the console's dark mode (same origin → same localStorage)
-        var t = localStorage.getItem('karate-theme');
-        if (!t) t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-theme', t);
-        // follow a console toggle live (this page usually opens in its own tab)
-        window.addEventListener('storage', function (e) {
-          if (e.key === 'karate-theme' && e.newValue) {
-            document.documentElement.setAttribute('data-theme', e.newValue);
-          }
-        });
-      } catch (e) {
-        document.documentElement.setAttribute('data-theme', 'light');
-      }
-    })();
-  </script>
+  <!-- the ONE theme rule (stored choice, else OS preference; follows a toggle in another tab) is
+       core's karate-report.js, loaded before paint; it also carries the shared top-nav util. -->
+  <script src="../../../res/karate-report.js"></script>
   <!-- THE one K-RTM traceability page shell (D75/D191): always at ext/traceability/pages/traceability.html —
        copied there by a real run's report-asset contribution (CoverageExt) or by the run-free
        Report.traceability(); assets sit one level up in ext/traceability/, Alpine + the top-nav util at
@@ -40,7 +23,7 @@
         <div class="k-sub">Every requirement, what verifies it, and whether that verification can be trusted &mdash; derived from the traceability graph.<button
             type="button" class="k-help-q"
             title="What is the traceability report / readiness? Copy the help-id — paste it into the Help tab or your AI chat"
-            onclick="kaCopyHelp('report.traceability')">?</button></div>
+            data-k-help="report.traceability">?</button></div>
       </div>
       <div class="k-head-actions">
         <div class="k-viewtoggle" role="tablist">
@@ -253,7 +236,7 @@
             <div class="k-line">
               <span class="k-pill" :class="statusClass(t.status)" :title="def('status', t.status)" x-text="statusIcon(t.status)"></span>
               <span x-text="t.name || t.id"></span>
-              <span class="k-muted" x-text="t.feature ? (String(t.feature).split('/').pop() + (t.line ? ':' + t.line : '')) : ''"></span>
+              <span class="k-muted" x-text="featureAt(t)"></span>
             </div>
           </template>
         </div>
@@ -319,7 +302,7 @@
           </tr>
           <tr class="k-drill" x-show="isOpen(it.id)">
             <td colspan="9">
-              <div x-show="it.body" class="k-prose" x-html="md(it.body)"></div>
+              <div x-show="it.body" class="k-prose" x-k-md="it.body"></div>
               <template x-if="acceptOf(it).length">
                 <div>
                   <h4>Acceptance criteria</h4>
@@ -521,23 +504,6 @@
   <script src="../traceability-data.js"></script>
   <script src="../traceability-report.js"></script>
   <script src="../help-affordance.js"></script>
-  <script src="../../../res/alpine.min.js" defer></script>
-  <!-- shared report top-nav via the core KarateReport util — consistent bar, Traceability tab highlighted. -->
-  <script src="../../../res/karate-report.js"></script>
-  <script>
-    (function () {
-      var d = window.KARATE_TRACE || {};
-      var tabs = [
-        // the Coverage sibling is always part of the deliverable — the writer stamps the href seam
-        { key: 'coverage', title: 'Coverage', href: d.coverageHref || '../../coverage/pages/coverage.html' },
-        { key: 'traceability', title: 'Traceability', href: 'traceability.html' }
-      ];
-      // the paired-run page, iff one was published beside this report (stamped only when it is there)
-      if (d.contractHref) {
-        tabs.push({ key: 'contract', title: 'Contract', href: d.contractHref });
-      }
-      KarateReport.renderTopNav({ current: 'traceability', summary: d.karateSummary, tabs: tabs });
-    })();
-  </script>
+  <script src="../../../res/alpine-csp.min.js" defer></script>
 </body>
 </html>
