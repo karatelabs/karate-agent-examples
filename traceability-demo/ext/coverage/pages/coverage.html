@@ -4,27 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Coverage Report</title>
-  <!-- theme before paint (no flash): follows the main report's <html data-theme>, persisted in
-       localStorage 'karate-theme', else the OS preference. -->
-  <script>
-    (function () {
-      try {
-        // 'karate-theme' is the ONE theme key — the served console writes the same one, so this
-        // page follows the console's dark mode (same origin → same localStorage)
-        var t = localStorage.getItem('karate-theme');
-        if (!t) t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-theme', t);
-        // follow a console toggle live (this page usually opens in its own tab)
-        window.addEventListener('storage', function (e) {
-          if (e.key === 'karate-theme' && e.newValue) {
-            document.documentElement.setAttribute('data-theme', e.newValue);
-          }
-        });
-      } catch (e) {
-        document.documentElement.setAttribute('data-theme', 'light');
-      }
-    })();
-  </script>
+  <!-- the ONE theme rule (stored choice, else OS preference; follows a toggle in another tab) is
+       core's karate-report.js, loaded before paint; it also carries the shared top-nav util. -->
+  <script src="../../../res/karate-report.js"></script>
   <!-- THE one coverage page shell (D191): always at ext/coverage/pages/coverage.html — copied there by a
        real run's report-asset contribution (CoverageExt) or by the run-free Report.generate(); assets sit
        one level up in ext/coverage/, Alpine + the top-nav util at the report root's res/. -->
@@ -38,7 +20,7 @@
     <div class="k-sub">How thoroughly your system was tested, where the gaps are, and what to test next.<button
         type="button" class="k-help-q"
         title="What do these grades mean? Copy the help-id — paste it into the Help tab or your AI chat"
-        onclick="kaCopyHelp('model.coverage.status')">?</button></div>
+        data-k-help="model.coverage.status">?</button></div>
     <div class="k-sub k-provisional" x-show="provisional" title="the run that wrote this is still settling its evidence; the settle replaces it">provisional &mdash; evidence not yet finalized</div>
 
     <!-- Confidence-to-ship banner (Part 1) — the CANONICAL release-readiness verdict (the same one the
@@ -78,7 +60,7 @@
         <div class="k-axiscard">
           <div class="k-axishd">
             <span class="k-axislabel" x-text="c.label"></span>
-            <span class="k-info" @click="kaCopyHelp(c.help)" :title="'What does ' + c.label + ' mean? Copy the help-id'">&#9432;</span>
+            <span class="k-info" :data-k-help="c.help" :title="'What does ' + c.label + ' mean? Copy the help-id'">&#9432;</span>
           </div>
           <div class="k-axisnum"><span x-text="c.pct + '%'"></span> <span class="k-axisden" x-text="'· ' + (c.segments[0] ? c.segments[0].n : 0) + '/' + c.total"></span></div>
           <div class="k-segbar">
@@ -87,6 +69,7 @@
             </template>
           </div>
           <div class="k-axisask" x-text="c.ask"></div>
+          <div class="k-axisshare" x-show="c.share" x-text="c.share"></div>
           <div class="k-axisnote" x-show="c.note" x-text="c.note"></div>
         </div>
       </template>
@@ -121,6 +104,7 @@
           <th>Tags</th>
           <th style="width:64px" title="how many times this action was exercised at runtime">Times run</th>
           <th style="width:64px">Tests</th>
+          <th style="width:80px" title="the strongest evidence behind an action’s coverage: observed in the run, then an attested machine claim, then a declared tag">Evidence</th>
           <th style="width:110px" title="the error-path (sad-path) grade — statuses the wire actually produced, and any response codes the spec declares that no run ever produced">Outcomes</th>
           <th style="width:96px" title="how thoroughly the inputs were varied — input-value and combination coverage, with any gaps">Inputs</th>
         </tr>
@@ -138,7 +122,7 @@
               <template x-if="protoBadge(it)"><span class="k-proto" x-text="protoBadge(it)" :title="protoBadge(it) === 'GRPC' ? 'gRPC service' : 'Kafka topic'"></span></template>
               <template x-if="it.method && !protoBadge(it)"><span class="k-method" x-text="it.method"></span></template>
               <template x-if="it.rulebook"><span class="k-rulebook" x-text="it.rulebook" :title="'rulebook: ' + it.rulebook"></span></template>
-              <template x-if="it.kind === 'req'"><span><a class="k-reqid" x-show="reqHref(it.id)" :href="reqHref(it.id)" target="_blank" rel="noopener" :title="'open ' + it.id.replace(/^req:/, '') + ' in tracker'" x-text="it.id.replace(/^req:/, '')"></a><span class="k-reqid" x-show="!reqHref(it.id)" x-text="it.id.replace(/^req:/, '')"></span></span></template>
+              <template x-if="it.kind === 'req'"><span><a class="k-reqid" x-show="reqHref(it.id)" :href="reqHref(it.id)" target="_blank" rel="noopener" :title="'open ' + bareReqId(it.id) + ' in tracker'" x-text="bareReqId(it.id)"></a><span class="k-reqid" x-show="!reqHref(it.id)" x-text="bareReqId(it.id)"></span></span></template>
               <span class="k-path" x-text="label(it)"></span>
               <!-- every observed exercise of this item was answered by a karate mock, which says so on the
                    wire (Karate-Mock). A neutral disclosure, NOT a grade (D194): the status pill is
@@ -157,6 +141,7 @@
             </td>
             <td x-text="it.callCount || ''"></td>
             <td x-text="(it.tests || []).length || ''"></td>
+            <td><template x-if="it.kind !== 'req' && it.evidenceGrade"><span class="k-tag" x-text="it.evidenceGrade" :title="evidenceTip(it.evidenceGrade)"></span></template></td>
             <!-- error-path (outcome) cell, D228b: what the wire produced vs what the spec declares.
                  A "never" badge is the spec-side gap — a declared response code no run ever produced;
                  "happy-only" marks an exercised item whose failure modes were never witnessed. -->
@@ -178,7 +163,7 @@
             </td>
           </tr>
           <tr class="k-drill" x-show="isOpen(it.id)">
-            <td colspan="8">
+            <td colspan="9">
               <template x-if="criteria(it).length">
                 <div>
                   <h4>Acceptance criteria</h4>
@@ -322,7 +307,7 @@
          and a "what to test next" worklist. Derived from the baked `dimensions` projection (render-only). -->
     <div class="k-inputcov" x-show="inputCoverage().length">
       <h2>Input Coverage <span class="k-muted">&middot; did we try the meaningfully-different values of each field?</span>
-        <span class="k-info" @click="kaCopyHelp('model.coverage.inputs')" title="What does input coverage mean? Copy the help-id to paste into Help / your AI chat">&#9432;</span></h2>
+        <span class="k-info" data-k-help="model.coverage.inputs" title="What does input coverage mean? Copy the help-id to paste into Help / your AI chat">&#9432;</span></h2>
       <template x-for="src in inputCoverage()" :key="src.source">
         <div class="k-rulebk">
           <div class="k-rulehd">
@@ -348,9 +333,9 @@
                 </span>
               </div>
             </template>
-            <template x-for="of in src.openFields" :key="'o' + of">
+            <template x-for="openField in src.openFields" :key="'o' + openField">
               <div class="k-line k-inpfield k-inpopen">
-                <span class="k-inpname" x-text="of"></span>
+                <span class="k-inpname" x-text="openField"></span>
                 <span class="k-muted">no list of allowed values defined — can't be scored yet</span>
               </div>
             </template>
@@ -375,7 +360,7 @@
          modes were never witnessed at all. Render-only over the per-item outcome the graph carries. -->
     <div class="k-inputcov" x-show="errorPathCoverage().length">
       <h2>Error paths <span class="k-muted">&middot; did we ever exercise each action's failure modes?</span>
-        <span class="k-info" @click="kaCopyHelp('model.coverage.axis.errors')" title="What is error-path coverage? Copy the help-id to paste into Help / your AI chat">&#9432;</span></h2>
+        <span class="k-info" data-k-help="model.coverage.axis.errors" title="What is error-path coverage? Copy the help-id to paste into Help / your AI chat">&#9432;</span></h2>
       <template x-for="src in errorPathCoverage()" :key="src.source">
         <div class="k-rulebk">
           <div class="k-rulehd">
@@ -425,7 +410,7 @@
          arms (fix = add a scenario). Kept its own section so the arm axis is never conflated with the RTM. -->
     <div class="k-rulecov" x-show="ruleCoverage.length">
       <h2>Rule branches <span class="k-muted">&middot; each yes/no path in your business rules, checked separately</span>
-        <span class="k-info" @click="kaCopyHelp('model.coverage.rules')" title="What is a rule branch? Copy the help-id">&#9432;</span></h2>
+        <span class="k-info" data-k-help="model.coverage.rules" title="What is a rule branch? Copy the help-id">&#9432;</span></h2>
       <!-- collapsed by default (the same expanded-map idiom as the RTM rows): a real-life rulebook
            carries dozens of branches, and the headline (pct bar + checked / not-checked / not-reachable
            counts) is the scannable part — the arm list is the drill-down, one click away. -->
@@ -514,27 +499,6 @@
   <script src="../help-affordance.js"></script>
   <!-- the component must register its alpine:init listener before Alpine (defer) initializes -->
   <script src="../coverage-report.js"></script>
-  <script src="../../../res/alpine.min.js" defer></script>
-  <!-- shared report top-nav via the core KarateReport util — one consistent bar across contributed pages,
-       current tab highlighted; the Traceability tab shows only when requirements are in play. -->
-  <script src="../../../res/karate-report.js"></script>
-  <script>
-    (function () {
-      var d = window.KARATE_COVERAGE_DATA || {};
-      var tabs = [{ key: 'coverage', title: 'Coverage', href: 'coverage.html' }];
-      // the Traceability sibling exists whenever requirements are in play — the writer stamps the
-      // href seam (hasTraceability/traceabilityHref); the sources check is the pre-stamp fallback
-      if (d.hasTraceability || (d.sources || []).some(function (s) { return s.namespace === 'req'; })) {
-        tabs.push({ key: 'traceability', title: 'Traceability',
-                    href: d.traceabilityHref || '../../traceability/pages/traceability.html' });
-      }
-      // the paired-run page, iff one was published beside this report (the writer stamps the href only
-      // when the page is really there — no dead tabs)
-      if (d.contractHref) {
-        tabs.push({ key: 'contract', title: 'Contract', href: d.contractHref });
-      }
-      KarateReport.renderTopNav({ current: 'coverage', summary: d.karateSummary, tabs: tabs });
-    })();
-  </script>
+  <script src="../../../res/alpine-csp.min.js" defer></script>
 </body>
 </html>

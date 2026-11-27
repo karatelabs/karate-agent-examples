@@ -7,7 +7,10 @@
  * open /help#<id>. This is the ONE implementation reused across the static report surfaces
  * (coverage-report, traceability-report, rule-analysis-report, …) — add it once per page with
  * `<script src="res/help-affordance.js"></script>` (path relative to that page) and drop in a
- * `<button class="k-help-q" onclick="kaCopyHelp('rule.execute')">?</button>` wherever a concept needs help.
+ * `<button class="k-help-q" data-k-help="rule.execute">?</button>` wherever a concept needs help (an Alpine
+ * page binds a computed id with `:data-k-help="expr"`). One delegated click listener serves every
+ * `data-k-help` element, so a page needs no inline handler and runs under a CSP without 'unsafe-inline'.
+ * `window.kaCopyHelp(id)` stays the API for a caller that copies from its own code.
  *
  * Self-contained: it injects its own styles + toast, so it does NOT depend on which stylesheet a
  * given report loads. Theme-agnostic colours (work in the report's light/dark via data-theme).
@@ -80,6 +83,13 @@
       fallback(id, done);
     }
   };
+
+  document.addEventListener('click', function (e) {
+    var el = e.target && e.target.closest ? e.target.closest('[data-k-help]') : null;
+    if (el) {
+      window.kaCopyHelp(el.getAttribute('data-k-help'));
+    }
+  });
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', ensureStyle);
