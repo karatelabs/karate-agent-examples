@@ -3,50 +3,24 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <link rel="stylesheet" href="res/karate-report.css"/>
     <link rel="icon" href="res/favicon.ico"/>
     <link rel="stylesheet" href="https://unpkg.com/vis-timeline@7/styles/vis-timeline-graph2d.min.css"/>
+    <!-- after vis's stylesheet: the vis overrides in karate-report.css win at equal specificity -->
+    <link rel="stylesheet" href="res/karate-report.css"/>
     <script src="https://unpkg.com/vis-timeline@7/standalone/umd/vis-timeline-graph2d.min.js"></script>
-    <script src="res/alpine.min.js" defer></script>
-    <script>document.documentElement.setAttribute('data-theme', localStorage.getItem('karate-theme') || 'light');</script>
+    <!-- See karate-summary.html: theme before paint, components registered on alpine:init,
+         CSP build of Alpine. The vis-timeline overrides live in karate-report.css
+         (etc/tailwind/input.css), not an inline style block, for a strict style-src. -->
+    <script src="res/karate-report.js"></script>
+    <script src="res/alpine-csp.min.js" defer></script>
     <link rel="stylesheet" href="ext/coverage/coverage-report.css">
 <script src="ext/coverage/coverage-report.js" defer></script>
 
     <title>Karate Timeline</title>
-    <style>
-        #timeline {
-            width: 100%;
-            /* Cap so the Slowest scenarios panel below stays visible without
-               scrolling past a full-viewport gantt. vis-timeline auto-scrolls
-               internally when content exceeds the height. */
-            max-height: 60vh;
-            min-height: 320px;
-        }
-        .vis-item.failed { background-color: #dc2626 !important; border-color: #b91c1c !important; color: white !important; }
-        .vis-item.passed { background-color: #16a34a !important; border-color: #15803d !important; color: white !important; }
-        .vis-label { font-size: 0.9rem; }
-        .vis-item-content { font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        /* Light mode — soften vis-timeline's default greys to match the D20 surface palette. */
-        .vis-timeline { border-color: #e2e8f0; }
-        .vis-labelset .vis-label { background-color: #f8fafc; color: #0f172a; border-color: #e2e8f0; }
-        .vis-time-axis .vis-text { color: #475569; }
-        .vis-time-axis .vis-grid.vis-minor { border-color: #e2e8f0; }
-        .vis-time-axis .vis-grid.vis-major { border-color: #cbd5e1; }
-        /* Dark mode for vis-timeline (we set data-theme on <html>) */
-        [data-theme="dark"] .vis-timeline { border-color: #475569; }
-        [data-theme="dark"] .vis-panel.vis-background,
-        [data-theme="dark"] .vis-panel.vis-center { background-color: #1e293b; }
-        [data-theme="dark"] .vis-labelset .vis-label {
-            background-color: #334155; color: #f1f5f9; border-color: #475569;
-        }
-        [data-theme="dark"] .vis-time-axis .vis-text { color: #cbd5e1; }
-        [data-theme="dark"] .vis-time-axis .vis-grid.vis-minor { border-color: #475569; }
-        [data-theme="dark"] .vis-time-axis .vis-grid.vis-major { border-color: #64748b; }
-    </style>
 </head>
-<body class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-sans antialiased" x-data="KarateReport.timelineData()">
+<body class="bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 font-sans antialiased" x-data="karateTimeline">
     <!-- Karate report inline SVG sprite (Heroicons v2, MIT). Spliced into the KARATE_ICONS placeholder by HtmlReportWriter. -->
-<svg xmlns="http://www.w3.org/2000/svg" style="display:none" aria-hidden="true">
+<svg xmlns="http://www.w3.org/2000/svg" class="hidden" width="0" height="0" aria-hidden="true">
 
     <!-- Status: passed -->
     <symbol id="icon-check-circle" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -151,10 +125,10 @@
              Speedup is threshold-gated — see speedup getter in karate-report.js. -->
         <div class="grid grid-cols-1 gap-4 mb-5"
              :class="speedup ? 'sm:grid-cols-3' : 'sm:grid-cols-2'"
-             x-show="data.summary?.scenario_count || data.summary?.duration_millis">
+             x-show="summary.scenario_count || summary.duration_millis">
             <div class="rounded-lg p-4 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
                 <div class="text-sm text-slate-500 dark:text-slate-400">Scenarios</div>
-                <div class="text-3xl font-bold mt-1 tabular-nums" x-text="data.summary?.scenario_count || 0">0</div>
+                <div class="text-3xl font-bold mt-1 tabular-nums" x-text="summary.scenario_count || 0">0</div>
                 <div class="text-xs text-slate-500 dark:text-slate-400 mt-1">total executed</div>
             </div>
             <div class="rounded-lg p-4 border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50" x-show="speedup">
@@ -207,7 +181,6 @@
         <a href="https://docs.karatelabs.io/" target="_blank" rel="noopener" class="hover:text-accent">Documentation</a>
     </footer>
 
-    <script src="res/karate-report.js"></script>
-    <script id="karate-data" type="application/json">{"env":null,"reportDate":"2026-10-23 10:47:59","threads":1,"karateVersion":"2.1.5.RC1","summary":{"feature_count":1,"feature_passed":1,"feature_failed":0,"scenario_count":6,"scenario_passed":6,"scenario_failed":0,"scenario_skipped":0,"duration_millis":682,"status":"passed"},"groups":[{"id":1,"content":"thread-1"}],"items":[{"id":1,"group":1,"content":"inventory[1:11]","start":1792752479760,"end":1792752480103,"title":"inventory[1:11] 10:47:59.760 (344 ms) the catalog — what the server says it can do","className":"passed"},{"id":2,"group":1,"content":"inventory[2:20]","start":1792752480106,"end":1792752480166,"title":"inventory[2:20] 10:48:00.106 (61 ms) a call, and the side effect it leaves behind","className":"passed"},{"id":3,"group":1,"content":"inventory[3:30]","start":1792752480168,"end":1792752480199,"title":"inventory[3:30] 10:48:00.168 (32 ms) a tool's own error is a result, not a failed step","className":"passed"},{"id":4,"group":1,"content":"inventory[4:37]","start":1792752480201,"end":1792752480247,"title":"inventory[4:37] 10:48:00.201 (47 ms) a protocol error is data, through the raw primitive","className":"passed"},{"id":5,"group":1,"content":"inventory[5:50]","start":1792752480248,"end":1792752480297,"title":"inventory[5:50] 10:48:00.248 (50 ms) resources and prompts","className":"passed"},{"id":6,"group":1,"content":"inventory[6:59]","start":1792752480298,"end":1792752480341,"title":"inventory[6:59] 10:48:00.298 (44 ms) search, and a bounded list","className":"passed"}],"scenarios":[{"featureFileName":"inventory","featureHtmlName":"checks.inventory","refId":"[1:11]","name":"the catalog — what the server says it can do","durationMillis":344,"passed":true},{"featureFileName":"inventory","featureHtmlName":"checks.inventory","refId":"[2:20]","name":"a call, and the side effect it leaves behind","durationMillis":61,"passed":true},{"featureFileName":"inventory","featureHtmlName":"checks.inventory","refId":"[3:30]","name":"a tool's own error is a result, not a failed step","durationMillis":32,"passed":true},{"featureFileName":"inventory","featureHtmlName":"checks.inventory","refId":"[4:37]","name":"a protocol error is data, through the raw primitive","durationMillis":47,"passed":true},{"featureFileName":"inventory","featureHtmlName":"checks.inventory","refId":"[5:50]","name":"resources and prompts","durationMillis":50,"passed":true},{"featureFileName":"inventory","featureHtmlName":"checks.inventory","refId":"[6:59]","name":"search, and a bounded list","durationMillis":44,"passed":true}],"serialDurationMillis":578}</script>
+    <script id="karate-data" type="application/json">{"env":null,"reportDate":"2026-11-27 11:19:13","threads":1,"karateVersion":"2.1.5.RC1","summary":{"feature_count":1,"feature_passed":1,"feature_failed":0,"scenario_count":6,"scenario_passed":6,"scenario_failed":0,"scenario_skipped":0,"scenario_cancelled":0,"duration_millis":466,"status":"passed"},"groups":[{"id":1,"content":"thread-1"}],"items":[{"id":1,"group":1,"content":"inventory[1:11]","start":1795778353930,"end":1795778354177,"title":"inventory[1:11] 11:19:13.930 (248 ms) the catalog — what the server says it can do","className":"passed"},{"id":2,"group":1,"content":"inventory[2:20]","start":1795778354180,"end":1795778354215,"title":"inventory[2:20] 11:19:14.180 (36 ms) a call, and the side effect it leaves behind","className":"passed"},{"id":3,"group":1,"content":"inventory[3:30]","start":1795778354217,"end":1795778354235,"title":"inventory[3:30] 11:19:14.217 (19 ms) a tool's own error is a result, not a failed step","className":"passed"},{"id":4,"group":1,"content":"inventory[4:37]","start":1795778354236,"end":1795778354268,"title":"inventory[4:37] 11:19:14.236 (33 ms) a protocol error is data, through the raw primitive","className":"passed"},{"id":5,"group":1,"content":"inventory[5:50]","start":1795778354270,"end":1795778354300,"title":"inventory[5:50] 11:19:14.270 (31 ms) resources and prompts","className":"passed"},{"id":6,"group":1,"content":"inventory[6:59]","start":1795778354301,"end":1795778354324,"title":"inventory[6:59] 11:19:14.301 (24 ms) search, and a bounded list","className":"passed"}],"scenarios":[{"featureFileName":"inventory","featureHtmlName":"checks.inventory","refId":"[1:11]","name":"the catalog — what the server says it can do","durationMillis":248,"passed":true},{"featureFileName":"inventory","featureHtmlName":"checks.inventory","refId":"[2:20]","name":"a call, and the side effect it leaves behind","durationMillis":36,"passed":true},{"featureFileName":"inventory","featureHtmlName":"checks.inventory","refId":"[3:30]","name":"a tool's own error is a result, not a failed step","durationMillis":19,"passed":true},{"featureFileName":"inventory","featureHtmlName":"checks.inventory","refId":"[4:37]","name":"a protocol error is data, through the raw primitive","durationMillis":33,"passed":true},{"featureFileName":"inventory","featureHtmlName":"checks.inventory","refId":"[5:50]","name":"resources and prompts","durationMillis":31,"passed":true},{"featureFileName":"inventory","featureHtmlName":"checks.inventory","refId":"[6:59]","name":"search, and a bounded list","durationMillis":24,"passed":true}],"serialDurationMillis":391}</script>
 </body>
 </html>
