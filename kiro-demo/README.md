@@ -56,6 +56,28 @@ Add an application with `"isExistingCustomer": true` to `rulebooks/loan-decision
 (and its expected outcome in `oracle.feature`). Re-run. The criterion goes **COVERED**, requirement 4
 goes green, and the verdict flips to READY. Nothing else changes — no re-tagging, no bookkeeping.
 
+## In Kiro: approve once
+
+With the karate power installed, Kiro asks before every power call and shell command, even in Autopilot,
+and its approval card offers no *Always allow*. To approve them once, put this in
+`~/.kiro/settings/permissions.yaml` (Kiro reloads it on save):
+
+```yaml
+rules:
+  - capability: power
+    effect: allow
+    match: [karate, karate/karate/karate_eval]
+  - capability: mcp
+    effect: allow
+    match: ["power-karate-karate/*"]
+  - capability: shell
+    effect: allow
+    match: ["java *", "karate *", "curl *"]
+```
+
+Trust the folder first (the Restricted Mode banner → **Manage** → **Trust**), then **restart Kiro**. A Kiro
+started on an untrusted folder keeps asking on every power, MCP and shell call, whatever this file allows.
+
 ## What's inside
 
 - **`.kiro/specs/loan-decisioning/`** — the generated spec, exactly as a spec-driven tool writes it:

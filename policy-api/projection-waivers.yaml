@@ -1,0 +1,81 @@
+# Where the policy twin's projected contract departs from openapi.yaml, the backend's hand-written contract,
+# each departure accepted by name:
+#   Rule.project('rating', {against: 'openapi.yaml', failOn: 'compatible', waivers: 'projection-waivers.yaml'})
+# The twin holds one aggregate, the policy: a quote is a policy not yet bound, and a claim is read through
+# its policy. openapi.yaml stays the contract the suite, the mock and the backend answer to.
+- rule: OPERATION_UNMODELLED
+  scope: /paths/~1quotes/post
+  reason: the twin prices a quote as a new policy (POST /policies); the backend keeps quotes as their own resource
+  owner: policy-api
+- rule: OPERATION_ID_DIFFERS
+  scope: /paths/~1policies/post
+  reason: paired by route - the twin's POST /policies is createQuote, the backend's binds a quote
+  owner: policy-api
+- rule: REQUEST_DEPARTS
+  scope: /paths/~1policies/post
+  reason: the twin's POST /policies takes the rating inputs; the backend's takes a quoteId and a holder
+  owner: policy-api
+- rule: RESPONSE_DEPARTS
+  scope: /paths/~1policies/post
+  reason: the twin's policy carries its rating inputs, its class, its claim and the QUOTED status, and no quoteId
+  owner: policy-api
+- rule: OPERATION_UNCLAIMED
+  scope: /paths/~1policies~1{id}~1bind/post
+  reason: the twin binds the quoted policy in place; the backend binds through POST /policies
+  owner: policy-api
+- rule: OPERATION_ID_DIFFERS
+  scope: /paths/~1policies/get
+  reason: the twin's collection read is named listPolicy
+  owner: policy-api
+- rule: CONSTRUCT_FENCED
+  scope: /paths/~1policies/get
+  reason: query parameters are outside what a twin projects; the state filter stays the backend's
+  owner: policy-api
+- rule: RESPONSE_DEPARTS
+  scope: /paths/~1policies/get
+  reason: the twin lists every policy, quotes included, in its own policy view
+  owner: policy-api
+- rule: OPERATION_ID_DIFFERS
+  scope: /paths/~1policies~1{id}/get
+  reason: the twin's item read is named readPolicy
+  owner: policy-api
+- rule: RESPONSE_DEPARTS
+  scope: /paths/~1policies~1{id}/get
+  reason: the twin's policy view, as on every policy response
+  owner: policy-api
+- rule: RESPONSE_DEPARTS
+  scope: /paths/~1policies~1{id}/delete
+  reason: the twin answers a cancel with the cancelled policy (200) and refuses a policy that is not bound (409); the backend answers 204
+  owner: policy-api
+- rule: ROUTE_DIFFERS
+  scope: /paths/~1claims/post
+  reason: the twin files a claim on its policy; the backend keeps claims as their own resource
+  owner: policy-api
+- rule: REQUEST_DEPARTS
+  scope: /paths/~1claims/post
+  reason: the policy is the path, not a policyId in the body; the twin bounds the amount and takes no description
+  owner: policy-api
+- rule: REQUEST_DEPARTS
+  scope: /paths/~1policies~1{id}~1claims/post
+  reason: the policy id travels in the path
+  owner: policy-api
+- rule: RESPONSE_DEPARTS
+  scope: /paths/~1claims/post
+  reason: a filed claim answers the policy carrying it, not a claim resource
+  owner: policy-api
+- rule: RESPONSE_DEPARTS
+  scope: /paths/~1policies~1{id}~1claims/post
+  reason: a filed claim answers the policy carrying it, and a refused one 409
+  owner: policy-api
+- rule: ENGINE_RESPONSE
+  scope: /paths/~1policies~1{id}~1claims/post
+  reason: a claim on an unknown policy answers 404
+  owner: policy-api
+- rule: OPERATION_UNMODELLED
+  scope: /paths/~1claims~1{id}/get
+  reason: a claim is read through its policy (the claim field of the policy view)
+  owner: policy-api
+- rule: CONSTRUCT_FENCED
+  scope: /servers
+  reason: the projection declares no servers
+  owner: policy-api

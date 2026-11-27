@@ -24,6 +24,9 @@ if (!grpcOff) {
 // (Rule.check / Rule.cover / Rule.execute) and the acceptance globals for checks.
 var rules = boot.ext('rules');
 rules.home = 'rulebooks';
+// the bot, for the PolicyDesk UI checks; cdp.url attaches it to a specific Chrome
+var robot = boot.ext('robot');
+robot.cdpUrl = boot.sysprop('cdp.url');
 
 var cov = boot.ext('coverage');
 // gRPC: the proto/ DIRECTORY is the rating method universe (service × method) — the gRPC analog of an
@@ -42,6 +45,8 @@ cov.openapi = 'openapi.yaml';
 cov.rules = 'rulebooks';
 cov.requirements = 'requirements';
 cov.dimensions = 'config/dimensions.js';
+// the lint findings this project accepts, each with a reason and an owner — honoured by every lint surface
+cov.lintWaivers = 'lint-waivers.yaml';
 
 // Requirements ext — deep-link each requirement id in the RTM / coverage report to its heading in the
 // markdown source of truth on GitHub, the pure-git / SDD mirror of an ALM Story link. So anyone

@@ -40,7 +40,7 @@ Two files, sent with your license, dropped into this folder:
 
 | file | what it is |
 | --- | --- |
-| `karate-async-2.1.5.RC1.jar` | the engine |
+| `karate-async-21.5.0.jar` | the engine |
 | `karate.lic` | your license |
 
 A JDK (21+) is required, and Maven to build the demo's gRPC backend. More: <https://karatelabs.io/agent>.
@@ -64,7 +64,7 @@ java -jar rating-server/target/rating-server.jar 50052
 
 ```bash
 export KARATE_LICENSE_PATH="$PWD/karate.lic"
-java -jar karate-async-2.1.5.RC1.jar serve . --port 4444
+java -jar karate-async-21.5.0.jar serve . --port 4444
 ```
 
 `KARATE_LICENSE_PATH` is one way to point at the license. A `karate.lic` file at `.karate/karate.lic`
@@ -208,11 +208,11 @@ they differed.
 java -cp rating-server/target/rating-server.jar io.karatelabs.examples.insurance.PolicyServer 8080
 
 # one suite, both targets -> contract/pairs/<date>-<id>.json
-java -jar karate-async-2.1.5.RC1.jar launch contract.karate.js
+java -jar karate-async-21.5.0.jar launch contract.karate.js
 
 # ...against a deployed provider instead of the local one — the same file, nothing edited
 PROVIDER_URL=https://policy.staging.example.com PROVIDER_ENV=staging \
-  java -jar karate-async-2.1.5.RC1.jar launch contract.karate.js
+  java -jar karate-async-21.5.0.jar launch contract.karate.js
 ```
 
 `contract.karate.js` reads both variables with `Settings.sysenv(name, default)`. The local run needs
@@ -259,6 +259,50 @@ rung 4 and nowhere else.
 > still-running provider compares a mock that starts empty against a provider that does not — the list
 > endpoint then returns more rows on one leg than the other. That is a setup mistake, not drift, and
 > the harness cannot tell them apart for you.
+
+### 3c. A suite against the real backend
+
+`karate.env=backend` points every run at the REST face on `http://localhost:8080` (`-DbackendUrl=<url>`
+moves it) instead of the mock:
+
+```bash
+java -cp rating-server/target/rating-server.jar io.karatelabs.examples.insurance.PolicyServer 8080
+KARATE_ENV=backend java -jar karate-async-21.5.0.jar serve . --port 4444
+```
+
+```js
+Runner.run('suites/ai')
+// without the senior-driver loading -> 63 passed (with it, the 3 senior rows fail). Coverage: every operation called, createQuote 12 of 30 combinations.
+//    Traceability: no requirement covered, NOT READY, blocker RATE-001
+```
+
+`suites/ai/` is the suite a coding agent wrote for the backend it built, captured verbatim
+(`drive/transcript.jsonl`). Its expected premiums come from that code, so against a backend without the
+senior-driver loading (`patch -p1 -R < fix/senior-loading.patch`, then rebuild `rating-server`) it is
+still green, drivers over 70 included. A rulebook row, `Rule.execute('rating', { state: 'CA', coverage:
+'COLLISION', driverAge: 75, priorClaims: false })` asserted against `POST /quotes`, fails there: actual
+100, expected 125. `patch -p1 < fix/senior-loading.patch` and a rebuild is the fix: that row passes, and
+the suite's own three senior rows fail on the premiums they copied from the code. That row plus
+`checks/rating-acceptance.feature` reads READY.
+
+### 3d. The same API from Postman
+
+`postman/policy-api.postman_collection.json` is a Postman collection of the same lifecycle, with `pm.test`
+checks on every request. It takes `baseUrl` from `karate-config.js`, so it runs against the mock, or
+against the REST face under `karate.env=backend`:
+
+```js
+Runner.run('postman/policy-api.postman_collection.json')
+// -> 13 passed: quote, bind, read, list, file and read a claim, cancel, and the 400 / 404 paths
+```
+
+### 3e. The pull-request check
+
+`Report.gate({spec: 'openapi.yaml'})` is the check a pull request posts: the readiness verdict and the
+spec's lint as one conclusion. `lint-waivers.yaml` (declared as `cov.lintWaivers` in `karate-boot.js`)
+waives `security-scheme-declared` with a reason and an owner. Every lint surface applies it, and the gate
+summary and the Governance tab list it. After the fix and the senior row, the gate reads READY; the
+remaining lint warnings make it `neutral`, which does not block a merge.
 
 ## 4. Requirements ⋈ rules — the RTM, and why no test pins a premium
 
@@ -337,7 +381,7 @@ registry-backed shape (the `policy-event` Avro fields then become reverse-inferr
 ```bash
 ( cd kafka && docker compose up -d )     # 1. KRaft broker (:29092) + Schema Registry (:8081)
 # 2. restart the serve process with the flag on:
-KARATE_KAFKA_ON=1 java -jar karate-async-2.1.5.RC1.jar serve . --port 4444
+KARATE_KAFKA_ON=1 java -jar karate-async-21.5.0.jar serve . --port 4444
 # 3. run the producer beat:
 curl -s -X POST localhost:4444/api/eval --data-binary "Runner.run('checks/policy-events.feature')"
 curl -s -X POST localhost:4444/api/eval --data-binary "Report.aggregate()"
@@ -352,7 +396,7 @@ exact lane CI runs to produce the published GitHub Pages report):
 
 ```bash
 KARATE_GRPC_ON=1 KARATE_KAFKA_ON=1 \
-  java -jar karate-async-2.1.5.RC1.jar launch suite.karate.js
+  java -jar karate-async-21.5.0.jar launch suite.karate.js
 open target/karate-reports/ext/coverage/pages/coverage.html
 ```
 
@@ -363,6 +407,128 @@ The produced `policy-event` (Avro, `kafka/policy-event.avsc`) joins `cov.kafka` 
 It lands as `policy-events#publish` **COVERED**, leaving `#subscribe` as the gap. The Avro `eventType`
 enum and the `rating.priorClaims` bool become reverse-inferred field-dimension axes
 (`Coverage.dimensions`).
+
+## 6. PolicyDesk — the same rules, checked on a screen
+
+PolicyDesk (`sut/`) is an underwriting desk over the Policy API: find accounts and policies, a
+submissions list, a quote wizard (Driver, Vehicle, Coverage), a rating worksheet with the premium
+build-up, Bind, the policy with its claims, and Documents. Every action is a call to the API, on the
+same origin that served the page. The REST face serves it when you name the folder:
+
+```bash
+java -cp rating-server/target/rating-server.jar io.karatelabs.examples.insurance.PolicyServer 8080 sut
+# -> open http://localhost:8080/desk/
+```
+
+`checks/cases.xlsx` (sheet `quotes`) holds eight cases: young, senior, prior claims, the age-70
+boundary, every territory. `checks/desk-cases.feature` runs `checks/desk-quote.js` once per row: it
+drives the wizard to a bound policy and compares the worksheet and policy premiums with
+`Rule.execute('rating', row)`. A spreadsheet cell reads back as text, so the check turns `driverAge`
+into a number and `priorClaims` (`Yes`/`No`) into a boolean before rating. A passing row records a
+verdict against the RATE criteria its rating reached.
+
+```bash
+curl -s -X POST localhost:4444/api/eval --data-binary \
+ "Runner.run('checks/desk-cases.feature')"
+# -> 8 passed
+```
+
+The check opens a browser. It finds PolicyDesk at `http://localhost:8080/desk/` on bare metal and at
+`http://host.docker.internal:8080/desk/` in the `karate-agent` container; `desk.url` overrides either.
+`{env: 'backend'}` finds the REST face on the same host (`backendUrl` overrides it).
+
+PolicyDesk follows the OS's light or dark setting. `?theme=dark` or `?theme=light` in the page URL pins
+it, and the `desk.theme` prop does the same for every check and migrated UI feature that opens it.
+
+Two seeded UI defects, off unless named in `desk.defects` (or in the page URL, `?defects=`):
+
+| `desk.defects` | what changes | what the run shows |
+| --- | --- | --- |
+| `display` | the worksheet totals its own build-up, which has no Florida territory factor | exactly the Florida row fails: `Worksheet premium $140 = rules $155` |
+| `drift` | the coverage step's **Rate quote** button becomes **Calculate premium**, with a new id | every row fails at that button: a check never heals a locator on its own |
+
+For `drift`, pick `checks/desk-quote.js` in the console's run dialog, tick **Run with AI**, and fill
+**props** with `desk.defects=drift`. The same run over eval:
+
+```bash
+curl -s -X POST localhost:4444/api/eval --data-binary \
+ "Harness.heal('desk-quote.js', {props: {'desk.defects': 'drift'}})"
+```
+
+It re-drives the flow on the live page and repairs the one changed locator in the check,
+`#rate-quote` → `#coverage-rate-quote-btn`, leaving the assertions as they were. Driven from the console without a check, the bot re-targets the same
+button itself and says so in the act's `healed` field.
+A flow you record on PolicyDesk in the console counts in Coverage: the API operations it called
+read as exercised by that recording. The same recording becomes two tests:
+
+- **A UI test.** At `/manual/tests/new`, or `Harness.author('<recording runId>', {name: 'desk-senior-fl'})`:
+  a model writes `checks/desk-senior-fl.js` and runs it until it is green.
+- **An API test.** `Traffic.migrate('<recording runId>')` turns the calls the screen made into a
+  candidate feature, and `ApiTest.land` writes it once it runs green (`Skill.help('record-to-api')`).
+  Chain the ids it returns, and assert the premium against `Rule.execute('rating', input)`, so the test
+  covers the RATE criteria its rating reaches.
+
+With no recording and no selectors, `checks/explore-desk.md` is a goal in plain English: quote a
+72-year-old Texas driver, bind, and file a claim. A model drives PolicyDesk to it, with screenshots and a
+video on the run's report:
+
+```bash
+curl -s -X POST localhost:4444/api/eval --data-binary \
+ "Harness.explore('explore-desk.md', {robot: true, async: true, req: 'RATE-001'})"
+```
+
+The senior row realizes `RATE-001/2`, so a run of this feature moves the release verdict too.
+
+## 7. Migrate a legacy estate
+
+`legacy/` holds tests written for this kit in other frameworks: a REST-assured class, a ReadyAPI
+project and a Playwright API-mode spec against the API, and a Selenium class (with page objects) and
+a Playwright spec that drive PolicyDesk. `suites/migrated/` holds their Karate migration, written by a
+coding agent over MCP from the prompt *"Migrate the tests in legacy/ to Karate. Run them until they
+pass."*: one scenario per source test with every assertion kept, each feature tagged
+`@imported-from-<source>`. The UI features call the page checks in `checks/pages/`.
+`suites/migrated/manifest.json` records the session, and `suites/migrated/drive/` holds its transcript.
+
+```bash
+curl -s -X POST localhost:4444/api/eval --data-binary "Skill.help('migration')"
+curl -s -X POST localhost:4444/api/eval --data-binary "Runner.run('suites/migrated')"
+curl -s -X POST localhost:4444/api/eval --data-binary "Report.aggregate()"
+curl -s -X POST localhost:4444/api/eval --data-binary "Coverage.gaps()"
+```
+
+The UI features need PolicyDesk at `deskUrl` and a browser, as in section 6.
+
+## 8. Follow the full-tour video, chapter by chapter
+
+The video starts with the backend **without** the senior-driver loading; this kit ships with it. Reverse
+the fix, rebuild, and start the three processes (each in its own terminal):
+
+```bash
+patch -p1 -R < fix/senior-loading.patch && ( cd rating-server && mvn -q package )
+java -jar rating-server/target/rating-server.jar 50052
+java -cp rating-server/target/rating-server.jar io.karatelabs.examples.insurance.PolicyServer 8080 sut
+java -jar karate-async-21.5.0.jar serve . --port 4444
+```
+
+Send each line below with `curl -s -X POST localhost:4444/api/eval --data-binary "<js>"`. Runs against the
+backend pass `{env: 'backend'}`.
+
+| chapter | run | you see |
+| --- | --- | --- |
+| The agent says done | `Runner.run('suites/ai', {env: 'backend'})` | 63 of 63 green; its senior rows expect the backend's prices (age 71 and 80 → 50) |
+| The business plays the API | `var m = Http.mock({twin: 'rating', record: true, port: 8099}); Http.app({twin: 'rating', target: m, console: 'http://localhost:4444', port: 8100})`, open `:8100` | a quote reads *Quoted*, $100; Cancel and File a claim read *Not available* with the reason; a second claim is *Refused*, `claim_already_open`. Rules › rating › *Compare with API spec*: 93 differences, 93 accepted, 0 open |
+| Spec in, project out | Checks › scaffold from `openapi.yaml` | 5 files in `openapi-tests/`; served as its own project, its starter test passes 3 of 3 on the spec's mock |
+| Migrate | Checks › migration map; `Runner.run('suites/migrated')` | 15 old tests → 15 scenarios, 60 checks → 60; 15 of 15 green on the mock; Coverage openapi 5/7. With `env: 'backend'`, unsolved: 14 of 15, the old senior Florida test fails (155, expected 180) |
+| Covered, or just called? | the first run's Coverage tab; `Report.aggregate()` then `Coverage.dimensions('openapi:createQuote')` | every operation called (openapi 7/7), evidence *observed*; 12 of 30 pricing combinations; error paths 6/7; a 4-row pairwise deck |
+| Requirements, traced | `Requirement.readiness({run: '<runId>'})`; `Runner.run('checks/rating-acceptance.feature', {env: 'backend'})` | NOT READY, blocker RATE-001; the acceptance run covers RATE-001/1, RATE-002/1, RATE-003/1 and leaves RATE-001/2 |
+| The rules are the answer key | Rules › rating › Health | *Senior-driver loading* NOT USED, *Catastrophe reinsurance surcharge* NOT REACHABLE, *premium never below base rate* HOLDS |
+| Would your tests notice? | `Rule.mutate('rating', {suite: 'suites/ai', operation: 'createQuote', handlers: 'mutation/handlers.js', provenance: 'mutation/provenance.json'})`, then again with `expectedFailures` set to the returned `failures`; or both in one click: the run dialog's `mutate.karate.js` | refused first: 3 rows agree with the *Senior-driver loading* mutant (RATE-001/2); then 15 killed, 1 survived, 2 screened, counterexample CA COLLISION age 75, expected 125 |
+| A real bug | `Rule.scenario.create('rating', {_id: 'senior-collision-ca', _label: 'senior driver over 70', state: 'CA', coverage: 'COLLISION', driverAge: 75, priorClaims: false})`, rerun the acceptance feature | the senior row is red: actual 100, expected 125 |
+| The fix | `patch -p1 < fix/senior-loading.patch`, rebuild, restart both servers, rerun | the acceptance feature 4 of 4, READY; `suites/ai` 60 of 63 (its three senior rows expected the bug) |
+| The mock that proves itself | restart PolicyServer, then `Runner.launch('contract.karate.js', {props: {'contract.suite': 'suites/ai'}})` | 59 matched, 1 difference no assertion checks (*priorClaims as string*: the two error texts differ), rung 1 of 4 |
+| Every protocol | `Runner.run('checks/rating.feature')`; `Runner.run('postman/policy-api.postman_collection.json')` | gRPC 2 of 4 methods (BatchRate, Negotiate open); Postman 13 of 13 |
+| Enterprise UI | `Runner.run('checks/desk-cases.feature')`, then with `{props: {'desk.defects': 'display'}}` | 8 of 8; then the Florida row fails, worksheet $140 against rules $155 |
+| The gate | `Report.gate({spec: 'openapi.yaml'})` | READY, 17 lint warnings: neutral, with the `security-scheme-declared` waiver |
 
 ## What it shows
 
@@ -397,8 +563,19 @@ policy-api/
     policy.feature              # the quote → bind → claim lifecycle (OpenAPI operations)
     rating.feature              # the gRPC lane — same rulebook, second protocol
     rating-dryrun.feature  policy-events.feature
+    desk-cases.feature  desk-quote.js  cases.xlsx   # PolicyDesk: every Excel case on the screen vs the rulebook (6)
+    explore-desk.md     # PolicyDesk: a plain-English goal for Harness.explore, no selectors (6)
+  suites/ai/           # a coding agent's suite + its transcript, frozen (manifest.json pins it) (3c)
+  fix/                 # senior-loading.patch — the rating-server fix for a driver over 70 (3c)
+  legacy/              # tests in other frameworks: REST-assured, ReadyAPI, Playwright, Selenium (section 7)
+  suites/migrated/     # their Karate migration by a coding agent, tagged @imported-from-<source> (section 7)
+  checks/pages/        # the page checks the migrated UI features call (section 7)
+  sut/                 # PolicyDesk, the underwriting UI over the Policy API (served at /desk/ by PolicyServer)
   mock/                # the in-process REST mock — and the subject of the paired run (3b)
+  postman/             # the same lifecycle as a Postman collection (3d)
+  lint-waivers.yaml    # the spec's accepted lint findings, each with a reason and an owner (3e)
   contract.karate.js   # the PAIRED RUN: one suite, both targets, the divergence set + the rung (3b)
+  mutate.karate.js     # would your tests notice? suite mutation over suites/ai, landing on Seeded defects (8)
   contract/pairs/      # where the evidence lands when you run it — dated, append-only, committed
   config/dimensions.js # the cross / covering-array binding for POST /quotes
   karate-config.js  karate-boot.js   # config + coverage-universe wiring

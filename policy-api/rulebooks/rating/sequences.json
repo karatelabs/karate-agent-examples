@@ -1,0 +1,51 @@
+{
+  "version": 1,
+  "sequences": [
+    {
+      "_id": "quote-bind-claim",
+      "_label": "a bound policy takes a claim",
+      "steps": [
+        { "command": "createQuote", "args": { "state": "CA", "coverage": "COLLISION", "driverAge": 45, "priorClaims": false } },
+        { "command": "bindPolicy", "args": { "holder": "Ada Lopez" } },
+        { "command": "fileClaim", "args": { "amount": 500 } }
+      ]
+    },
+    {
+      "_id": "quote-bind-cancel",
+      "_label": "a bound policy is cancelled",
+      "steps": [
+        { "command": "createQuote", "args": { "state": "TX", "coverage": "COLLISION", "driverAge": 22, "priorClaims": true } },
+        { "command": "bindPolicy", "args": { "holder": "Sam Chen" } },
+        { "command": "cancelPolicy" }
+      ]
+    },
+    {
+      "_id": "cancel-a-quote",
+      "_label": "a quote that was never bound has nothing to cancel",
+      "steps": [
+        { "command": "createQuote", "args": { "state": "TX", "coverage": "COLLISION", "driverAge": 45, "priorClaims": false } },
+        { "command": "cancelPolicy" }
+      ]
+    },
+    {
+      "_id": "claim-after-cancel",
+      "_label": "a cancelled policy takes no claim",
+      "steps": [
+        { "command": "createQuote", "args": { "state": "CA", "coverage": "COLLISION", "driverAge": 45, "priorClaims": false } },
+        { "command": "bindPolicy", "args": { "holder": "Ada Lopez" } },
+        { "command": "cancelPolicy" },
+        { "command": "fileClaim", "args": { "amount": 500 } }
+      ]
+    },
+    {
+      "_id": "second-claim",
+      "_label": "one claim is open at a time",
+      "steps": [
+        { "command": "createQuote", "args": { "state": "CA", "coverage": "COLLISION", "driverAge": 45, "priorClaims": false } },
+        { "command": "bindPolicy", "args": { "holder": "Sam Chen" } },
+        { "command": "fileClaim", "args": { "amount": 500 } },
+        { "command": "fileClaim", "args": { "amount": 5000 } }
+      ]
+    }
+  ]
+}

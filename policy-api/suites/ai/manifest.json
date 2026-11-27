@@ -1,0 +1,14 @@
+{
+  "note": "The frozen AI suite, verbatim. Changing a pinned file changes every number read off it; re-freeze the pins and the count together.",
+  "provenance": "a real capture: one cold Claude Code session (claude -p, no Karate MCP) in a project holding only rating-server/ (unsolved), proto/, openapi.yaml, karate-config.js and a plain Karate CLI, against the running unsolved PolicyServer; the transcript is drive/transcript.jsonl, local paths redacted",
+  "prompt": "You built this policy API (source in rating-server/, contract in openapi.yaml); it is running at http://localhost:8080. Write a Karate API test suite for it under suites/ai/ and run it with ./karate run until it passes. Tests only: don't change the application code.",
+  "scenarios": 63,
+  "frozenArtifacts": {
+    "suites/ai/claims.feature": "4a89c1091bd1f5ad953c313e361ee22661bf0c24c0323708cb77c5e1b69f448c",
+    "suites/ai/common/bind-policy.feature": "1f9580eace3ae35ecc3cca97697a67ecfe25006002342c9930fcfec39e551c82",
+    "suites/ai/common/schemas.js": "48c30c37cb9c4907ab699315d342496a6c7f97bd7e895e29b0d2a967aa73c50a",
+    "suites/ai/drive/transcript.jsonl": "b5546f392293c2323a8882d599594129f578a44269b0df1f76a55504f2f7dc55",
+    "suites/ai/policies.feature": "441e6d9c796fa5698d353ef0686a275c836f8ff98935442cee5172e961dac597",
+    "suites/ai/quotes.feature": "6d82a1a5e778de3593c498fbc2923cc25fad742a8112d3f7d1ef65a042e233e1"
+  }
+}

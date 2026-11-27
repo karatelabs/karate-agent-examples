@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<con:soapui-project id="7f1c2a40-policy-api" activeEnvironment="Default" name="Policy API" resourceRoot="" soapui-version="3.46.0" xmlns:con="http://eviware.com/soapui/config">
+  <con:settings/>
+  <con:interface xsi:type="con:RestService" id="policy-api-rest" wadlVersion="http://wadl.dev.java.net/2009/02" name="Policy API" type="rest" basePath="" definitionUrl="openapi.yaml" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <con:settings/>
+    <con:endpoints>
+      <con:endpoint>${#Project#endpoint}</con:endpoint>
+    </con:endpoints>
+    <con:resource name="quotes" path="/quotes">
+      <con:method name="createQuote" method="POST">
+        <con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType></con:representation>
+      </con:method>
+    </con:resource>
+    <con:resource name="policies" path="/policies">
+      <con:method name="bindPolicy" method="POST">
+        <con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType></con:representation>
+      </con:method>
+    </con:resource>
+    <con:resource name="claims" path="/claims">
+      <con:method name="fileClaim" method="POST">
+        <con:representation type="REQUEST"><con:mediaType>application/json</con:mediaType></con:representation>
+      </con:method>
+    </con:resource>
+  </con:interface>
+  <con:testSuite id="policy-regression" name="Policy API Regression">
+    <con:settings/>
+    <con:runType>SEQUENTIAL</con:runType>
+    <con:testCase id="tc-quote-ca" failOnError="true" keepSession="false" name="Quote - California collision, preferred driver" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="restrequest" name="Create quote">
+        <con:settings/>
+        <con:config service="Policy API" resourcePath="/quotes" methodName="createQuote" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Create quote" mediaType="application/json" postQueryString="false">
+            <con:settings/>
+            <con:endpoint>${#Project#endpoint}</con:endpoint>
+            <con:request>{ "state": "CA", "coverage": "COLLISION", "driverAge": 40, "priorClaims": false }</con:request>
+            <con:assertion type="Valid HTTP Status Codes" id="a1" name="Valid HTTP Status Codes">
+              <con:configuration><codes>201</codes></con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Existence Match" id="a2" name="Quote has an id">
+              <con:configuration><path>$.id</path><content>true</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="a3" name="Policy class">
+              <con:configuration><path>$.policyClass</path><content>PREFERRED</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="a4" name="Monthly premium">
+              <con:configuration><path>$.monthlyPremium</path><content>100</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
+            </con:assertion>
+            <con:credentials><con:authType>No Authorization</con:authType></con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:parameters/>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
+    <con:testCase id="tc-bind-unknown" failOnError="true" keepSession="false" name="Bind - unknown quote is rejected" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="restrequest" name="Bind unknown quote">
+        <con:settings/>
+        <con:config service="Policy API" resourcePath="/policies" methodName="bindPolicy" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Bind unknown quote" mediaType="application/json" postQueryString="false">
+            <con:settings/>
+            <con:endpoint>${#Project#endpoint}</con:endpoint>
+            <con:request>{ "quoteId": "q-never-issued", "holder": "Hedy Lamarr" }</con:request>
+            <con:assertion type="Valid HTTP Status Codes" id="b1" name="Valid HTTP Status Codes">
+              <con:configuration><codes>400</codes></con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="b2" name="Rejected field">
+              <con:configuration><path>$.field</path><content>quoteId</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
+            </con:assertion>
+            <con:assertion type="Simple Contains" id="b3" name="Contains">
+              <con:configuration><token>no such quote</token><ignoreCase>false</ignoreCase><useRegEx>false</useRegEx></con:configuration>
+            </con:assertion>
+            <con:credentials><con:authType>No Authorization</con:authType></con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:parameters/>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
+    <con:testCase id="tc-claim-zero" failOnError="true" keepSession="false" name="Claim - zero amount is rejected" searchProperties="true">
+      <con:settings/>
+      <con:testStep type="restrequest" name="Create quote">
+        <con:settings/>
+        <con:config service="Policy API" resourcePath="/quotes" methodName="createQuote" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Create quote" mediaType="application/json" postQueryString="false">
+            <con:settings/>
+            <con:endpoint>${#Project#endpoint}</con:endpoint>
+            <con:request>{ "state": "NY", "coverage": "LIABILITY", "driverAge": 33, "priorClaims": false }</con:request>
+            <con:assertion type="Valid HTTP Status Codes" id="c1" name="Valid HTTP Status Codes">
+              <con:configuration><codes>201</codes></con:configuration>
+            </con:assertion>
+            <con:credentials><con:authType>No Authorization</con:authType></con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:parameters/>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="Bind policy">
+        <con:settings/>
+        <con:config service="Policy API" resourcePath="/policies" methodName="bindPolicy" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="Bind policy" mediaType="application/json" postQueryString="false">
+            <con:settings/>
+            <con:endpoint>${#Project#endpoint}</con:endpoint>
+            <con:request>{ "quoteId": "${Create quote#Response#$.id}", "holder": "Evelyn Boyd Granville" }</con:request>
+            <con:assertion type="Valid HTTP Status Codes" id="c2" name="Valid HTTP Status Codes">
+              <con:configuration><codes>201</codes></con:configuration>
+            </con:assertion>
+            <con:credentials><con:authType>No Authorization</con:authType></con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:parameters/>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:testStep type="restrequest" name="File zero-amount claim">
+        <con:settings/>
+        <con:config service="Policy API" resourcePath="/claims" methodName="fileClaim" xsi:type="con:RestRequestStep" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+          <con:restRequest name="File zero-amount claim" mediaType="application/json" postQueryString="false">
+            <con:settings/>
+            <con:endpoint>${#Project#endpoint}</con:endpoint>
+            <con:request>{ "policyId": "${Bind policy#Response#$.id}", "amount": 0 }</con:request>
+            <con:assertion type="Valid HTTP Status Codes" id="c3" name="Valid HTTP Status Codes">
+              <con:configuration><codes>400</codes></con:configuration>
+            </con:assertion>
+            <con:assertion type="JsonPath Match" id="c4" name="Rejected field">
+              <con:configuration><path>$.field</path><content>amount</content><allowWildcards>false</allowWildcards><ignoreNamspaceDifferences>false</ignoreNamspaceDifferences><ignoreComments>false</ignoreComments></con:configuration>
+            </con:assertion>
+            <con:credentials><con:authType>No Authorization</con:authType></con:credentials>
+            <con:jmsConfig JMSDeliveryMode="PERSISTENT"/>
+            <con:parameters/>
+          </con:restRequest>
+        </con:config>
+      </con:testStep>
+      <con:properties/>
+    </con:testCase>
+    <con:properties/>
+  </con:testSuite>
+  <con:properties>
+    <con:property><con:name>endpoint</con:name><con:value>http://localhost:8080</con:value></con:property>
+  </con:properties>
+  <con:wssContainer/>
+  <con:oAuth2ProfileContainer/>
+  <con:sensitiveInformation/>
+</con:soapui-project>

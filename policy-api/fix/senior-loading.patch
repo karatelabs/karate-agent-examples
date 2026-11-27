@@ -1,0 +1,11 @@
+--- a/rating-server/src/main/java/io/karatelabs/examples/insurance/RatingServer.java
++++ b/rating-server/src/main/java/io/karatelabs/examples/insurance/RatingServer.java
+@@ -44,6 +44,8 @@
+         };
+         if (driverAge > 0 && driverAge < 25) {
+             base += 40;                    // young-driver loading
++        } else if (driverAge > 70) {
++            base += 25;                    // senior loading
+         }
+         if (priorClaims) {
+             base += 35;

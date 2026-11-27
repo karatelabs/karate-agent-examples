@@ -1,0 +1,6 @@
+# The policy API's lint waivers, read by every lint surface (Openapi.lint, the gate, the Governance tab)
+# through cov.lintWaivers in karate-boot.js. Each one is reported beside the finding it waives.
+- rule: security-scheme-declared
+  scope: ''
+  reason: the policy API runs behind the gateway, which authenticates every caller; the contract declares no scheme of its own
+  owner: policy-api team

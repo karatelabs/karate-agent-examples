@@ -1,0 +1,6 @@
+{
+  "levels": {
+    "createQuote.state": ["CA", "TX"],
+    "createQuote.coverage": ["COLLISION"]
+  }
+}

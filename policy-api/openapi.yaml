@@ -1,6 +1,6 @@
 openapi: 3.0.3
 info:
-  title: insurance demo — Policy API
+  title: Policy API
   version: 1.0.0
   description: |
     The REST surface of the all-in-one insurance kit. Quotes, policies, and claims on top of an in-memory

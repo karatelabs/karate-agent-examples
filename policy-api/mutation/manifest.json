@@ -1,0 +1,15 @@
+{
+  "note": "Rule.mutate('rating') over the frozen AI suite. The suite is served by mutation/handlers.js (createQuote priced by the rulebook, the other six operations mirroring PolicyServer); mock/policy-mock.feature stays the suite's and the pair's mock. Changing a pinned file changes every number PolicyApiMutationTest reads; re-pin them together.",
+  "rulebook": "rating",
+  "operation": "createQuote",
+  "suite": "suites/ai",
+  "handlers": "mutation/handlers.js",
+  "provenance": "mutation/provenance.json",
+  "provenanceNote": "no labels: the suite's literals were authored from the code (suites/ai/drive/transcript.jsonl), none copied from a response",
+  "calcSha256": "19452565897330c16a6672fcd79043e93a7667c3fa7b5af70d5b20510d30ba46",
+  "frozenArtifacts": {
+    "suites/ai/manifest.json": "3b695239331ba362040ec95ff0dcd3c5dd1931fccecda77b0fbda71c9416fd48",
+    "mutation/handlers.js": "d3764ff7c1d6247aef15eeebd02224a61f80f0f573661135571ff8acc1d351d7",
+    "mutation/provenance.json": "ca3d163bab055381827226140568f3bef7eaac187cebd76878e0b63e9e442356"
+  }
+}

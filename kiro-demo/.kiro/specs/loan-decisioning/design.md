@@ -17,7 +17,7 @@ POST /decisions ──► validate ──► decline gate ──► routing ─�
 - **routing** — a non-declined application is either borderline (manual review) or clean (approved).
 - **pricing** — base APR by credit-score band, the existing-customer discount, then the floor/ceiling clamp.
 
-## Components
+## Components and Interfaces
 
 | Component | Responsibility |
 |---|---|
@@ -32,6 +32,20 @@ POST /decisions ──► validate ──► decline gate ──► routing ─�
 Application    { creditScore, annualIncome, requestedAmount, termMonths, existingMonthlyDebt, isExistingCustomer }
 DecisionResult { outcome, apr?, dti?, reasons[] }
 ```
+
+## Correctness Properties
+
+### Property 1: A declined application is never priced
+
+*For any* application the decline gate declines, the decision carries no APR.
+
+**Validates: Requirements 2.1, 2.2**
+
+### Property 2: A priced APR stays inside the published bounds
+
+*For any* priced application, the APR is no less than 5 percent and no more than 24 percent.
+
+**Validates: Requirements 4.3**
 
 ## Error Handling
 

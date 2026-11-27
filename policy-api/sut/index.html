@@ -1,0 +1,240 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>PolicyDesk · Larkspur Mutual</title>
+  <script>
+    // ?theme=dark|light pins the theme; otherwise it follows the OS
+    (function () {
+      var t = new URLSearchParams(location.search).get('theme');
+      if (t !== 'dark' && t !== 'light') {
+        t = matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+      }
+      document.documentElement.setAttribute('data-theme', t);
+    })();
+  </script>
+  <link rel="stylesheet" href="desk.css">
+</head>
+<body>
+  <div class="shell">
+    <aside class="rail">
+      <div class="brand"><span class="mark">L</span><div><b>PolicyDesk</b><small>Larkspur Mutual</small></div></div>
+      <nav>
+        <a id="nav-search" href="#/search" data-route="search"><span class="ico"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6"/><path d="M20 20l-4.5-4.5"/></svg></span> Find</a>
+        <a id="nav-submissions" href="#/submissions" data-route="submissions"><span class="ico"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M 8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/></svg></span> Submissions</a>
+        <a id="nav-documents" href="#/documents" data-route="documents"><span class="ico"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5"/></svg></span> Documents</a>
+      </nav>
+      <div class="rail-foot">Personal lines · Underwriting</div>
+    </aside>
+
+    <div class="main">
+      <header class="topbar">
+        <div class="menu-root">
+          <button id="nav-new" class="btn accent" aria-haspopup="true" aria-expanded="false">New &#9662;</button>
+          <div id="menu-new" class="menu" role="menu" hidden>
+            <button id="menu-new-account" role="menuitem" class="menu-item" disabled>Account</button>
+            <div class="menu-sub">
+              <button id="menu-submission" role="menuitem" class="menu-item" aria-haspopup="true" aria-expanded="false">Submission <span class="caret">&#9656;</span></button>
+              <div id="menu-submission-flyout" class="menu flyout" role="menu" hidden>
+                <button id="menu-new-quote" role="menuitem" class="menu-item">Personal auto</button>
+                <button id="menu-commercial" role="menuitem" class="menu-item" disabled>Commercial auto</button>
+              </div>
+            </div>
+            <button id="menu-new-claim" role="menuitem" class="menu-item">First notice of loss</button>
+          </div>
+        </div>
+        <div class="crumbs" id="crumbs">Find</div>
+        <div class="top-actions">
+          <button id="top-alerts" class="icon-btn" aria-label="Alerts" title="Alerts"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M 6 16V11a6 6 0 1 1 12 0v5l2 2H4z"/><path d="M10 20a2 2 0 0 0 4 0"/></svg></button>
+          <button id="top-help" class="icon-btn" aria-label="Help" title="Help">?</button>
+          <span class="who"><span class="avatar">MO</span>M. Okafor</span>
+        </div>
+      </header>
+
+      <div id="banner" class="banner" hidden></div>
+
+      <section id="screen-search" class="screen">
+        <h1>Find accounts and policies</h1>
+        <div class="searchbar">
+          <input id="search-q" type="search" placeholder="Name, policy number or state (e.g. CA)">
+          <button id="search-go" class="btn">Search</button>
+        </div>
+        <div class="grid2">
+          <div class="card">
+            <h2>Accounts</h2>
+            <table class="tbl"><thead><tr><th>Account</th><th>Holder</th><th>State</th><th>Since</th></tr></thead>
+              <tbody id="accounts-body"></tbody></table>
+          </div>
+          <div class="card">
+            <h2>Policies <span class="muted" id="policies-count"></span></h2>
+            <table class="tbl"><thead><tr><th>Policy</th><th>Holder</th><th>State</th><th>Premium</th><th>Status</th></tr></thead>
+              <tbody id="policies-body"></tbody></table>
+          </div>
+        </div>
+      </section>
+
+      <section id="screen-submissions" class="screen" hidden>
+        <h1>Submissions</h1>
+        <div class="card">
+          <table class="tbl"><thead><tr><th>Quote</th><th>Driver</th><th>State</th><th>Coverage</th><th>Premium</th><th>Stage</th></tr></thead>
+            <tbody id="submissions-body"></tbody></table>
+        </div>
+      </section>
+
+      <section id="screen-quote" class="screen" hidden>
+        <h1>New personal auto quote</h1>
+        <ol class="stepper">
+          <li id="stepper-driver">Driver</li><li id="stepper-vehicle">Vehicle</li><li id="stepper-coverage">Coverage</li>
+        </ol>
+        <div class="wizard">
+          <div class="card wizard-body">
+            <div id="step-driver" class="step">
+              <h2>Driver</h2>
+              <div class="fields">
+                <label>First name<input id="driver-first" autocomplete="off"></label>
+                <label>Last name<input id="driver-last" autocomplete="off"></label>
+                <label>Age<input id="driver-age" type="number" min="18" max="80"></label>
+                <label>Garaging state<select id="driver-state">
+                  <option value="">Choose…</option><option value="CA">California (CA)</option><option value="NY">New York (NY)</option>
+                  <option value="FL">Florida (FL)</option><option value="TX">Texas (TX)</option><option value="WA">Washington (WA)</option>
+                </select></label>
+                <label class="check"><input id="prior-claims" type="checkbox"> At-fault claims in the last 3 years</label>
+              </div>
+            </div>
+            <div id="step-vehicle" class="step" hidden>
+              <h2>Vehicle</h2>
+              <div class="fields">
+                <label>Year<input id="vehicle-year" type="number" value="2021"></label>
+                <label>Make<input id="vehicle-make" value="Subaru"></label>
+                <label>Model<input id="vehicle-model" value="Outback"></label>
+                <label>Use<select id="vehicle-use"><option>Commute</option><option>Pleasure</option><option>Business</option></select></label>
+              </div>
+            </div>
+            <div id="step-coverage" class="step" hidden>
+              <h2>Coverage</h2>
+              <div class="cov-cards">
+                <label class="cov"><input type="radio" name="coverage" id="cov-LIABILITY" value="LIABILITY"><b>Liability</b><span>Bodily injury and property damage to others</span></label>
+                <label class="cov"><input type="radio" name="coverage" id="cov-COLLISION" value="COLLISION"><b>Collision</b><span>Your vehicle, after an accident</span></label>
+                <label class="cov"><input type="radio" name="coverage" id="cov-COMPREHENSIVE" value="COMPREHENSIVE"><b>Comprehensive</b><span>Theft, weather, glass and more</span></label>
+              </div>
+            </div>
+            <div class="wizard-foot">
+              <button id="wizard-back" class="btn ghost">Back</button>
+              <button id="wizard-next" class="btn">Next</button>
+              <button id="rate-quote" class="btn accent" hidden>Rate quote</button>
+            </div>
+          </div>
+          <aside class="card side">
+            <h2>Quick rate</h2>
+            <p class="muted">An indicative premium for the current answers, before the full rating.</p>
+            <div class="quick-out" id="quick-out">—</div>
+            <button id="quick-rate" class="btn ghost">Rate</button>
+          </aside>
+        </div>
+      </section>
+
+      <section id="screen-worksheet" class="screen" hidden>
+        <h1>Rating worksheet <span class="muted" id="ws-quote"></span></h1>
+        <div class="grid2">
+          <div class="card">
+            <h2>Premium build-up</h2>
+            <table class="tbl ws"><tbody id="ws-lines"></tbody>
+              <tfoot><tr><th>Monthly premium</th><th id="ws-total" class="num"></th></tr></tfoot></table>
+            <div class="row-actions">
+              <button id="ws-print" class="icon-btn" aria-label="Print worksheet" title="Print worksheet"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M 7 9V4h10v5"/><rect x="4" y="9" width="16" height="7" rx="2"/><path d="M 7 14h10v6H7z"/></svg></button>
+              <button id="ws-copy" class="icon-btn" aria-label="Copy premium" title="Copy premium"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M 5 15V6a2 2 0 0 1 2-2h8"/></svg></button>
+            </div>
+          </div>
+          <div class="card">
+            <h2>Risk</h2>
+            <dl class="kv">
+              <dt>Driver</dt><dd id="ws-driver"></dd>
+              <dt>State</dt><dd id="ws-state"></dd>
+              <dt>Coverage</dt><dd id="ws-coverage"></dd>
+              <dt>Policy class</dt><dd id="ws-class"></dd>
+            </dl>
+            <div class="actions">
+              <a id="ws-edit" class="btn ghost" href="#/quote/coverage">Edit coverage</a>
+              <button id="to-bind" class="btn accent">Bind policy</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="screen-bind" class="screen" hidden>
+        <h1>Bind <span class="muted" id="bind-quote"></span></h1>
+        <div class="card narrow">
+          <div class="fields">
+            <label>Named insured<input id="bind-holder"></label>
+            <label>Effective date<input id="bind-effective" type="date"></label>
+            <label>Payment plan<select id="bind-plan"><option>Monthly</option><option>Quarterly</option><option>Annual</option></select></label>
+            <label class="check"><input id="bind-signed" type="checkbox"> Signed application on file</label>
+          </div>
+          <p class="muted">Monthly premium <b id="bind-premium"></b></p>
+          <div class="actions">
+            <button id="bind-confirm" class="btn accent">Bind</button>
+          </div>
+        </div>
+      </section>
+
+      <section id="screen-policy" class="screen" hidden>
+        <h1>Policy <span id="policy-number"></span> <span id="policy-status" class="pill"></span></h1>
+        <div class="grid2">
+          <div class="card">
+            <h2>Summary
+              <span class="row-actions">
+                <button id="policy-refresh" class="icon-btn" aria-label="Refresh policy" title="Refresh policy"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.7"/><path d="M20 4v5h-5"/></svg></button>
+                <button id="policy-cancel" class="icon-btn danger" aria-label="Cancel policy" title="Cancel policy"><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M 6 6l12 12M18 6L6 18"/></svg></button>
+              </span>
+            </h2>
+            <dl class="kv">
+              <dt>Named insured</dt><dd id="policy-holder"></dd>
+              <dt>State</dt><dd id="policy-state"></dd>
+              <dt>Monthly premium</dt><dd id="policy-premium"></dd>
+              <dt>From quote</dt><dd id="policy-quote"></dd>
+            </dl>
+          </div>
+          <div class="card">
+            <h2>Claims
+              <span class="row-actions"><button id="claim-refresh" class="icon-btn" aria-label="Refresh claim status" title="Refresh claim status" hidden><svg class="i" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12a8 8 0 1 1-2.3-5.7"/><path d="M20 4v5h-5"/></svg></button></span>
+            </h2>
+            <div class="fields inline">
+              <label>Loss amount ($)<input id="claim-amount" type="number" min="1"></label>
+              <button id="claim-file" class="btn">File claim</button>
+            </div>
+            <dl class="kv" id="claim-card" hidden>
+              <dt>Claim</dt><dd id="claim-id"></dd>
+              <dt>Amount</dt><dd id="claim-amount-shown"></dd>
+              <dt>Status</dt><dd id="claim-status"></dd>
+            </dl>
+          </div>
+        </div>
+      </section>
+
+      <section id="screen-documents" class="screen" hidden>
+        <h1>Documents</h1>
+        <div class="card">
+          <div class="doc-bar">
+            <select id="doc-kind"><option>Signed application</option><option>Driver licence</option><option>Vehicle registration</option><option>Loss photos</option></select>
+            <input id="doc-file" type="file" multiple hidden>
+            <label for="doc-file" id="doc-attach" class="btn" role="button" tabindex="0">Attach files</label>
+          </div>
+          <table class="tbl"><thead><tr><th>File</th><th>Kind</th><th>Size</th><th>Added</th></tr></thead>
+            <tbody id="docs-body"><tr class="empty"><td colspan="4">No documents yet.</td></tr></tbody></table>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div id="confirm" class="modal" hidden>
+    <div class="dialog" role="dialog" aria-modal="true">
+      <p id="confirm-text"></p>
+      <div class="actions"><button id="confirm-no" class="btn ghost">Keep</button><button id="confirm-yes" class="btn danger">Confirm</button></div>
+    </div>
+  </div>
+
+  <script src="desk-rating.js"></script>
+  <script src="desk.js"></script>
+</body>
+</html>

@@ -1,4 +1,10 @@
-# Implementation Plan
+# Implementation Plan: Loan Decisioning
+
+## Overview
+
+Build the decision function behind `POST /decisions` in pipeline order: validation, the decline gate, routing, then APR pricing.
+
+## Tasks
 
 - [x] 1. Set up the decisioning module and its HTTP surface
   - Define the application and decision-result shapes
@@ -28,3 +34,17 @@
 
 - [ ] 6. Publish the decision event to the downstream ledger
   - _Requirements: 3.2_
+
+## Notes
+
+- Each task references specific requirements for traceability
+
+## Task Dependency Graph
+
+```json
+{
+  "waves": [
+    { "id": 0, "tasks": ["6"] }
+  ]
+}
+```

@@ -3,10 +3,11 @@
 //   java -cp rating-server/target/rating-server.jar io.karatelabs.examples.insurance.PolicyServer 8080
 //   docker run … karate-agent launch contract.karate.js # (or Contract.pair(...) from the console)
 //
-// checks/policy.feature runs TWICE in one session — once against mock/policy-mock.feature (the mock this
-// project ships to consuming teams) and once against rating-server's REST face (a second implementation of
-// the same openapi.yaml, in Java, sharing only the rate book). What comes back is not a pass/fail: it is
-// the set of places the two DIFFERED, and the rung that set entitles us to claim.
+// The suite (checks/policy.feature; `-Dcontract.suite=suites/ai` or CONTRACT_SUITE names another) runs TWICE in
+// one session — once against mock/policy-mock.feature (the mock this project ships to consuming teams) and once
+// against rating-server's REST face (a second implementation of the same openapi.yaml, in Java, sharing only the
+// rate book). What comes back is not a pass/fail: it is the set of places the two DIFFERED, and the rung that
+// set entitles us to claim.
 //
 // Why it is worth running at all: the suite is green against the mock by construction — that is what a mock
 // is for. It says nothing about whether a team building against the mock is building against the truth.
@@ -19,12 +20,13 @@ var provider = Settings.sysprop('provider.url', Settings.sysenv('PROVIDER_URL', 
 // `local` when nobody said otherwise: the environment label rides INTO the evidence, so a pair minted
 // against staging is not read later as if it had been minted against a laptop.
 var providerEnv = Settings.sysenv('PROVIDER_ENV', 'local');
+var suite = Settings.sysprop('contract.suite', Settings.sysenv('CONTRACT_SUITE', 'checks/policy.feature'));
 
 // EVERY ignore rule is a waiver: it re-classifies a difference, it never hides one (both values stay in the
 // artifact), and it owes a reason and an owner exactly as a lint waiver does. These three say the same
 // thing three times — two independent implementations mint their own surrogate keys, and the CONTRACT does
-// not fix the value, only that the reference resolves. Nothing else here is excused.
-var surrogateKeys = [
+// not fix the value, only that the reference resolves. The fourth excuses test data, not a target.
+var waivers = [
   {
     id: 'surrogate-primary-key', key: 'id', marker: '#string',
     reason: 'each target mints its own primary key; openapi.yaml fixes the type, never the value',
@@ -39,11 +41,16 @@ var surrogateKeys = [
     id: 'claim-policy-ref', key: 'policyId', marker: '#string',
     reason: 'a claim references the policy it was filed against by the id THAT target minted for it',
     owner: 'policy-api team'
+  },
+  {
+    id: 'suite-minted-holder', key: 'holder', marker: '#string',
+    reason: 'suites/ai binds with a random holder per call, so each leg sends and reads back its own',
+    owner: 'policy-api team'
   }
 ];
 
 var pair = Contract.pair({
-  suite: 'checks/policy.feature',
+  suite: suite,
   spec: 'openapi.yaml',
   provider: provider,
   // NAME THE MOCK. Omit it and the harness synthesizes one from openapi.yaml — which agrees with
@@ -52,7 +59,7 @@ var pair = Contract.pair({
   // karate-config.js already reads `baseUrl`, so the harness hands each leg its target through that
   // property rather than the suite being rewritten around a contract-testing convention
   targetProp: 'baseUrl',
-  ignore: surrogateKeys,
+  ignore: waivers,
   providerEnv: providerEnv
 });
 
@@ -99,3 +106,6 @@ if (!pair.claim || !pair.claim.rungs) {
 // as the rung normalised.
 var rung = pair.claim.rungs.aggregate;
 console.log('contract: rung ' + rung.rung + ' — ' + rung.name + '  (evidence: ' + pair.evidenceFile + ')');
+
+// The launch's value: its run page links the report and records the evidence file as the launch's evidence.
+({ report: page.httpUrl, rung: rung.name, evidenceFile: pair.evidenceFile });

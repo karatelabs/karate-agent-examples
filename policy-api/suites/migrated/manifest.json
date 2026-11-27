@@ -1,0 +1,30 @@
+{
+  "note": "The migration a coding agent wrote, verbatim. Changing a pinned file changes what the counts and the run read off it; re-freeze the pins together.",
+  "provenance": "a real capture: one cold Claude Code session (claude -p, model claude-opus-5-5) over this kit's MCP endpoint, its file tools on and no shell, in a copy of this kit (unsolved) with legacy/ and no suites/migrated/; PolicyDesk served by PolicyServer, the browser a headless Chrome the console attached to. It read Skill.help('migration') and its ui topic unprompted. Take 2 of 2: take 1's page checks each called Robot.create(), so every check opened a blank page; the ui topic now says a check drives the caller's bot. The transcript is drive/transcript.jsonl: local paths redacted, thinking signatures emptied, the kit's *.sh scripts (not shipped) dropped from one file listing, and one section mark spelled out",
+  "prompt": "Migrate the tests in legacy/ to Karate. Run them until they pass.",
+  "sources": {
+    "rest-assured": 4,
+    "readyapi": 3,
+    "playwright": 5,
+    "selenium": 3
+  },
+  "scenarios": 15,
+  "frozenArtifacts": {
+    "suites/migrated/playwright-desk-quote.feature": "9f966e085bbd1fe38812d22725961c46d1c5abcb6a57acf03e9b26f429043ec3",
+    "suites/migrated/playwright-policy-api.feature": "7f95ce96e0b087f998b424efab2fa27eb730546aa53c369a89d36184473ed5d6",
+    "suites/migrated/readyapi-policy.feature": "4843cc5a4b14751c699e736559f656a3537270dd8dfba7e9eb5dc34bbf2fa7c7",
+    "suites/migrated/rest-assured-policy.feature": "c64fe7ae0fd1bd6d30984f403698d44bd9f40731f4b5fd5ffb0d56bf714c4e89",
+    "suites/migrated/selenium-quote-and-bind.feature": "b0046857c5135cf8b2d59a68038728fcaeb0f32499a102318f38c9d0bf225b72",
+    "checks/pages/bind-signed.js": "dc66e5e9426d0bf24d73a3af12f61c2ee8b6644baca10fddb947a014f92ab1fd",
+    "checks/pages/bind-unsigned.js": "6edffccc20de2c0aa9d2ebe1b66a9e23f5691425159499f6caee8fac6611d1f7",
+    "checks/pages/policy-file-claim.js": "a3c8045bdd0a480843587652f0c840a27f8a95ec0f59b54bc81da68c4e1ce542",
+    "checks/pages/quote-coverage.js": "e2b1a31de80ae1cdcfb132d8130faf35c92b552a6ad9a9390c21726c71aff573",
+    "checks/pages/quote-driver.js": "426124f1e4c81443ac7652db52efea3f488b478ff42311fd86689aac736cf842",
+    "checks/pages/quote-quick-rate.js": "880ad8deddfd23160ba6f15e8ad5c0c6631aa1327534c0de00bc68ef591ec313",
+    "checks/pages/quote-rate.js": "b5d7ef5f5d4caed7323960aba84ab9f5bfd3a68c52c791e19bcb2e0800f3ce3d",
+    "checks/pages/quote-start.js": "d86c9c057aedd02b2a21620f49cf47a93a4d3e02078a04ad69ba5e6279ed889d",
+    "checks/pages/quote-vehicle-defaults.js": "f7fb45fb176fecfa1381570b8c130a4cc369e29e5d72ff13c5148eda8c8c4ab6",
+    "checks/pages/worksheet-bind.js": "6794bccd1dc0b16aa7187c8716f56e619e3b97e27f9f0ab12ae57fa41a3be4ff",
+    "suites/migrated/drive/transcript.jsonl": "564af58d7504eb1cf64cd19a84827f13b8f234d3c9f680914218054ebb85e53d"
+  }
+}

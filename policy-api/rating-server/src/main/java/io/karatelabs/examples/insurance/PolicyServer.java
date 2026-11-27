@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -44,8 +46,12 @@ import java.util.concurrent.atomic.AtomicInteger;
  * WA), and refuses anything else with a 400 rather than inventing a territory factor. The rulebook is the
  * oracle for both implementations; neither may quietly extend it.</p>
  *
+ * <p>Given a second argument, it also serves that folder at {@code /desk/} — the kit's {@code sut/}, the
+ * PolicyDesk page — so the page calls the API on its own origin: no CORS, and a recorded browser flow
+ * sees the API calls as the app's own.</p>
+ *
  * <pre>
- * java -cp rating-server/target/rating-server.jar io.karatelabs.examples.insurance.PolicyServer 8080
+ * java -cp rating-server/target/rating-server.jar io.karatelabs.examples.insurance.PolicyServer 8080 [sut]
  * </pre>
  */
 public class PolicyServer {
@@ -66,6 +72,11 @@ public class PolicyServer {
     private final AtomicInteger quoteSeq = new AtomicInteger();
     private final AtomicInteger policySeq = new AtomicInteger();
     private final AtomicInteger claimSeq = new AtomicInteger();
+    private final Path deskDir;
+
+    PolicyServer(Path deskDir) {
+        this.deskDir = deskDir == null ? null : deskDir.toAbsolutePath().normalize();
+    }
 
     // ------------------------------------------------------------------ the operations
 
@@ -265,6 +276,11 @@ public class PolicyServer {
     }
 
     private void handle(HttpExchange exchange) throws IOException {
+        String path = exchange.getRequestURI().getPath();
+        if (deskDir != null && (path.equals("/desk") || path.startsWith("/desk/"))) {
+            serveDesk(exchange, path);
+            return;
+        }
         Reply reply;
         try (InputStream in = exchange.getRequestBody()) {
             String body = new String(in.readAllBytes(), StandardCharsets.UTF_8);
@@ -281,6 +297,31 @@ public class PolicyServer {
         }
         // a 204 carries no body, and -1 is how this server says "none" (0 would mean chunked-forever)
         exchange.sendResponseHeaders(reply.status(), out.length == 0 ? -1 : out.length);
+        try (var os = exchange.getResponseBody()) {
+            os.write(out);
+        }
+    }
+
+    private void serveDesk(HttpExchange exchange, String path) throws IOException {
+        if (path.equals("/desk")) {
+            exchange.getResponseHeaders().add("Location", "/desk/");
+            exchange.sendResponseHeaders(302, -1);
+            exchange.close();
+            return;
+        }
+        String name = path.substring("/desk/".length());
+        Path file = deskDir.resolve(name.isEmpty() ? "index.html" : name).normalize();
+        if (!file.startsWith(deskDir) || !Files.isRegularFile(file)) {
+            exchange.sendResponseHeaders(404, -1);
+            exchange.close();
+            return;
+        }
+        String f = file.getFileName().toString();
+        String type = f.endsWith(".html") ? "text/html" : f.endsWith(".js") ? "text/javascript"
+                : f.endsWith(".css") ? "text/css" : "application/octet-stream";
+        byte[] out = Files.readAllBytes(file);
+        exchange.getResponseHeaders().add("Content-Type", type + "; charset=utf-8");
+        exchange.sendResponseHeaders(200, out.length);
         try (var os = exchange.getResponseBody()) {
             os.write(out);
         }
@@ -334,7 +375,11 @@ public class PolicyServer {
     // ------------------------------------------------------------------ lifecycle
 
     public static HttpServer start(int port) throws IOException {
-        PolicyServer api = new PolicyServer();
+        return start(port, null);
+    }
+
+    public static HttpServer start(int port, Path deskDir) throws IOException {
+        PolicyServer api = new PolicyServer(deskDir);
         HttpServer server = HttpServer.create(new InetSocketAddress(port), 0);
         server.createContext("/", api::handle);
         server.start();
@@ -344,8 +389,12 @@ public class PolicyServer {
 
     public static void main(String[] args) throws Exception {
         int port = args.length > 0 ? Integer.parseInt(args[0]) : 8080;
-        HttpServer server = start(port);
+        Path deskDir = args.length > 1 ? Path.of(args[1]) : null;
+        HttpServer server = start(port, deskDir);
         logger.info("policy API (REST) listening on :{}", server.getAddress().getPort());
+        if (deskDir != null) {
+            logger.info("PolicyDesk on http://localhost:{}/desk/", server.getAddress().getPort());
+        }
         Thread.currentThread().join();
     }
 }

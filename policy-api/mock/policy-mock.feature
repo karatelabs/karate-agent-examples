@@ -5,11 +5,6 @@ Feature: insurance Policy API mock — the stand-in for the REST face, and the s
   # under claim (Contract.pair({mock:'mock/policy-mock.feature', provider:<the REST face>})), so every
   # behaviour here answers to rating-server's PolicyServer.java — the same contract, implemented twice.
   # Where the two disagree, one of them is wrong; the pair says which, and this file is usually it.
-  #
-  # cancelPolicy (DELETE /policies/{id}) and getClaim (GET /claims/{id}) are deliberately NOT routed: the
-  # REST face implements them, this mock does not, and the suite exercises neither — so they stay the honest
-  # coverage gaps the worklist shows (mirroring the gRPC half leaving BatchRate/Negotiate uncovered), and
-  # the pair's claim reports the operations it did NOT speak for rather than rounding them up.
 
   Background:
     # NO java interop: a mock engine has the Java bridge OFF by default (it can assign attacker-controlled
@@ -28,7 +23,8 @@ Feature: insurance Policy API mock — the stand-in for the REST face, and the s
     * def premium = function(b){ var base = b.coverage == 'COMPREHENSIVE' ? 140 : b.coverage == 'COLLISION' ? 90 : 50; if (b.driverAge < 25) base += 40; else if (b.driverAge > 70) base += 25; if (b.priorClaims) base += 35; var sf = (b.state == 'NY' || b.state == 'FL') ? 15 : (b.state == 'CA' ? 10 : 0); return base + sf }
     * def policyClass = function(b){ return b.priorClaims ? 'SUBSTANDARD' : (b.driverAge >= 25 && b.driverAge <= 70 ? 'PREFERRED' : 'STANDARD') }
     # the 400 body is part of the contract too — same shape AND same words as the REST face, so the day a
-    # check exercises an error path the two targets still agree
+    # check exercises an error path the two targets still agree. One exception, seeded: priorClaims' message
+    # differs from PolicyServer's, a difference no suite here asserts and a paired run still finds
     * def badRequest = function(field, message){ return { error: message, field: field } }
     # TYPES ARE PART OF THE CONTRACT, and JS truthiness is where a stand-in quietly stops being one: `"40"`
     # is not 40 and `"true"` is not true, but both read as present-and-valid to a naive check — so this mock
@@ -45,7 +41,7 @@ Feature: insurance Policy API mock — the stand-in for the REST face, and the s
     * def policies = []
     * def claims = {}
     * def findPolicy = function(id){ for (var i = 0; i < policies.length; i++) { if (policies[i].id == id) return policies[i] } return null }
-    * def quoteError = function(b){ if (!isStr(b.state) || rated.indexOf(b.state) < 0) return badRequest('state', 'state must be one of [CA, NY, FL, TX, WA]'); if (!isStr(b.coverage) || coverages.indexOf(b.coverage) < 0) return badRequest('coverage', 'coverage must be one of [LIABILITY, COLLISION, COMPREHENSIVE]'); if (!isInt(b.driverAge) || b.driverAge < 18 || b.driverAge > 80) return badRequest('driverAge', 'driverAge must be between 18 and 80'); if (b.priorClaims != null && typeof b.priorClaims != 'boolean') return badRequest('priorClaims', 'priorClaims must be a boolean'); return null }
+    * def quoteError = function(b){ if (!isStr(b.state) || rated.indexOf(b.state) < 0) return badRequest('state', 'state must be one of [CA, NY, FL, TX, WA]'); if (!isStr(b.coverage) || coverages.indexOf(b.coverage) < 0) return badRequest('coverage', 'coverage must be one of [LIABILITY, COLLISION, COMPREHENSIVE]'); if (!isInt(b.driverAge) || b.driverAge < 18 || b.driverAge > 80) return badRequest('driverAge', 'driverAge must be between 18 and 80'); if (b.priorClaims != null && typeof b.priorClaims != 'boolean') return badRequest('priorClaims', 'priorClaims must be true or false'); return null }
     * def quoteFor = function(b){ var id = nextId(); var q = { id: id, policyClass: policyClass(b), monthlyPremium: premium(b), currency: 'USD' }; quotes[id] = { state: b.state, monthlyPremium: q.monthlyPremium }; return q }
     # a policy carries the price of the QUOTE it was bound from — so an unknown quote is an invalid binding
     # request, not a policy at an invented premium (the 400 openapi.yaml declares for this operation)
@@ -78,11 +74,23 @@ Feature: insurance Policy API mock — the stand-in for the REST face, and the s
     * def responseStatus = found ? 200 : 404
     * def response = found ? found : { error: 'no such policy', id: pathParams.id }
 
+  # a cancelled policy stays readable with its status moved; cancelling one again is another 204
+  Scenario: pathMatches('/policies/{id}') && methodIs('delete')
+    * def found = findPolicy(pathParams.id)
+    * def policies = policies.map(function(p){ return p.id == pathParams.id ? karate.merge(p, { status: 'CANCELLED' }) : p })
+    * def responseStatus = found ? 204 : 404
+    * def response = found ? null : { error: 'no such policy', id: pathParams.id }
+
   Scenario: pathMatches('/claims') && methodIs('post')
     * def req = orEmpty(request)
     * def bad = claimError(req)
     * def responseStatus = bad ? 400 : 201
     * def response = bad ? bad : claimFor(req)
+
+  Scenario: pathMatches('/claims/{id}') && methodIs('get')
+    * def found = claims[pathParams.id]
+    * def responseStatus = found ? 200 : 404
+    * def response = found ? found : { error: 'no such claim', id: pathParams.id }
 
   Scenario:
     * def responseStatus = 404
