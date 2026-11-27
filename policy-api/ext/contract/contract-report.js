@@ -58,6 +58,9 @@ document.addEventListener('alpine:init', function () {
       get notMeasured() { return this.pair.notMeasured || []; },
       get karateSummary() { return this.pair.karateSummary || ''; },
       get rehearsal() { return !!this.pair.rehearsal; },
+      get draftNote() {
+        return typeof this.pair.draft === 'string' ? this.pair.draft : 'exploratory, not project evidence';
+      },
       get rehearsalNote() {
         var r = this.pair.rehearsal;
         return typeof r === 'string' ? r : (r && r.note)
@@ -82,6 +85,15 @@ document.addEventListener('alpine:init', function () {
         return ['', 'shape-conformant', 'verified-against-mock', 'verified-against-provider',
           'proven-substitutable'][n] || '';
       },
+      // the rung LABELS translate the ladder as label() translates the outcome classes: the payload,
+      // Openapi.grade and the skill keep the ladder names, and rungHelp keeps each one in the tooltip
+      rungLabel: function (n) {
+        return ['', 'Declared in the contract', 'Passes against the mock', 'Passes against the provider',
+          'Mock can stand in for the provider'][n] || 'not measured';
+      },
+      rungHelp: function (n) {
+        return this.rungName(n) ? this.rungName(n) + ' (rung ' + n + ' of 4)' : 'no rung';
+      },
       // …and a rung of null is NOT MEASURED, which takes no failure tint: "no verdict" is not "bad", the
       // same rule the outcome tiles obey.
       rungClass: function (rung) {
@@ -89,6 +101,13 @@ document.addEventListener('alpine:init', function () {
         return rung >= 4 ? 'k-ok' : rung >= 3 ? 'k-link' : rung >= 2 ? 'k-warn' : 'k-no';
       },
       toggle: function (id) { this.expanded[id] = !this.expanded[id]; },
+
+      get freshWord() { return String(this.freshness.status || '').toUpperCase(); },
+      // waivedBars entries are MAPS ({bar, item, reason, owner}); joining them raw printed "[object Object]"
+      // on the one disclosure that most has to read cleanly
+      get waivedBarsText() {
+        return (this.standing.waivedBars || []).map(function (w) { return w && w.bar ? w.bar : w; }).join(', ');
+      },
 
       get freshClass() {
         return { fresh: 'k-fresh-ok', stale: 'k-fresh-no', expired: 'k-fresh-no',
@@ -207,24 +226,24 @@ document.addEventListener('alpine:init', function () {
           ]
         },
         {
-          key: 'rung', title: 'The rung — what the evidence lets you say',
-          intro: 'Four cumulative rungs. Each holds only if every rung below it holds, and each is a '
-            + 'counted statement with the evidence for every bar under it. The whole-artifact rung is the '
-            + 'floor of the per-operation rungs, and it is capped below the top while any declared '
-            + 'operation is not tested.',
+          key: 'rung', title: 'Evidence levels — what the evidence lets you say',
+          intro: 'Four cumulative levels (the rungs of the contract ladder). Each holds only if every level '
+            + 'below it holds, and each is a counted statement with the evidence for every bar under it. '
+            + 'The whole run\'s level is the lowest of its operations\' levels, and it stays below the top '
+            + 'while any declared operation is not tested.',
           terms: [
-            { t: '1 shape-conformant', cls: 'k-no', d: 'Your contract declares this operation. Nothing is claimed about its behaviour.' },
-            { t: '2 verified-against-mock', cls: 'k-warn', d: 'A suite exercised it against the mock, and the mock leg passed. This is what an everyday per-commit run already earns.' },
-            { t: '3 verified-against-provider', cls: 'k-link', d: 'The provider leg exercised it, sent its requests to the target it was given, and passed. It does not by itself say a real provider answered — a rehearsal pair reaches this level too, and is stopped here. What answered is the rehearsal bar.' },
-            { t: '4 proven-substitutable', cls: 'k-ok', d: 'The two legs were compared and did not differ, at both layers, under conditions strict enough for the claim. This is the claim consumers care about: the mock can stand where the provider stood.' },
-            { t: 'bar', d: 'One counted condition a rung rests on. A bar whose only evidence is that nothing refused it is not evidence: 0 of 0 reads not checked, never passed.' }
+            { t: '1 Declared in the contract', cls: 'k-no', d: 'Your contract declares this operation. Nothing is claimed about its behaviour. (shape-conformant)' },
+            { t: '2 Passes against the mock', cls: 'k-warn', d: 'A suite exercised it against the mock, and the mock leg passed. This is what an everyday per-commit run already earns. (verified-against-mock)' },
+            { t: '3 Passes against the provider', cls: 'k-link', d: 'The provider leg exercised it, sent its requests to the target it was given, and passed. It does not by itself say a real provider answered — a rehearsal pair reaches this level too, and is stopped here. What answered is the rehearsal bar. (verified-against-provider)' },
+            { t: '4 Mock can stand in for the provider', cls: 'k-ok', d: 'The two legs were compared and did not differ, at both layers, under conditions strict enough for the claim. This is the claim consumers care about. (proven-substitutable)' },
+            { t: 'bar', d: 'One counted condition a level rests on. A bar whose only evidence is that nothing refused it is not evidence: 0 of 0 reads not checked, never passed.' }
           ]
         },
         {
           key: 'waiver', title: 'Waivers and disclosures',
           terms: [
             { t: 'ignore rule', d: 'A declared waiver for an expected difference — surrogate ids, timestamps. It carries a reason and an owner, it re-classifies rather than hides (both values are kept), and it is marked stale when it covered nothing. Nothing is ignored by default.' },
-            { t: 'data profile', d: 'seeded — the suite creates everything it needs through the API, so the mock starts empty by construction; the only profile that reaches rung 4. fixture — both legs are pre-loaded from one declared file, whose digest becomes a freshness binding. ambient — whatever data the two targets happen to hold, where a data difference reads as a behaviour difference.' },
+            { t: 'data profile', d: 'seeded — the suite creates everything it needs through the API, so the mock starts empty by construction; the only profile that reaches level 4. fixture — both legs are pre-loaded from one declared file, whose digest becomes a freshness binding. ambient — whatever data the two targets happen to hold, where a data difference reads as a behaviour difference.' },
             { t: 'rehearsal', cls: 'k-warn', d: 'A karate mock answered the provider leg. Two instances of one mock agree by construction, so the run exercises the mechanism and is not evidence about a real provider.' },
             { t: 'draft', cls: 'k-warn', d: 'Minted with {draft:true} — exploratory, not project evidence, whatever directory it sits in.' }
           ]
@@ -233,7 +252,7 @@ document.addEventListener('alpine:init', function () {
           key: 'freshness', title: 'Freshness — evidence decays',
           intro: 'The pair is a committed file and is never rewritten, so freshness is calculated when '
             + 'you read it. The same bytes can read fresh today and expired next month. Anything other '
-            + 'than fresh withdraws the rung rather than lowering it.',
+            + 'than fresh withdraws the evidence level rather than lowering it.',
           terms: [
             { t: 'fresh', cls: 'k-ok', d: 'Every binding still matches, and the evidence is inside its maximum age.' },
             { t: 'stale', cls: 'k-no', d: 'A binding changed. The bindings are the suite, the mock, the spec, the data profile, any declared fixture, and the rulebooks — editing a fixture decays a pair exactly as editing the spec does. This evidence is about a different subject than the one you have now.' },
@@ -244,14 +263,25 @@ document.addEventListener('alpine:init', function () {
         }
       ],
 
-      /** A compared value, escaped — never injected, and an absent one says so rather than reading blank. */
-      cell: function (value) {
-        if (value === null || value === undefined) return '<span class="k-muted">absent</span>';
+      // A compared value, set as text (never injected); an absent one says so rather than reading blank.
+      absent: function (value) { return value === null || value === undefined; },
+      cellText: function (value) {
+        if (value === null || value === undefined) return '';
         // an object or array arrives VERBATIM for short values (Divergence.elide only stringifies the
         // long ones), and String() turned both sides of a real difference into "[object Object]"
-        var raw = (value !== null && typeof value === 'object') ? JSON.stringify(value) : String(value);
-        var s = raw.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        return '<code>' + s + '</code>';
+        return typeof value === 'object' ? JSON.stringify(value) : String(value);
+      },
+
+      // the shared report top-nav (core's KarateReport util): a sibling tab appears only when the writer
+      // stamped its href, i.e. when that page was really published beside this one
+      init: function () {
+        var d = window.KARATE_PAIR || {};
+        var tabs = [];
+        if (d.coverageHref) tabs.push({ key: 'coverage', title: 'Coverage', href: d.coverageHref });
+        if (d.traceabilityHref) tabs.push({ key: 'traceability', title: 'Traceability', href: d.traceabilityHref });
+        tabs.push({ key: 'contract', title: 'Contract', href: 'contract.html' });
+        if (d.governanceHref) tabs.push({ key: 'governance', title: 'Governance', href: d.governanceHref });
+        if (window.KarateReport) KarateReport.renderTopNav({ current: 'contract', summary: d.karateSummary, tabs: tabs });
       }
     };
   });

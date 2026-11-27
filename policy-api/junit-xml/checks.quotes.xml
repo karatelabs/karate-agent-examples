@@ -1,16 +1,16 @@
-<testsuite name="auto quotes — the covering-array dimension demo (REST front door to the rating engine)" tests="6" failures="0" time="0.108" skipped="0"><testcase classname="checks.quotes" name="quote a COLLISION policy in CA (priorClaims=false)" time="0.031"><system-out>* baseUrl
+<testsuite name="auto quotes — the covering-array dimension demo (REST front door to the rating engine)" tests="6" failures="0" time="0.139" skipped="0"><testcase classname="checks.quotes" name="quote a COLLISION policy in CA (priorClaims=false)" time="0.019"><system-out>* baseUrl
 * row = { state: &apos;CA&apos;, coverage: &apos;COLLISION&apos;, driverAge: 40, priorClaims: false }
 * check = Rule.execute(&apos;rating&apos;, row)
 Given &apos;quotes&apos;
 And row
 When post
-request:
-1 &gt; POST http://localhost:36653/quotes
+request: 2026-11-27T11:20:00.645Z
+1 &gt; POST http://localhost:39455/quotes
 1 &gt; Content-Type: application/json; charset=UTF-8
-1 &gt; Host: localhost:36653
+1 &gt; Host: localhost:39455
 1 &gt; Content-Length: 72
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.12.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;state&quot;: &quot;CA&quot;,
   &quot;coverage&quot;: &quot;COLLISION&quot;,
@@ -18,12 +18,12 @@ request:
   &quot;priorClaims&quot;: false
 }
 
-response time in milliseconds: 3
-1 &lt; 201 POST http://localhost:36653/quotes
+response: 3ms
+1 &lt; 201 POST http://localhost:39455/quotes
+1 &lt; Content-Type: application/json; charset=UTF-8
+1 &lt; Karate-Mock: true
 1 &lt; content-length: 78
 1 &lt; vary: origin
-1 &lt; Karate-Mock: true
-1 &lt; Content-Type: application/json; charset=UTF-8
 {
   &quot;id&quot;: &quot;pol-4&quot;,
   &quot;policyClass&quot;: &quot;PREFERRED&quot;,
@@ -31,24 +31,22 @@ response time in milliseconds: 3
   &quot;currency&quot;: &quot;USD&quot;
 }
 
-POST http://localhost:36653/quotes
-201 (3 ms)
 Then 201
 And response contains check.output
 </system-out></testcase>
-<testcase classname="checks.quotes" name="quote a COMPREHENSIVE policy in NY (priorClaims=true)" time="0.016"><system-out>* baseUrl
+<testcase classname="checks.quotes" name="quote a COMPREHENSIVE policy in NY (priorClaims=true)" time="0.015"><system-out>* baseUrl
 * row = { state: &apos;NY&apos;, coverage: &apos;COMPREHENSIVE&apos;, driverAge: 40, priorClaims: true }
 * check = Rule.execute(&apos;rating&apos;, row)
 Given &apos;quotes&apos;
 And row
 When post
-request:
-1 &gt; POST http://localhost:36653/quotes
+request: 2026-11-27T11:20:00.662Z
+1 &gt; POST http://localhost:39455/quotes
 1 &gt; Content-Type: application/json; charset=UTF-8
-1 &gt; Host: localhost:36653
+1 &gt; Host: localhost:39455
 1 &gt; Content-Length: 75
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.12.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;state&quot;: &quot;NY&quot;,
   &quot;coverage&quot;: &quot;COMPREHENSIVE&quot;,
@@ -56,12 +54,12 @@ request:
   &quot;priorClaims&quot;: true
 }
 
-response time in milliseconds: 3
-1 &lt; 201 POST http://localhost:36653/quotes
+response: 2ms
+1 &lt; 201 POST http://localhost:39455/quotes
+1 &lt; Content-Type: application/json; charset=UTF-8
+1 &lt; Karate-Mock: true
 1 &lt; content-length: 80
 1 &lt; vary: origin
-1 &lt; Karate-Mock: true
-1 &lt; Content-Type: application/json; charset=UTF-8
 {
   &quot;id&quot;: &quot;pol-5&quot;,
   &quot;policyClass&quot;: &quot;SUBSTANDARD&quot;,
@@ -69,24 +67,22 @@ response time in milliseconds: 3
   &quot;currency&quot;: &quot;USD&quot;
 }
 
-POST http://localhost:36653/quotes
-201 (3 ms)
 Then 201
 And response contains check.output
 </system-out></testcase>
-<testcase classname="checks.quotes" name="quote a LIABILITY policy in TX (priorClaims=false)" time="0.012"><system-out>* baseUrl
+<testcase classname="checks.quotes" name="quote a LIABILITY policy in TX (priorClaims=false)" time="0.018"><system-out>* baseUrl
 * row = { state: &apos;TX&apos;, coverage: &apos;LIABILITY&apos;, driverAge: 40, priorClaims: false }
 * check = Rule.execute(&apos;rating&apos;, row)
 Given &apos;quotes&apos;
 And row
 When post
-request:
-1 &gt; POST http://localhost:36653/quotes
+request: 2026-11-27T11:20:00.679Z
+1 &gt; POST http://localhost:39455/quotes
 1 &gt; Content-Type: application/json; charset=UTF-8
-1 &gt; Host: localhost:36653
+1 &gt; Host: localhost:39455
 1 &gt; Content-Length: 72
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.12.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;state&quot;: &quot;TX&quot;,
   &quot;coverage&quot;: &quot;LIABILITY&quot;,
@@ -94,12 +90,12 @@ request:
   &quot;priorClaims&quot;: false
 }
 
-response time in milliseconds: 3
-1 &lt; 201 POST http://localhost:36653/quotes
+response: 6ms
+1 &lt; 201 POST http://localhost:39455/quotes
+1 &lt; Content-Type: application/json; charset=UTF-8
+1 &lt; Karate-Mock: true
 1 &lt; content-length: 77
 1 &lt; vary: origin
-1 &lt; Karate-Mock: true
-1 &lt; Content-Type: application/json; charset=UTF-8
 {
   &quot;id&quot;: &quot;pol-6&quot;,
   &quot;policyClass&quot;: &quot;PREFERRED&quot;,
@@ -107,24 +103,22 @@ response time in milliseconds: 3
   &quot;currency&quot;: &quot;USD&quot;
 }
 
-POST http://localhost:36653/quotes
-201 (3 ms)
 Then 201
 And response contains check.output
 </system-out></testcase>
-<testcase classname="checks.quotes" name="quote a COLLISION policy in FL (priorClaims=true)" time="0.012"><system-out>* baseUrl
+<testcase classname="checks.quotes" name="quote a COLLISION policy in FL (priorClaims=true)" time="0.018"><system-out>* baseUrl
 * row = { state: &apos;FL&apos;, coverage: &apos;COLLISION&apos;, driverAge: 40, priorClaims: true }
 * check = Rule.execute(&apos;rating&apos;, row)
 Given &apos;quotes&apos;
 And row
 When post
-request:
-1 &gt; POST http://localhost:36653/quotes
+request: 2026-11-27T11:20:00.698Z
+1 &gt; POST http://localhost:39455/quotes
 1 &gt; Content-Type: application/json; charset=UTF-8
-1 &gt; Host: localhost:36653
+1 &gt; Host: localhost:39455
 1 &gt; Content-Length: 71
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.12.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;state&quot;: &quot;FL&quot;,
   &quot;coverage&quot;: &quot;COLLISION&quot;,
@@ -132,12 +126,12 @@ request:
   &quot;priorClaims&quot;: true
 }
 
-response time in milliseconds: 3
-1 &lt; 201 POST http://localhost:36653/quotes
+response: 6ms
+1 &lt; 201 POST http://localhost:39455/quotes
+1 &lt; Content-Type: application/json; charset=UTF-8
+1 &lt; Karate-Mock: true
 1 &lt; content-length: 80
 1 &lt; vary: origin
-1 &lt; Karate-Mock: true
-1 &lt; Content-Type: application/json; charset=UTF-8
 {
   &quot;id&quot;: &quot;pol-7&quot;,
   &quot;policyClass&quot;: &quot;SUBSTANDARD&quot;,
@@ -145,24 +139,22 @@ response time in milliseconds: 3
   &quot;currency&quot;: &quot;USD&quot;
 }
 
-POST http://localhost:36653/quotes
-201 (3 ms)
 Then 201
 And response contains check.output
 </system-out></testcase>
-<testcase classname="checks.quotes" name="quote a COMPREHENSIVE policy in WA (priorClaims=false)" time="0.013"><system-out>* baseUrl
+<testcase classname="checks.quotes" name="quote a COMPREHENSIVE policy in WA (priorClaims=false)" time="0.021"><system-out>* baseUrl
 * row = { state: &apos;WA&apos;, coverage: &apos;COMPREHENSIVE&apos;, driverAge: 40, priorClaims: false }
 * check = Rule.execute(&apos;rating&apos;, row)
 Given &apos;quotes&apos;
 And row
 When post
-request:
-1 &gt; POST http://localhost:36653/quotes
+request: 2026-11-27T11:20:00.726Z
+1 &gt; POST http://localhost:39455/quotes
 1 &gt; Content-Type: application/json; charset=UTF-8
-1 &gt; Host: localhost:36653
+1 &gt; Host: localhost:39455
 1 &gt; Content-Length: 76
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.12.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;state&quot;: &quot;WA&quot;,
   &quot;coverage&quot;: &quot;COMPREHENSIVE&quot;,
@@ -170,12 +162,12 @@ request:
   &quot;priorClaims&quot;: false
 }
 
-response time in milliseconds: 4
-1 &lt; 201 POST http://localhost:36653/quotes
+response: 4ms
+1 &lt; 201 POST http://localhost:39455/quotes
+1 &lt; Content-Type: application/json; charset=UTF-8
+1 &lt; Karate-Mock: true
 1 &lt; content-length: 78
 1 &lt; vary: origin
-1 &lt; Karate-Mock: true
-1 &lt; Content-Type: application/json; charset=UTF-8
 {
   &quot;id&quot;: &quot;pol-8&quot;,
   &quot;policyClass&quot;: &quot;PREFERRED&quot;,
@@ -183,24 +175,22 @@ response time in milliseconds: 4
   &quot;currency&quot;: &quot;USD&quot;
 }
 
-POST http://localhost:36653/quotes
-201 (4 ms)
 Then 201
 And response contains check.output
 </system-out></testcase>
-<testcase classname="checks.quotes" name="quote a LIABILITY policy in CA (priorClaims=true)" time="0.012"><system-out>* baseUrl
+<testcase classname="checks.quotes" name="quote a LIABILITY policy in CA (priorClaims=true)" time="0.027"><system-out>* baseUrl
 * row = { state: &apos;CA&apos;, coverage: &apos;LIABILITY&apos;, driverAge: 40, priorClaims: true }
 * check = Rule.execute(&apos;rating&apos;, row)
 Given &apos;quotes&apos;
 And row
 When post
-request:
-1 &gt; POST http://localhost:36653/quotes
+request: 2026-11-27T11:20:00.750Z
+1 &gt; POST http://localhost:39455/quotes
 1 &gt; Content-Type: application/json; charset=UTF-8
-1 &gt; Host: localhost:36653
+1 &gt; Host: localhost:39455
 1 &gt; Content-Length: 71
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.12.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;state&quot;: &quot;CA&quot;,
   &quot;coverage&quot;: &quot;LIABILITY&quot;,
@@ -208,12 +198,12 @@ request:
   &quot;priorClaims&quot;: true
 }
 
-response time in milliseconds: 4
-1 &lt; 201 POST http://localhost:36653/quotes
+response: 7ms
+1 &lt; 201 POST http://localhost:39455/quotes
+1 &lt; Content-Type: application/json; charset=UTF-8
+1 &lt; Karate-Mock: true
 1 &lt; content-length: 79
 1 &lt; vary: origin
-1 &lt; Karate-Mock: true
-1 &lt; Content-Type: application/json; charset=UTF-8
 {
   &quot;id&quot;: &quot;pol-9&quot;,
   &quot;policyClass&quot;: &quot;SUBSTANDARD&quot;,
@@ -221,8 +211,6 @@ response time in milliseconds: 4
   &quot;currency&quot;: &quot;USD&quot;
 }
 
-POST http://localhost:36653/quotes
-201 (4 ms)
 Then 201
 And response contains check.output
 </system-out></testcase>

@@ -4,25 +4,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Contract — mock vs provider</title>
-  <!-- theme before paint (no flash); follows the main report's <html data-theme>, else OS preference. -->
-  <script>
-    (function () {
-      try {
-        // 'karate-theme' is the ONE theme key — the served console writes the same one, so this
-        // page follows the console's dark mode (same origin → same localStorage)
-        var t = localStorage.getItem('karate-theme');
-        if (!t) t = (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'light';
-        document.documentElement.setAttribute('data-theme', t);
-        window.addEventListener('storage', function (e) {
-          if (e.key === 'karate-theme' && e.newValue) {
-            document.documentElement.setAttribute('data-theme', e.newValue);
-          }
-        });
-      } catch (e) {
-        document.documentElement.setAttribute('data-theme', 'light');
-      }
-    })();
-  </script>
+  <!-- the ONE theme rule (stored choice, else OS preference; follows a toggle in another tab) is
+       core's karate-report.js, loaded before paint; it also carries the shared top-nav util. -->
+  <script src="../../../res/karate-report.js"></script>
   <!-- THE one paired-run page shell (D191): always at ext/contract/pages/contract.html — written by
        Contract.report(); assets sit one level up in ext/contract/, Alpine + the top-nav util at the
        report root's res/. Every number on it is READ from window.KARATE_PAIR, which is what
@@ -49,13 +33,13 @@
         <div class="k-sub"><span x-text="subtitle"></span><button
             type="button" class="k-help-q"
             title="What is contract testing? Copy the help-id — paste it into the Help tab or your AI chat"
-            onclick="kaCopyHelp('contract')">?</button></div>
+            data-k-help="contract">?</button></div>
       </div>
       <div class="k-head-actions">
         <!-- the vocabulary this page cannot avoid — leg, rung, admissible, waiver — one click away, and
              static, so it still answers when the page is opened off a published site or off disk. -->
         <button class="k-gloss-btn" @click="glossaryOpen = true" title="What do these terms mean?">? Glossary</button>
-        <span class="k-pill k-warn" x-show="pair.draft" :title="typeof pair.draft === 'string' ? pair.draft : 'exploratory, not project evidence'">DRAFT</span>
+        <span class="k-pill k-warn" x-show="pair.draft" :title="draftNote">DRAFT</span>
         <span class="k-pill k-warn" x-show="rehearsal" :title="rehearsalNote">REHEARSAL</span>
         <!-- freshness as a PILL while it is fresh: a green box saying nothing is wrong earns a word, not
              a panel. It expands into a full box (below) the moment it has something to report. -->
@@ -142,14 +126,14 @@
         </div>
       </div>
       <div class="k-axiscard">
-        <div class="k-axishd"><span class="k-axislabel">Evidence</span><span class="k-info" @click="openGlossary('rung')" title="What is a rung?">&#9432;</span></div>
+        <div class="k-axishd"><span class="k-axislabel">Evidence</span><span class="k-info" @click="openGlossary('rung')" title="What do the evidence levels mean?">&#9432;</span></div>
         <div class="k-axisnum" x-show="!withdrawn && standing.rung != null">
-          Rung <span x-text="standing.rung"></span><span class="k-axisden"> / 4</span>
+          Level <span x-text="standing.rung"></span><span class="k-axisden"> / 4</span>
         </div>
         <div class="k-axisnum" x-show="withdrawn">Withdrawn</div>
         <div class="k-axisnum" x-show="!withdrawn && standing.rung == null">Not measured</div>
         <div class="k-axisask" x-show="!withdrawn && standing.name">
-          <span x-text="standing.name"></span> &mdash; the level of claim this run supports.
+          <span x-text="rungLabel(standing.rung)" :title="rungHelp(standing.rung)"></span> &mdash; the level of claim this run supports.
         </div>
         <div class="k-axisnote" x-show="withdrawn" x-text="standing.note"></div>
         <div class="k-axisnote" x-show="!withdrawn && identityCaveat">Provider identity is not independently verified.</div>
@@ -160,7 +144,7 @@
     <div class="k-fresh" :class="freshClass" x-show="freshness.status && freshness.status !== 'fresh'">
       <div class="k-fresh-head">
         <span class="k-info" @click="openGlossary('freshness')" title="What does this status mean?">&#9432;</span>
-        <span class="k-fresh-val" x-text="String(freshness.status || '').toUpperCase()"></span>
+        <span class="k-fresh-val" x-text="freshWord"></span>
         <span class="k-fresh-at">at <span x-text="freshness.asOf"></span></span>
       </div>
       <div class="k-sub" x-text="freshness.note"></div>
@@ -254,8 +238,8 @@
             <template x-for="(f, i) in (d.differences || [])" :key="i">
               <tr :class="f.ignoredBy ? 'k-ignored' : ''">
                 <td><code x-text="f.at"></code></td>
-                <td x-html="cell(f.provider)"></td>
-                <td x-html="cell(f.mock)"></td>
+                <td><code x-show="!absent(f.provider)" x-text="cellText(f.provider)"></code><span class="k-muted" x-show="absent(f.provider)">absent</span></td>
+                <td><code x-show="!absent(f.mock)" x-text="cellText(f.mock)"></code><span class="k-muted" x-show="absent(f.mock)">absent</span></td>
               </tr>
             </template>
           </tbody>
@@ -284,8 +268,8 @@
                   <template x-for="(f, fi) in (n.differences || [])" :key="fi">
                     <tr :class="f.ignoredBy ? 'k-ignored' : ''">
                       <td><code x-text="f.at"></code></td>
-                      <td x-html="cell(f.provider)"></td>
-                      <td x-html="cell(f.mock)"></td>
+                      <td><code x-show="!absent(f.provider)" x-text="cellText(f.provider)"></code><span class="k-muted" x-show="absent(f.provider)">absent</span></td>
+                      <td><code x-show="!absent(f.mock)" x-text="cellText(f.mock)"></code><span class="k-muted" x-show="absent(f.mock)">absent</span></td>
                     </tr>
                   </template>
                 </tbody>
@@ -355,17 +339,17 @@
              put a withdrawn claim back in the one slot a reader quotes. -->
         <template x-if="standing.name">
           <div>
-            <h3 x-show="!withdrawn">Rung &mdash; <span x-text="standing.name"></span><span x-show="standing.rung != null"> (<span x-text="standing.rung"></span> of 4)</span></h3>
-            <h3 x-show="withdrawn">Rung &mdash; withdrawn</h3>
+            <h3 x-show="!withdrawn">Evidence level &mdash; <span x-text="rungLabel(standing.rung)" :title="rungHelp(standing.rung)"></span><span x-show="standing.rung != null"> (<span x-text="standing.rung"></span> of 4)</span></h3>
+            <h3 x-show="withdrawn">Evidence level &mdash; withdrawn</h3>
             <div class="k-rungbar">
               <template x-for="n in [1,2,3,4]" :key="n">
-                <span class="k-rungstep" :class="n <= (standing.rung || 0) ? 'k-on' : ''" :title="rungName(n)"></span>
+                <span class="k-rungstep" :class="n <= (standing.rung || 0) ? 'k-on' : ''" :title="rungLabel(n) + ' — ' + rungHelp(n)"></span>
               </template>
             </div>
             <div class="k-qual" x-show="withdrawn" x-text="standing.note"></div>
             <div class="k-sub" x-show="withdrawn">
-              The run observed rung <span x-text="standing.observed"></span>
-              (<span x-text="standing.observedName"></span>). That remains true of the run. It does not
+              The run observed level <span x-text="standing.observed"></span>
+              (<span x-text="rungLabel(standing.observed)" :title="rungHelp(standing.observed)"></span>). That remains true of the run. It does not
               describe this project as it is now. The per-operation ladder below is the run's, unedited.
             </div>
             <div class="k-sub" x-show="!withdrawn && standing.means" x-text="standing.means"></div>
@@ -373,16 +357,14 @@
               <div class="k-qual" x-show="!withdrawn && standing[k]" x-text="standing[k]"></div>
             </template>
             <div class="k-qual" x-show="!withdrawn && (standing.waivedBars || []).length">
-              <!-- waivedBars entries are MAPS ({bar, item, reason, owner}); joining them raw printed
-                   "[object Object]" on the one disclosure that most has to read cleanly -->
-              This rung rests on a waived bar: <span x-text="(standing.waivedBars || []).map(function (w) { return w && w.bar ? w.bar : w; }).join(', ')"></span>
+              This level rests on a waived bar: <span x-text="waivedBarsText"></span>
             </div>
 
             <template x-for="it in items" :key="it.item">
               <div class="k-item">
                 <div class="k-item-head">
                   <code class="k-item-name" x-text="it.item"></code>
-                  <span class="k-pill" :class="rungClass(it.rung)" x-text="it.name"></span>
+                  <span class="k-pill" :class="rungClass(it.rung)" x-text="rungLabel(it.rung)" :title="rungHelp(it.rung)"></span>
                   <span class="k-muted k-item-held" x-show="it.blockedBy" x-text="'held back by ' + it.blockedBy"></span>
                   <button class="k-linkbtn" @click="toggle(it.item)"
                           x-text="expanded[it.item] ? 'hide evidence' : 'evidence (' + (it.bars || []).length + ')'"></button>
@@ -474,20 +456,6 @@
   <script src="../help-affordance.js"></script>
   <script src="../contract-data.js"></script>
   <script src="../contract-report.js"></script>
-  <script src="../../../res/alpine.min.js" defer></script>
-  <!-- shared report top-nav via the core KarateReport util — the Coverage/Traceability siblings appear
-       only when they were really published beside this page (the writer stamps the hrefs). -->
-  <script src="../../../res/karate-report.js"></script>
-  <script>
-    (function () {
-      var d = window.KARATE_PAIR || {};
-      var tabs = [];
-      if (d.coverageHref) tabs.push({ key: 'coverage', title: 'Coverage', href: d.coverageHref });
-      if (d.traceabilityHref) tabs.push({ key: 'traceability', title: 'Traceability', href: d.traceabilityHref });
-      tabs.push({ key: 'contract', title: 'Contract', href: 'contract.html' });
-      if (d.governanceHref) tabs.push({ key: 'governance', title: 'Governance', href: d.governanceHref });
-      KarateReport.renderTopNav({ current: 'contract', summary: d.karateSummary, tabs: tabs });
-    })();
-  </script>
+  <script src="../../../res/alpine-csp.min.js" defer></script>
 </body>
 </html>

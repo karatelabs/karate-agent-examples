@@ -12,6 +12,16 @@
  *   const cls = passed ? 'bg-green-600' : 'bg-red-600';
  * not:
  *   const cls = `bg-${passed ? 'green' : 'red'}-600`;).
+ *
+ * STRICT CSP: the core pages must keep working under a Content-Security-Policy with
+ * no 'unsafe-eval' and no 'unsafe-inline' (e.g. Jenkins serving archived artifacts), so:
+ * - they run the CSP build of Alpine (res/alpine-csp.min.js). Its expression parser takes
+ *   no `?.`, no arrow functions and no globals, member access on null throws, and x-html
+ *   is refused, so templates name only what the component object provides (see the
+ *   summary/showScenarioError helpers) and steps render through the x-k-steps directive;
+ * - components are registered by name (x-data="karateSummary", see registerAlpine);
+ * - markup built here carries no inline on* handlers (see the data-k-action delegation
+ *   in _onAction) and no style="" attributes (hidden / classes instead).
  */
 
 const KarateReport = {
@@ -27,40 +37,78 @@ const KarateReport = {
 
     // ========== Theme Management ==========
 
+    // The ONE theme rule for every report page, core and ext, and the served console, which
+    // writes the same key: the reader's stored choice, else the OS preference. Applying a theme
+    // never stores it; only a toggle does, so opening a page can't pin the choice for the rest.
     THEME_KEY: 'karate-theme',
 
-    /**
-     * Get current theme from localStorage (default: 'light')
-     */
-    getTheme() {
-        return localStorage.getItem(this.THEME_KEY) || 'light';
+    // localStorage throws where the page has no storage (an artifact served under a CSP
+    // `sandbox`, some file:// setups): the theme then just isn't remembered.
+    _storedTheme() {
+        try { return localStorage.getItem(this.THEME_KEY); } catch (e) { return null; }
     },
 
     /**
-     * Apply theme to document and save to localStorage. Uses data-theme
-     * attribute (matched by Tailwind's darkMode: ['selector', '[data-theme="dark"]']
-     * config; was data-bs-theme in the Bootstrap era).
+     * The theme to show: the stored choice, else the OS preference, else 'light'.
+     */
+    getTheme() {
+        const stored = this._storedTheme();
+        if (stored === 'light' || stored === 'dark') return stored;
+        const mm = typeof window !== 'undefined' && window.matchMedia;
+        return mm && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    },
+
+    /**
+     * Show a theme without storing it. Uses the data-theme attribute (matched by Tailwind's
+     * darkMode: ['selector', '[data-theme="dark"]'] config).
+     */
+    applyTheme(theme) {
+        document.documentElement.setAttribute('data-theme', theme);
+    },
+
+    /**
+     * Show and store a theme: the reader chose it.
      */
     setTheme(theme) {
-        document.documentElement.setAttribute('data-theme', theme);
-        localStorage.setItem(this.THEME_KEY, theme);
+        this.applyTheme(theme);
+        try { localStorage.setItem(this.THEME_KEY, theme); } catch (e) { /* not remembered */ }
     },
 
     /**
      * Toggle between light and dark theme
      */
     toggleTheme() {
-        const current = this.getTheme();
-        const next = current === 'light' ? 'dark' : 'light';
+        const current = document.documentElement.getAttribute('data-theme') || this.getTheme();
+        const next = current === 'dark' ? 'light' : 'dark';
         this.setTheme(next);
         return next;
     },
 
     /**
-     * Initialize theme on page load (call early, before content renders)
+     * Apply the theme on load, before paint, and follow a toggle made in another tab (a
+     * report page usually opens beside the console or another report page).
      */
     initTheme() {
-        this.setTheme(this.getTheme());
+        this.applyTheme(this.getTheme());
+        if (this._themeSync || typeof window === 'undefined' || typeof window.addEventListener !== 'function') return;
+        this._themeSync = true;
+        window.addEventListener('storage', e => {
+            if (e.key === this.THEME_KEY && (e.newValue === 'light' || e.newValue === 'dark')) {
+                this.applyTheme(e.newValue);
+                document.dispatchEvent(new CustomEvent('karate-theme', { detail: e.newValue }));
+            }
+        });
+    },
+
+    /**
+     * Keep an Alpine component's `theme` (the toggle icon) in step with initTheme's sync.
+     * Returns the unsubscribe the component's destroy() calls.
+     */
+    _followTheme(component) {
+        if (typeof document === 'undefined' || typeof document.addEventListener !== 'function') return () => {};
+        const listener = e => { component.theme = e.detail; };
+        document.addEventListener('karate-theme', listener);
+        return () => document.removeEventListener('karate-theme', listener);
     },
 
     // ========== State Initialization ==========
@@ -125,9 +173,10 @@ const KarateReport = {
     /**
      * Return {label, cls} for a scenario/feature based on flags. Used by both
      * Alpine templates (`x-text="statusOf(scenario).label"`) and the JS renderer.
-     * Order of checks matches the existing UI: skipped > passed > failed.
+     * Order of checks matches the existing UI: cancelled > skipped > passed > failed.
      */
     statusOf(item) {
+        if (item.cancelled) return { label: 'CANCELLED', cls: 'bg-slate-500' };
         if (item.skipped) return { label: 'SKIP', cls: 'bg-amber-500' };
         if (item.passed)  return { label: 'PASS', cls: 'bg-green-600' };
         return                       { label: 'FAIL', cls: 'bg-red-600' };
@@ -139,6 +188,7 @@ const KarateReport = {
      */
     statusOfFeature(f) {
         if (f.failed) return { label: 'FAILED', cls: 'bg-red-600' };
+        if (f.cancelled) return { label: 'CANCELLED', cls: 'bg-slate-500' };
         if (f.passed) return { label: 'PASSED', cls: 'bg-green-600' };
         return null;
     },
@@ -164,11 +214,19 @@ const KarateReport = {
     heroStatus(counts) {
         const failed = counts.failed || 0;
         const skipped = counts.skipped || 0;
+        const cancelled = counts.cancelled || 0;
         if (failed > 0) {
             return {
                 label: failed + (failed === 1 ? ' FAILURE' : ' FAILURES'),
                 dotCls: 'bg-red-500',
                 pillCls: 'bg-red-50 dark:bg-red-950/40 text-red-700 dark:text-red-300 border-red-200 dark:border-red-900'
+            };
+        }
+        if (cancelled > 0) {
+            return {
+                label: cancelled + ' CANCELLED',
+                dotCls: 'bg-slate-500',
+                pillCls: 'bg-slate-50 dark:bg-slate-900/40 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-700'
             };
         }
         if (skipped > 0) {
@@ -191,9 +249,9 @@ const KarateReport = {
 
     /**
      * Open the shared screenshot lightbox <dialog> on the page. The element is
-     * expected to be present in the feature template; embeds render onclick="..."
-     * inside HTML strings (Alpine doesn't process @click inside x-html output),
-     * so we go directly through the DOM here.
+     * expected to be present in the feature template; an image in step HTML opens it
+     * by carrying data-k-action="lightbox" (see _onAction), so we go directly through
+     * the DOM here.
      */
     openLightbox(src, name) {
         const dialog = document.getElementById('img-lightbox');
@@ -206,6 +264,39 @@ const KarateReport = {
     },
 
     /**
+     * Copy the text of the log block a copy button sits in. The Clipboard API needs a
+     * secure context, which a report opened over plain http is not; there the text is
+     * selected and copied with execCommand instead (and left selected, so a refused copy
+     * is still one Ctrl/Cmd+C away).
+     */
+    copyLog(btn) {
+        const pre = btn.parentElement && btn.parentElement.querySelector('pre');
+        if (!pre) return;
+        const text = pre.textContent;
+        const done = ok => {
+            btn.textContent = ok ? 'copied' : 'select + copy';
+            clearTimeout(btn._kTimer);
+            btn._kTimer = setTimeout(() => { btn.textContent = 'copy'; }, 1500);
+        };
+        const fallback = () => {
+            const sel = window.getSelection();
+            const range = document.createRange();
+            range.selectNodeContents(pre);
+            sel.removeAllRanges();
+            sel.addRange(range);
+            let ok = false;
+            try { ok = document.execCommand('copy'); } catch (e) { /* refused */ }
+            if (ok) sel.removeAllRanges();
+            done(ok);
+        };
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(() => done(true), fallback);
+        } else {
+            fallback();
+        }
+    },
+
+    /**
      * Toggle expand/collapse for a step's detail section. Marker classes
      * (.k-step, .k-step-detail, .k-badge-collapsed, .step-row) are kept
      * as DOM hooks for these queries — they carry no styling.
@@ -215,8 +306,10 @@ const KarateReport = {
         if (!container) return;
         const detail = container.querySelector(':scope > .k-step-detail');
         if (!detail) return;
-        const expanded = detail.style.display !== 'none';
-        detail.style.display = expanded ? 'none' : 'block';
+        // Collapsed is the `hidden` attribute, not an inline style: a style="" attribute in
+        // markup is refused by a strict style-src, which would show every detail expanded.
+        const expanded = !detail.hidden;
+        detail.hidden = expanded;
         // A row click shows EVERYTHING — clear any per-kind filter a badge set, so all embeds show.
         detail.querySelectorAll('.k-embed').forEach(el => { el.style.display = ''; });
         delete detail.dataset.kindFilter;
@@ -235,7 +328,8 @@ const KarateReport = {
      * Expand ONLY the embeds of one kind (the row's kind badge was clicked). Opens the step
      * detail, shows just that kind's embeds (hiding sibling embeds — a row click clears the
      * filter), and outlines the active badge. Clicking the same kind badge again collapses.
-     * `event.stopPropagation()` on the badge keeps this from also firing the row's toggleStep.
+     * The badge click never also fires the row's toggleStep: _onAction acts on the innermost
+     * data-k-action element only.
      */
     toggleEmbedKind(badge, kind) {
         const container = badge.closest('.k-step');
@@ -243,14 +337,14 @@ const KarateReport = {
         const detail = container.querySelector(':scope > .k-step-detail');
         if (!detail) return;
         const rowBadges = container.querySelectorAll(':scope > .step-row .k-embed-badge');
-        const alreadyThisKind = detail.style.display !== 'none' && detail.dataset.kindFilter === kind;
+        const alreadyThisKind = !detail.hidden && detail.dataset.kindFilter === kind;
         if (alreadyThisKind) {
-            detail.style.display = 'none';
+            detail.hidden = true;
             delete detail.dataset.kindFilter;
             rowBadges.forEach(b => { b.style.outline = ''; });
             return;
         }
-        detail.style.display = 'block';
+        detail.hidden = false;
         detail.dataset.kindFilter = kind;
         detail.querySelectorAll('.k-embed').forEach(el => {
             el.style.display = (el.dataset.embedKind === kind) ? '' : 'none';
@@ -299,19 +393,31 @@ const KarateReport = {
     _BADGE_BASE: 'inline-block px-1.5 py-0.5 text-[0.65rem] font-medium rounded text-white align-middle',
 
     /**
-     * Common error-block markup (used 3x in _renderStep — step-level error
-     * inside detail, step-level error outside detail, nested-scenario error).
+     * Common error-block markup (used 2x in _renderStep — the step's own error,
+     * beneath its row, and a nested scenario's error).
      * Pass extra margin classes via marginCls; defaults to inline-step spacing.
      */
     _renderErrorBlock(errorText, marginCls = 'mx-3 my-1') {
         return `<div class="${marginCls} px-3 py-1.5 rounded bg-red-50 dark:bg-red-950/40 border border-red-200 dark:border-red-900 text-red-700 dark:text-red-300 text-xs"><pre class="m-0 whitespace-pre-wrap">${this._esc(errorText)}</pre></div>`;
     },
 
+    // A scenario card on its feature page: every feature page sits in feature-html/, and a
+    // card's id is its refId (the same link the timeline's scenario list builds).
+    _originHref(origin) {
+        return this._esc(origin.featureHtmlName + '.html#' + origin.refId);
+    },
+
+    _renderOriginLink(origin) {
+        if (!origin) return '';
+        return `<div class="mx-3 my-1 text-xs text-slate-600 dark:text-slate-300">Cached failure, not run again: the call ran, with its full trace, in `
+            + `<a class="text-accent hover:underline font-mono" href="${this._originHref(origin)}">${this._esc(origin.label)}</a></div>`;
+    },
+
     _renderStep(step) {
         const id = 'ks-' + (this._stepId++);
         const hasDetail = step.hasLogs || step.hasEmbeds || step.hasCallResults;
         const clickable = hasDetail ? 'cursor-pointer' : '';
-        const onclick = hasDetail ? `onclick="KarateReport.toggleStep(this)"` : '';
+        const onclick = hasDetail ? `data-k-action="toggle-step"` : '';
         // Hook steps (before/after) are infrastructure, not user-authored test logic —
         // mute them so the eye skims past to the real steps.
         const statusClass = step.hook
@@ -322,7 +428,9 @@ const KarateReport = {
                     ? 'text-red-700 dark:text-red-400'
                     : step.status === 'skipped'
                         ? 'text-amber-700 dark:text-amber-400'
-                        : '';
+                        : step.status === 'cancelled'
+                            ? 'text-slate-500 dark:text-slate-400'
+                            : '';
         const muted = 'text-slate-500 dark:text-slate-400';
         const badgeBase = this._BADGE_BASE;
         const keywordColor = this._keywordColor(step.keyword);
@@ -360,8 +468,7 @@ const KarateReport = {
             this._embedKinds(step.embeds || []).forEach(({ kind, count }) => {
                 const label = count > 1 ? `${this._esc(kind)} ${count}` : this._esc(kind);
                 html += ` <span class="${badgeBase} bg-accent ml-1 k-badge-collapsed k-embed-badge cursor-pointer"`
-                    + ` data-embed-kind="${this._esc(kind)}"`
-                    + ` onclick="event.stopPropagation(); KarateReport.toggleEmbedKind(this, '${this._esc(kind)}')"`
+                    + ` data-embed-kind="${this._esc(kind)}" data-k-action="embed-kind"`
                     + ` title="${count} ${this._esc(kind)} embed${count > 1 ? 's' : ''} — click to expand just these">${label}</span>`;
             });
         }
@@ -374,13 +481,45 @@ const KarateReport = {
             }
         }
 
+        // A failure replayed from a run-once cache (callonce, setupOnce, callSingle): its trace
+        // lives under the scenario that ran it, so the row links there, without expanding this step.
+        if (step.cachedFailureOrigin) {
+            html += ` <a class="${badgeBase} bg-red-600 ml-1 hover:underline" href="${this._originHref(step.cachedFailureOrigin)}"`
+                + ` data-k-action="follow"`
+                + ` title="cached failure - open the scenario that ran it: ${this._esc(step.cachedFailureOrigin.label)}">trace ${this._esc(step.cachedFailureOrigin.featureFileName + step.cachedFailureOrigin.refId)}</a>`;
+        }
+
         html += `</div>`;
         html += `<div class="${muted} ml-2 w-20 text-right shrink-0"><span class="text-xs tabular-nums">${step.durationMillis} ms</span></div>`;
         html += `</div>`; // end step-row
 
+        // Doc string / data table: part of the step's source, so always shown, like the
+        // comments above it; indented to line up with the step text
+        if (step.docString != null) {
+            html += `<div class="ml-16 mr-3 my-1 p-2 rounded bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 font-mono text-xs ${muted}"><pre class="m-0 whitespace-pre-wrap">${this._esc(step.docString)}</pre></div>`;
+        }
+        if (step.table && step.table.length) {
+            html += `<div class="ml-16 mr-3 my-1 overflow-x-auto"><table class="font-mono text-xs ${muted} border-collapse">`;
+            step.table.forEach((row, ri) => {
+                html += `<tr>`;
+                row.forEach(cell => {
+                    html += `<td class="px-2 py-0.5 border border-slate-200 dark:border-slate-700${ri === 0 ? ' font-bold' : ''}">${this._esc(cell)}</td>`;
+                });
+                html += `</tr>`;
+            });
+            html += `</table></div>`;
+        }
+
+        // A failure is shown, never folded away with the step's logs and calls: why the step
+        // failed is what the reader came for
+        if (step.error) {
+            html += this._renderErrorBlock(step.error);
+            html += this._renderOriginLink(step.cachedFailureOrigin);
+        }
+
         // Detail section (hidden by default)
         if (hasDetail) {
-            html += `<div class="k-step-detail" style="display: none;">`;
+            html += `<div class="k-step-detail" hidden>`;
 
             if (step.logSegments && step.logSegments.length) {
                 // One contiguous <pre> so whitespace stays exactly as logged; code
@@ -395,7 +534,12 @@ const KarateReport = {
                         inner += this._esc(seg.text);
                     }
                 });
-                html += `<div class="mx-3 my-1 p-2 rounded bg-slate-100 dark:bg-slate-800 text-xs"><pre class="m-0 whitespace-pre-wrap">${inner}</pre></div>`;
+                // The copy button takes the text exactly as shown — masked headers stay masked —
+                // so a request / response can be pasted into a ticket as-is.
+                html += `<div class="relative mx-3 my-1 p-2 pr-14 rounded bg-slate-100 dark:bg-slate-800 text-xs">`
+                    + `<button type="button" class="absolute top-1 right-1 px-1.5 py-0.5 rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 font-sans text-xs print:hidden"`
+                    + ` data-k-action="copy-log" title="Copy this log to the clipboard">copy</button>`
+                    + `<pre class="m-0 whitespace-pre-wrap">${inner}</pre></div>`;
             }
 
             if (step.embeds && step.embeds.length) {
@@ -404,10 +548,6 @@ const KarateReport = {
                     html += this._renderEmbed(embed);
                 });
                 html += `</div>`;
-            }
-
-            if (step.error) {
-                html += this._renderErrorBlock(step.error);
             }
 
             // Call results (recursive)
@@ -440,7 +580,8 @@ const KarateReport = {
                         html += `<span class="${badgeBase} ${ns.cls}">${ns.label}</span>`;
                         html += `</span></div>`;
                         html += this.renderSteps(nested.steps);
-                        if (nested.error) {
+                        // as on the page itself: the scenario's error only when no step shows it
+                        if (nested.error && !(nested.steps || []).some(s => s.error)) {
                             html += this._renderErrorBlock(nested.error, 'my-1');
                         }
                         html += `</div>`;
@@ -451,8 +592,6 @@ const KarateReport = {
             }
 
             html += `</div>`; // end k-step-detail
-        } else if (step.error) {
-            html += this._renderErrorBlock(step.error);
         }
 
         html += `</div>`; // end k-step
@@ -499,7 +638,7 @@ const KarateReport = {
         const id = ++this._embedSeq;
         this._embeds.push({ id, embed });
         const kind = this._embedKind(embed);
-        return `<div class="k-embed" data-embed-id="${id}" data-embed-kind="${this._esc(kind)}" data-defer style="min-height:2rem"></div>`;
+        return `<div class="k-embed min-h-8" data-embed-id="${id}" data-embed-kind="${this._esc(kind)}" data-defer></div>`;
     },
 
     /**
@@ -545,7 +684,7 @@ const KarateReport = {
         host.innerHTML = renderer ? renderer(rec.embed, this) : this._renderEmbedGeneric(rec.embed);
         host.dataset.rendered = '1';
         host.removeAttribute('data-defer');
-        host.style.minHeight = '';
+        host.classList.remove('min-h-8');
         if (this._deferIO) this._deferIO.unobserve(host);
     },
 
@@ -659,7 +798,7 @@ const KarateReport = {
         if (mime.startsWith('image/')) {
             if (src) {
                 const alt = this._esc(embedName || part.role || 'embedded image');
-                html += `<img src="${src}" alt="${alt}" class="max-w-full h-auto max-h-96 cursor-zoom-in rounded transition-opacity hover:opacity-90" onclick="KarateReport.openLightbox(this.src, this.alt)">`;
+                html += `<img src="${src}" alt="${alt}" class="max-w-full h-auto max-h-96 cursor-zoom-in rounded transition-opacity hover:opacity-90" data-k-action="lightbox">`;
             }
         } else if (mime === 'text/html') {
             if (src) html += `<iframe src="${src}" class="w-full border-0 h-72"></iframe>`;
@@ -706,6 +845,9 @@ const KarateReport = {
         return {
             data,
             theme: self.getTheme(),
+            // the toggle icon follows a theme change made in another tab (initTheme)
+            init() { this._unfollowTheme = self._followTheme(this); },
+            destroy() { if (this._unfollowTheme) this._unfollowTheme(); },
             // Sidebar filter: 'all' shows every scenario, 'failed' restricts to
             // failures. Skipped count as non-failed (they're not actionable from
             // a sidebar nav perspective).
@@ -720,11 +862,12 @@ const KarateReport = {
             get heroCounts() {
                 const scenarios = data.scenarios || [];
                 return scenarios.reduce((acc, s) => {
-                    if (s.skipped) acc.skipped++;
+                    if (s.cancelled) acc.cancelled++;
+                    else if (s.skipped) acc.skipped++;
                     else if (s.passed) acc.passed++;
                     else acc.failed++;
                     return acc;
-                }, { passed: 0, failed: 0, skipped: 0 });
+                }, { passed: 0, failed: 0, skipped: 0, cancelled: 0 });
             },
 
             get heroStatus() { return self.heroStatus(this.heroCounts); },
@@ -732,7 +875,7 @@ const KarateReport = {
             get filteredSidebar() {
                 const scenarios = data.scenarios || [];
                 if (this.sidebarFilter === 'failed') {
-                    return scenarios.filter(s => !s.passed && !s.skipped);
+                    return scenarios.filter(s => !s.passed && !s.skipped && !s.cancelled);
                 }
                 return scenarios;
             },
@@ -741,6 +884,11 @@ const KarateReport = {
             truncate(str, len)         { return self.truncate(str, len); },
             renderSteps(steps)         { return self.renderSteps(steps); },
             statusOf(item)             { return self.statusOf(item); },
+
+            // The scenario's own error block, shown only when no step already shows it.
+            showScenarioError(scenario) {
+                return !!scenario.error && !(scenario.steps || []).some(s => s.error);
+            },
         };
     },
 
@@ -777,10 +925,16 @@ const KarateReport = {
             sortField: 'name',
             sortDir: 'asc',
             theme: self.getTheme(),
+            // the toggle icon follows a theme change made in another tab (initTheme)
+            init() { this._unfollowTheme = self._followTheme(this); },
+            destroy() { if (this._unfollowTheme) this._unfollowTheme(); },
 
             toggleTheme()        { this.theme = self.toggleTheme(); },
             statusOf(item)       { return self.statusOf(item); },
             statusOfFeature(f)   { return self.statusOfFeature(f); },
+
+            // data.summary, never null: the CSP build's parser has no `?.`.
+            get summary()        { return data.summary || {}; },
 
             // accent colour for an ext KPI tile's value, from its optional `status` field
             summaryCardColor(status) {
@@ -797,6 +951,7 @@ const KarateReport = {
                     passed: s.scenario_passed || 0,
                     failed: s.scenario_failed || 0,
                     skipped: s.scenario_skipped || 0,
+                    cancelled: s.scenario_cancelled || 0,
                 });
             },
 
@@ -855,7 +1010,7 @@ const KarateReport = {
                 const out = [];
                 (data.features || []).forEach(f => {
                     (f.scenarios || []).forEach(s => {
-                        if (!s.passed && !s.skipped) {
+                        if (!s.passed && !s.skipped && !s.cancelled) {
                             out.push({
                                 refId: s.refId,
                                 name: s.name,
@@ -909,9 +1064,10 @@ const KarateReport = {
                     acc.passed += (f.passedCount || 0);
                     acc.failed += (f.failedCount || 0);
                     acc.skipped += (f.skippedCount || 0);
+                    acc.cancelled += (f.cancelledCount || 0);
                     acc.durationMillis += (f.durationMillis || 0);
                     return acc;
-                }, { scenarios: 0, passed: 0, failed: 0, skipped: 0, durationMillis: 0 });
+                }, { scenarios: 0, passed: 0, failed: 0, skipped: 0, cancelled: 0, durationMillis: 0 });
                 t.passedRate = self.passedRate(t.passed, t.failed);
                 return t;
             },
@@ -962,7 +1118,13 @@ const KarateReport = {
         return {
             data,
             theme: self.getTheme(),
+            // the toggle icon follows a theme change made in another tab (initTheme)
+            init() { this._unfollowTheme = self._followTheme(this); },
+            destroy() { if (this._unfollowTheme) this._unfollowTheme(); },
             toggleTheme()  { this.theme = self.toggleTheme(); },
+
+            // data.summary, never null: the CSP build's parser has no `?.`.
+            get summary()  { return data.summary || {}; },
 
             get heroStatus() {
                 const s = data.summary || {};
@@ -970,6 +1132,7 @@ const KarateReport = {
                     passed: s.scenario_passed || 0,
                     failed: s.scenario_failed || 0,
                     skipped: s.scenario_skipped || 0,
+                    cancelled: s.scenario_cancelled || 0,
                 });
             },
 
@@ -1083,6 +1246,55 @@ const KarateReport = {
         document.head.appendChild(style);
     }
 };
+
+/**
+ * Register the page components and the x-k-steps directive with Alpine. The CSP build
+ * resolves x-data only against registered names (x-data="karateSummary"), so this runs
+ * on alpine:init: karate-report.js loads in <head>, ahead of the deferred Alpine.
+ *
+ * x-k-steps="scenario.steps" stands in for x-html="renderSteps(...)", which the CSP build
+ * refuses. Steps are static once loaded, so it renders once from the raw (unproxied)
+ * array: walking a large step tree through the reactive proxy only paid for tracking
+ * that nothing ever triggered.
+ */
+KarateReport.registerAlpine = function (Alpine) {
+    const self = this;
+    Alpine.data('karateSummary', () => self.summaryData());
+    Alpine.data('karateFeature', () => self.featureData());
+    Alpine.data('karateTimeline', () => self.timelineData());
+    Alpine.directive('k-steps', (el, { expression }, { evaluate }) => {
+        el.innerHTML = self.renderSteps(Alpine.raw(evaluate(expression)));
+    });
+};
+
+/**
+ * One delegated click handler for the markup built as HTML strings (step rows, embed
+ * badges, images) and the lightbox, in place of inline onclick="..." attributes, which a
+ * CSP without 'unsafe-inline' refuses. Only the innermost data-k-action element acts, as
+ * the old handlers' stopPropagation() did: a badge or link inside a step row doesn't
+ * also toggle the row. An ext's embed markup can use the same actions
+ * (data-k-action="lightbox" on an <img>).
+ */
+KarateReport._onAction = function (e) {
+    const el = e.target && e.target.closest ? e.target.closest('[data-k-action]') : null;
+    if (!el) return;
+    switch (el.getAttribute('data-k-action')) {
+        case 'toggle-step':      this.toggleStep(el); break;
+        case 'embed-kind':       this.toggleEmbedKind(el, el.getAttribute('data-embed-kind')); break;
+        case 'lightbox':         this.openLightbox(el.src, el.alt); break;
+        case 'copy-log':         this.copyLog(el); break;
+        case 'lightbox-close':   el.closest('dialog').close(); break;
+        // a click on the backdrop lands on the <dialog> itself; one inside its content doesn't
+        case 'lightbox-backdrop': if (e.target === el) el.close(); break;
+        // 'follow': a link inside a step row; the browser follows it and the row stays put
+    }
+};
+
+// Wired only in a browser: the report tests evaluate this file with stub globals.
+if (typeof document !== 'undefined' && typeof document.addEventListener === 'function') {
+    document.addEventListener('alpine:init', () => KarateReport.registerAlpine(window.Alpine));
+    document.addEventListener('click', e => KarateReport._onAction(e));
+}
 
 // Initialize theme immediately (before Alpine loads)
 // Expose on window so ext scripts can register embed renderers via

@@ -1,11 +1,11 @@
 {
   "schemaVersion": 1,
-  "index": "39%",
-  "verdict": "NOT_READY",
+  "index": "55%",
+  "verdict": "CONDITIONAL",
   "design": "96%",
   "provenness": "34%",
-  "contractMatched": 12,
+  "contractMatched": 11,
   "contractScenarios": 12,
   "notTested": 2,
-  "lastContractRun": "2026-10-23"
+  "lastContractRun": "2026-11-27"
 }

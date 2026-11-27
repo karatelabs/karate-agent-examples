@@ -1,36 +1,34 @@
-<testsuite name="insurance Policy API — quote → bind → claim lifecycle (REST / OpenAPI)" tests="12" failures="0" time="0.216" skipped="0"><testcase classname="checks.policy" name="price a quote (the REST front door to the rating engine)" time="0.022"><system-out>* baseUrl
+<testsuite name="insurance Policy API — quote → bind → claim lifecycle (REST / OpenAPI)" tests="12" failures="0" time="0.178" skipped="0"><testcase classname="checks.policy" name="price a quote (the REST front door to the rating engine)" time="0.018"><system-out>* baseUrl
 Given &apos;policies&apos;
 When get
-request:
-1 &gt; GET http://localhost:36653/policies
-1 &gt; Host: localhost:36653
+request: 2026-11-27T11:20:00.861Z
+1 &gt; GET http://localhost:39455/policies
+1 &gt; Host: localhost:39455
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.12.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 
-response time in milliseconds: 3
-1 &lt; 200 GET http://localhost:36653/policies
+response: 2ms
+1 &lt; 200 GET http://localhost:39455/policies
+1 &lt; Content-Type: application/json; charset=UTF-8
+1 &lt; Karate-Mock: true
 1 &lt; content-length: 2
 1 &lt; vary: origin
-1 &lt; Karate-Mock: true
-1 &lt; Content-Type: application/json; charset=UTF-8
 [
 ]
 
-GET http://localhost:36653/policies
-200 (3 ms)
 Then 200
 * row = { state: &apos;CA&apos;, coverage: &apos;COLLISION&apos;, driverAge: 40, priorClaims: false }
 * check = Rule.execute(&apos;rating&apos;, row)
 Given &apos;quotes&apos;
 And row
 When post
-request:
-2 &gt; POST http://localhost:36653/quotes
+request: 2026-11-27T11:20:00.871Z
+2 &gt; POST http://localhost:39455/quotes
 2 &gt; Content-Type: application/json
-2 &gt; Host: localhost:36653
+2 &gt; Host: localhost:39455
 2 &gt; Content-Length: 72
 2 &gt; Connection: keep-alive
-2 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.12.1)
+2 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;state&quot;: &quot;CA&quot;,
   &quot;coverage&quot;: &quot;COLLISION&quot;,
@@ -38,12 +36,12 @@ request:
   &quot;priorClaims&quot;: false
 }
 
-response time in milliseconds: 4
-2 &lt; 201 POST http://localhost:36653/quotes
+response: 2ms
+2 &lt; 201 POST http://localhost:39455/quotes
+2 &lt; Content-Type: application/json; charset=UTF-8
+2 &lt; Karate-Mock: true
 2 &lt; content-length: 79
 2 &lt; vary: origin
-2 &lt; Karate-Mock: true
-2 &lt; Content-Type: application/json; charset=UTF-8
 {
   &quot;id&quot;: &quot;pol-10&quot;,
   &quot;policyClass&quot;: &quot;PREFERRED&quot;,
@@ -51,43 +49,39 @@ response time in milliseconds: 4
   &quot;currency&quot;: &quot;USD&quot;
 }
 
-POST http://localhost:36653/quotes
-201 (4 ms)
 Then 201
 And response contains check.output
 * check.verify(true, &apos;live /quotes matches the rulebook&apos;)
 </system-out></testcase>
-<testcase classname="checks.policy" name="bind a policy from a quote" time="0.018"><system-out>* baseUrl
+<testcase classname="checks.policy" name="bind a policy from a quote" time="0.013"><system-out>* baseUrl
 Given &apos;policies&apos;
 When get
-request:
-1 &gt; GET http://localhost:36653/policies
-1 &gt; Host: localhost:36653
+request: 2026-11-27T11:20:00.879Z
+1 &gt; GET http://localhost:39455/policies
+1 &gt; Host: localhost:39455
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.12.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 
-response time in milliseconds: 3
-1 &lt; 200 GET http://localhost:36653/policies
+response: 2ms
+1 &lt; 200 GET http://localhost:39455/policies
+1 &lt; Content-Type: application/json; charset=UTF-8
+1 &lt; Karate-Mock: true
 1 &lt; content-length: 2
 1 &lt; vary: origin
-1 &lt; Karate-Mock: true
-1 &lt; Content-Type: application/json; charset=UTF-8
 [
 ]
 
-GET http://localhost:36653/policies
-200 (3 ms)
 Then 200
 Given &apos;quotes&apos;
 And { state: &apos;CA&apos;, coverage: &apos;COLLISION&apos;, driverAge: 40, priorClaims: false }
 When post
-request:
-2 &gt; POST http://localhost:36653/quotes
+request: 2026-11-27T11:20:00.882Z
+2 &gt; POST http://localhost:39455/quotes
 2 &gt; Content-Type: application/json
-2 &gt; Host: localhost:36653
+2 &gt; Host: localhost:39455
 2 &gt; Content-Length: 72
 2 &gt; Connection: keep-alive
-2 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.12.1)
+2 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;state&quot;: &quot;CA&quot;,
   &quot;coverage&quot;: &quot;COLLISION&quot;,
@@ -95,12 +89,12 @@ request:
   &quot;priorClaims&quot;: false
 }
 
-response time in milliseconds: 2
-2 &lt; 201 POST http://localhost:36653/quotes
+response: 1ms
+2 &lt; 201 POST http://localhost:39455/quotes
+2 &lt; Content-Type: application/json; charset=UTF-8
+2 &lt; Karate-Mock: true
 2 &lt; content-length: 79
 2 &lt; vary: origin
-2 &lt; Karate-Mock: true
-2 &lt; Content-Type: application/json; charset=UTF-8
 {
   &quot;id&quot;: &quot;pol-11&quot;,
   &quot;policyClass&quot;: &quot;PREFERRED&quot;,
@@ -108,31 +102,29 @@ response time in milliseconds: 2
   &quot;currency&quot;: &quot;USD&quot;
 }
 
-POST http://localhost:36653/quotes
-201 (2 ms)
 Then 201
 * quote = response
 Given &apos;policies&apos;
 And { quoteId: &apos;#(quote.id)&apos;, holder: &apos;Ada Lovelace&apos; }
 When post
-request:
-3 &gt; POST http://localhost:36653/policies
+request: 2026-11-27T11:20:00.886Z
+3 &gt; POST http://localhost:39455/policies
 3 &gt; Content-Type: application/json
-3 &gt; Host: localhost:36653
+3 &gt; Host: localhost:39455
 3 &gt; Content-Length: 44
 3 &gt; Connection: keep-alive
-3 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.12.1)
+3 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;quoteId&quot;: &quot;pol-11&quot;,
   &quot;holder&quot;: &quot;Ada Lovelace&quot;
 }
 
-response time in milliseconds: 4
-3 &lt; 201 POST http://localhost:36653/policies
+response: 3ms
+3 &lt; 201 POST http://localhost:39455/policies
+3 &lt; Content-Type: application/json; charset=UTF-8
+3 &lt; Karate-Mock: true
 3 &lt; content-length: 109
 3 &lt; vary: origin
-3 &lt; Karate-Mock: true
-3 &lt; Content-Type: application/json; charset=UTF-8
 {
   &quot;id&quot;: &quot;pol-12&quot;,
   &quot;quoteId&quot;: &quot;pol-11&quot;,
@@ -142,27 +134,25 @@ response time in milliseconds: 4
   &quot;status&quot;: &quot;BOUND&quot;
 }
 
-POST http://localhost:36653/policies
-201 (4 ms)
 Then 201
 And response.status == &apos;BOUND&apos;
 And response.monthlyPremium == quote.monthlyPremium
 </system-out></testcase>
-<testcase classname="checks.policy" name="bind a policy, then read it back off the list" time="0.024"><system-out>* baseUrl
+<testcase classname="checks.policy" name="bind a policy, then read it back off the list" time="0.025"><system-out>* baseUrl
 Given &apos;policies&apos;
 When get
-request:
-1 &gt; GET http://localhost:36653/policies
-1 &gt; Host: localhost:36653
+request: 2026-11-27T11:20:00.893Z
+1 &gt; GET http://localhost:39455/policies
+1 &gt; Host: localhost:39455
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.12.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 
-response time in milliseconds: 4
-1 &lt; 200 GET http://localhost:36653/policies
+response: 5ms
+1 &lt; 200 GET http://localhost:39455/policies
+1 &lt; Content-Type: application/json; charset=UTF-8
+1 &lt; Karate-Mock: true
 1 &lt; content-length: 111
 1 &lt; vary: origin
-1 &lt; Karate-Mock: true
-1 &lt; Content-Type: application/json; charset=UTF-8
 [
   {
     &quot;id&quot;: &quot;pol-12&quot;,
@@ -174,19 +164,17 @@ response time in milliseconds: 4
   }
 ]
 
-GET http://localhost:36653/policies
-200 (4 ms)
 Then 200
 Given &apos;quotes&apos;
 And { state: &apos;CA&apos;, coverage: &apos;COMPREHENSIVE&apos;, driverAge: 40, priorClaims: false }
 When post
-request:
-2 &gt; POST http://localhost:36653/quotes
+request: 2026-11-27T11:20:00.900Z
+2 &gt; POST http://localhost:39455/quotes
 2 &gt; Content-Type: application/json
-2 &gt; Host: localhost:36653
+2 &gt; Host: localhost:39455
 2 &gt; Content-Length: 76
 2 &gt; Connection: keep-alive
-2 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.12.1)
+2 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;state&quot;: &quot;CA&quot;,
   &quot;coverage&quot;: &quot;COMPREHENSIVE&quot;,
@@ -194,12 +182,12 @@ request:
   &quot;priorClaims&quot;: false
 }
 
-response time in milliseconds: 2
-2 &lt; 201 POST http://localhost:36653/quotes
+response: 5ms
+2 &lt; 201 POST http://localhost:39455/quotes
+2 &lt; Content-Type: application/json; charset=UTF-8
+2 &lt; Karate-Mock: true
 2 &lt; content-length: 79
 2 &lt; vary: origin
-2 &lt; Karate-Mock: true
-2 &lt; Content-Type: application/json; charset=UTF-8
 {
   &quot;id&quot;: &quot;pol-13&quot;,
   &quot;policyClass&quot;: &quot;PREFERRED&quot;,
@@ -207,31 +195,29 @@ response time in milliseconds: 2
   &quot;currency&quot;: &quot;USD&quot;
 }
 
-POST http://localhost:36653/quotes
-201 (2 ms)
 Then 201
 * quote = response
 Given &apos;policies&apos;
 And { quoteId: &apos;#(quote.id)&apos;, holder: &apos;Grace Hopper&apos; }
 When post
-request:
-3 &gt; POST http://localhost:36653/policies
+request: 2026-11-27T11:20:00.907Z
+3 &gt; POST http://localhost:39455/policies
 3 &gt; Content-Type: application/json
-3 &gt; Host: localhost:36653
+3 &gt; Host: localhost:39455
 3 &gt; Content-Length: 44
 3 &gt; Connection: keep-alive
-3 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.12.1)
+3 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;quoteId&quot;: &quot;pol-13&quot;,
   &quot;holder&quot;: &quot;Grace Hopper&quot;
 }
 
-response time in milliseconds: 2
-3 &lt; 201 POST http://localhost:36653/policies
+response: 3ms
+3 &lt; 201 POST http://localhost:39455/policies
+3 &lt; Content-Type: application/json; charset=UTF-8
+3 &lt; Karate-Mock: true
 3 &lt; content-length: 109
 3 &lt; vary: origin
-3 &lt; Karate-Mock: true
-3 &lt; Content-Type: application/json; charset=UTF-8
 {
   &quot;id&quot;: &quot;pol-14&quot;,
   &quot;quoteId&quot;: &quot;pol-13&quot;,
@@ -241,23 +227,21 @@ response time in milliseconds: 2
   &quot;status&quot;: &quot;BOUND&quot;
 }
 
-POST http://localhost:36653/policies
-201 (2 ms)
 Then 201
 Given &apos;policies&apos;
 When get
-request:
-4 &gt; GET http://localhost:36653/policies
-4 &gt; Host: localhost:36653
+request: 2026-11-27T11:20:00.911Z
+4 &gt; GET http://localhost:39455/policies
+4 &gt; Host: localhost:39455
 4 &gt; Connection: keep-alive
-4 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.12.1)
+4 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 
-response time in milliseconds: 4
-4 &lt; 200 GET http://localhost:36653/policies
+response: 3ms
+4 &lt; 200 GET http://localhost:39455/policies
+4 &lt; Content-Type: application/json; charset=UTF-8
+4 &lt; Karate-Mock: true
 4 &lt; content-length: 221
 4 &lt; vary: origin
-4 &lt; Karate-Mock: true
-4 &lt; Content-Type: application/json; charset=UTF-8
 [
   {
     &quot;id&quot;: &quot;pol-12&quot;,
@@ -277,27 +261,25 @@ response time in milliseconds: 4
   }
 ]
 
-GET http://localhost:36653/policies
-200 (4 ms)
 Then 200
 And response == &apos;#array&apos;
 And response[*].holder contains &apos;Grace Hopper&apos;
 </system-out></testcase>
-<testcase classname="checks.policy" name="fetch a missing policy is a 404" time="0.017"><system-out>* baseUrl
+<testcase classname="checks.policy" name="fetch a missing policy is a 404" time="0.011"><system-out>* baseUrl
 Given &apos;policies&apos;
 When get
-request:
-1 &gt; GET http://localhost:36653/policies
-1 &gt; Host: localhost:36653
+request: 2026-11-27T11:20:00.921Z
+1 &gt; GET http://localhost:39455/policies
+1 &gt; Host: localhost:39455
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.12.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 
-response time in milliseconds: 2
-1 &lt; 200 GET http://localhost:36653/policies
+response: 3ms
+1 &lt; 200 GET http://localhost:39455/policies
+1 &lt; Content-Type: application/json; charset=UTF-8
+1 &lt; Karate-Mock: true
 1 &lt; content-length: 221
 1 &lt; vary: origin
-1 &lt; Karate-Mock: true
-1 &lt; Content-Type: application/json; charset=UTF-8
 [
   {
     &quot;id&quot;: &quot;pol-12&quot;,
@@ -317,48 +299,44 @@ response time in milliseconds: 2
   }
 ]
 
-GET http://localhost:36653/policies
-200 (2 ms)
 Then 200
 Given &apos;policies&apos;, &apos;does-not-exist&apos;
 When get
-request:
-2 &gt; GET http://localhost:36653/policies/does-not-exist
-2 &gt; Host: localhost:36653
+request: 2026-11-27T11:20:00.925Z
+2 &gt; GET http://localhost:39455/policies/does-not-exist
+2 &gt; Host: localhost:39455
 2 &gt; Connection: keep-alive
-2 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.12.1)
+2 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 
-response time in milliseconds: 2
-2 &lt; 404 GET http://localhost:36653/policies/does-not-exist
+response: 4ms
+2 &lt; 404 GET http://localhost:39455/policies/does-not-exist
+2 &lt; Content-Type: application/json; charset=UTF-8
+2 &lt; Karate-Mock: true
 2 &lt; content-length: 48
 2 &lt; vary: origin
-2 &lt; Karate-Mock: true
-2 &lt; Content-Type: application/json; charset=UTF-8
 {
   &quot;error&quot;: &quot;no such policy&quot;,
   &quot;id&quot;: &quot;does-not-exist&quot;
 }
 
-GET http://localhost:36653/policies/does-not-exist
-404 (2 ms)
 Then 404
 And response contains { error: &apos;#string&apos; }
 </system-out></testcase>
-<testcase classname="checks.policy" name="a rating input the rate book cannot price is refused — a territory we cannot rate" time="0.012"><system-out>* baseUrl
+<testcase classname="checks.policy" name="a rating input the rate book cannot price is refused — a territory we cannot rate" time="0.009"><system-out>* baseUrl
 Given &apos;policies&apos;
 When get
-request:
-1 &gt; GET http://localhost:36653/policies
-1 &gt; Host: localhost:36653
+request: 2026-11-27T11:20:00.934Z
+1 &gt; GET http://localhost:39455/policies
+1 &gt; Host: localhost:39455
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.12.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 
-response time in milliseconds: 3
-1 &lt; 200 GET http://localhost:36653/policies
+response: 2ms
+1 &lt; 200 GET http://localhost:39455/policies
+1 &lt; Content-Type: application/json; charset=UTF-8
+1 &lt; Karate-Mock: true
 1 &lt; content-length: 221
 1 &lt; vary: origin
-1 &lt; Karate-Mock: true
-1 &lt; Content-Type: application/json; charset=UTF-8
 [
   {
     &quot;id&quot;: &quot;pol-12&quot;,
@@ -378,56 +356,52 @@ response time in milliseconds: 3
   }
 ]
 
-GET http://localhost:36653/policies
-200 (3 ms)
 Then 200
 Given &apos;quotes&apos;
 And { state: &apos;ZZ&apos;, coverage: &apos;COLLISION&apos;, driverAge: 40 }
 When post
-request:
-2 &gt; POST http://localhost:36653/quotes
+request: 2026-11-27T11:20:00.937Z
+2 &gt; POST http://localhost:39455/quotes
 2 &gt; Content-Type: application/json
-2 &gt; Host: localhost:36653
+2 &gt; Host: localhost:39455
 2 &gt; Content-Length: 52
 2 &gt; Connection: keep-alive
-2 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.12.1)
+2 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;state&quot;: &quot;ZZ&quot;,
   &quot;coverage&quot;: &quot;COLLISION&quot;,
   &quot;driverAge&quot;: 40
 }
 
-response time in milliseconds: 2
-2 &lt; 400 POST http://localhost:36653/quotes
+response: 1ms
+2 &lt; 400 POST http://localhost:39455/quotes
+2 &lt; Content-Type: application/json; charset=UTF-8
+2 &lt; Karate-Mock: true
 2 &lt; content-length: 69
 2 &lt; vary: origin
-2 &lt; Karate-Mock: true
-2 &lt; Content-Type: application/json; charset=UTF-8
 {
   &quot;error&quot;: &quot;state must be one of [CA, NY, FL, TX, WA]&quot;,
   &quot;field&quot;: &quot;state&quot;
 }
 
-POST http://localhost:36653/quotes
-400 (2 ms)
 Then 400
 And response == { error: &apos;#string&apos;, field: &apos;state&apos; }
 </system-out></testcase>
-<testcase classname="checks.policy" name="a rating input the rate book cannot price is refused — a coverage line we do not sell" time="0.013"><system-out>* baseUrl
+<testcase classname="checks.policy" name="a rating input the rate book cannot price is refused — a coverage line we do not sell" time="0.014"><system-out>* baseUrl
 Given &apos;policies&apos;
 When get
-request:
-1 &gt; GET http://localhost:36653/policies
-1 &gt; Host: localhost:36653
+request: 2026-11-27T11:20:00.946Z
+1 &gt; GET http://localhost:39455/policies
+1 &gt; Host: localhost:39455
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.12.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 
-response time in milliseconds: 3
-1 &lt; 200 GET http://localhost:36653/policies
+response: 2ms
+1 &lt; 200 GET http://localhost:39455/policies
+1 &lt; Content-Type: application/json; charset=UTF-8
+1 &lt; Karate-Mock: true
 1 &lt; content-length: 221
 1 &lt; vary: origin
-1 &lt; Karate-Mock: true
-1 &lt; Content-Type: application/json; charset=UTF-8
 [
   {
     &quot;id&quot;: &quot;pol-12&quot;,
@@ -447,56 +421,52 @@ response time in milliseconds: 3
   }
 ]
 
-GET http://localhost:36653/policies
-200 (3 ms)
 Then 200
 Given &apos;quotes&apos;
 And { state: &apos;CA&apos;, coverage: &apos;MARINE&apos;, driverAge: 40 }
 When post
-request:
-2 &gt; POST http://localhost:36653/quotes
+request: 2026-11-27T11:20:00.950Z
+2 &gt; POST http://localhost:39455/quotes
 2 &gt; Content-Type: application/json
-2 &gt; Host: localhost:36653
+2 &gt; Host: localhost:39455
 2 &gt; Content-Length: 49
 2 &gt; Connection: keep-alive
-2 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.12.1)
+2 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;state&quot;: &quot;CA&quot;,
   &quot;coverage&quot;: &quot;MARINE&quot;,
   &quot;driverAge&quot;: 40
 }
 
-response time in milliseconds: 2
-2 &lt; 400 POST http://localhost:36653/quotes
+response: 4ms
+2 &lt; 400 POST http://localhost:39455/quotes
+2 &lt; Content-Type: application/json; charset=UTF-8
+2 &lt; Karate-Mock: true
 2 &lt; content-length: 92
 2 &lt; vary: origin
-2 &lt; Karate-Mock: true
-2 &lt; Content-Type: application/json; charset=UTF-8
 {
   &quot;error&quot;: &quot;coverage must be one of [LIABILITY, COLLISION, COMPREHENSIVE]&quot;,
   &quot;field&quot;: &quot;coverage&quot;
 }
 
-POST http://localhost:36653/quotes
-400 (2 ms)
 Then 400
 And response == { error: &apos;#string&apos;, field: &apos;coverage&apos; }
 </system-out></testcase>
-<testcase classname="checks.policy" name="a rating input the rate book cannot price is refused — an age outside the book" time="0.014"><system-out>* baseUrl
+<testcase classname="checks.policy" name="a rating input the rate book cannot price is refused — an age outside the book" time="0.011"><system-out>* baseUrl
 Given &apos;policies&apos;
 When get
-request:
-1 &gt; GET http://localhost:36653/policies
-1 &gt; Host: localhost:36653
+request: 2026-11-27T11:20:00.962Z
+1 &gt; GET http://localhost:39455/policies
+1 &gt; Host: localhost:39455
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.12.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 
-response time in milliseconds: 4
-1 &lt; 200 GET http://localhost:36653/policies
+response: 2ms
+1 &lt; 200 GET http://localhost:39455/policies
+1 &lt; Content-Type: application/json; charset=UTF-8
+1 &lt; Karate-Mock: true
 1 &lt; content-length: 221
 1 &lt; vary: origin
-1 &lt; Karate-Mock: true
-1 &lt; Content-Type: application/json; charset=UTF-8
 [
   {
     &quot;id&quot;: &quot;pol-12&quot;,
@@ -516,56 +486,52 @@ response time in milliseconds: 4
   }
 ]
 
-GET http://localhost:36653/policies
-200 (4 ms)
 Then 200
 Given &apos;quotes&apos;
 And { state: &apos;CA&apos;, coverage: &apos;COLLISION&apos;, driverAge: 17 }
 When post
-request:
-2 &gt; POST http://localhost:36653/quotes
+request: 2026-11-27T11:20:00.966Z
+2 &gt; POST http://localhost:39455/quotes
 2 &gt; Content-Type: application/json
-2 &gt; Host: localhost:36653
+2 &gt; Host: localhost:39455
 2 &gt; Content-Length: 52
 2 &gt; Connection: keep-alive
-2 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.12.1)
+2 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;state&quot;: &quot;CA&quot;,
   &quot;coverage&quot;: &quot;COLLISION&quot;,
   &quot;driverAge&quot;: 17
 }
 
-response time in milliseconds: 3
-2 &lt; 400 POST http://localhost:36653/quotes
+response: 3ms
+2 &lt; 400 POST http://localhost:39455/quotes
+2 &lt; Content-Type: application/json; charset=UTF-8
+2 &lt; Karate-Mock: true
 2 &lt; content-length: 67
 2 &lt; vary: origin
-2 &lt; Karate-Mock: true
-2 &lt; Content-Type: application/json; charset=UTF-8
 {
   &quot;error&quot;: &quot;driverAge must be between 18 and 80&quot;,
   &quot;field&quot;: &quot;driverAge&quot;
 }
 
-POST http://localhost:36653/quotes
-400 (3 ms)
 Then 400
 And response == { error: &apos;#string&apos;, field: &apos;driverAge&apos; }
 </system-out></testcase>
-<testcase classname="checks.policy" name="a rating input the rate book cannot price is refused — an age sent as a string" time="0.014"><system-out>* baseUrl
+<testcase classname="checks.policy" name="a rating input the rate book cannot price is refused — an age sent as a string" time="0.01"><system-out>* baseUrl
 Given &apos;policies&apos;
 When get
-request:
-1 &gt; GET http://localhost:36653/policies
-1 &gt; Host: localhost:36653
+request: 2026-11-27T11:20:00.975Z
+1 &gt; GET http://localhost:39455/policies
+1 &gt; Host: localhost:39455
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.12.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 
-response time in milliseconds: 3
-1 &lt; 200 GET http://localhost:36653/policies
+response: 1ms
+1 &lt; 200 GET http://localhost:39455/policies
+1 &lt; Content-Type: application/json; charset=UTF-8
+1 &lt; Karate-Mock: true
 1 &lt; content-length: 221
 1 &lt; vary: origin
-1 &lt; Karate-Mock: true
-1 &lt; Content-Type: application/json; charset=UTF-8
 [
   {
     &quot;id&quot;: &quot;pol-12&quot;,
@@ -585,56 +551,52 @@ response time in milliseconds: 3
   }
 ]
 
-GET http://localhost:36653/policies
-200 (3 ms)
 Then 200
 Given &apos;quotes&apos;
 And { state: &apos;CA&apos;, coverage: &apos;COLLISION&apos;, driverAge: &apos;40&apos; }
 When post
-request:
-2 &gt; POST http://localhost:36653/quotes
+request: 2026-11-27T11:20:00.979Z
+2 &gt; POST http://localhost:39455/quotes
 2 &gt; Content-Type: application/json
-2 &gt; Host: localhost:36653
+2 &gt; Host: localhost:39455
 2 &gt; Content-Length: 54
 2 &gt; Connection: keep-alive
-2 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.12.1)
+2 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;state&quot;: &quot;CA&quot;,
   &quot;coverage&quot;: &quot;COLLISION&quot;,
   &quot;driverAge&quot;: &quot;40&quot;
 }
 
-response time in milliseconds: 3
-2 &lt; 400 POST http://localhost:36653/quotes
+response: 1ms
+2 &lt; 400 POST http://localhost:39455/quotes
+2 &lt; Content-Type: application/json; charset=UTF-8
+2 &lt; Karate-Mock: true
 2 &lt; content-length: 67
 2 &lt; vary: origin
-2 &lt; Karate-Mock: true
-2 &lt; Content-Type: application/json; charset=UTF-8
 {
   &quot;error&quot;: &quot;driverAge must be between 18 and 80&quot;,
   &quot;field&quot;: &quot;driverAge&quot;
 }
 
-POST http://localhost:36653/quotes
-400 (3 ms)
 Then 400
 And response == { error: &apos;#string&apos;, field: &apos;driverAge&apos; }
 </system-out></testcase>
-<testcase classname="checks.policy" name="a rating input the rate book cannot price is refused — a flag sent as a string" time="0.015"><system-out>* baseUrl
+<testcase classname="checks.policy" name="a rating input the rate book cannot price is refused — a flag sent as a string" time="0.011"><system-out>* baseUrl
 Given &apos;policies&apos;
 When get
-request:
-1 &gt; GET http://localhost:36653/policies
-1 &gt; Host: localhost:36653
+request: 2026-11-27T11:20:00.987Z
+1 &gt; GET http://localhost:39455/policies
+1 &gt; Host: localhost:39455
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.12.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 
-response time in milliseconds: 4
-1 &lt; 200 GET http://localhost:36653/policies
+response: 3ms
+1 &lt; 200 GET http://localhost:39455/policies
+1 &lt; Content-Type: application/json; charset=UTF-8
+1 &lt; Karate-Mock: true
 1 &lt; content-length: 221
 1 &lt; vary: origin
-1 &lt; Karate-Mock: true
-1 &lt; Content-Type: application/json; charset=UTF-8
 [
   {
     &quot;id&quot;: &quot;pol-12&quot;,
@@ -654,19 +616,17 @@ response time in milliseconds: 4
   }
 ]
 
-GET http://localhost:36653/policies
-200 (4 ms)
 Then 200
 Given &apos;quotes&apos;
 And { state: &apos;CA&apos;, coverage: &apos;COLLISION&apos;, driverAge: 40, priorClaims: &apos;true&apos; }
 When post
-request:
-2 &gt; POST http://localhost:36653/quotes
+request: 2026-11-27T11:20:00.992Z
+2 &gt; POST http://localhost:39455/quotes
 2 &gt; Content-Type: application/json
-2 &gt; Host: localhost:36653
+2 &gt; Host: localhost:39455
 2 &gt; Content-Length: 73
 2 &gt; Connection: keep-alive
-2 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.12.1)
+2 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;state&quot;: &quot;CA&quot;,
   &quot;coverage&quot;: &quot;COLLISION&quot;,
@@ -674,37 +634,35 @@ request:
   &quot;priorClaims&quot;: &quot;true&quot;
 }
 
-response time in milliseconds: 3
-2 &lt; 400 POST http://localhost:36653/quotes
-2 &lt; content-length: 63
-2 &lt; vary: origin
-2 &lt; Karate-Mock: true
+response: 1ms
+2 &lt; 400 POST http://localhost:39455/quotes
 2 &lt; Content-Type: application/json; charset=UTF-8
+2 &lt; Karate-Mock: true
+2 &lt; content-length: 67
+2 &lt; vary: origin
 {
-  &quot;error&quot;: &quot;priorClaims must be a boolean&quot;,
+  &quot;error&quot;: &quot;priorClaims must be true or false&quot;,
   &quot;field&quot;: &quot;priorClaims&quot;
 }
 
-POST http://localhost:36653/quotes
-400 (3 ms)
 Then 400
 And response == { error: &apos;#string&apos;, field: &apos;priorClaims&apos; }
 </system-out></testcase>
-<testcase classname="checks.policy" name="binding a quote that does not exist is refused" time="0.012"><system-out>* baseUrl
+<testcase classname="checks.policy" name="binding a quote that does not exist is refused" time="0.008"><system-out>* baseUrl
 Given &apos;policies&apos;
 When get
-request:
-1 &gt; GET http://localhost:36653/policies
-1 &gt; Host: localhost:36653
+request: 2026-11-27T11:20:01.000Z
+1 &gt; GET http://localhost:39455/policies
+1 &gt; Host: localhost:39455
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.12.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 
-response time in milliseconds: 2
-1 &lt; 200 GET http://localhost:36653/policies
+response: 1ms
+1 &lt; 200 GET http://localhost:39455/policies
+1 &lt; Content-Type: application/json; charset=UTF-8
+1 &lt; Karate-Mock: true
 1 &lt; content-length: 221
 1 &lt; vary: origin
-1 &lt; Karate-Mock: true
-1 &lt; Content-Type: application/json; charset=UTF-8
 [
   {
     &quot;id&quot;: &quot;pol-12&quot;,
@@ -724,55 +682,51 @@ response time in milliseconds: 2
   }
 ]
 
-GET http://localhost:36653/policies
-200 (2 ms)
 Then 200
 Given &apos;policies&apos;
 And { quoteId: &apos;q-does-not-exist&apos;, holder: &apos;Ada Lovelace&apos; }
 When post
-request:
-2 &gt; POST http://localhost:36653/policies
+request: 2026-11-27T11:20:01.003Z
+2 &gt; POST http://localhost:39455/policies
 2 &gt; Content-Type: application/json
-2 &gt; Host: localhost:36653
+2 &gt; Host: localhost:39455
 2 &gt; Content-Length: 54
 2 &gt; Connection: keep-alive
-2 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.12.1)
+2 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;quoteId&quot;: &quot;q-does-not-exist&quot;,
   &quot;holder&quot;: &quot;Ada Lovelace&quot;
 }
 
-response time in milliseconds: 2
-2 &lt; 400 POST http://localhost:36653/policies
+response: 2ms
+2 &lt; 400 POST http://localhost:39455/policies
+2 &lt; Content-Type: application/json; charset=UTF-8
+2 &lt; Karate-Mock: true
 2 &lt; content-length: 61
 2 &lt; vary: origin
-2 &lt; Karate-Mock: true
-2 &lt; Content-Type: application/json; charset=UTF-8
 {
   &quot;error&quot;: &quot;no such quote: q-does-not-exist&quot;,
   &quot;field&quot;: &quot;quoteId&quot;
 }
 
-POST http://localhost:36653/policies
-400 (2 ms)
 Then 400
 And response == { error: &apos;#string&apos;, field: &apos;quoteId&apos; }
 </system-out></testcase>
-<testcase classname="checks.policy" name="a claim for nothing, against nothing, is refused" time="0.014"><system-out>* baseUrl
+<testcase classname="checks.policy" name="a claim for nothing, against nothing, is refused" time="0.009"><system-out>* baseUrl
 Given &apos;policies&apos;
 When get
-request:
-1 &gt; GET http://localhost:36653/policies
-1 &gt; Host: localhost:36653
+request: 2026-11-27T11:20:01.010Z
+1 &gt; GET http://localhost:39455/policies
+1 &gt; Host: localhost:39455
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.12.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 
-response time in milliseconds: 2
-1 &lt; 200 GET http://localhost:36653/policies
+response: 2ms
+1 &lt; 200 GET http://localhost:39455/policies
+1 &lt; Content-Type: application/json; charset=UTF-8
+1 &lt; Karate-Mock: true
 1 &lt; content-length: 221
 1 &lt; vary: origin
-1 &lt; Karate-Mock: true
-1 &lt; Content-Type: application/json; charset=UTF-8
 [
   {
     &quot;id&quot;: &quot;pol-12&quot;,
@@ -792,55 +746,51 @@ response time in milliseconds: 2
   }
 ]
 
-GET http://localhost:36653/policies
-200 (2 ms)
 Then 200
 Given &apos;claims&apos;
 And { policyId: &apos;p-does-not-exist&apos;, amount: 0 }
 When post
-request:
-2 &gt; POST http://localhost:36653/claims
+request: 2026-11-27T11:20:01.014Z
+2 &gt; POST http://localhost:39455/claims
 2 &gt; Content-Type: application/json
-2 &gt; Host: localhost:36653
+2 &gt; Host: localhost:39455
 2 &gt; Content-Length: 42
 2 &gt; Connection: keep-alive
-2 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.12.1)
+2 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;policyId&quot;: &quot;p-does-not-exist&quot;,
   &quot;amount&quot;: 0
 }
 
-response time in milliseconds: 4
-2 &lt; 400 POST http://localhost:36653/claims
+response: 1ms
+2 &lt; 400 POST http://localhost:39455/claims
+2 &lt; Content-Type: application/json; charset=UTF-8
+2 &lt; Karate-Mock: true
 2 &lt; content-length: 62
 2 &lt; vary: origin
-2 &lt; Karate-Mock: true
-2 &lt; Content-Type: application/json; charset=UTF-8
 {
   &quot;error&quot;: &quot;amount must be a positive integer&quot;,
   &quot;field&quot;: &quot;amount&quot;
 }
 
-POST http://localhost:36653/claims
-400 (4 ms)
 Then 400
 And response == { error: &apos;#string&apos;, field: &apos;amount&apos; }
 </system-out></testcase>
-<testcase classname="checks.policy" name="file a claim against a policy" time="0.022"><system-out>* baseUrl
+<testcase classname="checks.policy" name="file a claim against a policy" time="0.014"><system-out>* baseUrl
 Given &apos;policies&apos;
 When get
-request:
-1 &gt; GET http://localhost:36653/policies
-1 &gt; Host: localhost:36653
+request: 2026-11-27T11:20:01.020Z
+1 &gt; GET http://localhost:39455/policies
+1 &gt; Host: localhost:39455
 1 &gt; Connection: keep-alive
-1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.12.1)
+1 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 
-response time in milliseconds: 2
-1 &lt; 200 GET http://localhost:36653/policies
+response: 1ms
+1 &lt; 200 GET http://localhost:39455/policies
+1 &lt; Content-Type: application/json; charset=UTF-8
+1 &lt; Karate-Mock: true
 1 &lt; content-length: 221
 1 &lt; vary: origin
-1 &lt; Karate-Mock: true
-1 &lt; Content-Type: application/json; charset=UTF-8
 [
   {
     &quot;id&quot;: &quot;pol-12&quot;,
@@ -860,19 +810,17 @@ response time in milliseconds: 2
   }
 ]
 
-GET http://localhost:36653/policies
-200 (2 ms)
 Then 200
 Given &apos;quotes&apos;
 And { state: &apos;CA&apos;, coverage: &apos;LIABILITY&apos;, driverAge: 40, priorClaims: false }
 When post
-request:
-2 &gt; POST http://localhost:36653/quotes
+request: 2026-11-27T11:20:01.023Z
+2 &gt; POST http://localhost:39455/quotes
 2 &gt; Content-Type: application/json
-2 &gt; Host: localhost:36653
+2 &gt; Host: localhost:39455
 2 &gt; Content-Length: 72
 2 &gt; Connection: keep-alive
-2 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.12.1)
+2 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;state&quot;: &quot;CA&quot;,
   &quot;coverage&quot;: &quot;LIABILITY&quot;,
@@ -880,12 +828,12 @@ request:
   &quot;priorClaims&quot;: false
 }
 
-response time in milliseconds: 2
-2 &lt; 201 POST http://localhost:36653/quotes
+response: 1ms
+2 &lt; 201 POST http://localhost:39455/quotes
+2 &lt; Content-Type: application/json; charset=UTF-8
+2 &lt; Karate-Mock: true
 2 &lt; content-length: 78
 2 &lt; vary: origin
-2 &lt; Karate-Mock: true
-2 &lt; Content-Type: application/json; charset=UTF-8
 {
   &quot;id&quot;: &quot;pol-15&quot;,
   &quot;policyClass&quot;: &quot;PREFERRED&quot;,
@@ -893,31 +841,29 @@ response time in milliseconds: 2
   &quot;currency&quot;: &quot;USD&quot;
 }
 
-POST http://localhost:36653/quotes
-201 (2 ms)
 Then 201
 * quote = response
 Given &apos;policies&apos;
 And { quoteId: &apos;#(quote.id)&apos;, holder: &apos;Katherine Johnson&apos; }
 When post
-request:
-3 &gt; POST http://localhost:36653/policies
+request: 2026-11-27T11:20:01.026Z
+3 &gt; POST http://localhost:39455/policies
 3 &gt; Content-Type: application/json
-3 &gt; Host: localhost:36653
+3 &gt; Host: localhost:39455
 3 &gt; Content-Length: 49
 3 &gt; Connection: keep-alive
-3 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.12.1)
+3 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;quoteId&quot;: &quot;pol-15&quot;,
   &quot;holder&quot;: &quot;Katherine Johnson&quot;
 }
 
-response time in milliseconds: 2
-3 &lt; 201 POST http://localhost:36653/policies
+response: 2ms
+3 &lt; 201 POST http://localhost:39455/policies
+3 &lt; Content-Type: application/json; charset=UTF-8
+3 &lt; Karate-Mock: true
 3 &lt; content-length: 113
 3 &lt; vary: origin
-3 &lt; Karate-Mock: true
-3 &lt; Content-Type: application/json; charset=UTF-8
 {
   &quot;id&quot;: &quot;pol-16&quot;,
   &quot;quoteId&quot;: &quot;pol-15&quot;,
@@ -927,32 +873,30 @@ response time in milliseconds: 2
   &quot;status&quot;: &quot;BOUND&quot;
 }
 
-POST http://localhost:36653/policies
-201 (2 ms)
 Then 201
 * policy = response
 Given &apos;claims&apos;
 And { policyId: &apos;#(policy.id)&apos;, amount: 2500, description: &apos;rear-end collision&apos; }
 When post
-request:
-4 &gt; POST http://localhost:36653/claims
+request: 2026-11-27T11:20:01.029Z
+4 &gt; POST http://localhost:39455/claims
 4 &gt; Content-Type: application/json
-4 &gt; Host: localhost:36653
+4 &gt; Host: localhost:39455
 4 &gt; Content-Length: 70
 4 &gt; Connection: keep-alive
-4 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.12.1)
+4 &gt; User-Agent: Apache-HttpClient/5.6.5 (Java/21.0.13)
 {
   &quot;policyId&quot;: &quot;pol-16&quot;,
   &quot;amount&quot;: 2500,
   &quot;description&quot;: &quot;rear-end collision&quot;
 }
 
-response time in milliseconds: 2
-4 &lt; 201 POST http://localhost:36653/claims
+response: 2ms
+4 &lt; 201 POST http://localhost:39455/claims
+4 &lt; Content-Type: application/json; charset=UTF-8
+4 &lt; Karate-Mock: true
 4 &lt; content-length: 65
 4 &lt; vary: origin
-4 &lt; Karate-Mock: true
-4 &lt; Content-Type: application/json; charset=UTF-8
 {
   &quot;id&quot;: &quot;pol-17&quot;,
   &quot;policyId&quot;: &quot;pol-16&quot;,
@@ -960,8 +904,6 @@ response time in milliseconds: 2
   &quot;status&quot;: &quot;OPEN&quot;
 }
 
-POST http://localhost:36653/claims
-201 (2 ms)
 Then 201
 And response.status == &apos;OPEN&apos;
 And response.policyId == policy.id

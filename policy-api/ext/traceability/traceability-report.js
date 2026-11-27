@@ -1,9 +1,43 @@
 
 
 document.addEventListener('alpine:init', function () {
+   
+   
+  function md(s) {
+    if (!s) return '';
+    var esc = String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return esc
+      .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+      .replace(/`([^`]+)`/g, '<code>$1</code>')
+      .replace(/(^|[^*])\*([^*]+)\*/g, '$1<em>$2</em>');
+  }
+   
+   
+  Alpine.directive('k-md', function (el, directive, utils) {
+    var value = utils.evaluateLater(directive.expression);
+    utils.effect(function () {
+      value(function (s) { el.innerHTML = md(s); });
+    });
+  });
+
   Alpine.data('traceabilityReport', function () {
     return {
       data: window.KARATE_TRACE || {},
+
+       
+      init: function () {
+        var d = window.KARATE_TRACE || {};
+        var tabs = [
+           
+          { key: 'coverage', title: 'Coverage', href: d.coverageHref || '../../coverage/pages/coverage.html' },
+          { key: 'traceability', title: 'Traceability', href: 'traceability.html' }
+        ];
+         
+        if (d.contractHref) {
+          tabs.push({ key: 'contract', title: 'Contract', href: d.contractHref });
+        }
+        if (window.KarateReport) KarateReport.renderTopNav({ current: 'traceability', summary: d.karateSummary, tabs: tabs });
+      },
       q: '',
       critFilter: '',
       statusFilter: '',
@@ -36,17 +70,6 @@ document.addEventListener('alpine:init', function () {
        
        
       get coverageHref() { return this.data.coverageHref || '../../coverage/pages/coverage.html'; },
-
-       
-       
-      md: function (s) {
-        if (!s) return '';
-        var esc = String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        return esc
-          .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
-          .replace(/`([^`]+)`/g, '<code>$1</code>')
-          .replace(/(^|[^*])\*([^*]+)\*/g, '$1<em>$2</em>');
-      },
 
        
       get riskById() {
@@ -253,8 +276,9 @@ document.addEventListener('alpine:init', function () {
         var i = String(slug).lastIndexOf(':');
         return i >= 0 ? String(slug).slice(i + 1) : String(slug);
       },
-      testLoc: function (slug) {
-        var t = this.testNode(slug);
+      testLoc: function (slug) { return this.featureAt(this.testNode(slug)); },
+       
+      featureAt: function (t) {
         if (!t.feature) return '';
         var f = String(t.feature).split('/').pop();
         return f + (t.line ? ':' + t.line : '');
